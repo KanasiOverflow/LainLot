@@ -175,7 +175,7 @@ function Records() {
         ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}><Loader /></div>
         : <RecordList
           records={sortedAndSearchedRecords}
-          title={currentTable}
+          table={currentTable}
           edit={openEditModal}
           remove={removePost}
         />

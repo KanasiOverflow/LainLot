@@ -7,7 +7,7 @@ import Records from "../pages/Records";
 export const privateRoutes = [
     {path: '/about', component: <About/>},
     {path: '/records', component: <Records />},
-    {path: '/records/:id', component: <RecordIdPage />},
+    {path: '/records/:table/:id', component: <RecordIdPage />},
     {path: '/error', component: <Error />}
 ];
 

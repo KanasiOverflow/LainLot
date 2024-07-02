@@ -2,10 +2,10 @@ import React from 'react';
 import GeneralButton from './UI/button/GeneralButton';
 import { useNavigate } from 'react-router-dom';
 
-export default function RecordItem({ record, edit, remove }) {
+export default function RecordItem({ table, record, edit, remove }) {
 
     const navigate = useNavigate();
-
+    
     return (
         <div className='post'>
             <div className='post__content'>
@@ -16,7 +16,7 @@ export default function RecordItem({ record, edit, remove }) {
                 )}
             </div>
             <div className='post__btns'>
-                <GeneralButton onClick={() => navigate(`/records/${record.id}`)}>
+                <GeneralButton onClick={() => navigate(`/records/${table}/${record.id}`)}>
                     Open
                 </GeneralButton>
                 <GeneralButton onClick={() => edit(record)}>
