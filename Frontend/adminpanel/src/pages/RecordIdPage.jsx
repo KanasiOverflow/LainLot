@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useFetching } from '../hooks/useFetching';
 import { getRecordById } from '../utils/getRecordById';
 import Loader from '../components/UI/loader/Loader';
+import GeneralButton from '../components/UI/button/GeneralButton';
 
 export default function RecordIdPage() {
 
@@ -34,6 +35,11 @@ export default function RecordIdPage() {
                         )}
                     </div>
                 : <h1>{error.message}</h1>}
+            <div>
+                <GeneralButton>Return to {params.table}</GeneralButton>
+                <GeneralButton>Edit</GeneralButton>
+                <GeneralButton>Delete</GeneralButton>
+            </div>
         </div>
     );
 };
