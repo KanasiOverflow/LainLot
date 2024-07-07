@@ -60,6 +60,14 @@ namespace RestAPI.Controllers
 
         #region About table
 
+        [HttpGet("GetAboutCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetAboutCount()
+        {
+            return _aboutRepository.GetAll().Count();
+        }
+
         [HttpGet("GetAboutFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -149,6 +157,14 @@ namespace RestAPI.Controllers
         #endregion
 
         #region AccessLevels table
+
+        [HttpGet("GetAccessLevelsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetAccessLevelsCount()
+        {
+            return _accessLevelRepository.GetAll().Count();
+        }
 
         [HttpGet("GetAccessLevelsFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -240,6 +256,14 @@ namespace RestAPI.Controllers
 
         #region Contacts table
 
+        [HttpGet("GetContactsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetContactsCount()
+        {
+            return _contactRepository.GetAll().Count();
+        }
+
         [HttpGet("GetContactsFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -329,6 +353,14 @@ namespace RestAPI.Controllers
         #endregion
 
         #region Languages table
+
+        [HttpGet("GetLanguagesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetLanguagesCount()
+        {
+            return _languageRepository.GetAll().Count();
+        }
 
         [HttpGet("GetLanguagesFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -420,6 +452,14 @@ namespace RestAPI.Controllers
 
         #region Posts table
 
+        [HttpGet("GetPostsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetPostsCount()
+        {
+            return _postRepository.GetAll().Count();
+        }
+
         [HttpGet("GetPostsFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -509,6 +549,14 @@ namespace RestAPI.Controllers
         #endregion
 
         #region PostsTranslations table
+
+        [HttpGet("GetPostsTranslationsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetPostsTranslationsCount()
+        {
+            return _postsTranslationRepository.GetAll().Count();
+        }
 
         [HttpGet("GetPostsTranslationsFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -600,6 +648,14 @@ namespace RestAPI.Controllers
 
         #region Users table
 
+        [HttpGet("GetUsersCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetUsersCount()
+        {
+            return _userRepository.GetAll().Count();
+        }
+
         [HttpGet("GetUsersFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -690,6 +746,14 @@ namespace RestAPI.Controllers
 
         #region UserProfiles table
 
+        [HttpGet("GetUserProfilesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetUserProfilesCount()
+        {
+            return _userProfileRepository.GetAll().Count();
+        }
+
         [HttpGet("GetUserProfilesFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -779,6 +843,14 @@ namespace RestAPI.Controllers
         #endregion
 
         #region UserRoles table
+
+        [HttpGet("GetUserRolesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetUserRolesCount()
+        {
+            return _userRoleRepository.GetAll().Count();
+        }
 
         [HttpGet("GetUserRolesFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
