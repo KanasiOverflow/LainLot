@@ -21,11 +21,11 @@ export default class AboutService {
         return null;
     };
 
-    static async GetAbout() {
+    static async GetAbout(limit, page) {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetAbout',
+            url: `http://localhost:8040/api/v1/Database/GetAbout?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')

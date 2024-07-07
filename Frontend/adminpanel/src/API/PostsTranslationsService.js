@@ -21,11 +21,11 @@ export default class PostsTranslationService {
         return null;
     };
 
-    static async GetPostsTranslations() {
+    static async GetPostsTranslations(limit, page) {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetPostsTranslations',
+            url: `http://localhost:8040/api/v1/Database/GetPostsTranslations?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')

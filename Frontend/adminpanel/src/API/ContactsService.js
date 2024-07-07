@@ -21,11 +21,11 @@ export default class ContactsService {
         return null;
     };
 
-    static async GetContacts() {
+    static async GetContacts(limit, page) {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetContacts',
+            url: `http://localhost:8040/api/v1/Database/GetContacts?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')

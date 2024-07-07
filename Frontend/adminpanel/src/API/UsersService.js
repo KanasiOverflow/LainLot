@@ -22,11 +22,11 @@ export default class UsersService {
         return null;
     };
 
-    static async GetUsers() {
+    static async GetUsers(limit, page) {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUsers',
+            url: `http://localhost:8040/api/v1/Database/GetUsers?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')

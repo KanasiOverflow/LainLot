@@ -21,11 +21,11 @@ export default class UserProfileService {
         return null;
     };
 
-    static async GetUserProfiles() {
+    static async GetUserProfiles(limit, page) {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserProfiles',
+            url: `http://localhost:8040/api/v1/Database/GetUserProfiles?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')

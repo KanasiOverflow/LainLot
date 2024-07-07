@@ -8,37 +8,37 @@ import UsersService from '../API/UsersService';
 import UserProfileService from '../API/UserProfileService';
 import UserRolesService from '../API/UserRolesService';
 
-export const getAllRecords = async (currentTable) => {
+export const getAllRecords = async (currentTable, limit, page) => {
 
   var response = null;
 
   switch (currentTable) {
     case 'About':
-      response = await AboutService.GetAbout();
+      response = await AboutService.GetAbout(limit, page);
       break;
     case 'AccessLevels':
-      response = await AccessLevelsService.GetAccessLevels();
+      response = await AccessLevelsService.GetAccessLevels(limit, page);
       break;
     case 'Contacts':
-      response = await ContactsService.GetContacts();
+      response = await ContactsService.GetContacts(limit, page);
       break;
     case 'Languages':
-      response = await LanguagesService.GetLanguages();
+      response = await LanguagesService.GetLanguages(limit, page);
       break;
     case 'Posts':
-      response = await PostsService.GetPosts();
+      response = await PostsService.GetPosts(limit, page);
       break;
     case 'PostsTranstations':
-      response = await PostsTranslationService.GetPostsTranslations();
+      response = await PostsTranslationService.GetPostsTranslations(limit, page);
       break;
     case 'Users':
-      response = await UsersService.GetUsers();
+      response = await UsersService.GetUsers(limit, page);
       break;
     case 'UserProfile':
-      response = await UserProfileService.GetUserProfiles();
+      response = await UserProfileService.GetUserProfiles(limit, page);
       break;
     case 'UserRoles':
-      response = await UserRolesService.GetUserRoles();
+      response = await UserRolesService.GetUserRoles(limit, page);
       break;
     default:
       break;

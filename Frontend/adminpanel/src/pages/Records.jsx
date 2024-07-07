@@ -42,7 +42,7 @@ function Records() {
 
   const [fetchRecords, isRecordLoading, postError] = useFetching(async (limit, page) => {
 
-    var responseData = await getAllRecords(currentTable);
+    var responseData = await getAllRecords(currentTable, limit, page);
     var responseFields = await getRecordFields(currentTable);
 
     if (responseData) {

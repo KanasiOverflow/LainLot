@@ -22,11 +22,11 @@ export default class LanguagesService {
         return null;
     };
 
-    static async GetLanguages() {
+    static async GetLanguages(limit, page) {
         
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetLanguages',
+            url: `http://localhost:8040/api/v1/Database/GetLanguages?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')

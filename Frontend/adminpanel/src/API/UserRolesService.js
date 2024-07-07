@@ -21,11 +21,11 @@ export default class UserRolesService {
         return null;
     };
 
-    static async GetUserRoles() {
+    static async GetUserRoles(limit, page) {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserRoles',
+            url: `http://localhost:8040/api/v1/Database/GetUserRoles?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')

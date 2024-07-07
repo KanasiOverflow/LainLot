@@ -21,11 +21,11 @@ export default class AccessLevelsService {
         return null;
     };
 
-    static async GetAccessLevels() {
+    static async GetAccessLevels(limit, page) {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetAccessLevels',
+            url: `http://localhost:8040/api/v1/Database/GetAccessLevels?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')

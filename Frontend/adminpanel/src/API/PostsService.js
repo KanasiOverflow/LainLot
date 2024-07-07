@@ -21,11 +21,11 @@ export default class PostsService {
         return null;
     };
 
-    static async GetPosts() {
+    static async GetPosts(limit, page) {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetPosts',
+            url: `http://localhost:8040/api/v1/Database/GetPosts?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
