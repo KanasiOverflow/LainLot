@@ -14,7 +14,7 @@ export const getAllRecords = async (currentTable) => {
 
   switch (currentTable) {
     case 'About':
-      response = await AboutService.GetAbouts();
+      response = await AboutService.GetAbout();
       break;
     case 'AccessLevels':
       response = await AccessLevelsService.GetAccessLevels();
@@ -35,7 +35,7 @@ export const getAllRecords = async (currentTable) => {
       response = await UsersService.GetUsers();
       break;
     case 'UserProfile':
-      response = await UserProfileService.GetUserProfile();
+      response = await UserProfileService.GetUserProfiles();
       break;
     case 'UserRoles':
       response = await UserRolesService.GetUserRoles();

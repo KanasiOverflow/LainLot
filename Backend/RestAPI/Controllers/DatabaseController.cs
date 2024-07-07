@@ -5,6 +5,8 @@ using RestAPI.AutoMapper;
 using DB = DatabaseProvider.Models;
 using DatabaseRepository.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Collections.Generic;
 
 namespace RestAPI.Controllers
 {
@@ -66,13 +68,13 @@ namespace RestAPI.Controllers
             return new About().GetType().GetProperties().Select(x => x.Name);
         }
 
-        [HttpGet("GetAbouts")]
+        [HttpGet("GetAbout")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<About>> GetAbouts()
+        public ActionResult<IEnumerable<About>> GetAbout(int limit, int page)
         {
-            var dbList = _aboutRepository.GetAll().ToList();
-            var apiList = _mapper.Map<List<DB.About>, List<About>>((List<DB.About>)dbList);
+            var dbList = _aboutRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.About>, List<About>>(dbList);
 
             return apiList == null ? NotFound() : apiList;
         }
@@ -159,10 +161,10 @@ namespace RestAPI.Controllers
         [HttpGet("GetAccessLevels")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<AccessLevel>> GetAccessLevels()
+        public ActionResult<IEnumerable<AccessLevel>> GetAccessLevels(int limit, int page)
         {
-            var dbList = _accessLevelRepository.GetAll().ToList();
-            var apiList = _mapper.Map<List<DB.AccessLevel>, List<AccessLevel>>((List<DB.AccessLevel>)dbList);
+            var dbList = _accessLevelRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.AccessLevel>, List<AccessLevel>>(dbList);
 
             return apiList == null ? NotFound() : apiList;
         }
@@ -249,10 +251,10 @@ namespace RestAPI.Controllers
         [HttpGet("GetContacts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<Contact>> GetContacts()
+        public ActionResult<IEnumerable<Contact>> GetContacts(int limit, int page)
         {
-            var dbList = _contactRepository.GetAll().ToList();
-            var apiList = _mapper.Map<List<DB.Contact>, List<Contact>>((List<DB.Contact>)dbList);
+            var dbList = _contactRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.Contact>, List<Contact>>(dbList);
 
             return apiList == null ? NotFound() : apiList;
         }
@@ -339,15 +341,15 @@ namespace RestAPI.Controllers
         [HttpGet("GetLanguages")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<Language>> GetLanguages()
+        public ActionResult<IEnumerable<Language>> GetLanguages(int limit, int page)
         {
-            var dbList = _languageRepository.GetAll().ToList();
-            var apiList = _mapper.Map<List<DB.Language>, List<Language>>((List<DB.Language>)dbList);
+            var dbList = _languageRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.Language>, List<Language>>(dbList);
 
             return apiList == null ? NotFound() : apiList;
         }
 
-        [HttpGet("GetLanguageById")]
+        [HttpGet("GetLanguagesById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<Language?> GetLanguageById(int id)
@@ -429,10 +431,10 @@ namespace RestAPI.Controllers
         [HttpGet("GetPosts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<Post>> GetPosts()
+        public ActionResult<IEnumerable<Post>> GetPosts(int limit, int page)
         {
-            var dbList = _postRepository.GetAll().ToList();
-            var apiList = _mapper.Map<List<DB.Post>, List<Post>>((List<DB.Post>)dbList);
+            var dbList = _postRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.Post>, List<Post>>(dbList);
 
             return apiList == null ? NotFound() : apiList;
         }
@@ -519,10 +521,10 @@ namespace RestAPI.Controllers
         [HttpGet("GetPostsTranslations")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<PostsTranslation>> GetPostsTranslations()
+        public ActionResult<IEnumerable<PostsTranslation>> GetPostsTranslations(int limit, int page)
         {
-            var dbList = _postsTranslationRepository.GetAll().ToList();
-            var apiList = _mapper.Map<List<DB.PostsTranslation>, List<PostsTranslation>>((List<DB.PostsTranslation>)dbList);
+            var dbList = _postsTranslationRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.PostsTranslation>, List<PostsTranslation>>(dbList);
 
             return apiList == null ? NotFound() : apiList;
         }
@@ -609,10 +611,10 @@ namespace RestAPI.Controllers
         [HttpGet("GetUsers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<User>> GetUsers()
+        public ActionResult<IEnumerable<User>> GetUsers(int limit, int page)
         {
-            var dbList = _userRepository.GetAll().ToList();
-            var apiList = _mapper.Map<List<DB.User>, List<User>>((List<DB.User>)dbList);
+            var dbList = _userRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.User>, List<User>>(dbList);
 
             return apiList == null ? NotFound() : apiList;
         }
@@ -686,12 +688,12 @@ namespace RestAPI.Controllers
 
         #endregion
 
-        #region UserProfile table
+        #region UserProfiles table
 
-        [HttpGet("GetUserProfileFields")]
+        [HttpGet("GetUserProfilesFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IEnumerable<string> GetUserProfileFields()
+        public IEnumerable<string> GetUserProfilesFields()
         {
             return new UserProfile().GetType().GetProperties().Select(x => x.Name);
         }
@@ -699,15 +701,15 @@ namespace RestAPI.Controllers
         [HttpGet("GetUserProfiles")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<UserProfile>> GetUserProfiles()
+        public ActionResult<IEnumerable<UserProfile>> GetUserProfiles(int limit, int page)
         {
-            var dbList = _userProfileRepository.GetAll().ToList();
-            var apiList = _mapper.Map<List<DB.UserProfile>, List<UserProfile>>((List<DB.UserProfile>)dbList);
+            var dbList = _userProfileRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.UserProfile>, List<UserProfile>>(dbList);
 
             return apiList == null ? NotFound() : apiList;
         }
 
-        [HttpGet("GetUserProfileById")]
+        [HttpGet("GetUserProfilesById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<UserProfile?> GetUserProfileById(int id)
@@ -716,7 +718,7 @@ namespace RestAPI.Controllers
             return dbEntity == null ? NotFound() : _mapper.Map<DB.UserProfile, UserProfile>(dbEntity);
         }
 
-        [HttpPost("CreateUserProfile")]
+        [HttpPost("CreateUserProfiles")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -789,10 +791,10 @@ namespace RestAPI.Controllers
         [HttpGet("GetUserRoles")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<UserRole>> GetUserRoles()
+        public ActionResult<IEnumerable<UserRole>> GetUserRoles(int limit, int page)
         {
-            var dbList = _userRoleRepository.GetAll().ToList();
-            var apiList = _mapper.Map<List<DB.UserRole>, List<UserRole>>((List<DB.UserRole>)dbList);
+            var dbList = _userRoleRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.UserRole>, List<UserRole>>(dbList);
 
             return apiList == null ? NotFound() : apiList;
         }

@@ -23,7 +23,7 @@ export const getRecordById = async (currentTable, id) => {
             response = await ContactsService.GetContactById(id);
             break;
         case 'Languages':
-            response = await LanguagesService.GetLanguageById(id);
+            response = await LanguagesService.GetLanguagesById(id);
             break;
         case 'Posts':
             response = await PostsService.GetPostById(id);
@@ -35,7 +35,7 @@ export const getRecordById = async (currentTable, id) => {
             response = await UsersService.GetUserById(id);
             break;
         case 'UserProfile':
-            response = await UserProfileService.GetUserProfileById(id);
+            response = await UserProfileService.GetUserProfilesById(id);
             break;
         case 'UserRoles':
             response = await UserRolesService.getRecordById(id);

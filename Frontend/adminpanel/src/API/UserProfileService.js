@@ -4,11 +4,11 @@ import { get200, get201 } from '../utils/responseCodes';
 
 export default class UserProfileService {
 
-    static async GetUserProfileFields() {
+    static async GetUserProfilesFields() {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserProfileFields',
+            url: 'http://localhost:8040/api/v1/Database/GetUserProfilesFields',
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -21,7 +21,7 @@ export default class UserProfileService {
         return null;
     };
 
-    static async GetUserProfile() {
+    static async GetUserProfiles() {
 
         const options = {
             method: 'get',
@@ -38,11 +38,11 @@ export default class UserProfileService {
         return null;
     };
 
-    static async GetUserProfileById(id) {
+    static async GetUserProfilesById(id) {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserProfileById',
+            url: 'http://localhost:8040/api/v1/Database/GetUserProfilesById',
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

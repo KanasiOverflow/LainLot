@@ -27,6 +27,9 @@ namespace NUnitTests.RestAPI
 
         private DatabaseController _restApiController;
 
+        private int _limit;
+        private int _page;
+
         [SetUp]
         public void Setup()
         {
@@ -84,6 +87,9 @@ namespace NUnitTests.RestAPI
                 _userRepository,
                 _userProfileRepository,
                 _userRoleRepository);
+
+            _limit = 100;
+            _page = 1;
         }
 
         [TearDown]
@@ -97,7 +103,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetAbouts_Return_2_Items()
         {
-            var result = _restApiController.GetAbouts();
+            var result = _restApiController.GetAbout(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -147,7 +153,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreateAbout(entity);
 
-            var list = _restApiController.GetAbouts();
+            var list = _restApiController.GetAbout(_limit, _page);
             var entityThatWasAdded = _restApiController.GetAboutById(3);
 
             Assert.Multiple(() =>
@@ -186,7 +192,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetAccessLevels_Return_2_Items()
         {
-            var result = _restApiController.GetAccessLevels();
+            var result = _restApiController.GetAccessLevels(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -235,7 +241,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreateAccessLevel(entity);
 
-            var list = _restApiController.GetAccessLevels();
+            var list = _restApiController.GetAccessLevels(_limit, _page);
             var entityThatWasAdded = _restApiController.GetAccessLevelById(3);
 
             Assert.Multiple(() =>
@@ -274,7 +280,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetContacts_Return_2_Items()
         {
-            var result = _restApiController.GetContacts();
+            var result = _restApiController.GetContacts(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -325,7 +331,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreateContact(entity);
 
-            var list = _restApiController.GetContacts();
+            var list = _restApiController.GetContacts(_limit, _page);
             var entityThatWasAdded = _restApiController.GetContactById(3);
 
             Assert.Multiple(() =>
@@ -364,7 +370,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetLanguages_Return_2_Items()
         {
-            var result = _restApiController.GetLanguages();
+            var result = _restApiController.GetLanguages(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -416,7 +422,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreateLanguage(entity);
 
-            var list = _restApiController.GetLanguages();
+            var list = _restApiController.GetLanguages(_limit, _page);
             var entityThatWasAdded = _restApiController.GetLanguageById(3);
 
             Assert.Multiple(() =>
@@ -455,7 +461,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetPosts_Return_2_Items()
         {
-            var result = _restApiController.GetPosts();
+            var result = _restApiController.GetPosts(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -510,7 +516,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreatePost(entity);
 
-            var list = _restApiController.GetPosts();
+            var list = _restApiController.GetPosts(_limit, _page);
             var entityThatWasAdded = _restApiController.GetPostById(3);
 
             Assert.Multiple(() =>
@@ -549,7 +555,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetPostTranslations_Return_2_Items()
         {
-            var result = _restApiController.GetPostsTranslations();
+            var result = _restApiController.GetPostsTranslations(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -601,7 +607,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreatePostsTranslation(entity);
 
-            var list = _restApiController.GetPostsTranslations();
+            var list = _restApiController.GetPostsTranslations(_limit, _page);
             var entityThatWasAdded = _restApiController.GetPostsTranslationById(3);
 
             Assert.Multiple(() =>
@@ -640,7 +646,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetUsers_Return_2_Items()
         {
-            var result = _restApiController.GetUsers();
+            var result = _restApiController.GetUsers(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -695,7 +701,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreateUser(entity);
 
-            var list = _restApiController.GetUsers();
+            var list = _restApiController.GetUsers(_limit, _page);
             var entityThatWasAdded = _restApiController.GetUserById(3);
 
             Assert.Multiple(() =>
@@ -734,7 +740,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetUserProfiles_Return_2_Items()
         {
-            var result = _restApiController.GetUserProfiles();
+            var result = _restApiController.GetUserProfiles(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -794,7 +800,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreateUserProfile(entity);
 
-            var list = _restApiController.GetUserProfiles();
+            var list = _restApiController.GetUserProfiles(_limit, _page);
             var entityThatWasAdded = _restApiController.GetUserProfileById(3);
 
             Assert.Multiple(() =>
@@ -833,7 +839,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetUserRoles_Return_2_Items()
         {
-            var result = _restApiController.GetUserRoles();
+            var result = _restApiController.GetUserRoles(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -882,7 +888,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreateUserRole(entity);
 
-            var list = _restApiController.GetUserRoles();
+            var list = _restApiController.GetUserRoles(_limit, _page);
             var entityThatWasAdded = _restApiController.GetUserRoleById(3);
 
             Assert.Multiple(() =>

@@ -40,11 +40,11 @@ export default class LanguagesService {
         return null;
     };
 
-    static async GetLanguageById(id) {
+    static async GetLanguagesById(id) {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetLanguageById',
+            url: 'http://localhost:8040/api/v1/Database/GetLanguagesById',
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

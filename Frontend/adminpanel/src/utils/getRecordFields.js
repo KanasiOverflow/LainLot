@@ -35,7 +35,7 @@ export const getRecordFields = async (currentTable) => {
       response = await UsersService.GetUsersFields();
       break;
     case 'UserProfile':
-      response = await UserProfileService.GetUserProfileFields();
+      response = await UserProfileService.GetUserProfilesFields();
       break;
     case 'UserRoles':
       response = await UserRolesService.GetUserRolesFields();

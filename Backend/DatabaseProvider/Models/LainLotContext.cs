@@ -7,9 +7,11 @@ namespace DatabaseProvider.Models;
 public partial class LainLotContext : DbContext
 {
     /// <summary>
-    /// dotnet ef migrations add InitialCreate --project DatabaseProvider
+    /// 1. cd Backend/DatabaseProvider
+    /// 2. dotnet ef migrations add InitialCreate --project DatabaseProvider
     /// 
-    /// dotnet ef database update --project DatabaseProvider --connection "Host=localhost;Database=LainLot;Username=postgres;Password=123456789"
+    /// 1. cd Backend/DatabaseProvider
+    /// 2. dotnet ef database update --project DatabaseProvider.csproj --connection "Host=localhost;Database=LainLot;Username=postgres;Password=123456789"
     /// </summary>
 
     private string? _connectionString;
@@ -144,9 +146,9 @@ public partial class LainLotContext : DbContext
 
         modelBuilder.Entity<UserProfile>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("UserProfile_pkey");
+            entity.HasKey(e => e.Id).HasName("UserProfiles_pkey");
 
-            entity.ToTable("UserProfile");
+            entity.ToTable("UserProfiles");
 
             entity.Property(e => e.Address).HasMaxLength(255);
             entity.Property(e => e.Avatar).HasMaxLength(255);
@@ -162,7 +164,7 @@ public partial class LainLotContext : DbContext
 
             entity.HasOne(d => d.FkUsersNavigation).WithMany(p => p.UserProfiles)
                 .HasForeignKey(d => d.FkUsers)
-                .HasConstraintName("UserProfile_FkUsers_fkey");
+                .HasConstraintName("UserProfiles_FkUsers_fkey");
         });
 
         modelBuilder.Entity<UserRole>(entity =>
