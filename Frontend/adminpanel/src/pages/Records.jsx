@@ -4,6 +4,7 @@ import { useFetching } from '../hooks/useFetching';
 import { getPageCount } from '../utils/getPageCount';
 import { getDBTablesList } from '../utils/getDBTablesList';
 import { getRecordFields } from '../utils/getRecordFields';
+import { getTableTotalCount } from '../utils/getTableTotalCount';
 import { getAllRecords } from '../utils/getAllRecords';
 import { removeRecordById } from '../utils/removeRecordById';
 import { createRecord } from '../utils/createRecord';
@@ -44,14 +45,12 @@ function Records() {
 
     var responseData = await getAllRecords(currentTable, limit, page);
     var responseFields = await getRecordFields(currentTable);
-
+    var responseTotalCount = await getTableTotalCount(currentTable);
+    
     if (responseData) {
       if (responseData.data) {
         setCurrentTable(currentTable);
-
-        const totalCount = responseData.data.length;
-        setTotalPages(getPageCount(totalCount, limit));
-
+        setTotalPages(getPageCount(responseTotalCount.data, limit));
         setCurrentRecords(responseData.data);
         setRecordFields(toLowerCase(responseFields.data));
       }

@@ -4,6 +4,24 @@ import { get200, get201 } from '../utils/responseCodes';
 
 export default class AboutService {
 
+    static async GetAboutCount() {
+
+        const options = {
+            method: 'get',
+            url: 'http://localhost:8040/api/v1/Database/GetAboutCount',
+            auth: {
+                username: secureLocalStorage.getItem('login'),
+                password: secureLocalStorage.getItem('password')
+            }
+        };
+
+        const response = await axios(options);
+        if (response.status === get200().Code && response.statusText === get200().Message) {
+            return response;
+        }
+        return null;
+    };
+
     static async GetAboutFields() {
 
         const options = {
