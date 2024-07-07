@@ -25,7 +25,7 @@ import '../styles/App.css';
 
 function Records() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
   const [modal, setModal] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -46,13 +46,15 @@ function Records() {
     var responseData = await getAllRecords(currentTable, limit, page);
     var responseFields = await getRecordFields(currentTable);
     var responseTotalCount = await getTableTotalCount(currentTable);
-    
+
     if (responseData) {
       if (responseData.data) {
-        setCurrentTable(currentTable);
-        setTotalPages(getPageCount(responseTotalCount.data, limit));
-        setCurrentRecords(responseData.data);
-        setRecordFields(toLowerCase(responseFields.data));
+        if (responseTotalCount.data) {
+          setCurrentTable(currentTable);
+          setTotalPages(getPageCount(responseTotalCount.data, limit));
+          setCurrentRecords(responseData.data);
+          setRecordFields(toLowerCase(responseFields.data));
+        }
       }
     }
   });
