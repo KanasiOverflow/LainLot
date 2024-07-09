@@ -1,29 +1,36 @@
-import React, { useContext } from 'react';
-import secureLocalStorage from 'react-secure-storage';
-import { Link } from "react-router-dom";
-import GeneralButton from '../button/GeneralButton';
-import { AuthContext } from '../../../context';
+import React, { useContext } from 'react'
+import secureLocalStorage from 'react-secure-storage'
+import { NavLink } from 'react-router-dom'
+import GeneralButton from '../button/GeneralButton'
+import { AuthContext } from '../../../context'
+import cl from './Navbar.module.css'
 
 export default function Navbar() {
+  const { setIsAuth } = useContext(AuthContext)
 
-    const {setIsAuth} = useContext(AuthContext);
+  const logout = () => {
+    setIsAuth(false)
+    secureLocalStorage.removeItem('auth')
+    secureLocalStorage.removeItem('login')
+    secureLocalStorage.removeItem('password')
+  }
 
-    const logout = () => {
-        setIsAuth(false);
-        secureLocalStorage.removeItem('auth');
-        secureLocalStorage.removeItem('login');
-        secureLocalStorage.removeItem('password');
-    };
-
-    return (
-        <div className='navbar'>
-            <GeneralButton onClick={logout}>
-                Sign out
-            </GeneralButton>
-            <div className='navbar__links'>
-                <Link to='/about'>About site</Link>
-                <Link to='/records'>Records</Link>
-            </div>
-        </div>
-    );
-};
+  return (
+    <nav className={cl.navigation}>
+      <GeneralButton onClick={logout}>Sign out</GeneralButton>
+      <ul className="stroke-animation">
+        <li>
+          <NavLink
+            className={({ isActive }) => (isActive ? 'active' : '')}
+            to="/about"
+          >
+            About site
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/records">Records</NavLink>
+        </li>
+      </ul>
+    </nav>
+  )
+}
