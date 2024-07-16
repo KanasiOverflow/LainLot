@@ -5,6 +5,7 @@ import { getRecordById } from '../utils/getRecordById';
 import Loader from '../components/UI/loader/Loader';
 import GeneralButton from '../components/UI/button/GeneralButton';
 
+
 export default function RecordIdPage() {
 
     const params = useParams();
