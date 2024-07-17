@@ -25,7 +25,7 @@ function Records() {
   const { 
     openEditModal, openCreateModal, addRecord,
     mode, oldRecord, modifyRecordError,
-    modal, setModal, currentTable, setCurrentTable,
+    currentTable, setCurrentTable,
     currentRecords, setCurrentRecords,
     totalPages, setTotalPages,
     recordFields, setRecordFields,
@@ -34,6 +34,8 @@ function Records() {
 
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [limit, setLimit] = useState(5);
+
+  const { modal, setModal } = useContext(ModalContext);
 
   const [page, setPage] = useState(1);
   const [DBTables, setDBTables] = useState([]);
