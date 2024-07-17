@@ -23,7 +23,7 @@ import { ModalContext } from '../context/ModalContext';
 
 function Records() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(5);
 
   const [page, setPage] = useState(1);
   const [DBTables, setDBTables] = useState([]);
