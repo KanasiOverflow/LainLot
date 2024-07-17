@@ -47,7 +47,7 @@ function Records() {
     var responseData = await getAllRecords(currentTable, limit, page);
     var responseFields = await getRecordFields(currentTable);
     var responseTotalCount = await getTableTotalCount(currentTable);
-    
+
     if (responseData) {
       if (responseData.data) {
         if (responseTotalCount.data) {
