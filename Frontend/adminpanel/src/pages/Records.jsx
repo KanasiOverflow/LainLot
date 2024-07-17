@@ -22,12 +22,6 @@ import { ModalContext } from '../context/ModalContext';
 // rsc - create template component
 
 function Records() {
-  const [filter, setFilter] = useState({ sort: '', query: '' });
-  const [limit, setLimit] = useState(5);
-
-  const [page, setPage] = useState(1);
-  const [DBTables, setDBTables] = useState([]);
-
   const { 
     openEditModal, openCreateModal, addRecord,
     mode, oldRecord, modifyRecordError,
@@ -37,6 +31,12 @@ function Records() {
     recordFields, setRecordFields,
     editRecord, removeRecord
   } = useContext(ModalContext);
+
+  const [filter, setFilter] = useState({ sort: '', query: '' });
+  const [limit, setLimit] = useState(5);
+
+  const [page, setPage] = useState(1);
+  const [DBTables, setDBTables] = useState([]);
 
   const sortedAndSearchedRecords = useRecords(currentRecords, filter.sort, filter.query);
 
