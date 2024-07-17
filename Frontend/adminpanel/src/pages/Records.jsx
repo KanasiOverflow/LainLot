@@ -49,10 +49,10 @@ function Records() {
     if (responseData) {
       if (responseData.data) {
         if (responseTotalCount.data) {
-        setCurrentTable(currentTable);
-        setTotalPages(getPageCount(responseTotalCount.data, limit));
-        setCurrentRecords(responseData.data);
-        setRecordFields(toLowerCase(responseFields.data));
+          setCurrentTable(currentTable);
+          setTotalPages(getPageCount(responseTotalCount.data, limit));
+          setCurrentRecords(responseData.data);
+          setRecordFields(toLowerCase(responseFields.data));
         }
       }
     }
