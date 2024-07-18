@@ -5,6 +5,7 @@ import Navbar from './components/UI/navbar/Navbar';
 import './styles/App.css';
 import AppRouter from './components/AppRouter';
 import { AuthContext } from './context';
+import { ModalProvider } from "./context/ModalContext";
 
 // rsc - create template component
 
@@ -23,10 +24,12 @@ function App() {
     <AuthContext.Provider value={{
       isAuth, setIsAuth, isLoading
     }}>
-      <BrowserRouter>
-        <Navbar />
-        <AppRouter />
-      </BrowserRouter>
+      <ModalProvider>
+        <BrowserRouter>
+          <Navbar />
+          <AppRouter />
+        </BrowserRouter>
+      </ModalProvider>
     </AuthContext.Provider>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useRecords } from '../hooks/useRecords';
 import { useFetching } from '../hooks/useFetching';
 import { getPageCount } from '../utils/getPageCount';
@@ -6,9 +6,6 @@ import { getDBTablesList } from '../utils/getDBTablesList';
 import { getRecordFields } from '../utils/getRecordFields';
 import { getTableTotalCount } from '../utils/getTableTotalCount';
 import { getAllRecords } from '../utils/getAllRecords';
-import { removeRecordById } from '../utils/removeRecordById';
-import { createRecord } from '../utils/createRecord';
-import { updateRecord } from '../utils/updateRecord';
 import { toLowerCase } from '../utils/toLowerCase';
 import RecordList from '../components/RecordList';
 import PageCountSwitcher from '../components/PageCountSwitcher';
@@ -20,24 +17,28 @@ import Loader from '../components/UI/loader/Loader';
 import Pagination from '../components/UI/pagination/Pagination';
 import TablesList from '../components/TablesList';
 import '../styles/App.css';
+import { ModalContext } from '../context/ModalContext';
 
 // rsc - create template component
 
 function Records() {
+  const { 
+    openEditModal, openCreateModal, addRecord,
+    mode, oldRecord, modifyRecordError,
+    currentTable, setCurrentTable,
+    currentRecords, setCurrentRecords,
+    totalPages, setTotalPages,
+    recordFields, setRecordFields,
+    editRecord, removeRecord
+  } = useContext(ModalContext);
+
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [limit, setLimit] = useState(5);
-  const [modal, setModal] = useState(false);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [DBTables, setDBTables] = useState([]);
-  const [recordFields, setRecordFields] = useState([]);
-  const [mode, setMode] = useState("");
-  const [oldRecord, setOldRecord] = useState({});
-  const [modifyRecordError, setModifyRecordError] = useState("");
 
-  // Tables
-  const [currentTable, setCurrentTable] = useState("");
-  const [currentRecords, setCurrentRecords] = useState([]);
+  const { modal, setModal } = useContext(ModalContext);
+
+  const [page, setPage] = useState(1);
+  const [DBTables, setDBTables] = useState([]);
 
   const sortedAndSearchedRecords = useRecords(currentRecords, filter.sort, filter.query);
 
@@ -63,56 +64,7 @@ function Records() {
     const response = getDBTablesList();
     setDBTables(response);
   });
-
-  const openCreateModal = () => {
-    setMode("Create");
-    setModifyRecordError("");
-    setModal(true);
-    setOldRecord(null);
-  };
-
-  const openEditModal = (record) => {
-    setMode("Edit");
-    setModifyRecordError("");
-    setModal(true);
-    setOldRecord(record);
-  };
-
-  const addRecord = async (record) => {
-    var response = await createRecord(currentTable, record);
-    if (response !== null && response !== undefined) {
-      if (response.data) {
-        setCurrentRecords([...currentRecords, response.data]);
-        setModal(false);
-      }
-      else {
-        setModifyRecordError(response);
-      }
-    }
-  };
-
-  const editRecord = async (record) => {
-    var response = await updateRecord(currentTable, record);
-    if (response !== null && response !== undefined) {
-      if (response.data) {
-        setCurrentRecords(currentRecords.filter(p => p.id !== record.id));
-        setCurrentRecords([...currentRecords, response.data]);
-        setModal(false);
-      }
-      else {
-        setModifyRecordError(response);
-      }
-    }
-  };
-
-  const removePost = async (record) => {
-    var response = await removeRecordById(currentTable, record.id);
-
-    if (response !== null && response !== undefined) {
-      setCurrentRecords(currentRecords.filter(p => p.id !== record.id));
-    }
-  };
-
+  
   const changePage = (page) => {
     setPage(page);
     fetchRecords(limit, page);
@@ -178,7 +130,7 @@ function Records() {
           records={sortedAndSearchedRecords}
           table={currentTable}
           edit={openEditModal}
-          remove={removePost}
+          remove={removeRecord}
         />
       }
 
