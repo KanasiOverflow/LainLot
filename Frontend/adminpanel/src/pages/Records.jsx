@@ -22,18 +22,18 @@ import { ModalContext } from '../context/ModalContext';
 // rsc - create template component
 
 function Records() {
-  const { 
+  const {
     openEditModal, openCreateModal, addRecord,
     mode, oldRecord, modifyRecordError,
     currentTable, setCurrentTable,
     currentRecords, setCurrentRecords,
-    totalPages, setTotalPages,
     recordFields, setRecordFields,
     editRecord, removeRecord
   } = useContext(ModalContext);
 
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [limit, setLimit] = useState(5);
+  const [totalPages, setTotalPages] = useState(0);
 
   const { modal, setModal } = useContext(ModalContext);
 
@@ -64,7 +64,7 @@ function Records() {
     const response = getDBTablesList();
     setDBTables(response);
   });
-  
+
   const changePage = (page) => {
     setPage(page);
     fetchRecords(limit, page);
