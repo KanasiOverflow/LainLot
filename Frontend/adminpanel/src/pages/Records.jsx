@@ -7,6 +7,7 @@ import { getRecordFields } from '../utils/getRecordFields';
 import { getTableTotalCount } from '../utils/getTableTotalCount';
 import { getAllRecords } from '../utils/getAllRecords';
 import { toLowerCase } from '../utils/toLowerCase';
+import { ModalContext } from '../context/ModalContext';
 import RecordList from '../components/RecordList';
 import PageCountSwitcher from '../components/PageCountSwitcher';
 import RecordForm from '../components/RecordForm';
@@ -17,25 +18,23 @@ import Loader from '../components/UI/loader/Loader';
 import Pagination from '../components/UI/pagination/Pagination';
 import TablesList from '../components/TablesList';
 import '../styles/App.css';
-import { ModalContext } from '../context/ModalContext';
 
 // rsc - create template component
 
 function Records() {
   const {
-    openEditModal, openCreateModal, addRecord,
+    openCreateModal, openEditModal,
+    addRecord, editRecord, removeRecord,
     mode, oldRecord, modifyRecordError,
+    modal, setModal,
     currentTable, setCurrentTable,
     currentRecords, setCurrentRecords,
-    recordFields, setRecordFields,
-    editRecord, removeRecord
+    recordFields, setRecordFields
   } = useContext(ModalContext);
 
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [limit, setLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(0);
-
-  const { modal, setModal } = useContext(ModalContext);
 
   const [page, setPage] = useState(1);
   const [DBTables, setDBTables] = useState([]);

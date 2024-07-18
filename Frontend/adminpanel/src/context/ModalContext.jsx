@@ -66,13 +66,13 @@ export const ModalProvider = ({ children }) => {
 
   return (
     <ModalContext.Provider value={{
-      openEditModal, openCreateModal, addRecord,
-      mode, setMode, oldRecord, setOldRecord, modifyRecordError,
-      setModifyRecordError, modal, setModal,
+      openCreateModal, openEditModal,
+      addRecord, editRecord, removeRecord,
+      mode, oldRecord, modifyRecordError,
+      modal, setModal,
       currentTable, setCurrentTable,
       currentRecords, setCurrentRecords,
-      recordFields, setRecordFields,
-      editRecord, removeRecord
+      recordFields, setRecordFields
     }}>
       {children}
     </ModalContext.Provider>
