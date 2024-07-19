@@ -23,7 +23,7 @@ import '../styles/App.css';
 
 function Records() {
   const {
-    openCreateModal, addRecord, editRecord, 
+    openCreateModal, addRecord, editRecord,
     mode, oldRecord, modifyRecordError,
     modal, setModal, currentTable, setCurrentTable,
     currentRecords, setCurrentRecords,
@@ -123,8 +123,7 @@ function Records() {
 
       {isRecordLoading
         ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}><Loader /></div>
-        : <RecordList
-          records={sortedAndSearchedRecords}
+        : <RecordList records={sortedAndSearchedRecords}
         />
       }
 

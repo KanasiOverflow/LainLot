@@ -1,9 +1,12 @@
 import React, { useContext } from 'react';
-import RecordItem from './RecordItem';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { ModalContext } from '../context/ModalContext';
+import RecordItem from './RecordItem';
 
 export default function RecordList({ records }) {
+    
+    const MemoizedRecordItem = React.memo(({ record }) => <RecordItem record={record} />);
+
     let { currentTable } = useContext(ModalContext);
 
     if (currentTable === "") {
@@ -39,5 +42,3 @@ export default function RecordList({ records }) {
         </div>
     );
 };
-
-const MemoizedRecordItem = React.memo(({ record }) => <RecordItem record={record} />);
