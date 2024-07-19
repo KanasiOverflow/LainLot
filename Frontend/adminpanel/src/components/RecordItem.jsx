@@ -1,11 +1,25 @@
-import React from 'react';
-import GeneralButton from './UI/button/GeneralButton';
+import { useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ModalContext } from '../context/ModalContext';
+import GeneralButton from './UI/button/GeneralButton';
 
-export default function RecordItem({ table, record, edit, remove }) {
-
-    const navigate = useNavigate();
+export default function RecordItem({ record }) {
     
+    const { openEditModal, removeRecord, currentTable } = useContext(ModalContext);
+    const navigate = useNavigate();
+
+    const handleOpenRecordIdPage = useCallback(() => {
+        navigate(`/records/${currentTable}/${record.id}`);
+    }, [navigate, currentTable, record.id]);
+
+    const handleOpenEditModal = useCallback(() => {
+        openEditModal(record);
+    }, [openEditModal, record]);
+
+    const handleRemoveRecord = useCallback(() => {
+        removeRecord(record);
+    }, [removeRecord, record]);
+
     return (
         <div className='post'>
             <div className='post__content'>
@@ -16,13 +30,13 @@ export default function RecordItem({ table, record, edit, remove }) {
                 )}
             </div>
             <div className='post__btns'>
-                <GeneralButton onClick={() => navigate(`/records/${table}/${record.id}`)}>
+                <GeneralButton onClick={handleOpenRecordIdPage}>
                     Open
                 </GeneralButton>
-                <GeneralButton onClick={() => edit(record)}>
+                <GeneralButton onClick={handleOpenEditModal}>
                     Edit
                 </GeneralButton>
-                <GeneralButton onClick={() => remove(record)}>
+                <GeneralButton onClick={handleRemoveRecord}>
                     Delete
                 </GeneralButton>
             </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { useRecords } from '../hooks/useRecords';
 import { useFetching } from '../hooks/useFetching';
 import { getPageCount } from '../utils/getPageCount';
@@ -23,11 +23,9 @@ import '../styles/App.css';
 
 function Records() {
   const {
-    openCreateModal, openEditModal,
-    addRecord, editRecord, removeRecord,
+    openCreateModal, addRecord, editRecord,
     mode, oldRecord, modifyRecordError,
-    modal, setModal,
-    currentTable, setCurrentTable,
+    modal, setModal, currentTable, setCurrentTable,
     currentRecords, setCurrentRecords,
     recordFields, setRecordFields
   } = useContext(ModalContext);
@@ -64,10 +62,10 @@ function Records() {
     setDBTables(response);
   });
 
-  const changePage = (page) => {
+  const changePage = useCallback((page) => {
     setPage(page);
     fetchRecords(limit, page);
-  };
+  }, [fetchRecords, limit]);
 
   useEffect(() => {
     fetchRecords(limit, page);
@@ -125,11 +123,7 @@ function Records() {
 
       {isRecordLoading
         ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}><Loader /></div>
-        : <RecordList
-          records={sortedAndSearchedRecords}
-          table={currentTable}
-          edit={openEditModal}
-          remove={removeRecord}
+        : <RecordList records={sortedAndSearchedRecords}
         />
       }
 

@@ -1,17 +1,22 @@
-import React from 'react';
-import RecordItem from './RecordItem';
+import React, { useContext } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { ModalContext } from '../context/ModalContext';
+import RecordItem from './RecordItem';
 
-export default function RecordList({ records, table, edit, remove }) {
+export default function RecordList({ records }) {
+    
+    const MemoizedRecordItem = React.memo(({ record }) => <RecordItem record={record} />);
 
-    if (table === "") {
-        table = "Database Records";
+    let { currentTable } = useContext(ModalContext);
+
+    if (currentTable === "") {
+        currentTable = "Database Records";
     }
 
     if (!records && !records.length) {
         return (
             <h1 style={{ textAlign: 'center' }}>
-                {table} not found!
+                {currentTable} not found!
             </h1>
         );
     }
@@ -19,7 +24,7 @@ export default function RecordList({ records, table, edit, remove }) {
     return (
         <div>
             <h1 className='listHeader'>
-                {table}
+                {currentTable}
             </h1>
             <TransitionGroup>
                 {records.map((record) =>
@@ -28,7 +33,7 @@ export default function RecordList({ records, table, edit, remove }) {
                         timeout={500}
                         classNames="post"
                     >
-                        <RecordItem table={table} record={record} edit={edit} remove={remove} />
+                        <MemoizedRecordItem record={record} />
                     </CSSTransition>
 
                 )}
