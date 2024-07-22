@@ -45,15 +45,11 @@ function Records() {
     var responseFields = await getRecordFields(currentTable);
     var responseTotalCount = await getTableTotalCount(currentTable);
 
-    if (responseData) {
-      if (responseData.data) {
-        if (responseTotalCount.data) {
-          setCurrentTable(currentTable);
-          setTotalPages(getPageCount(responseTotalCount.data, limit));
-          setCurrentRecords(responseData.data);
-          setRecordFields(toLowerCase(responseFields.data));
-        }
-      }
+    if (responseData && responseData.data) {
+        setCurrentTable(currentTable);
+        setTotalPages(getPageCount(responseTotalCount.data, limit));
+        setCurrentRecords(responseData.data);
+        setRecordFields(toLowerCase(responseFields.data));
     }
   });
 
