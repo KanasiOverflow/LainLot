@@ -1,6 +1,7 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
 export default class GetContactsCount {
 
@@ -8,7 +9,7 @@ export default class GetContactsCount {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserProfilesCount',
+            url: `${getRestAPIUrl()}/Database/GetUserProfilesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -26,7 +27,7 @@ export default class GetContactsCount {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserProfilesFields',
+            url: `${getRestAPIUrl()}/Database/GetUserProfilesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -43,7 +44,7 @@ export default class GetContactsCount {
 
         const options = {
             method: 'get',
-            url: `http://localhost:8040/api/v1/Database/GetUserProfiles?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetUserProfiles?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -60,7 +61,7 @@ export default class GetContactsCount {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserProfilesById',
+            url: `${getRestAPIUrl()}/Database/GetUserProfilesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -78,7 +79,7 @@ export default class GetContactsCount {
 
         const options = {
             method: 'post',
-            url: 'http://localhost:8040/api/v1/Database/CreateUserProfile',
+            url: `${getRestAPIUrl()}/Database/CreateUserProfile`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -108,7 +109,7 @@ export default class GetContactsCount {
 
         const options = {
             method: 'put',
-            url: 'http://localhost:8040/api/v1/Database/UpdateUserProfile',
+            url: `${getRestAPIUrl()}/Database/UpdateUserProfile`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -138,7 +139,7 @@ export default class GetContactsCount {
 
         const options = {
             method: 'delete',
-            url: 'http://localhost:8040/api/v1/Database/DeleteUserProfile',
+            url: `${getRestAPIUrl()}/Database/DeleteUserProfile`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

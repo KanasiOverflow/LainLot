@@ -1,6 +1,7 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
 export default class UsersService {
 
@@ -8,7 +9,7 @@ export default class UsersService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUsersCount',
+            url: `${getRestAPIUrl()}/Database/GetUsersCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -26,7 +27,7 @@ export default class UsersService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUsersFields',
+            url: `${getRestAPIUrl()}/Database/GetUsersFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -44,7 +45,7 @@ export default class UsersService {
 
         const options = {
             method: 'get',
-            url: `http://localhost:8040/api/v1/Database/GetUsers?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetUsers?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -62,7 +63,7 @@ export default class UsersService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserById',
+            url: `${getRestAPIUrl()}/Database/GetUserById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -81,7 +82,7 @@ export default class UsersService {
 
         const options = {
             method: 'post',
-            url: 'http://localhost:8040/api/v1/Database/CreateUser',
+            url: `${getRestAPIUrl()}/Database/CreateUser`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -111,7 +112,7 @@ export default class UsersService {
 
         const options = {
             method: 'put',
-            url: 'http://localhost:8040/api/v1/Database/UpdateUser',
+            url: `${getRestAPIUrl()}/Database/UpdateUser`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -141,7 +142,7 @@ export default class UsersService {
 
         const options = {
             method: 'delete',
-            url: 'http://localhost:8040/api/v1/Database/DeleteUser',
+            url: `${getRestAPIUrl()}/Database/DeleteUser`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

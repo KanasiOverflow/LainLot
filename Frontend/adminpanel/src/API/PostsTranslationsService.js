@@ -1,6 +1,7 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
 export default class PostsTranslationService {
 
@@ -8,7 +9,7 @@ export default class PostsTranslationService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetPostsTranslationsCount',
+            url: `${getRestAPIUrl()}/Database/GetPostsTranslationsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -26,7 +27,7 @@ export default class PostsTranslationService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetPostsTranslationsFields',
+            url: `${getRestAPIUrl()}/Database/GetPostsTranslationsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -43,7 +44,7 @@ export default class PostsTranslationService {
 
         const options = {
             method: 'get',
-            url: `http://localhost:8040/api/v1/Database/GetPostsTranslations?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetPostsTranslations?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -60,7 +61,7 @@ export default class PostsTranslationService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetPostsTranslationById',
+            url: `${getRestAPIUrl()}/Database/GetPostsTranslationById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -78,7 +79,7 @@ export default class PostsTranslationService {
 
         const options = {
             method: 'post',
-            url: 'http://localhost:8040/api/v1/Database/CreatePostsTranslation',
+            url: `${getRestAPIUrl()}/Database/CreatePostsTranslation`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -108,7 +109,7 @@ export default class PostsTranslationService {
 
         const options = {
             method: 'put',
-            url: 'http://localhost:8040/api/v1/Database/UpdatePostsTranslation',
+            url: `${getRestAPIUrl()}/Database/UpdatePostsTranslation`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -138,7 +139,7 @@ export default class PostsTranslationService {
 
         const options = {
             method: 'delete',
-            url: 'http://localhost:8040/api/v1/Database/DeletePostsTranslation',
+            url: `${getRestAPIUrl()}/Database/DeletePostsTranslation`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
