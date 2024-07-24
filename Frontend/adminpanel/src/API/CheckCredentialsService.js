@@ -1,11 +1,12 @@
 import axios from 'axios';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
 export default class CheckCredentialsService {
 
     static async CheckCredentials(login, password) {
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/CredentialsChecker/CheckCredentials',
+            url: `${getRestAPIUrl()}/CredentialsChecker/CheckCredentials`,
             auth: {
                 username: login,
                 password: password

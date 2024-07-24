@@ -1,6 +1,7 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
 export default class UserRolesService {
 
@@ -8,7 +9,7 @@ export default class UserRolesService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserRolesCount',
+            url: `${getRestAPIUrl()}/Database/GetUserRolesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -26,7 +27,7 @@ export default class UserRolesService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserRolesFields',
+            url: `${getRestAPIUrl()}/Database/GetUserRolesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -43,7 +44,7 @@ export default class UserRolesService {
 
         const options = {
             method: 'get',
-            url: `http://localhost:8040/api/v1/Database/GetUserRoles?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetUserRoles?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -60,7 +61,7 @@ export default class UserRolesService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetUserRoleById',
+            url: `${getRestAPIUrl()}/Database/GetUserRoleById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -78,7 +79,7 @@ export default class UserRolesService {
 
         const options = {
             method: 'post',
-            url: 'http://localhost:8040/api/v1/Database/CreateUserRole',
+            url: `${getRestAPIUrl()}/Database/CreateUserRole`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -108,7 +109,7 @@ export default class UserRolesService {
 
         const options = {
             method: 'put',
-            url: 'http://localhost:8040/api/v1/Database/UpdateUserRole',
+            url: `${getRestAPIUrl()}/Database/UpdateUserRole`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -138,7 +139,7 @@ export default class UserRolesService {
 
         const options = {
             method: 'delete',
-            url: 'http://localhost:8040/api/v1/Database/DeleteUserRole',
+            url: `${getRestAPIUrl()}/Database/DeleteUserRole`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

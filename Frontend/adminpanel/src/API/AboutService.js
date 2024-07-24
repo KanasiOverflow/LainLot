@@ -1,6 +1,7 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
 export default class AboutService {
 
@@ -8,7 +9,7 @@ export default class AboutService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetAboutCount',
+            url: `${getRestAPIUrl()}/Database/GetAboutCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,10 +24,10 @@ export default class AboutService {
     };
 
     static async GetAboutFields() {
-
+        
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetAboutFields',
+            url: `${getRestAPIUrl()}/Database/GetAboutFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,10 +41,10 @@ export default class AboutService {
     };
 
     static async GetAbout(limit, page) {
-
+        
         const options = {
             method: 'get',
-            url: `http://localhost:8040/api/v1/Database/GetAbout?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetAbout?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -60,7 +61,7 @@ export default class AboutService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetAboutById',
+            url: `${getRestAPIUrl()}/Database/Database/GetAboutById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -78,7 +79,7 @@ export default class AboutService {
 
         const options = {
             method: 'post',
-            url: 'http://localhost:8040/api/v1/Database/CreateAbout',
+            url: `${getRestAPIUrl()}/Database/CreateAbout`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -108,7 +109,7 @@ export default class AboutService {
 
         const options = {
             method: 'put',
-            url: 'http://localhost:8040/api/v1/Database/UpdateAbout',
+            url: `${getRestAPIUrl()}/Database/UpdateAbout`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -138,7 +139,7 @@ export default class AboutService {
 
         const options = {
             method: 'delete',
-            url: 'http://localhost:8040/api/v1/Database/DeleteAbout',
+            url: `${getRestAPIUrl()}/Database/DeleteAbout`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
