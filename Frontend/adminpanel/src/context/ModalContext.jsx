@@ -48,11 +48,12 @@ export const ModalProvider = ({ children }) => {
 
     const editRecord = useCallback(async (record) => {
         try {
+            console.log(record, currentTable)
             const response = await updateRecord(currentTable, record);
             if (response && response.data) {
                 setCurrentRecords(prevRecords =>
                     prevRecords.map(p => (p.id === record.id ? response.data : p))
-                );
+                )
                 setModal(false);
             }
             else {

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
 export default class PostsService {
 
@@ -8,7 +9,7 @@ export default class PostsService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetPostsCount',
+            url: `${getRestAPIUrl()}/Database/GetPostsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -26,7 +27,7 @@ export default class PostsService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetPostsFields',
+            url: `${getRestAPIUrl()}/Database/GetPostsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -43,7 +44,7 @@ export default class PostsService {
 
         const options = {
             method: 'get',
-            url: `http://localhost:8040/api/v1/Database/GetPosts?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetPosts?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -60,7 +61,7 @@ export default class PostsService {
 
         const options = {
             method: 'get',
-            url: 'http://localhost:8040/api/v1/Database/GetPostById',
+            url: `${getRestAPIUrl()}/Database/GetPostById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -78,7 +79,7 @@ export default class PostsService {
 
         const options = {
             method: 'post',
-            url: 'http://localhost:8040/api/v1/Database/CreatePost',
+            url: `${getRestAPIUrl()}/Database/CreatePost`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -108,7 +109,7 @@ export default class PostsService {
 
         const options = {
             method: 'put',
-            url: 'http://localhost:8040/api/v1/Database/UpdatePost',
+            url: `${getRestAPIUrl()}/Database/UpdatePost`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -138,7 +139,7 @@ export default class PostsService {
 
         const options = {
             method: 'delete',
-            url: 'http://localhost:8040/api/v1/Database/DeletePost',
+            url: `${getRestAPIUrl()}/Database/DeletePost`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

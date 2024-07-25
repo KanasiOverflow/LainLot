@@ -8,5 +8,5 @@ const GeneralButton = React.memo(({ children, ...props }) => {
     </button>
   );
 });
-
+ 
 export default GeneralButton;

@@ -1,13 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useFetching } from '../hooks/useFetching';
 import { getRecordById } from '../utils/getRecordById';
 import Loader from '../components/UI/loader/Loader';
 import GeneralButton from '../components/UI/button/GeneralButton';
+import { ModalContext } from '../context/ModalContext';
+import RecordForm from '../components/RecordForm';
+import GeneralModal from '../components/UI/modal/GeneralModal';
 
 export default function RecordIdPage() {
+    const {
+        addRecord, editRecord,
+        mode, oldRecord, modifyRecordError,
+        modal, setModal, currentTable, recordFields
+      } = useContext(ModalContext);
+
+    const { openEditModal, removeRecord} = useContext(ModalContext);
 
     const params = useParams();
+    const navigate = useNavigate();
 
     const [record, setRecord] = useState({});
 
@@ -16,13 +27,36 @@ export default function RecordIdPage() {
         setRecord(response.data);
     });
 
+    const handleReturnToRecords = useCallback(() => {
+        navigate(`/records`);
+    }, [navigate]);
+
+    const handleOpenEditModal = useCallback(() => {
+        openEditModal(record);
+    }, [openEditModal, record]);
+
+    const handleRemoveRecord = useCallback(() => {
+        removeRecord(record);
+    }, [removeRecord, record]);
+    
     useEffect(() => {
-        fetchRecordById(params.table, params.id);
+        console.log(fetchRecordById(params.table, params.id));
         // eslint-disable-next-line
     }, []);
-
+    
     return (
         <div>
+              <GeneralModal visible={modal} setVisible={setModal} >
+                <RecordForm
+                mode={mode}
+                currentTable={currentTable}
+                create={addRecord}
+                edit={editRecord}
+                fields={recordFields}
+                oldRecord={oldRecord}
+                requestError={modifyRecordError}
+                />
+            </GeneralModal>
             <h1>{params.table} page with id {params.id}</h1>
             {error !== null
                 ? isLoading
@@ -36,9 +70,9 @@ export default function RecordIdPage() {
                     </div>
                 : <h1>{error.message}</h1>}
             <div>
-                <GeneralButton>Return to {params.table}</GeneralButton>
-                <GeneralButton>Edit</GeneralButton>
-                <GeneralButton>Delete</GeneralButton>
+                <GeneralButton onClick={handleReturnToRecords}>Return to {params.table}</GeneralButton>
+                <GeneralButton onClick={handleOpenEditModal}>Edit</GeneralButton>
+                <GeneralButton onClick={handleRemoveRecord}>Delete</GeneralButton>
             </div>
         </div>
     );
