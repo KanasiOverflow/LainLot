@@ -40,7 +40,7 @@ export default function RecordIdPage() {
     }, [removeRecord, record]);
     
     useEffect(() => {
-        console.log(fetchRecordById(params.table, params.id));
+        fetchRecordById(params.table, params.id);
         // eslint-disable-next-line
     }, []);
     
