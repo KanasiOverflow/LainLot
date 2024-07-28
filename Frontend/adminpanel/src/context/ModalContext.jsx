@@ -63,7 +63,7 @@ export const ModalProvider = ({ children }) => {
             if (response && response.data) {
                 setCurrentRecords(prevRecords =>
                     prevRecords.map(p => (p.id === record.id ? response.data : p))
-                )
+                );
                 setModal(false);
             }
             else {
