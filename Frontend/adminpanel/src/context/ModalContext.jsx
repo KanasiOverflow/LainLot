@@ -92,9 +92,9 @@ export const ModalProvider = ({ children }) => {
 
     const [fetchRecords, isRecordLoading, postError] = useFetching(async (limit, page) => {
 
-        var responseData = await getAllRecords(currentTable, limit, page);
-        var responseFields = await getRecordFields(currentTable);
-        var responseTotalCount = await getTableTotalCount(currentTable);
+        const responseData = await getAllRecords(currentTable, limit, page);
+        const responseFields = await getRecordFields(currentTable);
+        const responseTotalCount = await getTableTotalCount(currentTable);
     
         if (responseData && responseData.data) {
             setCurrentTable(currentTable);
