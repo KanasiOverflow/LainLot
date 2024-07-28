@@ -1,12 +1,9 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { useRecords } from '../hooks/useRecords';
 import { useFetching } from '../hooks/useFetching';
-import { getPageCount } from '../utils/getPageCount';
+
 import { getDBTablesList } from '../utils/getDBTablesList';
-import { getRecordFields } from '../utils/getRecordFields';
-import { getTableTotalCount } from '../utils/getTableTotalCount';
-import { getAllRecords } from '../utils/getAllRecords';
-import { toLowerCase } from '../utils/toLowerCase';
+
 import { ModalContext } from '../context/ModalContext';
 import RecordList from '../components/RecordList';
 import PageCountSwitcher from '../components/PageCountSwitcher';
@@ -26,32 +23,18 @@ function Records() {
     openCreateModal, addRecord, editRecord,
     mode, oldRecord, modifyRecordError,
     modal, setModal, currentTable, setCurrentTable,
-    currentRecords, setCurrentRecords,
-    recordFields, setRecordFields
+    currentRecords, recordFields,
+    totalPages,
+    fetchRecords, isRecordLoading, postError
   } = useContext(ModalContext);
 
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [limit, setLimit] = useState(5);
-  const [totalPages, setTotalPages] = useState(0);
 
   const [page, setPage] = useState(1);
   const [DBTables, setDBTables] = useState([]);
 
   const sortedAndSearchedRecords = useRecords(currentRecords, filter.sort, filter.query);
-
-  const [fetchRecords, isRecordLoading, postError] = useFetching(async (limit, page) => {
-
-    var responseData = await getAllRecords(currentTable, limit, page);
-    var responseFields = await getRecordFields(currentTable);
-    var responseTotalCount = await getTableTotalCount(currentTable);
-
-    if (responseData && responseData.data) {
-        setCurrentTable(currentTable);
-        setTotalPages(getPageCount(responseTotalCount.data, limit));
-        setCurrentRecords(responseData.data);
-        setRecordFields(toLowerCase(responseFields.data));
-    }
-  });
 
   const [fetchTables, isTablesLoading, tablesError] = useFetching(() => {
     const response = getDBTablesList();

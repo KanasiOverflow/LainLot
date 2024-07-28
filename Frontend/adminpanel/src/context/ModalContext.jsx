@@ -3,6 +3,14 @@ import { removeRecordById } from '../utils/removeRecordById';
 import { createRecord } from '../utils/createRecord';
 import { updateRecord } from '../utils/updateRecord';
 
+import { getPageCount } from '../utils/getPageCount';
+import { getRecordFields } from '../utils/getRecordFields';
+import { getTableTotalCount } from '../utils/getTableTotalCount';
+import { getAllRecords } from '../utils/getAllRecords';
+import { toLowerCase } from '../utils/toLowerCase';
+
+import { useFetching } from '../hooks/useFetching';
+
 export const ModalContext = createContext(null);
 
 export const ModalProvider = ({ children }) => {
@@ -14,6 +22,8 @@ export const ModalProvider = ({ children }) => {
     const [recordFields, setRecordFields] = useState([]);
     const [currentTable, setCurrentTable] = useState("");
     const [currentRecords, setCurrentRecords] = useState([]);
+
+    const [totalPages, setTotalPages] = useState(0);
 
     const openEditModal = useCallback((record) => {
         setMode("Edit");
@@ -80,6 +90,20 @@ export const ModalProvider = ({ children }) => {
         }
     }, [currentTable, setCurrentRecords]);
 
+    const [fetchRecords, isRecordLoading, postError] = useFetching(async (limit, page) => {
+
+        var responseData = await getAllRecords(currentTable, limit, page);
+        var responseFields = await getRecordFields(currentTable);
+        var responseTotalCount = await getTableTotalCount(currentTable);
+    
+        if (responseData && responseData.data) {
+            setCurrentTable(currentTable);
+            setTotalPages(getPageCount(responseTotalCount.data, limit));
+            setCurrentRecords(responseData.data);
+            setRecordFields(toLowerCase(responseFields.data));
+        }
+    });
+
     return (
         <ModalContext.Provider value={{
             openCreateModal, openEditModal,
@@ -88,7 +112,9 @@ export const ModalProvider = ({ children }) => {
             modal, setModal,
             currentTable, setCurrentTable,
             currentRecords, setCurrentRecords,
-            recordFields, setRecordFields
+            recordFields, setRecordFields,
+            totalPages,
+            fetchRecords, isRecordLoading, postError
         }}>
             {children}
         </ModalContext.Provider>
