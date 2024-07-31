@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Routes, Route, Navigate } from "react-router-dom";
 import { publicRoutes, privateRoutes } from '../router';
-import { AuthContext } from '../context';
+import { AuthContext } from '../provider/context/AuthContext';
 import Loader from '../components/UI/loader/Loader';
 
 export default function AppRouter() {

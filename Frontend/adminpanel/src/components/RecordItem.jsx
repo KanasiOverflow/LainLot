@@ -1,6 +1,6 @@
 import { useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ModalContext } from '../context/ModalContext';
+import { ModalContext } from '../provider/context/ModalContext';
 import GeneralButton from './UI/button/GeneralButton';
 
 export default function RecordItem({ record }) {

@@ -3,7 +3,7 @@ import secureLocalStorage from 'react-secure-storage';
 import GeneralInput from '../components/UI/input/GeneralInput';
 import GeneralButton from '../components/UI/button/GeneralButton';
 import CheckCredentialsService from '../API/CheckCredentialsService';
-import { AuthContext } from '../context';
+import { AuthContext } from '../provider/context/AuthContext';
 
 export default function Login() {
 

@@ -4,7 +4,7 @@ import { useFetching } from '../hooks/useFetching';
 
 import { getDBTablesList } from '../utils/getDBTablesList';
 
-import { ModalContext } from '../context/ModalContext';
+import { ModalContext } from '../provider/context/ModalContext';
 import RecordList from '../components/RecordList';
 import PageCountSwitcher from '../components/PageCountSwitcher';
 import RecordForm from '../components/RecordForm';
