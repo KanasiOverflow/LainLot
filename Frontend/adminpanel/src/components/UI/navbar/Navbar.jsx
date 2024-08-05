@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import secureLocalStorage from 'react-secure-storage'
 import { NavLink } from 'react-router-dom'
 import GeneralButton from '../button/GeneralButton'
-import { AuthContext } from '../../../provider/context/AuthContext'
+import { AuthContext } from '../../../provider/context/AuthProvider'
 import cl from './Navbar.module.css'
 
 export default function Navbar() {

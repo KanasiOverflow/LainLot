@@ -4,7 +4,7 @@ import { useFetching } from '../hooks/useFetching';
 import { getRecordById } from '../utils/getRecordById';
 import Loader from '../components/UI/loader/Loader';
 import GeneralButton from '../components/UI/button/GeneralButton';
-import { ModalContext } from '../provider/context/ModalContext';
+import { ModalContext } from '../provider/context/ModalProvider';
 import RecordForm from '../components/RecordForm';
 import GeneralModal from '../components/UI/modal/GeneralModal';
 

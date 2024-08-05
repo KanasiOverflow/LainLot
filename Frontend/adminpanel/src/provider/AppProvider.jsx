@@ -1,12 +1,15 @@
-import { ModalProvider } from './context/ModalContext';
-import { AuthProvider } from './context/AuthContext';
+import { ModalProvider } from './context/ModalProvider';
+import { AuthProvider } from './context/AuthProvider';
+import { DataProvider } from './context/DataProvider';
 
 export const AppProvider = ({ children }) => {
     return (
         <AuthProvider>
-            <ModalProvider>
-            {children}
-            </ModalProvider>
+            <DataProvider>
+                <ModalProvider>
+                    {children}
+                </ModalProvider>
+            </DataProvider>
         </AuthProvider>
     )
-}
+};

@@ -1,29 +1,25 @@
-import { createContext, useState, useCallback } from 'react';
+import { createContext, useState, useContext, useCallback } from 'react';
 import { removeRecordById } from '../../utils/removeRecordById';
 import { createRecord } from '../../utils/createRecord';
 import { updateRecord } from '../../utils/updateRecord';
-
-import { getPageCount } from '../../utils/getPageCount';
-import { getRecordFields } from '../../utils/getRecordFields';
-import { getTableTotalCount } from '../../utils/getTableTotalCount';
-import { getAllRecords } from '../../utils/getAllRecords';
-import { toLowerCase } from '../../utils/toLowerCase';
-
-import { useFetching } from '../../hooks/useFetching';
+import { DataContext } from './DataProvider';
 
 export const ModalContext = createContext(null);
 
 export const ModalProvider = ({ children }) => {
 
+    const {
+        currentTable, setCurrentTable,
+        currentRecords, setCurrentRecords,
+        recordFields, setRecordFields,
+        totalPages,
+        fetchRecords, isRecordLoading, postError
+    } = useContext(DataContext);
+
     const [mode, setMode] = useState("");
     const [oldRecord, setOldRecord] = useState({});
     const [modifyRecordError, setModifyRecordError] = useState("");
     const [modal, setModal] = useState(false);
-    const [recordFields, setRecordFields] = useState([]);
-    const [currentTable, setCurrentTable] = useState("");
-    const [currentRecords, setCurrentRecords] = useState([]);
-
-    const [totalPages, setTotalPages] = useState(0);
 
     const openEditModal = useCallback((record) => {
         setMode("Edit");
@@ -89,20 +85,6 @@ export const ModalProvider = ({ children }) => {
         }
     }, [currentTable, setCurrentRecords]);
 
-    const [fetchRecords, isRecordLoading, postError] = useFetching(async (limit, page) => {
-
-        const responseData = await getAllRecords(currentTable, limit, page);
-        const responseFields = await getRecordFields(currentTable);
-        const responseTotalCount = await getTableTotalCount(currentTable);
-    
-        if (responseData && responseData.data) {
-            setCurrentTable(currentTable);
-            setTotalPages(getPageCount(responseTotalCount.data, limit));
-            setCurrentRecords(responseData.data);
-            setRecordFields(toLowerCase(responseFields.data));
-        }
-    });
-
     return (
         <ModalContext.Provider value={{
             openCreateModal, openEditModal,
@@ -118,5 +100,4 @@ export const ModalProvider = ({ children }) => {
             {children}
         </ModalContext.Provider>
     );
-
 };
