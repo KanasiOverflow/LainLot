@@ -1,15 +1,15 @@
 import { createContext, useState, useCallback } from 'react';
-import { removeRecordById } from '../utils/removeRecordById';
-import { createRecord } from '../utils/createRecord';
-import { updateRecord } from '../utils/updateRecord';
+import { removeRecordById } from '../../utils/removeRecordById';
+import { createRecord } from '../../utils/createRecord';
+import { updateRecord } from '../../utils/updateRecord';
 
-import { getPageCount } from '../utils/getPageCount';
-import { getRecordFields } from '../utils/getRecordFields';
-import { getTableTotalCount } from '../utils/getTableTotalCount';
-import { getAllRecords } from '../utils/getAllRecords';
-import { toLowerCase } from '../utils/toLowerCase';
+import { getPageCount } from '../../utils/getPageCount';
+import { getRecordFields } from '../../utils/getRecordFields';
+import { getTableTotalCount } from '../../utils/getTableTotalCount';
+import { getAllRecords } from '../../utils/getAllRecords';
+import { toLowerCase } from '../../utils/toLowerCase';
 
-import { useFetching } from '../hooks/useFetching';
+import { useFetching } from '../../hooks/useFetching';
 
 export const ModalContext = createContext(null);
 
