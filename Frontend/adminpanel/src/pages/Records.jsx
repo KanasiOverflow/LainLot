@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { useRecords } from '../hooks/useRecords';
 import { useFetching } from '../hooks/useFetching';
-
 import { getDBTablesList } from '../utils/getDBTablesList';
-
-import { ModalContext } from '../provider/context/ModalContext';
+import { ModalContext } from '../provider/context/ModalProvider';
 import RecordList from '../components/RecordList';
 import PageCountSwitcher from '../components/PageCountSwitcher';
 import RecordForm from '../components/RecordForm';

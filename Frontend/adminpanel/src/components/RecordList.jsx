@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { ModalContext } from '../provider/context/ModalContext';
+import { ModalContext } from '../provider/context/ModalProvider';
 import RecordItem from './RecordItem';
 
 export default function RecordList({ records }) {
