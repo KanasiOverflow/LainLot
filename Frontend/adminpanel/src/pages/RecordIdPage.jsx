@@ -7,15 +7,17 @@ import GeneralButton from '../components/UI/button/GeneralButton';
 import { ModalContext } from '../provider/context/ModalProvider';
 import RecordForm from '../components/RecordForm';
 import GeneralModal from '../components/UI/modal/GeneralModal';
+import { DataContext } from '../provider/context/DataProvider';
 
 export default function RecordIdPage() {
     const {
         addRecord, editRecord,
         mode, oldRecord, modifyRecordError,
-        modal, setModal, currentTable, recordFields
-      } = useContext(ModalContext);
-
+        modal, setModal, fetchRecords
+    } = useContext(ModalContext);
+      
     const { openEditModal, removeRecord} = useContext(ModalContext);
+    const { recordFields, setCurrentTable, currentTable, currentRecords } = useContext(DataContext)
 
     const params = useParams();
     const navigate = useNavigate();
@@ -37,16 +39,22 @@ export default function RecordIdPage() {
 
     const handleRemoveRecord = useCallback(() => {
         removeRecord(record);
-    }, [removeRecord, record]);
-    
+        navigate(`/records`);
+    }, [removeRecord, record, navigate]);
+     
+    useEffect(() => {
+        setCurrentTable(params.table)
+        fetchRecords(1, 5)
+        fetchRecordById(params.table, params.id);
+        // eslint-disable-next-line
+    }, [currentTable]);
     useEffect(() => {
         fetchRecordById(params.table, params.id);
         // eslint-disable-next-line
-    }, []);
-    
+    }, [currentRecords])
     return (
         <div>
-              <GeneralModal visible={modal} setVisible={setModal} >
+            <GeneralModal visible={modal} setVisible={setModal} >
                 <RecordForm
                 mode={mode}
                 currentTable={currentTable}

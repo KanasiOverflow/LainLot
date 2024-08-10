@@ -25,7 +25,7 @@ export const ModalProvider = ({ children }) => {
         setMode("Edit");
         setModifyRecordError("");
         setModal(true);
-        setOldRecord(record);
+        setOldRecord(record); 
     }, [setMode, setModifyRecordError, setModal, setOldRecord]);
 
     const openCreateModal = useCallback(() => {
