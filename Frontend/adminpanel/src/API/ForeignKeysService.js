@@ -9,7 +9,7 @@ export default class ForeignKeysService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetFkAccessLevelsData`,
+            url: `${getRestAPIUrl()}/Database/GetFkAccessLevelsData`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -27,7 +27,7 @@ export default class ForeignKeysService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetFkLanguagesData`,
+            url: `${getRestAPIUrl()}/Database/GetFkLanguagesData`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -45,7 +45,7 @@ export default class ForeignKeysService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetFkPostsData`,
+            url: `${getRestAPIUrl()}/Database/GetFkPostsData`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -63,7 +63,7 @@ export default class ForeignKeysService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetFkUsersData`,
+            url: `${getRestAPIUrl()}/Database/GetFkUsersData`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -81,7 +81,7 @@ export default class ForeignKeysService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetFkUserRoles`,
+            url: `${getRestAPIUrl()}/Database/GetFkUserRoles`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
