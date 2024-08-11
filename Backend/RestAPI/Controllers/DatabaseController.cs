@@ -964,6 +964,17 @@ namespace RestAPI.Controllers
                 : $"Abbreviation: {dbEntity?.Abbreviation} | FullName: {dbEntity?.FullName}";
         }
 
+        [HttpGet("GetFkPosts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public string? GetFkPosts(int id)
+        {
+            var dbEntity = _postRepository.GetById(id);
+            return dbEntity == null
+                ? string.Empty
+                : $"Name: {dbEntity?.Name} | Description: {dbEntity?.Description}";
+        }
+
         [HttpGet("GetFkUsersData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
