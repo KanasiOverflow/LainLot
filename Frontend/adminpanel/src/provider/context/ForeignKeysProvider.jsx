@@ -9,13 +9,11 @@ export const ForeignKeysProvider = ({ children }) => {
     const [foreignKeyValue, setForeignKeyValue] = useState("");
 
     const [fetchFkData, fkLoading, fkError] = useFetching(async (foreignFieldKey, id) => {
-
+        
         const responseData = await getForeignKeyById(foreignFieldKey, id);
 
         if(responseData && responseData.data){
             setForeignKeyValue(responseData.data);
-            console.log("responseData: " + responseData.data);
-            console.log("foreignKeyValue: " + foreignKeyValue);
         }
     });
 

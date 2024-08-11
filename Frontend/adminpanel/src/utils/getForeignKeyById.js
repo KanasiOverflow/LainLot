@@ -5,20 +5,22 @@ export const getForeignKeyById = async (foreignFieldKey, id) => {
     var response = null;
 
     switch (foreignFieldKey) {
-        case 'FkLanguages':
+        case 'fkLanguages':
             response = await ForeignKeysService.GetFkLanguagesData(id);
             break;
-        case 'FkUsers':
+        case 'fkUsers':
             response = await ForeignKeysService.GetFkUsersData(id);
             break;
-        case 'FkUserRoles':
+        case 'fkUserRoles':
             response = await ForeignKeysService.GetFkUserRoles(id);
             break;
-        case 'FkAccessLevels':
+        case 'fkAccessLevels':
             response = await ForeignKeysService.GetFkAccessLevelsData(id);
             break;
-        case 'FkPosts':
+        case 'fkPosts':
             response = await ForeignKeysService.GetFkPostsData(id);
+            break;
+        default:
             break;
     };
 
