@@ -1,11 +1,15 @@
-import { useContext, useCallback } from 'react';
+import { useContext, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ModalContext } from '../provider/context/ModalProvider';
+import { ForeignKeysContext } from '../provider/context/ForeignKeysProvider';
+import { findValueByPrefix } from '../utils/findValueByPrefix';
 import GeneralButton from './UI/button/GeneralButton';
 
 export default function RecordItem({ record }) {
-    
+
     const { openEditModal, removeRecord, currentTable } = useContext(ModalContext);
+    const { fetchFkData, fkError, foreignKeyValue } = useContext(ForeignKeysContext);
+
     const navigate = useNavigate();
 
     const handleOpenRecordIdPage = useCallback(() => {
@@ -20,12 +24,18 @@ export default function RecordItem({ record }) {
         removeRecord(record);
     }, [removeRecord, record]);
 
+    useEffect(() => {
+        var fkData = findValueByPrefix(record, "fk");
+        fetchFkData(fkData.key, fkData.value);
+        // eslint-disable-next-line
+    }, []);
+
     return (
         <div className='post'>
             <div className='post__content'>
                 {Object.keys(record).map(key =>
                     <div key={key}>
-                        {key}: {record[key]}
+                        {key}: {key.startsWith("fk") ? (fkError ? fkError : foreignKeyValue + "(" + record[key] + ")") : record[key]}
                     </div>
                 )}
             </div>

@@ -939,5 +939,64 @@ namespace RestAPI.Controllers
         }
 
         #endregion
+
+        #region Get Foreign Keys
+
+        [HttpGet("GetFkAccessLevelsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public string? GetFkAccessLevelsData(int id)
+        {
+            var dbEntity = _accessLevelRepository.GetById(id);
+            return dbEntity == null 
+                ? string.Empty 
+                : $"Level: {dbEntity?.Level} | Description: {dbEntity?.Description}";
+        }
+
+        [HttpGet("GetFkLanguagesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public string? GetFkLanguagesData(int id)
+        {
+            var dbEntity = _languageRepository.GetById(id);
+            return dbEntity == null
+                ? string.Empty
+                : $"Abbreviation: {dbEntity?.Abbreviation} | FullName: {dbEntity?.FullName}";
+        }
+
+        [HttpGet("GetFkPosts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public string? GetFkPosts(int id)
+        {
+            var dbEntity = _postRepository.GetById(id);
+            return dbEntity == null
+                ? string.Empty
+                : $"Name: {dbEntity?.Name} | Description: {dbEntity?.Description}";
+        }
+
+        [HttpGet("GetFkUsersData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public string? GetFkUsersData(int id)
+        {
+            var dbEntity = _userRepository.GetById(id);
+            return dbEntity == null
+                ? string.Empty
+                : $"Login: {dbEntity?.Login} | Email: {dbEntity?.Email}";
+        }
+
+        [HttpGet("GetFkUserRoles")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public string? GetFkUserRoles(int id)
+        {
+            var dbEntity = _userRoleRepository.GetById(id);
+            return dbEntity == null
+                ? string.Empty
+                : $"Name: {dbEntity?.Name}";
+        }
+
+        #endregion
     }
 }
