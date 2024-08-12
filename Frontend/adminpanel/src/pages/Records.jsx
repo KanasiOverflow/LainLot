@@ -13,6 +13,7 @@ import Loader from '../components/UI/loader/Loader';
 import Pagination from '../components/UI/pagination/Pagination';
 import TablesList from '../components/TablesList';
 import '../styles/App.css';
+import { PaginationContext } from '../provider/context/PaginationProvider';
 
 // rsc - create template component
 
@@ -26,10 +27,9 @@ function Records() {
     fetchRecords, isRecordLoading, postError
   } = useContext(ModalContext);
 
+  const {page, setPage, limit, setLimit} = useContext(PaginationContext);
   const [filter, setFilter] = useState({ sort: '', query: '' });
-  const [limit, setLimit] = useState(5);
-
-  const [page, setPage] = useState(1);
+ 
   const [DBTables, setDBTables] = useState([]);
 
   const sortedAndSearchedRecords = useRecords(currentRecords, filter.sort, filter.query);
@@ -42,7 +42,7 @@ function Records() {
   const changePage = useCallback((page) => {
     setPage(page);
     fetchRecords(limit, page);
-  }, [fetchRecords, limit]);
+  }, [fetchRecords, limit, setPage]);
 
   useEffect(() => {
     fetchRecords(limit, page);
