@@ -8,6 +8,7 @@ import { ModalContext } from '../provider/context/ModalProvider';
 import RecordForm from '../components/RecordForm';
 import GeneralModal from '../components/UI/modal/GeneralModal';
 import { DataContext } from '../provider/context/DataProvider';
+ 
 
 export default function RecordIdPage() {
     const {
@@ -44,7 +45,7 @@ export default function RecordIdPage() {
      
     useEffect(() => {
         setCurrentTable(params.table)
-        fetchRecords(1, 5)
+        fetchRecords(1, 5) // limit = 1, page = 5, 
         fetchRecordById(params.table, params.id);
         // eslint-disable-next-line
     }, [currentTable]);
