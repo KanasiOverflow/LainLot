@@ -6,7 +6,6 @@ import GeneralInput from './UI/input/GeneralInput';
 export default function RecordForm({ mode, currentTable, create, edit, fields, oldRecord, requestError }) {
 
     var submitFormRef = useRef();
-
     const [validation, setValidation] = useState(undefined);
 
     const {
@@ -68,12 +67,21 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
             {fields.map((field, index) => (
                 <div key={index}>
                     <label>{field}:</label>
+                    {field === "photo" ?
+                        <div className='add-photo'>
+                            <GeneralButton>
+                                Add {field}
+                            </GeneralButton>
+                        </div>
+                        : ""
+                    }
                     <GeneralInput
                         refs={register(`${field}`)}
                         placeholder={field}
                         type="text"
                         defaultValue={(oldRecord && oldRecord[field]) ?? ""}
                         onChange={e => setValue(field, e.target.value)}
+                        disabled={field === "photo" ? true : false}
                     />
                 </div>
             ))}
