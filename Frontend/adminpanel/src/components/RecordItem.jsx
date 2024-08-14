@@ -26,7 +26,11 @@ export default function RecordItem({ record }) {
 
     useEffect(() => {
         var fkData = findValueByPrefix(record, "fk");
-        fetchFkData(fkData.key, fkData.value);
+
+        if (fkData) {
+            fetchFkData(fkData.key, fkData.value);
+        }
+
         // eslint-disable-next-line
     }, []);
 
