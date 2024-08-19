@@ -1,20 +1,27 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Config.Enums;
+using Microsoft.Extensions.Configuration;
 
 namespace Config
 {
     public static class ConnectionStrings
     {
-        public static string? DEVConnectionString => GetConnnectionString("ConnectionStrings:DEV");
+        public static string? ConnectionString => GetConnnectionString();
 
-        public static string? PRODConnectionString => GetConnnectionString("ConnectionStrings:PROD");
-
-        private static string? GetConnnectionString(string param)
+        private static string? GetConnnectionString()
         {
+            var isDevelopment = string.Equals(Environment
+                .GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), EnvVariables.Development.ToString(),
+                StringComparison.InvariantCultureIgnoreCase);
+
+            var connectionString = isDevelopment ? "ConnectionStrings:DEV" : "ConnectionStrings:PROD";
+
             var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                .AddJsonFile(isDevelopment ? "appsettings.json" : "appsettings.production.json",
+                optional: false, reloadOnChange: true);
+
             var config = configuration.Build();
 
-            return config[param];
+            return config[connectionString];
         }
     }
 }

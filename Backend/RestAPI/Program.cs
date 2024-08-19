@@ -5,7 +5,6 @@ using DatabaseRepository.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using RestAPI.Classes;
-using DatabaseProvider.Enums;
 using Config;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,14 +23,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-var isDevelopment = string.Equals(Environment
-    .GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), EnvVariables.Development.ToString(),
-    StringComparison.InvariantCultureIgnoreCase);
-
 var context = new LainLotContext();
 
 builder.Services.AddDbContext<LainLotContext>(options =>
-    options.UseNpgsql(isDevelopment ? ConnectionStrings.DEVConnectionString : ConnectionStrings.PRODConnectionString));
+    options.UseNpgsql(ConnectionStrings.ConnectionString));
 
 // Add auth service
 builder.Services.AddAuthentication("BasicAuthentication")

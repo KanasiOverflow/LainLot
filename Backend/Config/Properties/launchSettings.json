@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "DatabaseProvider": {
+    "Config": {
       "commandName": "Project"
     }
   }

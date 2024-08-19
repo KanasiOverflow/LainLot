@@ -1,5 +1,4 @@
 ﻿using Config;
-using DatabaseProvider.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace DatabaseProvider.Models;
@@ -47,14 +46,7 @@ public partial class LainLotContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var isDevelopment = string.Equals(Environment
-                .GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), EnvVariables.Development.ToString(),
-                StringComparison.InvariantCultureIgnoreCase);
-
-            if (isDevelopment)
-                _connectionString = ConnectionStrings.DEVConnectionString;
-            else
-                _connectionString = ConnectionStrings.PRODConnectionString;
+            _connectionString = ConnectionStrings.ConnectionString;
         }
 
         optionsBuilder.UseNpgsql(_connectionString);
