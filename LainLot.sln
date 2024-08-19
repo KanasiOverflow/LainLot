@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnitTests", "Backend\NUnit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseRepository", "Backend\DatabaseRepository\DatabaseRepository.csproj", "{1E69C7F4-E0BD-4D70-B8E5-8717C5BC54DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config", "Config\Config.csproj", "{DE0961D2-1A0C-41ED-9A9F-BA22A5A220B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config", "Backend\Config\Config.csproj", "{DE0961D2-1A0C-41ED-9A9F-BA22A5A220B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
