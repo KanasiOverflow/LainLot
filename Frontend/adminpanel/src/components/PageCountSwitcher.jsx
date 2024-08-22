@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import GeneralSelect from './UI/select/GeneralSelect';
+import { PaginationContext } from '../provider/context/PaginationProvider';
 
-export default function PageCountSwitcher({ limit, setLimit }) {
+export default function PageCountSwitcher() {
+
+    const {
+        limit, setLimit
+    } = useContext(PaginationContext);
+
     return (
         <div>
             <h4>Elements on the page:</h4>
