@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { usePagination } from '../../../hooks/usePagination';
+import { DataContext } from '../../../provider/context/DataProvider';
+import { PaginationContext } from '../../../provider/context/PaginationProvider';
 
-export default function Pagination({totalPages, page, changePage}) {
+export default function Pagination() {
+
+    const {
+        totalPages,
+    } = useContext(DataContext);
+
+    const {
+        page, changePage
+    } = useContext(PaginationContext);
 
     let pagesArray = usePagination(totalPages);
 
