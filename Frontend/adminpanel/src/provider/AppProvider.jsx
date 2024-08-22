@@ -8,13 +8,13 @@ export const AppProvider = ({ children }) => {
     return (
         <AuthProvider>
             <DataProvider>
-                <ForeignKeysProvider>
-                    <PaginationProvider>
+                <PaginationProvider>
+                    <ForeignKeysProvider>
                         <ModalProvider>
                             {children}
                         </ModalProvider>
-                    </PaginationProvider>
-                </ForeignKeysProvider>
+                    </ForeignKeysProvider>
+                </PaginationProvider>
             </DataProvider>
         </AuthProvider>
     )

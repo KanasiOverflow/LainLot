@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useRecords } from '../hooks/useRecords';
 import { useFetching } from '../hooks/useFetching';
 import { getDBTablesList } from '../utils/getDBTablesList';
 import { ModalContext } from '../provider/context/ModalProvider';
+import { PaginationContext } from '../provider/context/PaginationProvider';
 import RecordList from '../components/RecordList';
 import PageCountSwitcher from '../components/PageCountSwitcher';
 import RecordForm from '../components/RecordForm';
@@ -23,13 +24,13 @@ function Records() {
     mode, oldRecord, modifyRecordError,
     modal, setModal, currentTable, setCurrentTable,
     currentRecords, recordFields,
-    totalPages,
     fetchRecords, isRecordLoading, postError
   } = useContext(ModalContext);
 
-  const {page, setPage, limit, setLimit} = useContext(PaginationContext);
+  const { page, limit } = useContext(PaginationContext);
+
   const [filter, setFilter] = useState({ sort: '', query: '' });
- 
+
   const [DBTables, setDBTables] = useState([]);
 
   const sortedAndSearchedRecords = useRecords(currentRecords, filter.sort, filter.query);
@@ -38,11 +39,6 @@ function Records() {
     const response = getDBTablesList();
     setDBTables(response);
   });
-
-  const changePage = useCallback((page) => {
-    setPage(page);
-    fetchRecords(limit, page);
-  }, [fetchRecords, limit, setPage]);
 
   useEffect(() => {
     fetchRecords(limit, page);
@@ -90,7 +86,7 @@ function Records() {
 
       <RecordFilter filter={filter} setFilter={setFilter} fields={recordFields} />
 
-      <PageCountSwitcher limit={limit} setLimit={setLimit} />
+      <PageCountSwitcher />
 
       <hr style={{ margin: '15px 0' }} />
 
@@ -104,10 +100,7 @@ function Records() {
         />
       }
 
-      <Pagination page={page}
-        changePage={changePage}
-        totalPages={totalPages}
-      />
+      <Pagination />
 
     </div>
   );

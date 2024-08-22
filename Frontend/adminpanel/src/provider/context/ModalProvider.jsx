@@ -12,7 +12,6 @@ export const ModalProvider = ({ children }) => {
         currentTable, setCurrentTable,
         currentRecords, setCurrentRecords,
         recordFields, setRecordFields,
-        totalPages,
         fetchRecords, isRecordLoading, postError
     } = useContext(DataContext);
 
@@ -94,7 +93,6 @@ export const ModalProvider = ({ children }) => {
             currentTable, setCurrentTable,
             currentRecords, setCurrentRecords,
             recordFields, setRecordFields,
-            totalPages,
             fetchRecords, isRecordLoading, postError
         }}>
             {children}
