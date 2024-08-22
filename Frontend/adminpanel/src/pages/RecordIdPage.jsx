@@ -47,7 +47,7 @@ export default function RecordIdPage() {
      
     useEffect(() => {
         setCurrentTable(params.table)
-        fetchRecords(limit, page) 
+        fetchRecords(1, 5) // limit = 1, page = 5, 
         fetchRecordById(params.table, params.id);
         // eslint-disable-next-line
     }, [currentTable]);
