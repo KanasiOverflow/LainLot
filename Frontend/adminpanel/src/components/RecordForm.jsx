@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import GeneralButton from './UI/button/GeneralButton';
 import GeneralInput from './UI/input/GeneralInput';
+import OpenImgDialog from './UI/openImgDialog/OpenImgDialog';
 
 export default function RecordForm({ mode, currentTable, create, edit, fields, oldRecord, requestError }) {
 
@@ -69,9 +70,7 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
                     <label>{field}:</label>
                     {field === "photo" ?
                         <div className='add-photo'>
-                            <GeneralButton>
-                                Add {field}
-                            </GeneralButton>
+                            <OpenImgDialog />
                         </div>
                         : ""
                     }
