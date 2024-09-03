@@ -10,7 +10,7 @@ export default function OpenImgDialog() {
         accept: {
             'image/*': []
         },
-        maxFiles: 1,
+        maxFiles: 5,
         onDrop: acceptedFiles => {
             setFiles(acceptedFiles.map(file => Object.assign(file, {
                 preview: URL.createObjectURL(file)
@@ -18,17 +18,15 @@ export default function OpenImgDialog() {
         }
     });
 
-    const thumbs = files.map(file => (
+    const preview = files.map(file => (
         <div key={file.name}>
-            <div className={cl.thumbInner}>
-                <img
-                    alt='Preview'
-                    src={file.preview}
-                    className={cl.previewImg}
-                    // Revoke data uri after image is loaded
-                    onLoad={() => { URL.revokeObjectURL(file.preview) }}
-                />
-            </div>
+            <img
+                alt='Preview'
+                src={file.preview}
+                className={cl.previewImg}
+                // Revoke data uri after image is loaded
+                onLoad={() => { URL.revokeObjectURL(file.preview) }}
+            />
         </div>
     ));
 
@@ -45,7 +43,7 @@ export default function OpenImgDialog() {
                 <p>Drag 'n' drop file here, or click to select file</p>
             </div>
             <aside>
-                {thumbs}
+                {preview}
             </aside>
         </section>
     )
