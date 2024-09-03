@@ -2,6 +2,7 @@
     display: block;
     width: auto;
     max-height: 200px;
+    margin-bottom: 2px;
 }
 
 .dropzone {
