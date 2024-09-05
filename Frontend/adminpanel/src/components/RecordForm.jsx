@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import GeneralButton from './UI/button/GeneralButton';
 import GeneralInput from './UI/input/GeneralInput';
@@ -8,12 +8,17 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
 
     var submitFormRef = useRef();
     const [validation, setValidation] = useState(undefined);
+    const [base64Files, setBase64Files] = useState([]);
 
     const {
         register,
         setValue,
         handleSubmit,
     } = useForm();
+
+    const handleDataFromChild = (data) => {
+        setBase64Files(data);
+    };
 
     const onSubmit = (data) => {
         var isValid = true;
@@ -70,7 +75,7 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
                     <label>{field}:</label>
                     {field === "photo" ?
                         <div className='add-photo'>
-                            <OpenImgDialog />
+                            <OpenImgDialog onData={handleDataFromChild} />
                         </div>
                         : ""
                     }
