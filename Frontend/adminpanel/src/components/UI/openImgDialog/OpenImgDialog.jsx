@@ -41,14 +41,14 @@ export default function OpenImgDialog({ onData }) {
     useEffect(() => {
         if (files.length > 0) {
             files.forEach(file => {
+                // Push promise into array
                 base64Files.push(imageToBase64(file));
             });
-
             onData(base64Files);
         }
         // eslint-disable-next-line
     }, [files]);
-
+    
     return (
         <section>
             <div className={cl.dropzone} {...getRootProps()}>

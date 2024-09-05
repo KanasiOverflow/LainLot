@@ -8,7 +8,7 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
 
     var submitFormRef = useRef();
     const [validation, setValidation] = useState(undefined);
-    const [base64Files, setBase64Files] = useState([]);
+    const [base64String, setBase64String] = useState("");
 
     const {
         register,
@@ -16,8 +16,18 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
         handleSubmit,
     } = useForm();
 
-    const handleDataFromChild = (data) => {
-        setBase64Files(data);
+    const handleDataFromChild = async (data) => {
+        if (data !== null || data !== undefined) {
+            
+            let promiseArray = (await Promise.all(data)).map((obj) => obj);
+            let base64Buffer = "";
+
+            promiseArray.forEach(base64File => {
+                base64Buffer += base64File + "|";
+            });
+
+            setBase64String(base64Buffer);
+        }
     };
 
     const onSubmit = (data) => {
