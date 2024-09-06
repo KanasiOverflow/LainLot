@@ -2,14 +2,13 @@ import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFetching } from '../hooks/useFetching';
 import { getRecordById } from '../utils/getRecordById';
+import { DataContext } from '../provider/context/DataProvider';
+import { ModalContext } from '../provider/context/ModalProvider';
+import { PaginationContext } from '../provider/context/PaginationProvider';
 import Loader from '../components/UI/loader/Loader';
 import GeneralButton from '../components/UI/button/GeneralButton';
-import { ModalContext } from '../provider/context/ModalProvider';
-import RecordForm from '../components/RecordForm';
 import GeneralModal from '../components/UI/modal/GeneralModal';
-import { DataContext } from '../provider/context/DataProvider';
-import { PaginationContext } from '../provider/context/PaginationProvider';
- 
+import RecordForm from '../components/RecordForm';
 
 export default function RecordIdPage() {
     const {
@@ -19,7 +18,7 @@ export default function RecordIdPage() {
     } = useContext(ModalContext);
 
     const { page, limit } = useContext(PaginationContext);
-    const { openEditModal, removeRecord} = useContext(ModalContext);
+    const { openEditModal, removeRecord } = useContext(ModalContext);
     const { recordFields, setCurrentTable, currentTable, currentRecords } = useContext(DataContext)
 
     const params = useParams();
@@ -44,7 +43,7 @@ export default function RecordIdPage() {
         removeRecord(record);
         navigate(`/records`);
     }, [removeRecord, record, navigate]);
-     
+
     useEffect(() => {
         setCurrentTable(params.table)
         fetchRecords(limit, page) // limit = 1, page = 5, 
@@ -59,13 +58,13 @@ export default function RecordIdPage() {
         <div>
             <GeneralModal visible={modal} setVisible={setModal} >
                 <RecordForm
-                mode={mode}
-                currentTable={currentTable}
-                create={addRecord}
-                edit={editRecord}
-                fields={recordFields}
-                oldRecord={oldRecord}
-                requestError={modifyRecordError}
+                    mode={mode}
+                    currentTable={currentTable}
+                    create={addRecord}
+                    edit={editRecord}
+                    fields={recordFields}
+                    oldRecord={oldRecord}
+                    requestError={modifyRecordError}
                 />
             </GeneralModal>
             <h1>{params.table} page with id {params.id}</h1>
