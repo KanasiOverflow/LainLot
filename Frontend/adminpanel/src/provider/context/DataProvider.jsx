@@ -14,13 +14,12 @@ export const DataProvider = ({ children }) => {
     const [currentRecords, setCurrentRecords] = useState([]);
     const [recordFields, setRecordFields] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
-
     const [fetchRecords, isRecordLoading, postError] = useFetching(async (limit, page) => {
-
+        
         const responseData = await getAllRecords(currentTable, limit, page);
         const responseFields = await getRecordFields(currentTable);
         const responseTotalCount = await getTableTotalCount(currentTable);
-
+        
         if (responseData && responseData.data) {
             setCurrentTable(currentTable);
             setTotalPages(getPageCount(responseTotalCount.data, limit));
