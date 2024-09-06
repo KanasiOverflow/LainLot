@@ -18,7 +18,7 @@ export default function RecordIdPage() {
         modal, setModal, fetchRecords
     } = useContext(ModalContext);
 
-    const {page, limit} = useContext(PaginationContext);
+    const { page, limit } = useContext(PaginationContext);
     const { openEditModal, removeRecord} = useContext(ModalContext);
     const { recordFields, setCurrentTable, currentTable, currentRecords } = useContext(DataContext)
 
@@ -47,7 +47,7 @@ export default function RecordIdPage() {
      
     useEffect(() => {
         setCurrentTable(params.table)
-        fetchRecords(1, 5) // limit = 1, page = 5, 
+        fetchRecords(limit, page) // limit = 1, page = 5, 
         fetchRecordById(params.table, params.id);
         // eslint-disable-next-line
     }, [currentTable]);

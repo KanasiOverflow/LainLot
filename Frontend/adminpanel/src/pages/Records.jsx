@@ -14,7 +14,7 @@ import Loader from '../components/UI/loader/Loader';
 import Pagination from '../components/UI/pagination/Pagination';
 import TablesList from '../components/TablesList';
 import '../styles/App.css';
-import { PaginationContext } from '../provider/context/PaginationProvider';
+
 
 // rsc - create template component
 

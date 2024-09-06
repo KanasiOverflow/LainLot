@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 Config/Config/appsettings.json
 Backend/Config/appsettings.json
+Backend/DatabaseProvider/Models/LainLotContext.cs
+
