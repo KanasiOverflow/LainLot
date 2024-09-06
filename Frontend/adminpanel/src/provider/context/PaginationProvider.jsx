@@ -3,6 +3,7 @@ import { DataContext } from '../context/DataProvider';
 
 export const PaginationContext = createContext(null);
 
+// Create a provider component
 export const PaginationProvider = ({ children }) => {
 
     const {
