@@ -1,7 +1,7 @@
-﻿using Config.Enums;
+﻿using DatabaseProvider.Enums;
 using Microsoft.Extensions.Configuration;
 
-namespace Config
+namespace DatabaseProvider
 {
     public static class ConnectionStrings
     {

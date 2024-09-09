@@ -4,17 +4,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.7.34302.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseProvider", "Backend\DatabaseProvider\DatabaseProvider.csproj", "{00578DD1-C0E4-4191-94A6-5F250CC2DD45}"
-	ProjectSection(ProjectDependencies) = postProject
-		{DE0961D2-1A0C-41ED-9A9F-BA22A5A220B0} = {DE0961D2-1A0C-41ED-9A9F-BA22A5A220B0}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestAPI", "Backend\RestAPI\RestAPI.csproj", "{967B569B-BB57-4DB7-A766-EB92FF9AF5F0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NUnitTests", "Backend\NUnitTests\NUnitTests.csproj", "{23D59EEE-8042-4EB4-882B-7F5404F8A097}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseRepository", "Backend\DatabaseRepository\DatabaseRepository.csproj", "{1E69C7F4-E0BD-4D70-B8E5-8717C5BC54DD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Config", "Backend\Config\Config.csproj", "{DE0961D2-1A0C-41ED-9A9F-BA22A5A220B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,10 +33,6 @@ Global
 		{1E69C7F4-E0BD-4D70-B8E5-8717C5BC54DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E69C7F4-E0BD-4D70-B8E5-8717C5BC54DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E69C7F4-E0BD-4D70-B8E5-8717C5BC54DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DE0961D2-1A0C-41ED-9A9F-BA22A5A220B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE0961D2-1A0C-41ED-9A9F-BA22A5A220B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE0961D2-1A0C-41ED-9A9F-BA22A5A220B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE0961D2-1A0C-41ED-9A9F-BA22A5A220B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
