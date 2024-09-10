@@ -5,8 +5,6 @@ using RestAPI.AutoMapper;
 using DB = DatabaseProvider.Models;
 using DatabaseRepository.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
 
 namespace RestAPI.Controllers
 {
