@@ -362,5 +362,11 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 Config/Config/appsettings.json
+<<<<<<< HEAD
 Backend/DatabaseProvider/Models/LainLotContext.cs
 Backend/RestAPI/RestAPI.http
+=======
+Backend/Config/appsettings.json
+Backend/DatabaseProvider/Models/LainLotContext.cs
+
+>>>>>>> 1d9491edc5148967c110b66f22608ffda0c696b4
