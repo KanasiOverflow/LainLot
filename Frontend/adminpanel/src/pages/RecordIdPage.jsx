@@ -13,14 +13,12 @@ import { PaginationContext } from '../provider/context/PaginationProvider';
 
 export default function RecordIdPage() {
     const {
-        addRecord, editRecord,
-        mode, oldRecord, modifyRecordError,
         modal, setModal, fetchRecords
     } = useContext(ModalContext);
 
     const { page, limit } = useContext(PaginationContext);
     const { openEditModal, removeRecord} = useContext(ModalContext);
-    const { recordFields, setCurrentTable, currentTable, currentRecords } = useContext(DataContext)
+    const { setCurrentTable, currentTable, currentRecords } = useContext(DataContext)
 
     const params = useParams();
     const navigate = useNavigate();
@@ -58,15 +56,7 @@ export default function RecordIdPage() {
     return (
         <div>
             <GeneralModal visible={modal} setVisible={setModal} >
-                <RecordForm
-                mode={mode}
-                currentTable={currentTable}
-                create={addRecord}
-                edit={editRecord}
-                fields={recordFields}
-                oldRecord={oldRecord}
-                requestError={modifyRecordError}
-                />
+                <RecordForm/>
             </GeneralModal>
             <h1>{params.table} page with id {params.id}</h1>
             {error !== null
