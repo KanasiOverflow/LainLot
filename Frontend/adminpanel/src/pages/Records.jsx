@@ -20,9 +20,7 @@ import '../styles/App.css';
 
 function Records() {
   const {
-    openCreateModal, addRecord, editRecord,
-    mode, oldRecord, modifyRecordError,
-    modal, setModal, currentTable, setCurrentTable,
+    openCreateModal, currentTable, setCurrentTable,
     currentRecords, recordFields,
     fetchRecords, isRecordLoading, postError
   } = useContext(ModalContext);
@@ -70,16 +68,8 @@ function Records() {
         </GeneralButton>
       }
 
-      <GeneralModal visible={modal} setVisible={setModal} >
-        <RecordForm
-          mode={mode}
-          currentTable={currentTable}
-          create={addRecord}
-          edit={editRecord}
-          fields={recordFields}
-          oldRecord={oldRecord}
-          requestError={modifyRecordError}
-        />
+      <GeneralModal>
+        <RecordForm />
       </GeneralModal>
 
       <hr style={{ margin: '15px 0' }} />
