@@ -46,6 +46,7 @@ public partial class LainLotContext : DbContext
         if (!optionsBuilder.IsConfigured)
         {
             _connectionString = ConnectionStrings.ConnectionString;
+            // _connectionString = "Host=localhost;Database=LainLot;Username=postgres;Password=123456789";
         }
 
         optionsBuilder.UseNpgsql(_connectionString);

@@ -7,7 +7,7 @@ import { DataContext } from './DataProvider';
 export const ModalContext = createContext(null);
 
 export const ModalProvider = ({ children }) => {
-
+ 
     const {
         currentTable, setCurrentTable,
         currentRecords, setCurrentRecords,

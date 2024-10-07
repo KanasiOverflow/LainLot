@@ -4,3 +4,5 @@ GET {{RestAPI_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
+
+http://localhost:8040/api/v1/Database/GetUsers?limit=10&page=1

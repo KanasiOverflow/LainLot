@@ -1,10 +1,20 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import GeneralButton from './UI/button/GeneralButton';
 import GeneralInput from './UI/input/GeneralInput';
 import OpenImgDialog from './UI/openImgDialog/OpenImgDialog';
 
-export default function RecordForm({ mode, currentTable, create, edit, fields, oldRecord, requestError }) {
+
+export default function RecordForm() {
+    const {
+        mode,
+        currentTable,
+        addRecord,
+        editRecord,
+        recordFields,
+        oldRecord,
+        modifyRecordError,
+    } = useContext(ModalContext);
 
     var submitFormRef = useRef();
     
@@ -33,13 +43,12 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
 
     const onSubmit = (data) => {
         var isValid = true;
-
         data["photo"] = base64String;
 
         for (var i = 0; i < fields.length; i++) {            
             if (data[fields[i]] === undefined) {
                 isValid = false;
-                setValidation(fields[i]);
+                setValidation(recordFields[i]);
                 break;
             }
             setValidation(undefined);
@@ -47,10 +56,9 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
 
         if (isValid) {
             if (mode === "Edit") {
-                edit(data);
-            }
-            else {
-                create(data);
+                editRecord(data);
+            } else {
+                addRecord(data);
             }
         }
 
@@ -63,8 +71,8 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
     };
 
     const initEditFields = () => {
-        for (var i = 0; i < fields.length; i++) {
-            setValue(fields[i], oldRecord[fields[i]] ?? "");
+        for (var i = 0; i < recordFields.length; i++) {
+            setValue(recordFields[i], oldRecord[recordFields[i]] ?? "");
         }
     };
 
@@ -72,7 +80,7 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
         initEditFields();
     }
 
-    if (!fields.length) {
+    if (!recordFields.length) {
         return (
             <h1 style={{ textAlign: 'center' }}>
                 Table fields not found!
@@ -83,7 +91,7 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
     return (
         <form ref={(el) => submitFormRef = el} onSubmit={handleSubmit(onSubmit)}>
             <h3>{mode} mode for {currentTable}</h3>
-            {fields.map((field, index) => (
+            {recordFields.map((field, index) => (
                 <div key={index}>
                     <label>{field}:</label>
                     {field === "photo" ?
@@ -118,9 +126,9 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
                     </span>
                 }
 
-                {requestError &&
+                {modifyRecordError &&
                     <span>
-                        {requestError}
+                        {modifyRecordError}
                     </span>
                 }
             </div>
