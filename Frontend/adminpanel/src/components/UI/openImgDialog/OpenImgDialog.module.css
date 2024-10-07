@@ -5,6 +5,11 @@
     margin-bottom: 2px;
 }
 
+.previewList {
+    max-height: 200px; 
+    overflow-y: auto;
+}
+
 .dropzone {
     flex: 1;
     display: flex;

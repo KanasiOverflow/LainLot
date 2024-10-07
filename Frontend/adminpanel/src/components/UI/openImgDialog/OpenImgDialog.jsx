@@ -55,7 +55,7 @@ export default function OpenImgDialog({ onData }) {
                 <input {...getInputProps()} />
                 <p>Drag 'n' drop file here, or click to select file</p>
             </div>
-            <aside>
+            <aside className={cl.previewList}>
                 {preview}
             </aside>
         </section>
