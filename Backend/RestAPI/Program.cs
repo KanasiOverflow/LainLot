@@ -3,9 +3,7 @@ using DatabaseProvider.Models;
 using DatabaseRepository.Classes;
 using DatabaseRepository.Interfaces;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.EntityFrameworkCore;
 using RestAPI.Classes;
-using Config;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -25,8 +23,7 @@ builder.Services.AddCors(options =>
 
 var context = new LainLotContext();
 
-builder.Services.AddDbContext<LainLotContext>(options =>
-    options.UseNpgsql(ConnectionStrings.ConnectionString));
+builder.Services.AddDbContext<LainLotContext>();
 
 // Add auth service
 builder.Services.AddAuthentication("BasicAuthentication")
@@ -54,14 +51,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseHttpsRedirection();
-
 app.MapControllers();
-
-app.UseCors();
 
 app.Run();

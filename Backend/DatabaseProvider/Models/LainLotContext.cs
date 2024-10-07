@@ -1,5 +1,4 @@
-﻿using Config;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DatabaseProvider.Models;
 

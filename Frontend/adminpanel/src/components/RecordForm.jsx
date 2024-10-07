@@ -7,6 +7,7 @@ import OpenImgDialog from './UI/openImgDialog/OpenImgDialog';
 export default function RecordForm({ mode, currentTable, create, edit, fields, oldRecord, requestError }) {
 
     var submitFormRef = useRef();
+    
     const [validation, setValidation] = useState(undefined);
     const [base64String, setBase64String] = useState("");
 
@@ -18,7 +19,7 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
 
     const handleDataFromChild = async (data) => {
         if (data !== null || data !== undefined) {
-            
+
             let promiseArray = (await Promise.all(data)).map((obj) => obj);
             let base64Buffer = "";
 
@@ -33,7 +34,9 @@ export default function RecordForm({ mode, currentTable, create, edit, fields, o
     const onSubmit = (data) => {
         var isValid = true;
 
-        for (var i = 0; i < fields.length; i++) {
+        data["photo"] = base64String;
+
+        for (var i = 0; i < fields.length; i++) {            
             if (data[fields[i]] === undefined) {
                 isValid = false;
                 setValidation(fields[i]);

@@ -1,4 +1,4 @@
-﻿namespace Config.Enums
+﻿namespace DatabaseProvider.Enums
 {
     public enum EnvVariables
     {

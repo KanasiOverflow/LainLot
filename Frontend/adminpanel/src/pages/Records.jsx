@@ -15,6 +15,7 @@ import Pagination from '../components/UI/pagination/Pagination';
 import TablesList from '../components/TablesList';
 import '../styles/App.css';
 
+
 // rsc - create template component
 
 function Records() {
