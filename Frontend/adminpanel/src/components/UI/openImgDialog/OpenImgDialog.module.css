@@ -25,4 +25,6 @@
     outline: none;
     transition: border .24s ease-in-out;
     margin-bottom: 10px;
+
+    cursor: pointer; 
 }
