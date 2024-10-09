@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import imageToBase64 from '../../../utils/base64Converter';
 import cl from './OpenImgDialog.module.css'
 
-export default function OpenImgDialog({ onData }) {
-
-    const [files, setFiles] = useState([]);
+export default function OpenImgDialog({ onData, files, setFiles }) {
     let base64Files = [];
-
+    
     const { getRootProps, getInputProps } = useDropzone({
         accept: {
             'image/*': []
@@ -21,15 +19,15 @@ export default function OpenImgDialog({ onData }) {
     });
 
     const preview = files.map(file => (
-        <div key={file.name}>
-            <img
-                alt='Preview'
-                src={file.preview}
-                className={cl.previewImg}
-                // Revoke data uri after image is loaded
-                onLoad={() => { URL.revokeObjectURL(file.preview) }}
-            />
-        </div>
+    <div key={file.name}>
+        <img
+            alt='Preview'
+            src={file.preview}
+            className={cl.previewImg}
+            // Revoke data uri after image is loaded
+            onLoad={() => { URL.revokeObjectURL(file.preview) }}
+        />
+    </div>
     ));
 
     useEffect(() => {
@@ -37,7 +35,7 @@ export default function OpenImgDialog({ onData }) {
         return () => files.forEach(file => URL.revokeObjectURL(file.preview));
         // eslint-disable-next-line
     }, []);
-
+    
     useEffect(() => {
         if (files.length > 0) {
             files.forEach(file => {
@@ -47,7 +45,7 @@ export default function OpenImgDialog({ onData }) {
             onData(base64Files);
         }
         // eslint-disable-next-line
-    }, [files]);
+    }, [files, onData]);
     
     return (
         <section>
