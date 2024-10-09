@@ -2,6 +2,7 @@ import { useRef, useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import GeneralButton from './UI/button/GeneralButton';
 import GeneralInput from './UI/input/GeneralInput';
+import OpenImgDialog from './UI/openImgDialog/OpenImgDialog';
 import { ModalContext } from '../provider/context/ModalProvider';
 
 export default function RecordForm() {
@@ -16,7 +17,9 @@ export default function RecordForm() {
     } = useContext(ModalContext);
 
     var submitFormRef = useRef();
+
     const [validation, setValidation] = useState(undefined);
+    const [base64String, setBase64String] = useState("");
 
     const {
         register,
@@ -24,8 +27,23 @@ export default function RecordForm() {
         handleSubmit,
     } = useForm();
 
+    const handleDataFromChild = async (data) => {
+        if (data !== null || data !== undefined) {
+
+            let promiseArray = (await Promise.all(data)).map((obj) => obj);
+            let base64Buffer = "";
+
+            promiseArray.forEach(base64File => {
+                base64Buffer += base64File + "|";
+            });
+
+            setBase64String(base64Buffer);
+        }
+    };
+
     const onSubmit = (data) => {
         var isValid = true;
+        data["photo"] = base64String;
 
         for (var i = 0; i < recordFields.length; i++) {
             if (data[recordFields[i]] === undefined) {
@@ -78,9 +96,7 @@ export default function RecordForm() {
                     <label>{field}:</label>
                     {field === "photo" ?
                         <div className='add-photo'>
-                            <GeneralButton>
-                                Add {field}
-                            </GeneralButton>
+                            <OpenImgDialog onData={handleDataFromChild} />
                         </div>
                         : ""
                     }
