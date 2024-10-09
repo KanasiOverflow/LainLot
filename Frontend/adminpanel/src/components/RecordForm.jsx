@@ -20,6 +20,9 @@ export default function RecordForm() {
 
     const [validation, setValidation] = useState(undefined);
     const [base64String, setBase64String] = useState("");
+    
+    //State for images which are used in child component
+    const [images, setImages] = useState([]);
 
     const {
         register,
@@ -29,22 +32,22 @@ export default function RecordForm() {
 
     const handleDataFromChild = async (data) => {
         if (data !== null || data !== undefined) {
-
+            
             let promiseArray = (await Promise.all(data)).map((obj) => obj);
             let base64Buffer = "";
-
+            
             promiseArray.forEach(base64File => {
                 base64Buffer += base64File + "|";
             });
-
+            
             setBase64String(base64Buffer);
         }
     };
-
+    
     const onSubmit = (data) => {
         var isValid = true;
         data["photo"] = base64String;
-
+        
         for (var i = 0; i < recordFields.length; i++) {
             if (data[recordFields[i]] === undefined) {
                 isValid = false;
@@ -53,7 +56,7 @@ export default function RecordForm() {
             }
             setValidation(undefined);
         }
-
+        
         if (isValid) {
             if (mode === "Edit") {
                 editRecord(data);
@@ -61,13 +64,19 @@ export default function RecordForm() {
                 addRecord(data);
             }
         }
-
+        
         submitFormRef.reset();
+    };
+    
+    const clearImages = () => {
+        images.forEach(file => URL.revokeObjectURL(file.preview));
+        setImages([]);
     };
 
     const onReset = (e) => {
         e.preventDefault();
         submitFormRef.reset();
+        clearImages()
     };
 
     const initEditFields = () => {
@@ -96,7 +105,10 @@ export default function RecordForm() {
                     <label>{field}:</label>
                     {field === "photo" ?
                         <div className='add-photo'>
-                            <OpenImgDialog onData={handleDataFromChild} />
+                            <OpenImgDialog 
+                            onData={handleDataFromChild} 
+                            setFiles={setImages} 
+                            files={images} />
                         </div>
                         : ""
                     }
