@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import GeneralButton from './UI/button/GeneralButton';
 import GeneralInput from './UI/input/GeneralInput';
 import OpenImgDialog from './UI/openImgDialog/OpenImgDialog';
-
+import { ModalContext } from '../provider/context/ModalProvider';
 
 export default function RecordForm() {
     const {
@@ -17,7 +17,7 @@ export default function RecordForm() {
     } = useContext(ModalContext);
 
     var submitFormRef = useRef();
-    
+
     const [validation, setValidation] = useState(undefined);
     const [base64String, setBase64String] = useState("");
 
@@ -45,8 +45,8 @@ export default function RecordForm() {
         var isValid = true;
         data["photo"] = base64String;
 
-        for (var i = 0; i < fields.length; i++) {            
-            if (data[fields[i]] === undefined) {
+        for (var i = 0; i < recordFields.length; i++) {
+            if (data[recordFields[i]] === undefined) {
                 isValid = false;
                 setValidation(recordFields[i]);
                 break;
