@@ -4,6 +4,7 @@ import { ModalContext } from '../provider/context/ModalProvider';
 import { ForeignKeysContext } from '../provider/context/ForeignKeysProvider';
 import { findValueByPrefix } from '../utils/findValueByPrefix';
 import GeneralButton from './UI/button/GeneralButton';
+import DisplayImage from './UI/image/DisplayImage';
 
 export default function RecordItem({ record }) {
 
@@ -39,7 +40,15 @@ export default function RecordItem({ record }) {
             <div className='post__content'>
                 {Object.keys(record).map(key =>
                     <div key={key}>
-                        {key}: {key.startsWith("fk") ? (fkError ? fkError : foreignKeyValue + "(" + record[key] + ")") : record[key]}
+                        {key}: {key.startsWith("fk")
+                            ? (fkError
+                                ? fkError
+                                : foreignKeyValue + "(" + record[key] + ")"
+                            )
+                            : (key === "photo"
+                                ? <DisplayImage base64Img={record[key]} fullSize={false}/>
+                                : record[key]
+                            )}
                     </div>
                 )}
             </div>

@@ -9,6 +9,7 @@ import Loader from '../components/UI/loader/Loader';
 import GeneralButton from '../components/UI/button/GeneralButton';
 import GeneralModal from '../components/UI/modal/GeneralModal';
 import RecordForm from '../components/RecordForm';
+import DisplayImage from '../components/UI/image/DisplayImage';
 
 export default function RecordIdPage() {
     const {
@@ -16,7 +17,7 @@ export default function RecordIdPage() {
     } = useContext(ModalContext);
 
     const { page, limit } = useContext(PaginationContext);
-    const { openEditModal, removeRecord} = useContext(ModalContext);
+    const { openEditModal, removeRecord } = useContext(ModalContext);
     const { setCurrentTable, currentTable, currentRecords } = useContext(DataContext)
 
 
@@ -56,7 +57,7 @@ export default function RecordIdPage() {
     return (
         <div>
             <GeneralModal visible={modal} setVisible={setModal} >
-                <RecordForm/>
+                <RecordForm />
             </GeneralModal>
             <h1>{params.table} page with id {params.id}</h1>
             {error !== null
@@ -65,7 +66,12 @@ export default function RecordIdPage() {
                     : <div>
                         {Object.keys(record).map(key =>
                             <div key={key}>
-                                {key}: {record[key]}
+                                {key}: {
+                                    (key === "photo"
+                                        ? <DisplayImage base64Img={record[key]} fullSize={true}/>
+                                        : record[key]
+                                    )
+                                }
                             </div>
                         )}
                     </div>
