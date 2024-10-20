@@ -7,110 +7,110 @@ namespace NUnitTests.Classes
     {
         public static List<About> GetFakeAboutList()
         {
-            return new List<About>
-            {
+            return
+            [
                 new About { Id = 1, FkLanguages = 1, Header = "About Us", Text = "This is about us." },
                 new About { Id = 2, FkLanguages = 2, Header = "О нас", Text = "Это о нас." }
-            };
+            ];
         }
 
         public static List<AccessLevel> GetFakeAccessLevelList()
         {
-            return new List<AccessLevel>
-            {
+            return
+            [
                 new AccessLevel { Id = 1, Level = 1, Description = "Admin" },
                 new AccessLevel { Id = 2, Level = 2, Description = "User" }
-            };
+            ];
         }
 
         public static List<Cart> GetFakeCartsList()
         {
-            return new List<Cart>
-            {
+            return
+            [
                 new Cart { Id = 1, FkUsers = 1, FkProducts = 1, Quantity = 2, CreatedAt = DateTime.Now },
                 new Cart { Id = 2, FkUsers = 1, FkProducts = 2, Quantity = 1, CreatedAt = DateTime.Now }
-            };
+            ];
         }
 
         public static List<Category> GetFakeCategoryList()
         {
-            return new List<Category>
-            {
+            return
+            [
                 new Category { Id = 1, FkLanguages = 1, Name = "Clothes", Description = "Clothing items." },
                 new Category { Id = 2, FkLanguages = 2, Name = "Одежда", Description = "Элементы одежды." }
-            };
+            ];
         }
 
         public static List<CategoryHierarchy> GetFakeCategoryHierarchyList()
         {
-            return new List<CategoryHierarchy>
-            {
+            return
+            [
                 new CategoryHierarchy { Id = 1, ParentId = null, FkCategories = 1 },
                 new CategoryHierarchy { Id = 2, ParentId = 1, FkCategories = 2 }
-            };
+            ];
         }
 
         public static List<Color> GetFakeColorList()
         {
-            return new List<Color>
-            {
+            return
+            [
                 new Color { Id = 1, Name = "Red", HexCode = "#FF0000" },
                 new Color { Id = 2, Name = "Green", HexCode = "#00FF00" }
-            };
+            ];
         }
 
         public static List<Contact> GetFakeContactList()
         {
-            return new List<Contact>
-            {
+            return
+            [
                 new Contact { Id = 1, FkLanguages = 1, Address = "123 Main St", Phone = "123-456-7890", Email = "contact@example.com" },
                 new Contact { Id = 2, FkLanguages = 2, Address = "123 Кол принципал", Phone = "098-765-4321", Email = "contacto@ejemplo.com" }
-            };
+            ];
         }
 
         public static List<CustomizableProduct> GetFakeCustomizableProductList()
         {
-            return new List<CustomizableProduct>
-            {
+            return
+            [
                 new CustomizableProduct { Id = 1, FkProducts = 1, FkFabricTypes = 1, FkColors = 1, SizeOptions = "S,M,L", CustomizationDetails = "{}" },
                 new CustomizableProduct { Id = 2, FkProducts = 2, FkFabricTypes = 2, FkColors = 2, SizeOptions = "M,L", CustomizationDetails = "{}" }
-            };
+            ];
         }
 
         public static List<CustomizationOrder> GetFakeCustomizationOrderList()
         {
-            return new List<CustomizationOrder>
-            {
+            return
+            [
                 new CustomizationOrder { Id = 1, FkOrders = 1, FkProducts = 1, FkFabricTypes = 1, FkColors = 1, Size = "M", AdditionalNotes = "Custom request" },
                 new CustomizationOrder { Id = 2, FkOrders = 2, FkProducts = 2, FkFabricTypes = 2, FkColors = 2, Size = "L", AdditionalNotes = "Urgent delivery" }
-            };
+            ];
         }
 
         public static List<FabricType> GetFakeFabricTypeList()
         {
-            return new List<FabricType>
-            {
+            return
+            [
                 new FabricType { Id = 1, Name = "Cotton", Description = "Soft and breathable fabric." },
                 new FabricType { Id = 2, Name = "Polyester", Description = "Durable and wrinkle-resistant fabric." }
-            };
+            ];
         }
 
         public static List<Language> GetFakeLanguageList()
         {
-            return new List<Language>
-            {
+            return
+            [
                 new Language { Id = 1, FullName = "English", Abbreviation = "EN", Description = "English language.", DateFormat = "MM/dd/yyyy", TimeFormat = "hh:mm tt" },
                 new Language { Id = 2, FullName = "Russian", Abbreviation = "RU", Description = "Russian language.", DateFormat = "dd/MM/yyyy", TimeFormat = "HH:mm" }
-            };
+            ];
         }
 
         public static List<Order> GetFakeOrderList()
         {
-            return new List<Order>
-            {
+            return
+            [
                 new Order { Id = 1, FkUsers = 1, FkOrderStatus = 1, TotalAmount = 100.00m, OrderDate = DateTime.Now, ShippingAddress = "123 Main St", TrackingNumber = "TRACK123", ShippingMethod = "Standard", PaymentStatus = "Paid" },
                 new Order { Id = 2, FkUsers = 2, FkOrderStatus = 2, TotalAmount = 50.00m, OrderDate = DateTime.Now, ShippingAddress = "456 Elm St", TrackingNumber = "TRACK456", ShippingMethod = "Express", PaymentStatus = "Pending" }
-            };
+            ];
         }
 
         public static List<OrderHistory> GetFakeOrderHistoryList()
@@ -196,11 +196,11 @@ namespace NUnitTests.Classes
 
         public static List<UserRole> GetFakeUserRoleList()
         {
-            return new List<UserRole>
-            {
+            return
+            [
                 new UserRole { Id = 1, FkAccessLevels = 1, Name = "Admin" },
                 new UserRole { Id = 2, FkAccessLevels = 2, Name = "User" }
-            };
+            ];
         }
     }
 }

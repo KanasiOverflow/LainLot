@@ -1,3 +1,4 @@
+using System.Text;
 using Moq;
 using NUnitTests.Classes;
 using RestAPI.Controllers;
@@ -8,7 +9,6 @@ using DatabaseRepository.Classes;
 using DB = DatabaseProvider.Models;
 using RestAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
 
 namespace NUnitTests.RestAPI
 {
@@ -658,7 +658,8 @@ namespace NUnitTests.RestAPI
             var entity = new Color()
             {
                 Id = 3,
-                Name = "#A020F0"
+                Name = "Purple",
+                HexCode = "#A020F0"
             };
 
             var result = _restApiController.CreateColor(entity);

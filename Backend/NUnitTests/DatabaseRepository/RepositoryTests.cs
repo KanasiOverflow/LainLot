@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using DatabaseProvider.Models;
 using DatabaseRepository.Interfaces;
 using DatabaseRepository.Classes;
+using System.Text;
 
 namespace NUnitTests.DatabaseRepository
 {
@@ -426,7 +427,9 @@ namespace NUnitTests.DatabaseRepository
             var entity = new Category()
             {
                 Id = 3,
-                Name = "New Category"
+                FkLanguages = 1,
+                Name = "New Category",
+                Description = "Description"
             };
 
             _categoryRepository?.Add(entity);
@@ -548,21 +551,20 @@ namespace NUnitTests.DatabaseRepository
         #region Color table
 
         [Test]
-        public void GetColors_Return_3_Items()
+        public void GetColors_Return_2_Items()
         {
             var result = _colorRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(3));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void GetColorById_Return_Correct_Entity(int id)
         {
             var result = _colorRepository?.GetById(id);
@@ -577,7 +579,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Delete_Color_Entity(int id)
         {
             var result = _colorRepository?.GetById(id);
@@ -587,7 +588,7 @@ namespace NUnitTests.DatabaseRepository
             _colorRepository?.Delete(result);
             var count = _colorRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(2));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -595,18 +596,19 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new Color()
             {
-                Id = 4,
-                Name = "Blue"
+                Id = 3,
+                Name = "Blue",
+                HexCode = "#0000FF"
             };
 
             _colorRepository?.Add(entity);
 
             var list = _colorRepository?.GetAll().ToList();
-            var entityThatWasAdded = _colorRepository?.GetById(4);
+            var entityThatWasAdded = _colorRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(4));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Name, Is.EqualTo(entity?.Name));
             });
@@ -615,7 +617,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Update_Color_Entity(int id)
         {
             var entity = _colorRepository?.GetById(id);
@@ -634,21 +635,20 @@ namespace NUnitTests.DatabaseRepository
         #region Contact table
 
         [Test]
-        public void GetContacts_Return_3_Items()
+        public void GetContacts_Return_2_Items()
         {
             var result = _contactRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(3));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void GetContactById_Return_Correct_Entity(int id)
         {
             var result = _contactRepository?.GetById(id);
@@ -663,7 +663,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Delete_Contact_Entity(int id)
         {
             var result = _contactRepository?.GetById(id);
@@ -673,7 +672,7 @@ namespace NUnitTests.DatabaseRepository
             _contactRepository?.Delete(result);
             var count = _contactRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(2));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -681,19 +680,20 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new Contact()
             {
-                Id = 4,
+                Id = 3,
                 Email = "newcontact@example.com",
-                Phone = "123456789"
+                Phone = "123456789",
+                Address = "Address"
             };
 
             _contactRepository?.Add(entity);
 
             var list = _contactRepository?.GetAll().ToList();
-            var entityThatWasAdded = _contactRepository?.GetById(4);
+            var entityThatWasAdded = _contactRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(4));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Email, Is.EqualTo(entity?.Email));
                 Assert.That(entityThatWasAdded?.Phone, Is.EqualTo(entity?.Phone));
@@ -703,7 +703,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Update_Contact_Entity(int id)
         {
             var entity = _contactRepository?.GetById(id);
@@ -727,21 +726,20 @@ namespace NUnitTests.DatabaseRepository
         #region CustomizableProduct table
 
         [Test]
-        public void GetCustomizableProducts_Return_3_Items()
+        public void GetCustomizableProducts_Return_2_Items()
         {
             var result = _customizableProductRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(3));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void GetCustomizableProductById_Return_Correct_Entity(int id)
         {
             var result = _customizableProductRepository?.GetById(id);
@@ -756,7 +754,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Delete_CustomizableProduct_Entity(int id)
         {
             var result = _customizableProductRepository?.GetById(id);
@@ -766,7 +763,7 @@ namespace NUnitTests.DatabaseRepository
             _customizableProductRepository?.Delete(result);
             var count = _customizableProductRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(2));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -774,19 +771,22 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new CustomizableProduct()
             {
-                Id = 4,
+                Id = 3,
                 FkProducts = 1,
-                CustomizationDetails = "Description of new customizable product"
+                CustomizationDetails = "Description of new customizable product",
+                FkColors = 1,
+                FkFabricTypes = 1,
+                SizeOptions = "M"
             };
 
             _customizableProductRepository?.Add(entity);
 
             var list = _customizableProductRepository?.GetAll().ToList();
-            var entityThatWasAdded = _customizableProductRepository?.GetById(4);
+            var entityThatWasAdded = _customizableProductRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(4));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.FkProducts, Is.EqualTo(entity?.FkProducts));
                 Assert.That(entityThatWasAdded?.CustomizationDetails, Is.EqualTo(entity?.CustomizationDetails));
@@ -796,7 +796,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Update_CustomizableProduct_Entity(int id)
         {
             var entity = _customizableProductRepository?.GetById(id);
@@ -820,21 +819,20 @@ namespace NUnitTests.DatabaseRepository
         #region CustomizationOrder table
 
         [Test]
-        public void GetCustomizationOrders_Return_3_Items()
+        public void GetCustomizationOrders_Return_2_Items()
         {
             var result = _customizationOrderRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(3));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void GetCustomizationOrderById_Return_Correct_Entity(int id)
         {
             var result = _customizationOrderRepository?.GetById(id);
@@ -849,7 +847,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Delete_CustomizationOrder_Entity(int id)
         {
             var result = _customizationOrderRepository?.GetById(id);
@@ -859,7 +856,7 @@ namespace NUnitTests.DatabaseRepository
             _customizationOrderRepository?.Delete(result);
             var count = _customizationOrderRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(2));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -867,18 +864,18 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new CustomizationOrder()
             {
-                Id = 4,
+                Id = 3,
                 Size = "M"
             };
 
             _customizationOrderRepository?.Add(entity);
 
             var list = _customizationOrderRepository?.GetAll().ToList();
-            var entityThatWasAdded = _customizationOrderRepository?.GetById(4);
+            var entityThatWasAdded = _customizationOrderRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(4));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Size, Is.EqualTo(entity?.Size));
             });
@@ -887,7 +884,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Update_CustomizationOrder_Entity(int id)
         {
             var entity = _customizationOrderRepository?.GetById(id);
@@ -909,21 +905,20 @@ namespace NUnitTests.DatabaseRepository
         #region FabricType table
 
         [Test]
-        public void GetFabricTypes_Return_3_Items()
+        public void GetFabricTypes_Return_2_Items()
         {
             var result = _fabricTypeRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(3));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void GetFabricTypeById_Return_Correct_Entity(int id)
         {
             var result = _fabricTypeRepository?.GetById(id);
@@ -938,7 +933,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Delete_FabricType_Entity(int id)
         {
             var result = _fabricTypeRepository?.GetById(id);
@@ -948,7 +942,7 @@ namespace NUnitTests.DatabaseRepository
             _fabricTypeRepository?.Delete(result);
             var count = _fabricTypeRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(2));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -956,18 +950,18 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new FabricType()
             {
-                Id = 4,
+                Id = 3,
                 Name = "Cotton"
             };
 
             _fabricTypeRepository?.Add(entity);
 
             var list = _fabricTypeRepository?.GetAll().ToList();
-            var entityThatWasAdded = _fabricTypeRepository?.GetById(4);
+            var entityThatWasAdded = _fabricTypeRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(4));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Name, Is.EqualTo(entity?.Name));
             });
@@ -976,7 +970,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Update_FabricType_Entity(int id)
         {
             var entity = _fabricTypeRepository?.GetById(id);
@@ -995,21 +988,20 @@ namespace NUnitTests.DatabaseRepository
         #region Language table
 
         [Test]
-        public void GetLanguages_Return_3_Items()
+        public void GetLanguages_Return_2_Items()
         {
             var result = _languageRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(3));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void GetLanguageById_Return_Correct_Entity(int id)
         {
             var result = _languageRepository?.GetById(id);
@@ -1024,7 +1016,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Delete_Language_Entity(int id)
         {
             var result = _languageRepository?.GetById(id);
@@ -1034,7 +1025,7 @@ namespace NUnitTests.DatabaseRepository
             _languageRepository?.Delete(result);
             var count = _languageRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(2));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1042,18 +1033,22 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new Language()
             {
-                Id = 4,
-                FullName = "Spanish"
+                Id = 3,
+                FullName = "Spanish",
+                Abbreviation = "SPA",
+                DateFormat = "dd\\mm\\yyyy",
+                TimeFormat = "",
+                Description = "Description"
             };
 
             _languageRepository?.Add(entity);
 
             var list = _languageRepository?.GetAll().ToList();
-            var entityThatWasAdded = _languageRepository?.GetById(4);
+            var entityThatWasAdded = _languageRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(4));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.FullName, Is.EqualTo(entity?.FullName));
             });
@@ -1062,7 +1057,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
         public void Update_Language_Entity(int id)
         {
             var entity = _languageRepository?.GetById(id);
@@ -1081,23 +1075,20 @@ namespace NUnitTests.DatabaseRepository
         #region Order table
 
         [Test]
-        public void GetOrders_Return_5_Items()
+        public void GetOrders_Return_2_Items()
         {
             var result = _orderRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetOrderById_Return_Correct_Entity(int id)
         {
             var result = _orderRepository?.GetById(id);
@@ -1112,9 +1103,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_Order_Entity(int id)
         {
             var result = _orderRepository?.GetById(id);
@@ -1124,7 +1112,7 @@ namespace NUnitTests.DatabaseRepository
             _orderRepository?.Delete(result);
             var count = _orderRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1132,20 +1120,27 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new Order()
             {
-                Id = 6,
+                Id = 3,
                 FkUsers = 1,
                 FkOrderStatus = 1,
-                TotalAmount = 100.00M
+                TotalAmount = 100.00M,
+                ShippingAddress = "ShippingAddress",
+                CreatedAt = DateTime.UtcNow,
+                OrderDate = DateTime.UtcNow,
+                PaymentStatus = "PaymentStatus",
+                ShippingMethod = "ShippingMethod",
+                UpdatedAt = DateTime.UtcNow,
+                TrackingNumber = "TrackingNumber"
             };
 
             _orderRepository?.Add(entity);
 
             var list = _orderRepository?.GetAll().ToList();
-            var entityThatWasAdded = _orderRepository?.GetById(6);
+            var entityThatWasAdded = _orderRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.FkUsers, Is.EqualTo(entity?.FkUsers));
                 Assert.That(entityThatWasAdded?.FkOrderStatus, Is.EqualTo(entity?.FkOrderStatus));
@@ -1156,9 +1151,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_Order_Entity(int id)
         {
             var entity = _orderRepository?.GetById(id);
@@ -1177,23 +1169,20 @@ namespace NUnitTests.DatabaseRepository
         #region OrderHistory table
 
         [Test]
-        public void GetOrderHistories_Return_5_Items()
+        public void GetOrderHistories_Return_2_Items()
         {
             var result = _orderHistoryRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetOrderHistoryById_Return_Correct_Entity(int id)
         {
             var result = _orderHistoryRepository?.GetById(id);
@@ -1208,9 +1197,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_OrderHistory_Entity(int id)
         {
             var result = _orderHistoryRepository?.GetById(id);
@@ -1220,7 +1206,7 @@ namespace NUnitTests.DatabaseRepository
             _orderHistoryRepository?.Delete(result);
             var count = _orderHistoryRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1228,7 +1214,7 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new OrderHistory()
             {
-                Id = 6,
+                Id = 3,
                 FkOrders = 1,
                 Status = 1,
                 ChangedAt = DateTime.Now
@@ -1237,11 +1223,11 @@ namespace NUnitTests.DatabaseRepository
             _orderHistoryRepository?.Add(entity);
 
             var list = _orderHistoryRepository?.GetAll().ToList();
-            var entityThatWasAdded = _orderHistoryRepository?.GetById(6);
+            var entityThatWasAdded = _orderHistoryRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Status, Is.EqualTo(entity?.Status));
             });
@@ -1250,9 +1236,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_OrderHistory_Entity(int id)
         {
             var entity = _orderHistoryRepository?.GetById(id);
@@ -1271,23 +1254,20 @@ namespace NUnitTests.DatabaseRepository
         #region OrderStatus table
 
         [Test]
-        public void GetOrderStatuses_Return_5_Items()
+        public void GetOrderStatuses_Return_2_Items()
         {
             var result = _orderStatusRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetOrderStatusById_Return_Correct_Entity(int id)
         {
             var result = _orderStatusRepository?.GetById(id);
@@ -1302,9 +1282,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_OrderStatus_Entity(int id)
         {
             var result = _orderStatusRepository?.GetById(id);
@@ -1314,7 +1291,7 @@ namespace NUnitTests.DatabaseRepository
             _orderStatusRepository?.Delete(result);
             var count = _orderStatusRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1322,18 +1299,18 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new OrderStatus()
             {
-                Id = 6,
+                Id = 3,
                 Status = "Cancelled"
             };
 
             _orderStatusRepository?.Add(entity);
 
             var list = _orderStatusRepository?.GetAll().ToList();
-            var entityThatWasAdded = _orderStatusRepository?.GetById(6);
+            var entityThatWasAdded = _orderStatusRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Status, Is.EqualTo(entity?.Status));
             });
@@ -1342,9 +1319,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_OrderStatus_Entity(int id)
         {
             var entity = _orderStatusRepository?.GetById(id);
@@ -1363,23 +1337,20 @@ namespace NUnitTests.DatabaseRepository
         #region Payment table
 
         [Test]
-        public void GetPayments_Return_5_Items()
+        public void GetPayments_Return_2_Items()
         {
             var result = _paymentRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetPaymentById_Return_Correct_Entity(int id)
         {
             var result = _paymentRepository?.GetById(id);
@@ -1394,9 +1365,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_Payment_Entity(int id)
         {
             var result = _paymentRepository?.GetById(id);
@@ -1406,7 +1374,7 @@ namespace NUnitTests.DatabaseRepository
             _paymentRepository?.Delete(result);
             var count = _paymentRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1414,18 +1382,20 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new Payment()
             {
-                Id = 6,
-                PaymentMethod = "Credit Card"
+                Id = 3,
+                PaymentMethod = "Credit Card",
+                Status = "Status",
+                Amount = 10
             };
 
             _paymentRepository?.Add(entity);
 
             var list = _paymentRepository?.GetAll().ToList();
-            var entityThatWasAdded = _paymentRepository?.GetById(6);
+            var entityThatWasAdded = _paymentRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.PaymentMethod, Is.EqualTo(entity?.PaymentMethod));
             });
@@ -1434,9 +1404,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_Payment_Entity(int id)
         {
             var entity = _paymentRepository?.GetById(id);
@@ -1455,23 +1422,20 @@ namespace NUnitTests.DatabaseRepository
         #region Product table
 
         [Test]
-        public void GetProducts_Return_5_Items()
+        public void GetProducts_Return_2_Items()
         {
             var result = _productRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetProductById_Return_Correct_Entity(int id)
         {
             var result = _productRepository?.GetById(id);
@@ -1486,9 +1450,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_Product_Entity(int id)
         {
             var result = _productRepository?.GetById(id);
@@ -1498,7 +1459,7 @@ namespace NUnitTests.DatabaseRepository
             _productRepository?.Delete(result);
             var count = _productRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1506,18 +1467,23 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new Product()
             {
-                Id = 6,
-                Price = 99.99m
+                Id = 3,
+                Price = 99.99m,
+                IsActive = true,
+                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                IsCustomizable = true,
+                StockQuantity = 1
             };
 
             _productRepository?.Add(entity);
 
             var list = _productRepository?.GetAll().ToList();
-            var entityThatWasAdded = _productRepository?.GetById(6);
+            var entityThatWasAdded = _productRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Price, Is.EqualTo(entity?.Price));
             });
@@ -1526,9 +1492,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_Product_Entity(int id)
         {
             var entity = _productRepository?.GetById(id);
@@ -1550,23 +1513,20 @@ namespace NUnitTests.DatabaseRepository
         #region ProductImage table
 
         [Test]
-        public void GetProductImages_Return_5_Items()
+        public void GetProductImages_Return_2_Items()
         {
             var result = _productImageRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetProductImageById_Return_Correct_Entity(int id)
         {
             var result = _productImageRepository?.GetById(id);
@@ -1581,9 +1541,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_ProductImage_Entity(int id)
         {
             var result = _productImageRepository?.GetById(id);
@@ -1593,7 +1550,7 @@ namespace NUnitTests.DatabaseRepository
             _productImageRepository?.Delete(result);
             var count = _productImageRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1601,18 +1558,19 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new ProductImage()
             {
-                Id = 6,
+                Id = 3,
                 FkProducts = 1,
+                ImageData = Encoding.ASCII.GetBytes("https://example.com/image1.jpg")
             };
 
             _productImageRepository?.Add(entity);
 
             var list = _productImageRepository?.GetAll().ToList();
-            var entityThatWasAdded = _productImageRepository?.GetById(6);
+            var entityThatWasAdded = _productImageRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
             });
         }
@@ -1620,9 +1578,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_ProductImage_Entity(int id)
         {
             var entity = _productImageRepository?.GetById(id);
@@ -1644,23 +1599,20 @@ namespace NUnitTests.DatabaseRepository
         #region ProductTranslation table
 
         [Test]
-        public void GetProductTranslations_Return_5_Items()
+        public void GetProductTranslations_Return_2_Items()
         {
             var result = _productTranslationRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetProductTranslationById_Return_Correct_Entity(int id)
         {
             var result = _productTranslationRepository?.GetById(id);
@@ -1675,9 +1627,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_ProductTranslation_Entity(int id)
         {
             var result = _productTranslationRepository?.GetById(id);
@@ -1687,7 +1636,7 @@ namespace NUnitTests.DatabaseRepository
             _productTranslationRepository?.Delete(result);
             var count = _productTranslationRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1695,7 +1644,7 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new ProductTranslation()
             {
-                Id = 6,
+                Id = 3,
                 FkProducts = 1,
                 FkLanguages = 1,
                 Name = "New Product",
@@ -1705,11 +1654,11 @@ namespace NUnitTests.DatabaseRepository
             _productTranslationRepository?.Add(entity);
 
             var list = _productTranslationRepository?.GetAll().ToList();
-            var entityThatWasAdded = _productTranslationRepository?.GetById(6);
+            var entityThatWasAdded = _productTranslationRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Name, Is.EqualTo(entity?.Name));
             });
@@ -1718,9 +1667,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_ProductTranslation_Entity(int id)
         {
             var entity = _productTranslationRepository?.GetById(id);
@@ -1742,23 +1688,20 @@ namespace NUnitTests.DatabaseRepository
         #region Review table
 
         [Test]
-        public void GetReviews_Return_5_Items()
+        public void GetReviews_Return_2_Items()
         {
             var result = _reviewRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetReviewById_Return_Correct_Entity(int id)
         {
             var result = _reviewRepository?.GetById(id);
@@ -1773,9 +1716,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_Review_Entity(int id)
         {
             var result = _reviewRepository?.GetById(id);
@@ -1785,7 +1725,7 @@ namespace NUnitTests.DatabaseRepository
             _reviewRepository?.Delete(result);
             var count = _reviewRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1793,7 +1733,7 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new Review()
             {
-                Id = 6,
+                Id = 3,
                 FkProducts = 1,
                 FkUsers = 1,
                 Rating = 5,
@@ -1803,11 +1743,11 @@ namespace NUnitTests.DatabaseRepository
             _reviewRepository?.Add(entity);
 
             var list = _reviewRepository?.GetAll().ToList();
-            var entityThatWasAdded = _reviewRepository?.GetById(6);
+            var entityThatWasAdded = _reviewRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Comment, Is.EqualTo(entity?.Comment));
             });
@@ -1816,9 +1756,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_Review_Entity(int id)
         {
             var entity = _reviewRepository?.GetById(id);
@@ -1840,23 +1777,20 @@ namespace NUnitTests.DatabaseRepository
         #region User table
 
         [Test]
-        public void GetUsers_Return_5_Items()
+        public void GetUsers_Return_2_Items()
         {
             var result = _userRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetUserById_Return_Correct_Entity(int id)
         {
             var result = _userRepository?.GetById(id);
@@ -1871,9 +1805,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_User_Entity(int id)
         {
             var result = _userRepository?.GetById(id);
@@ -1883,7 +1814,7 @@ namespace NUnitTests.DatabaseRepository
             _userRepository?.Delete(result);
             var count = _userRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1891,21 +1822,25 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new User()
             {
-                Id = 6,
+                Id = 3,
                 Login = "new_user",
                 Hash = "hashed_password",
                 Email = "new_user@example.com",
-                FkUserRoles = 1
+                FkUserRoles = 1,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                Password = "Password",
+                ConfirmEmail = 0
             };
 
             _userRepository?.Add(entity);
 
             var list = _userRepository?.GetAll().ToList();
-            var entityThatWasAdded = _userRepository?.GetById(6);
+            var entityThatWasAdded = _userRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Login, Is.EqualTo(entity?.Login));
             });
@@ -1914,9 +1849,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_User_Entity(int id)
         {
             var entity = _userRepository?.GetById(id);
@@ -1938,23 +1870,20 @@ namespace NUnitTests.DatabaseRepository
         #region UserProfile table
 
         [Test]
-        public void GetUserProfiles_Return_5_Items()
+        public void GetUserProfiles_Return_2_Items()
         {
             var result = _userProfileRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetUserProfileById_Return_Correct_Entity(int id)
         {
             var result = _userProfileRepository?.GetById(id);
@@ -1969,9 +1898,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_UserProfile_Entity(int id)
         {
             var result = _userProfileRepository?.GetById(id);
@@ -1981,7 +1907,7 @@ namespace NUnitTests.DatabaseRepository
             _userProfileRepository?.Delete(result);
             var count = _userProfileRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -1989,7 +1915,7 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new UserProfile()
             {
-                Id = 6,
+                Id = 3,
                 FkUsers = 1,
                 FirstName = "John",
                 LastName = "Doe",
@@ -1999,11 +1925,11 @@ namespace NUnitTests.DatabaseRepository
             _userProfileRepository?.Add(entity);
 
             var list = _userProfileRepository?.GetAll().ToList();
-            var entityThatWasAdded = _userProfileRepository?.GetById(6);
+            var entityThatWasAdded = _userProfileRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.FirstName, Is.EqualTo(entity?.FirstName));
             });
@@ -2012,9 +1938,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_UserProfile_Entity(int id)
         {
             var entity = _userProfileRepository?.GetById(id);
@@ -2036,23 +1959,20 @@ namespace NUnitTests.DatabaseRepository
         #region UserRole table
 
         [Test]
-        public void GetUserRoles_Return_5_Items()
+        public void GetUserRoles_Return_2_Items()
         {
             var result = _userRoleRepository?.GetAll().ToList();
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(5));
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void GetUserRoleById_Return_Correct_Entity(int id)
         {
             var result = _userRoleRepository?.GetById(id);
@@ -2067,9 +1987,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Delete_UserRole_Entity(int id)
         {
             var result = _userRoleRepository?.GetById(id);
@@ -2079,7 +1996,7 @@ namespace NUnitTests.DatabaseRepository
             _userRoleRepository?.Delete(result);
             var count = _userRoleRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(4));
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -2087,18 +2004,18 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = new UserRole()
             {
-                Id = 6,
+                Id = 3,
                 Name = "NewRole"
             };
 
             _userRoleRepository?.Add(entity);
 
             var list = _userRoleRepository?.GetAll().ToList();
-            var entityThatWasAdded = _userRoleRepository?.GetById(6);
+            var entityThatWasAdded = _userRoleRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(6));
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.Name, Is.EqualTo(entity?.Name));
             });
@@ -2107,9 +2024,6 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        [TestCase(3)]
-        [TestCase(4)]
-        [TestCase(5)]
         public void Update_UserRole_Entity(int id)
         {
             var entity = _userRoleRepository?.GetById(id);
