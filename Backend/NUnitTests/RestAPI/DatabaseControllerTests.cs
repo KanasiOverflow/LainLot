@@ -18,23 +18,23 @@ namespace NUnitTests.RestAPI
         private Mock<ILogger<DatabaseController>> _logger;
         private IRepository<DB.About>? _aboutRepository;
         private IRepository<DB.AccessLevel>? _accessLevelRepository;
-        private IRepository<DB.Cart>? _cartRepository; // Добавлено
-        private IRepository<DB.Category>? _categoryRepository; // Добавлено
-        private IRepository<DB.CategoryHierarchy>? _categoryHierarchyRepository; // Добавлено
-        private IRepository<DB.Color>? _colorRepository; // Добавлено
+        private IRepository<DB.Cart>? _cartRepository; 
+        private IRepository<DB.Category>? _categoryRepository; 
+        private IRepository<DB.CategoryHierarchy>? _categoryHierarchyRepository; 
+        private IRepository<DB.Color>? _colorRepository; 
         private IRepository<DB.Contact>? _contactRepository;
-        private IRepository<DB.CustomizableProduct>? _customizableProductRepository; // Добавлено
-        private IRepository<DB.CustomizationOrder>? _customizationOrderRepository; // Добавлено
-        private IRepository<DB.FabricType>? _fabricTypeRepository; // Добавлено
+        private IRepository<DB.CustomizableProduct>? _customizableProductRepository; 
+        private IRepository<DB.CustomizationOrder>? _customizationOrderRepository; 
+        private IRepository<DB.FabricType>? _fabricTypeRepository; 
         private IRepository<DB.Language>? _languageRepository;
-        private IRepository<DB.Order>? _orderRepository; // Добавлено
-        private IRepository<DB.OrderHistory>? _orderHistoryRepository; // Добавлено
-        private IRepository<DB.OrderStatus>? _orderStatusRepository; // Добавлено
-        private IRepository<DB.Payment>? _paymentRepository; // Добавлено
+        private IRepository<DB.Order>? _orderRepository; 
+        private IRepository<DB.OrderHistory>? _orderHistoryRepository; 
+        private IRepository<DB.OrderStatus>? _orderStatusRepository; 
+        private IRepository<DB.Payment>? _paymentRepository; 
         private IRepository<DB.Product>? _productRepository;
-        private IRepository<DB.ProductImage>? _productImageRepository; // Добавлено
-        private IRepository<DB.ProductTranslation>? _productTranslationRepository; // Исправлено название
-        private IRepository<DB.Review>? _reviewRepository; // Добавлено
+        private IRepository<DB.ProductImage>? _productImageRepository; 
+        private IRepository<DB.ProductTranslation>? _productTranslationRepository; 
+        private IRepository<DB.Review>? _reviewRepository; 
         private IRepository<DB.User>? _userRepository;
         private IRepository<DB.UserProfile>? _userProfileRepository;
         private IRepository<DB.UserRole>? _userRoleRepository;
@@ -58,23 +58,23 @@ namespace NUnitTests.RestAPI
             // Create fake data
             var abouts = DatabaseDataFake.GetFakeAboutList();
             var accessLevels = DatabaseDataFake.GetFakeAccessLevelList();
-            var carts = DatabaseDataFake.GetFakeCartsList(); // Добавлено
-            var categories = DatabaseDataFake.GetFakeCategoryList(); // Добавлено
-            var categoryHierarchies = DatabaseDataFake.GetFakeCategoryHierarchyList(); // Добавлено
-            var colors = DatabaseDataFake.GetFakeColorList(); // Добавлено
+            var carts = DatabaseDataFake.GetFakeCartsList(); 
+            var categories = DatabaseDataFake.GetFakeCategoryList(); 
+            var categoryHierarchies = DatabaseDataFake.GetFakeCategoryHierarchyList(); 
+            var colors = DatabaseDataFake.GetFakeColorList(); 
             var contacts = DatabaseDataFake.GetFakeContactList();
-            var customizableProducts = DatabaseDataFake.GetFakeCustomizableProductList(); // Добавлено
-            var customizationOrders = DatabaseDataFake.GetFakeCustomizationOrderList(); // Добавлено
-            var fabricTypes = DatabaseDataFake.GetFakeFabricTypeList(); // Добавлено
+            var customizableProducts = DatabaseDataFake.GetFakeCustomizableProductList(); 
+            var customizationOrders = DatabaseDataFake.GetFakeCustomizationOrderList(); 
+            var fabricTypes = DatabaseDataFake.GetFakeFabricTypeList(); 
             var languages = DatabaseDataFake.GetFakeLanguageList();
-            var orders = DatabaseDataFake.GetFakeOrderList(); // Добавлено
-            var orderHistories = DatabaseDataFake.GetFakeOrderHistoryList(); // Добавлено
-            var orderStatuses = DatabaseDataFake.GetFakeOrderStatusList(); // Добавлено
-            var payments = DatabaseDataFake.GetFakePaymentList(); // Добавлено
+            var orders = DatabaseDataFake.GetFakeOrderList(); 
+            var orderHistories = DatabaseDataFake.GetFakeOrderHistoryList(); 
+            var orderStatuses = DatabaseDataFake.GetFakeOrderStatusList(); 
+            var payments = DatabaseDataFake.GetFakePaymentList(); 
             var products = DatabaseDataFake.GetFakeProductList();
-            var productImages = DatabaseDataFake.GetFakeProductImageList(); // Добавлено
-            var productTranslations = DatabaseDataFake.GetFakeProductTranslationList(); // Исправлено название
-            var reviews = DatabaseDataFake.GetFakeReviewList(); // Добавлено
+            var productImages = DatabaseDataFake.GetFakeProductImageList(); 
+            var productTranslations = DatabaseDataFake.GetFakeProductTranslationList(); 
+            var reviews = DatabaseDataFake.GetFakeReviewList(); 
             var users = DatabaseDataFake.GetFakeUserList();
             var userProfiles = DatabaseDataFake.GetFakeUserProfileList();
             var userRoles = DatabaseDataFake.GetFakeUserRoleList();
@@ -82,23 +82,23 @@ namespace NUnitTests.RestAPI
             // Init base data in fake DbContext
             _context.Abouts.AddRange(abouts);
             _context.AccessLevels.AddRange(accessLevels);
-            _context.Carts.AddRange(carts); // Добавлено
-            _context.Categories.AddRange(categories); // Добавлено
-            _context.CategoryHierarchies.AddRange(categoryHierarchies); // Добавлено
-            _context.Colors.AddRange(colors); // Добавлено
+            _context.Carts.AddRange(carts); 
+            _context.Categories.AddRange(categories); 
+            _context.CategoryHierarchies.AddRange(categoryHierarchies); 
+            _context.Colors.AddRange(colors); 
             _context.Contacts.AddRange(contacts);
-            _context.CustomizableProducts.AddRange(customizableProducts); // Добавлено
-            _context.CustomizationOrders.AddRange(customizationOrders); // Добавлено
-            _context.FabricTypes.AddRange(fabricTypes); // Добавлено
+            _context.CustomizableProducts.AddRange(customizableProducts); 
+            _context.CustomizationOrders.AddRange(customizationOrders); 
+            _context.FabricTypes.AddRange(fabricTypes); 
             _context.Languages.AddRange(languages);
-            _context.Orders.AddRange(orders); // Добавлено
-            _context.OrderHistories.AddRange(orderHistories); // Добавлено
-            _context.OrderStatuses.AddRange(orderStatuses); // Добавлено
-            _context.Payments.AddRange(payments); // Добавлено
+            _context.Orders.AddRange(orders); 
+            _context.OrderHistories.AddRange(orderHistories); 
+            _context.OrderStatuses.AddRange(orderStatuses); 
+            _context.Payments.AddRange(payments); 
             _context.Products.AddRange(products);
-            _context.ProductImages.AddRange(productImages); // Добавлено
-            _context.ProductTranslations.AddRange(productTranslations); // Исправлено название
-            _context.Reviews.AddRange(reviews); // Добавлено
+            _context.ProductImages.AddRange(productImages); 
+            _context.ProductTranslations.AddRange(productTranslations); 
+            _context.Reviews.AddRange(reviews); 
             _context.Users.AddRange(users);
             _context.UserProfiles.AddRange(userProfiles);
             _context.UserRoles.AddRange(userRoles);
@@ -109,23 +109,23 @@ namespace NUnitTests.RestAPI
             _logger = new Mock<ILogger<DatabaseController>>();
             _aboutRepository = new Repository<DB.About>(_context);
             _accessLevelRepository = new Repository<DB.AccessLevel>(_context);
-            _cartRepository = new Repository<DB.Cart>(_context); // Добавлено
-            _categoryRepository = new Repository<DB.Category>(_context); // Добавлено
-            _categoryHierarchyRepository = new Repository<DB.CategoryHierarchy>(_context); // Добавлено
-            _colorRepository = new Repository<DB.Color>(_context); // Добавлено
+            _cartRepository = new Repository<DB.Cart>(_context); 
+            _categoryRepository = new Repository<DB.Category>(_context); 
+            _categoryHierarchyRepository = new Repository<DB.CategoryHierarchy>(_context); 
+            _colorRepository = new Repository<DB.Color>(_context); 
             _contactRepository = new Repository<DB.Contact>(_context);
-            _customizableProductRepository = new Repository<DB.CustomizableProduct>(_context); // Добавлено
-            _customizationOrderRepository = new Repository<DB.CustomizationOrder>(_context); // Добавлено
-            _fabricTypeRepository = new Repository<DB.FabricType>(_context); // Добавлено
+            _customizableProductRepository = new Repository<DB.CustomizableProduct>(_context); 
+            _customizationOrderRepository = new Repository<DB.CustomizationOrder>(_context); 
+            _fabricTypeRepository = new Repository<DB.FabricType>(_context); 
             _languageRepository = new Repository<DB.Language>(_context);
-            _orderRepository = new Repository<DB.Order>(_context); // Добавлено
-            _orderHistoryRepository = new Repository<DB.OrderHistory>(_context); // Добавлено
-            _orderStatusRepository = new Repository<DB.OrderStatus>(_context); // Добавлено
-            _paymentRepository = new Repository<DB.Payment>(_context); // Добавлено
+            _orderRepository = new Repository<DB.Order>(_context); 
+            _orderHistoryRepository = new Repository<DB.OrderHistory>(_context); 
+            _orderStatusRepository = new Repository<DB.OrderStatus>(_context); 
+            _paymentRepository = new Repository<DB.Payment>(_context); 
             _productRepository = new Repository<DB.Product>(_context);
-            _productImageRepository = new Repository<DB.ProductImage>(_context); // Добавлено
-            _productTranslationRepository = new Repository<DB.ProductTranslation>(_context); // Исправлено название
-            _reviewRepository = new Repository<DB.Review>(_context); // Добавлено
+            _productImageRepository = new Repository<DB.ProductImage>(_context); 
+            _productTranslationRepository = new Repository<DB.ProductTranslation>(_context); 
+            _reviewRepository = new Repository<DB.Review>(_context); 
             _userRepository = new Repository<DB.User>(_context);
             _userProfileRepository = new Repository<DB.UserProfile>(_context);
             _userRoleRepository = new Repository<DB.UserRole>(_context);
@@ -134,23 +134,23 @@ namespace NUnitTests.RestAPI
                 _logger.Object,
                 _aboutRepository,
                 _accessLevelRepository,
-                _cartRepository, // Добавлено
-                _categoryRepository, // Добавлено
-                _categoryHierarchyRepository, // Добавлено
-                _colorRepository, // Добавлено
+                _cartRepository, 
+                _categoryRepository, 
+                _categoryHierarchyRepository, 
+                _colorRepository, 
                 _contactRepository,
-                _customizableProductRepository, // Добавлено
-                _customizationOrderRepository, // Добавлено
-                _fabricTypeRepository, // Добавлено
+                _customizableProductRepository, 
+                _customizationOrderRepository, 
+                _fabricTypeRepository, 
                 _languageRepository,
-                _orderRepository, // Добавлено
-                _orderHistoryRepository, // Добавлено
-                _orderStatusRepository, // Добавлено
-                _paymentRepository, // Добавлено
+                _orderRepository, 
+                _orderHistoryRepository, 
+                _orderStatusRepository, 
+                _paymentRepository, 
                 _productRepository,
-                _productImageRepository, // Добавлено
-                _productTranslationRepository, // Исправлено название
-                _reviewRepository, // Добавлено
+                _productImageRepository, 
+                _productTranslationRepository, 
+                _reviewRepository, 
                 _userRepository,
                 _userProfileRepository,
                 _userRoleRepository);

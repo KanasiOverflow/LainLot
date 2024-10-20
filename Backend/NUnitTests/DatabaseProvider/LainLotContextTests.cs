@@ -45,7 +45,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Abouts.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.AccessLevels.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Carts.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Categories.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -85,7 +85,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.CategoryHierarchy.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Colors.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -105,7 +105,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Contacts.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.CustomizableProducts.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -125,7 +125,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.CustomizationOrders.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -135,7 +135,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.FabricTypes.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -145,7 +145,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Languages.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -155,7 +155,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Orders.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -165,7 +165,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.OrderHistory.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -175,7 +175,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.OrderStatuses.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -185,7 +185,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Payments.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -195,7 +195,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Products.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -205,7 +205,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.ProductImages.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -215,7 +215,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.ProductTranslations.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -225,7 +225,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Reviews.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -235,7 +235,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.Users.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -245,7 +245,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.UserProfiles.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
 
         [Test]
@@ -255,7 +255,7 @@ namespace NUnitTests.DatabaseProvider
             var result = fakeContext.UserRoles.ToList();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(2)); // Замените 2 на актуальное значение
+            Assert.That(result, Has.Count.EqualTo(2));
         }
     }
 }
