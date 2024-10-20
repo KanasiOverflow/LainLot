@@ -323,7 +323,7 @@ namespace RestAPI.Controllers
         [HttpGet("GetCartById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Cart?> GetCartId(int id)
+        public ActionResult<Cart?> GetCartById(int id)
         {
             var dbEntity = _cartRepository.GetById(id);
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Cart, Cart>(dbEntity);
@@ -617,7 +617,7 @@ namespace RestAPI.Controllers
         [HttpGet("GetColorById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Color?> GetColorId(int id)
+        public ActionResult<Color?> GetColorById(int id)
         {
             var dbEntity = _colorRepository.GetById(id);
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Color, Color>(dbEntity);
@@ -813,7 +813,7 @@ namespace RestAPI.Controllers
         [HttpGet("GetCustomizableProductById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<CustomizableProduct?> GetCustomizableProductId(int id)
+        public ActionResult<CustomizableProduct?> GetCustomizableProductById(int id)
         {
             var dbEntity = _customizableProductRepository.GetById(id);
             return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomizableProduct, CustomizableProduct>(dbEntity);
@@ -911,7 +911,7 @@ namespace RestAPI.Controllers
         [HttpGet("GetCustomizationOrderById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<CustomizationOrder?> GetCustomizationOrderId(int id)
+        public ActionResult<CustomizationOrder?> GetCustomizationOrderById(int id)
         {
             var dbEntity = _customizationOrderRepository.GetById(id);
             return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomizationOrder, CustomizationOrder>(dbEntity);
@@ -1205,7 +1205,7 @@ namespace RestAPI.Controllers
         [HttpGet("GetOrderById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Order?> GetOrderId(int id)
+        public ActionResult<Order?> GetOrderById(int id)
         {
             var dbEntity = _orderRepository.GetById(id);
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Order, Order>(dbEntity);
@@ -1499,7 +1499,7 @@ namespace RestAPI.Controllers
         [HttpGet("GetPaymentById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Payment?> GetPaymentId(int id)
+        public ActionResult<Payment?> GetPaymentById(int id)
         {
             var dbEntity = _paymentRepository.GetById(id);
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Payment, Payment>(dbEntity);
@@ -1753,6 +1753,104 @@ namespace RestAPI.Controllers
             if (entity != null)
             {
                 _productImageRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region ProductTranslations table
+
+        [HttpGet("GetProductTranslationsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetProductTranslationsCount()
+        {
+            return _productTranslationRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetProductTranslationsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IEnumerable<string> GetProductTranslationsFields()
+        {
+            return new ProductTranslation().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetProductTranslations")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<ProductTranslation>> GetProductTranslations(int limit, int page)
+        {
+            var dbList = _productTranslationRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.ProductTranslation>, List<ProductTranslation>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetProductTranslationById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<ProductTranslation?> GetProductTranslationById(int id)
+        {
+            var dbEntity = _productTranslationRepository.GetById(id);
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.ProductTranslation, ProductTranslation>(dbEntity);
+        }
+
+        [HttpPost("CreateProductTranslation")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<ProductTranslation> CreateProductTranslation(ProductTranslation entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                _productTranslationRepository.Add(_mapper.Map<ProductTranslation, DB.ProductTranslation>(entity));
+                return CreatedAtAction(nameof(CreateProductTranslation), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateProductTranslation")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<ProductTranslation> UpdateProductTranslation(ProductTranslation entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                _productTranslationRepository.Update(_mapper.Map<ProductTranslation, DB.ProductTranslation>(entity));
+                return CreatedAtAction(nameof(UpdateProductTranslation), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteProductTranslation")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult DeleteProductTranslation(int id)
+        {
+            var entity = _productTranslationRepository.GetById(id);
+
+            if (entity != null)
+            {
+                _productTranslationRepository.Delete(entity);
                 return Ok();
             }
 
