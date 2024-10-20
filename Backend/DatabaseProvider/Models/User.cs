@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DatabaseProvider.Models;
 
@@ -14,17 +15,21 @@ public partial class User
 
     public string Password { get; set; } = null!;
 
-    public string? DateLink { get; set; }
-
-    public string? TimeLink { get; set; }
-
     public int ConfirmEmail { get; set; }
 
     public string Hash { get; set; } = null!;
 
-    [JsonIgnore]
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
+
+    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+
     public virtual UserRole FkUserRolesNavigation { get; set; } = null!;
 
-    [JsonIgnore]
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
     public virtual ICollection<UserProfile> UserProfiles { get; set; } = new List<UserProfile>();
 }

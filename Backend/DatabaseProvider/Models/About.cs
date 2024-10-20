@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DatabaseProvider.Models;
 
@@ -12,6 +13,5 @@ public partial class About
 
     public string Text { get; set; } = null!;
 
-    [JsonIgnore]
     public virtual Language FkLanguagesNavigation { get; set; } = null!;
 }

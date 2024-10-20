@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DatabaseProvider.Models;
 
@@ -16,12 +17,11 @@ public partial class Language
 
     public string TimeFormat { get; set; } = null!;
 
-    [JsonIgnore]
     public virtual ICollection<About> Abouts { get; set; } = new List<About>();
 
-    [JsonIgnore]
+    public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+
     public virtual ICollection<Contact> Contacts { get; set; } = new List<Contact>();
 
-    [JsonIgnore]
-    public virtual ICollection<PostsTranslation> PostsTranslations { get; set; } = new List<PostsTranslation>();
+    public virtual ICollection<ProductTranslation> ProductTranslations { get; set; } = new List<ProductTranslation>();
 }

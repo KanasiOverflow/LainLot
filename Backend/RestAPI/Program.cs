@@ -32,13 +32,27 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddSingleton<IRepository<About>>(new Repository<About>(context));
 builder.Services.AddSingleton<IRepository<AccessLevel>>(new Repository<AccessLevel>(context));
+builder.Services.AddSingleton<IRepository<Cart>>(new Repository<Cart>(context)); 
+builder.Services.AddSingleton<IRepository<Category>>(new Repository<Category>(context)); 
+builder.Services.AddSingleton<IRepository<CategoryHierarchy>>(new Repository<CategoryHierarchy>(context)); 
+builder.Services.AddSingleton<IRepository<Color>>(new Repository<Color>(context)); 
 builder.Services.AddSingleton<IRepository<Contact>>(new Repository<Contact>(context));
+builder.Services.AddSingleton<IRepository<CustomizableProduct>>(new Repository<CustomizableProduct>(context)); 
+builder.Services.AddSingleton<IRepository<CustomizationOrder>>(new Repository<CustomizationOrder>(context)); 
+builder.Services.AddSingleton<IRepository<FabricType>>(new Repository<FabricType>(context)); 
 builder.Services.AddSingleton<IRepository<Language>>(new Repository<Language>(context));
-builder.Services.AddSingleton<IRepository<Post>>(new Repository<Post>(context));
-builder.Services.AddSingleton<IRepository<PostsTranslation>>(new Repository<PostsTranslation>(context));
+builder.Services.AddSingleton<IRepository<Order>>(new Repository<Order>(context)); 
+builder.Services.AddSingleton<IRepository<OrderHistory>>(new Repository<OrderHistory>(context)); 
+builder.Services.AddSingleton<IRepository<OrderStatus>>(new Repository<OrderStatus>(context)); 
+builder.Services.AddSingleton<IRepository<Payment>>(new Repository<Payment>(context)); 
+builder.Services.AddSingleton<IRepository<Product>>(new Repository<Product>(context));
+builder.Services.AddSingleton<IRepository<ProductImage>>(new Repository<ProductImage>(context)); 
+builder.Services.AddSingleton<IRepository<ProductTranslation>>(new Repository<ProductTranslation>(context));
+builder.Services.AddSingleton<IRepository<Review>>(new Repository<Review>(context));
 builder.Services.AddSingleton<IRepository<User>>(new Repository<User>(context));
 builder.Services.AddSingleton<IRepository<UserProfile>>(new Repository<UserProfile>(context));
 builder.Services.AddSingleton<IRepository<UserRole>>(new Repository<UserRole>(context));
+
 
 var app = builder.Build();
 

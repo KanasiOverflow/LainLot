@@ -1,3 +1,4 @@
+using System.Text;
 using Moq;
 using NUnitTests.Classes;
 using RestAPI.Controllers;
@@ -17,10 +18,23 @@ namespace NUnitTests.RestAPI
         private Mock<ILogger<DatabaseController>> _logger;
         private IRepository<DB.About>? _aboutRepository;
         private IRepository<DB.AccessLevel>? _accessLevelRepository;
+        private IRepository<DB.Cart>? _cartRepository; 
+        private IRepository<DB.Category>? _categoryRepository; 
+        private IRepository<DB.CategoryHierarchy>? _categoryHierarchyRepository; 
+        private IRepository<DB.Color>? _colorRepository; 
         private IRepository<DB.Contact>? _contactRepository;
+        private IRepository<DB.CustomizableProduct>? _customizableProductRepository; 
+        private IRepository<DB.CustomizationOrder>? _customizationOrderRepository; 
+        private IRepository<DB.FabricType>? _fabricTypeRepository; 
         private IRepository<DB.Language>? _languageRepository;
-        private IRepository<DB.Post>? _postRepository;
-        private IRepository<DB.PostsTranslation>? _postsTranslationRepository;
+        private IRepository<DB.Order>? _orderRepository; 
+        private IRepository<DB.OrderHistory>? _orderHistoryRepository; 
+        private IRepository<DB.OrderStatus>? _orderStatusRepository; 
+        private IRepository<DB.Payment>? _paymentRepository; 
+        private IRepository<DB.Product>? _productRepository;
+        private IRepository<DB.ProductImage>? _productImageRepository; 
+        private IRepository<DB.ProductTranslation>? _productTranslationRepository; 
+        private IRepository<DB.Review>? _reviewRepository; 
         private IRepository<DB.User>? _userRepository;
         private IRepository<DB.UserProfile>? _userProfileRepository;
         private IRepository<DB.UserRole>? _userRoleRepository;
@@ -41,13 +55,26 @@ namespace NUnitTests.RestAPI
             // Create a fake DbContext
             _context = new DbContextFake(options);
 
-            // Create a fake data
+            // Create fake data
             var abouts = DatabaseDataFake.GetFakeAboutList();
             var accessLevels = DatabaseDataFake.GetFakeAccessLevelList();
+            var carts = DatabaseDataFake.GetFakeCartsList(); 
+            var categories = DatabaseDataFake.GetFakeCategoryList(); 
+            var categoryHierarchies = DatabaseDataFake.GetFakeCategoryHierarchyList(); 
+            var colors = DatabaseDataFake.GetFakeColorList(); 
             var contacts = DatabaseDataFake.GetFakeContactList();
+            var customizableProducts = DatabaseDataFake.GetFakeCustomizableProductList(); 
+            var customizationOrders = DatabaseDataFake.GetFakeCustomizationOrderList(); 
+            var fabricTypes = DatabaseDataFake.GetFakeFabricTypeList(); 
             var languages = DatabaseDataFake.GetFakeLanguageList();
-            var posts = DatabaseDataFake.GetFakePostList();
-            var postTranslations = DatabaseDataFake.GetFakePostsTranslationList();
+            var orders = DatabaseDataFake.GetFakeOrderList(); 
+            var orderHistories = DatabaseDataFake.GetFakeOrderHistoryList(); 
+            var orderStatuses = DatabaseDataFake.GetFakeOrderStatusList(); 
+            var payments = DatabaseDataFake.GetFakePaymentList(); 
+            var products = DatabaseDataFake.GetFakeProductList();
+            var productImages = DatabaseDataFake.GetFakeProductImageList(); 
+            var productTranslations = DatabaseDataFake.GetFakeProductTranslationList(); 
+            var reviews = DatabaseDataFake.GetFakeReviewList(); 
             var users = DatabaseDataFake.GetFakeUserList();
             var userProfiles = DatabaseDataFake.GetFakeUserProfileList();
             var userRoles = DatabaseDataFake.GetFakeUserRoleList();
@@ -55,10 +82,23 @@ namespace NUnitTests.RestAPI
             // Init base data in fake DbContext
             _context.Abouts.AddRange(abouts);
             _context.AccessLevels.AddRange(accessLevels);
+            _context.Carts.AddRange(carts); 
+            _context.Categories.AddRange(categories); 
+            _context.CategoryHierarchies.AddRange(categoryHierarchies); 
+            _context.Colors.AddRange(colors); 
             _context.Contacts.AddRange(contacts);
+            _context.CustomizableProducts.AddRange(customizableProducts); 
+            _context.CustomizationOrders.AddRange(customizationOrders); 
+            _context.FabricTypes.AddRange(fabricTypes); 
             _context.Languages.AddRange(languages);
-            _context.Posts.AddRange(posts);
-            _context.PostsTranslations.AddRange(postTranslations);
+            _context.Orders.AddRange(orders); 
+            _context.OrderHistories.AddRange(orderHistories); 
+            _context.OrderStatuses.AddRange(orderStatuses); 
+            _context.Payments.AddRange(payments); 
+            _context.Products.AddRange(products);
+            _context.ProductImages.AddRange(productImages); 
+            _context.ProductTranslations.AddRange(productTranslations); 
+            _context.Reviews.AddRange(reviews); 
             _context.Users.AddRange(users);
             _context.UserProfiles.AddRange(userProfiles);
             _context.UserRoles.AddRange(userRoles);
@@ -69,21 +109,48 @@ namespace NUnitTests.RestAPI
             _logger = new Mock<ILogger<DatabaseController>>();
             _aboutRepository = new Repository<DB.About>(_context);
             _accessLevelRepository = new Repository<DB.AccessLevel>(_context);
+            _cartRepository = new Repository<DB.Cart>(_context); 
+            _categoryRepository = new Repository<DB.Category>(_context); 
+            _categoryHierarchyRepository = new Repository<DB.CategoryHierarchy>(_context); 
+            _colorRepository = new Repository<DB.Color>(_context); 
             _contactRepository = new Repository<DB.Contact>(_context);
+            _customizableProductRepository = new Repository<DB.CustomizableProduct>(_context); 
+            _customizationOrderRepository = new Repository<DB.CustomizationOrder>(_context); 
+            _fabricTypeRepository = new Repository<DB.FabricType>(_context); 
             _languageRepository = new Repository<DB.Language>(_context);
-            _postRepository = new Repository<DB.Post>(_context);
-            _postsTranslationRepository = new Repository<DB.PostsTranslation>(_context);
+            _orderRepository = new Repository<DB.Order>(_context); 
+            _orderHistoryRepository = new Repository<DB.OrderHistory>(_context); 
+            _orderStatusRepository = new Repository<DB.OrderStatus>(_context); 
+            _paymentRepository = new Repository<DB.Payment>(_context); 
+            _productRepository = new Repository<DB.Product>(_context);
+            _productImageRepository = new Repository<DB.ProductImage>(_context); 
+            _productTranslationRepository = new Repository<DB.ProductTranslation>(_context); 
+            _reviewRepository = new Repository<DB.Review>(_context); 
             _userRepository = new Repository<DB.User>(_context);
             _userProfileRepository = new Repository<DB.UserProfile>(_context);
             _userRoleRepository = new Repository<DB.UserRole>(_context);
 
-            _restApiController = new DatabaseController(_logger.Object,
+            _restApiController = new DatabaseController(
+                _logger.Object,
                 _aboutRepository,
                 _accessLevelRepository,
+                _cartRepository, 
+                _categoryRepository, 
+                _categoryHierarchyRepository, 
+                _colorRepository, 
                 _contactRepository,
+                _customizableProductRepository, 
+                _customizationOrderRepository, 
+                _fabricTypeRepository, 
                 _languageRepository,
-                _postRepository,
-                _postsTranslationRepository,
+                _orderRepository, 
+                _orderHistoryRepository, 
+                _orderStatusRepository, 
+                _paymentRepository, 
+                _productRepository,
+                _productImageRepository, 
+                _productTranslationRepository, 
+                _reviewRepository, 
                 _userRepository,
                 _userProfileRepository,
                 _userRoleRepository);
@@ -91,6 +158,7 @@ namespace NUnitTests.RestAPI
             _limit = 100;
             _page = 1;
         }
+
 
         [TearDown]
         public void FinishTest()
@@ -275,6 +343,361 @@ namespace NUnitTests.RestAPI
 
         #endregion
 
+        #region Cart table
+
+        [Test]
+        public void GetCarts_Return_2_Items()
+        {
+            var result = _restApiController.GetCarts(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<Cart>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetCartById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetCartById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_Cart_Entity(int id)
+        {
+            var result = _restApiController.DeleteCart(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_Cart_Entity()
+        {
+            var entity = new Cart()
+            {
+                Id = 3,
+                FkUsers = 1,
+                FkProducts = 1,
+                Quantity = 2,
+                CreatedAt = DateTime.Now
+            };
+
+            var result = _restApiController.CreateCart(entity);
+
+            var list = _restApiController.GetCarts(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetCartById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<Cart>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Quantity, Is.EqualTo(entity.Quantity));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_Cart_Entity(int id)
+        {
+            var entity = _restApiController.GetCartById(id);
+
+            entity.Value.Quantity = 5;
+
+            _restApiController.UpdateCart(entity.Value);
+
+            var updateEntity = _restApiController.GetCartById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.Quantity, Is.EqualTo(entity.Value.Quantity));
+                Assert.That(entity?.Value?.Quantity, Is.EqualTo(updateEntity?.Value?.Quantity));
+            });
+        }
+
+        #endregion
+
+        #region Categories table
+
+        [Test]
+        public void GetCategories_Return_2_Items()
+        {
+            var result = _restApiController.GetCategories(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<Category>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetCategoryById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetCategoryById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_Category_Entity(int id)
+        {
+            var result = _restApiController.DeleteCategory(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_Category_Entity()
+        {
+            var entity = new Category()
+            {
+                Id = 3,
+                FkLanguages = 1,
+                Name = "New Category",
+                Description = "Category Description"
+            };
+
+            var result = _restApiController.CreateCategory(entity);
+
+            var list = _restApiController.GetCategories(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetCategoryById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<Category>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Name, Is.EqualTo(entity.Name));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_Category_Entity(int id)
+        {
+            var entity = _restApiController.GetCategoryById(id);
+
+            entity.Value.Name = "Updated Name";
+
+            _restApiController.UpdateCategory(entity.Value);
+
+            var updateEntity = _restApiController.GetCategoryById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.Name, Is.EqualTo(entity.Value.Name));
+                Assert.That(entity?.Value?.Name, Is.EqualTo(updateEntity?.Value?.Name));
+            });
+        }
+
+        #endregion
+
+        #region CategoryHierarchy table
+
+        [Test]
+        public void GetCategoryHierarchies_Return_2_Items()
+        {
+            var result = _restApiController.GetCategoryHierarchies(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CategoryHierarchy>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetCategoryHierarchyById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetCategoryHierarchyById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_CategoryHierarchy_Entity(int id)
+        {
+            var result = _restApiController.DeleteCategoryHierarchy(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_CategoryHierarchy_Entity()
+        {
+            var entity = new CategoryHierarchy()
+            {
+                Id = 3,
+                ParentId = 1,
+                FkCategories = 2
+            };
+
+            var result = _restApiController.CreateCategoryHierarchy(entity);
+
+            var list = _restApiController.GetCategoryHierarchies(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetCategoryHierarchyById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<CategoryHierarchy>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.FkCategories, Is.EqualTo(entity.FkCategories));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_CategoryHierarchy_Entity(int id)
+        {
+            var entity = _restApiController.GetCategoryHierarchyById(id);
+
+            entity.Value.ParentId = 2;
+
+            _restApiController.UpdateCategoryHierarchy(entity.Value);
+
+            var updateEntity = _restApiController.GetCategoryHierarchyById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.ParentId, Is.EqualTo(entity.Value.ParentId));
+                Assert.That(entity?.Value?.ParentId, Is.EqualTo(updateEntity?.Value?.ParentId));
+            });
+        }
+
+        #endregion
+
+        #region Colors table
+
+        [Test]
+        public void GetColors_Return_2_Items()
+        {
+            var result = _restApiController.GetColors(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<Color>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetColorById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetColorById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_Color_Entity(int id)
+        {
+            var result = _restApiController.DeleteColor(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_Color_Entity()
+        {
+            var entity = new Color()
+            {
+                Id = 3,
+                Name = "Purple",
+                HexCode = "#A020F0"
+            };
+
+            var result = _restApiController.CreateColor(entity);
+
+            var list = _restApiController.GetColors(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetColorById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<Color>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Name, Is.EqualTo(entity.Name));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_Color_Entity(int id)
+        {
+            var entity = _restApiController.GetColorById(id);
+
+            entity.Value.Name = "Updated Name";
+
+            _restApiController.UpdateColor(entity.Value);
+
+            var updateEntity = _restApiController.GetColorById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.Name, Is.EqualTo(entity.Value.Name));
+                Assert.That(entity?.Value?.Name, Is.EqualTo(updateEntity?.Value?.Name));
+            });
+        }
+
+        #endregion
+
         #region Contacts table
 
         [Test]
@@ -360,6 +783,275 @@ namespace NUnitTests.RestAPI
             {
                 Assert.That(updateEntity?.Value?.Email, Is.EqualTo(entity.Value.Email));
                 Assert.That(entity?.Value?.Email, Is.EqualTo(updateEntity?.Value?.Email));
+            });
+        }
+
+        #endregion
+
+        #region CustomizableProducts table
+
+        [Test]
+        public void GetCustomizableProducts_Return_2_Items()
+        {
+            var result = _restApiController.GetCustomizableProducts(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CustomizableProduct>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetCustomizableProductById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetCustomizableProductById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_CustomizableProduct_Entity(int id)
+        {
+            var result = _restApiController.DeleteCustomizableProduct(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_CustomizableProduct_Entity()
+        {
+            var entity = new CustomizableProduct()
+            {
+                Id = 3,
+                FkProducts = 1,
+                FkColors = 2,
+                FkFabricTypes = 3,
+                CustomizationDetails = "Custom Detail 1"
+            };
+
+            var result = _restApiController.CreateCustomizableProduct(entity);
+
+            var list = _restApiController.GetCustomizableProducts(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetCustomizableProductById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<CustomizableProduct>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.CustomizationDetails, Is.EqualTo(entity.CustomizationDetails));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_CustomizableProduct_Entity(int id)
+        {
+            var entity = _restApiController.GetCustomizableProductById(id);
+
+            entity.Value.CustomizationDetails = "Updated Detail";
+
+            _restApiController.UpdateCustomizableProduct(entity.Value);
+
+            var updateEntity = _restApiController.GetCustomizableProductById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.CustomizationDetails, Is.EqualTo(entity.Value.CustomizationDetails));
+                Assert.That(entity?.Value?.CustomizationDetails, Is.EqualTo(updateEntity?.Value?.CustomizationDetails));
+            });
+        }
+
+        #endregion
+
+        #region CustomizationOrders table
+
+        [Test]
+        public void GetCustomizationOrders_Return_2_Items()
+        {
+            var result = _restApiController.GetCustomizationOrders(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CustomizationOrder>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetCustomizationOrderById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetCustomizationOrderById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_CustomizationOrder_Entity(int id)
+        {
+            var result = _restApiController.DeleteCustomizationOrder(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_CustomizationOrder_Entity()
+        {
+            var entity = new CustomizationOrder()
+            {
+                Id = 3,
+                FkOrders = 1,
+                FkProducts = 2,
+                FkFabricTypes = 1,
+                FkColors = 1,
+                Size = "M",
+                AdditionalNotes = "Additional Note"
+            };
+
+            var result = _restApiController.CreateCustomizationOrder(entity);
+
+            var list = _restApiController.GetCustomizationOrders(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetCustomizationOrderById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<CustomizationOrder>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.AdditionalNotes, Is.EqualTo(entity.AdditionalNotes));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_CustomizationOrder_Entity(int id)
+        {
+            var entity = _restApiController.GetCustomizationOrderById(id);
+
+            entity.Value.AdditionalNotes = "Updated Note";
+
+            _restApiController.UpdateCustomizationOrder(entity.Value);
+
+            var updateEntity = _restApiController.GetCustomizationOrderById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.AdditionalNotes, Is.EqualTo(entity.Value.AdditionalNotes));
+                Assert.That(entity?.Value?.AdditionalNotes, Is.EqualTo(updateEntity?.Value?.AdditionalNotes));
+            });
+        }
+
+        #endregion
+
+        #region FabricTypes table
+
+        [Test]
+        public void GetFabricTypes_Return_2_Items()
+        {
+            var result = _restApiController.GetFabricTypes(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<FabricType>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetFabricTypeById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetFabricTypeById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_FabricType_Entity(int id)
+        {
+            var result = _restApiController.DeleteFabricType(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_FabricType_Entity()
+        {
+            var entity = new FabricType()
+            {
+                Id = 3,
+                Name = "Silk"
+            };
+
+            var result = _restApiController.CreateFabricType(entity);
+
+            var list = _restApiController.GetFabricTypes(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetFabricTypeById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<FabricType>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Name, Is.EqualTo(entity.Name));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_FabricType_Entity(int id)
+        {
+            var entity = _restApiController.GetFabricTypeById(id);
+
+            entity.Value.Name = "Updated Name";
+
+            _restApiController.UpdateFabricType(entity.Value);
+
+            var updateEntity = _restApiController.GetFabricTypeById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.Name, Is.EqualTo(entity.Value.Name));
+                Assert.That(entity?.Value?.Name, Is.EqualTo(updateEntity?.Value?.Name));
             });
         }
 
@@ -456,26 +1148,26 @@ namespace NUnitTests.RestAPI
 
         #endregion
 
-        #region Posts table
+        #region Orders
 
         [Test]
-        public void GetPosts_Return_2_Items()
+        public void GetOrders_Return_2_Items()
         {
-            var result = _restApiController.GetPosts(_limit, _page);
+            var result = _restApiController.GetOrders(_limit, _page);
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result.Value as List<Post>, Has.Count.EqualTo(2));
+                Assert.That(result.Value as List<Order>, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetPostById_Return_Correct_Entity(int id)
+        public void GetOrderById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetPostById(id);
+            var result = _restApiController.GetOrderById(id);
 
             Assert.Multiple(() =>
             {
@@ -487,9 +1179,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Post_Entity(int id)
+        public void Delete_Order_Entity(int id)
         {
-            var result = _restApiController.DeletePost(id);
+            var result = _restApiController.DeleteOrder(id);
 
             Assert.Multiple(() =>
             {
@@ -499,31 +1191,32 @@ namespace NUnitTests.RestAPI
         }
 
         [Test]
-        public void Add_Post_Entity()
+        public void Add_Order_Entity()
         {
-            var entity = new Post()
+            var entity = new Order()
             {
                 Id = 3,
-                PostDate = DateOnly.Parse("07/02/2024"),
-                PostTime = TimeOnly.Parse("12:00:00"),
-                Name = "Name 3",
-                Description = "Description 3",
-                Text = "Text 3",
-                Tags = "#Tag3",
-                Photo = "Photo 3",
-                VisitCount = 3
+                FkUsers = 1,
+                FkOrderStatus = 1,
+                TotalAmount = 150.50M,
+                OrderDate = DateTime.Now,
+                ShippingAddress = "ShippingAddress",
+                TrackingNumber = "TrackingNumber-000",
+                ShippingMethod = "ShippingMethod",
+                PaymentStatus = "PaymentStatus",
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
 
-            var result = _restApiController.CreatePost(entity);
+            var result = _restApiController.CreateOrder(entity);
 
-            var list = _restApiController.GetPosts(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetPostById(3);
+            var list = _restApiController.GetOrders(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetOrderById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list.Value as List<Post>, Has.Count.EqualTo(3));
+                Assert.That(list.Value as List<Order>, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded.Value?.VisitCount, Is.EqualTo(entity.VisitCount));
                 Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
             });
         }
@@ -531,45 +1224,45 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_Post_Entity(int id)
+        public void Update_Order_Entity(int id)
         {
-            var entity = _restApiController.GetPostById(id);
+            var entity = _restApiController.GetOrderById(id);
 
-            entity.Value.Text = "Text 3";
+            entity.Value.TotalAmount = 200.75M;
 
-            _restApiController.UpdatePost(entity.Value);
+            _restApiController.UpdateOrder(entity.Value);
 
-            var updateEntity = _restApiController.GetPostById(id);
+            var updateEntity = _restApiController.GetOrderById(id);
 
             Assert.Multiple(() =>
             {
-                Assert.That(updateEntity?.Value?.Text, Is.EqualTo(entity.Value.Text));
-                Assert.That(entity?.Value?.Text, Is.EqualTo(updateEntity?.Value?.Text));
+                Assert.That(updateEntity?.Value?.TotalAmount, Is.EqualTo(entity.Value.TotalAmount));
+                Assert.That(entity?.Value?.TotalAmount, Is.EqualTo(updateEntity?.Value?.TotalAmount));
             });
         }
 
         #endregion
 
-        #region PostTranslations table
+        #region OrderHistory
 
         [Test]
-        public void GetPostTranslations_Return_2_Items()
+        public void GetOrderHistory_Return_2_Items()
         {
-            var result = _restApiController.GetPostsTranslations(_limit, _page);
+            var result = _restApiController.GetOrderHistories(_limit, _page);
 
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result.Value as List<PostsTranslation>, Has.Count.EqualTo(2));
+                Assert.That(result.Value as List<OrderHistory>, Has.Count.EqualTo(2));
             });
         }
 
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetPostTranslationById_Return_Correct_Entity(int id)
+        public void GetOrderHistoryById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetPostsTranslationById(id);
+            var result = _restApiController.GetOrderHistoryById(id);
 
             Assert.Multiple(() =>
             {
@@ -581,9 +1274,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_PostTranslation_Entity(int id)
+        public void Delete_OrderHistory_Entity(int id)
         {
-            var result = _restApiController.DeletePostsTranslation(id);
+            var result = _restApiController.DeleteOrderHistory(id);
 
             Assert.Multiple(() =>
             {
@@ -593,28 +1286,25 @@ namespace NUnitTests.RestAPI
         }
 
         [Test]
-        public void Add_PostTranslation_Entity()
+        public void Add_OrderHistory_Entity()
         {
-            var entity = new PostsTranslation()
+            var entity = new OrderHistory()
             {
                 Id = 3,
-                FkLanguages = 1,
-                FkPosts = 1,
-                Name = "Name 3",
-                Description = "Description 3",
-                Text = "Text 3"
+                FkOrders = 1,
+                Status = 1,
+                ChangedAt = DateTime.Now
             };
 
-            var result = _restApiController.CreatePostsTranslation(entity);
+            var result = _restApiController.CreateOrderHistory(entity);
 
-            var list = _restApiController.GetPostsTranslations(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetPostsTranslationById(3);
+            var list = _restApiController.GetOrderHistories(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetOrderHistoryById(3);
 
             Assert.Multiple(() =>
             {
-                Assert.That(list.Value as List<PostsTranslation>, Has.Count.EqualTo(3));
+                Assert.That(list.Value as List<OrderHistory>, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded.Value?.FkLanguages, Is.EqualTo(entity.FkLanguages));
                 Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
             });
         }
@@ -622,20 +1312,558 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_PostTranslation_Entity(int id)
+        public void Update_OrderHistory_Entity(int id)
         {
-            var entity = _restApiController.GetPostsTranslationById(id);
+            var entity = _restApiController.GetOrderHistoryById(id);
 
-            entity.Value.Text = "Text 3";
+            entity.Value.Status = 3;
 
-            _restApiController.UpdatePostsTranslation(entity.Value);
+            _restApiController.UpdateOrderHistory(entity.Value);
 
-            var updateEntity = _restApiController.GetPostsTranslationById(id);
+            var updateEntity = _restApiController.GetOrderHistoryById(id);
 
             Assert.Multiple(() =>
             {
-                Assert.That(updateEntity?.Value?.Text, Is.EqualTo(entity.Value.Text));
-                Assert.That(entity?.Value?.Text, Is.EqualTo(updateEntity?.Value?.Text));
+                Assert.That(updateEntity?.Value?.Status, Is.EqualTo(entity.Value.Status));
+                Assert.That(entity?.Value?.Status, Is.EqualTo(updateEntity?.Value?.Status));
+            });
+        }
+
+        #endregion
+
+        #region OrderStatuses table
+
+        [Test]
+        public void GetOrderStatuses_Return_2_Items()
+        {
+            var result = _restApiController.GetOrderStatuses(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<OrderStatus>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetOrderStatusById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetOrderStatusById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_OrderStatus_Entity(int id)
+        {
+            var result = _restApiController.DeleteOrderStatus(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_OrderStatus_Entity()
+        {
+            var entity = new OrderStatus()
+            {
+                Id = 3,
+                Status = "New Order"
+            };
+
+            var result = _restApiController.CreateOrderStatus(entity);
+
+            var list = _restApiController.GetOrderStatuses(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetOrderStatusById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<OrderStatus>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Status, Is.EqualTo(entity.Status));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_OrderStatus_Entity(int id)
+        {
+            var entity = _restApiController.GetOrderStatusById(id);
+
+            entity.Value.Status = "Updated Status";
+
+            _restApiController.UpdateOrderStatus(entity.Value);
+
+            var updateEntity = _restApiController.GetOrderStatusById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.Status, Is.EqualTo(entity.Value.Status));
+                Assert.That(entity?.Value?.Status, Is.EqualTo(updateEntity?.Value?.Status));
+            });
+        }
+
+        #endregion
+
+        #region Payments table
+
+        [Test]
+        public void GetPayments_Return_2_Items()
+        {
+            var result = _restApiController.GetPayments(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<Payment>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetPaymentById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetPaymentById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_Payment_Entity(int id)
+        {
+            var result = _restApiController.DeletePayment(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_Payment_Entity()
+        {
+            var entity = new Payment()
+            {
+                Id = 3,
+                FkOrders = 1,
+                PaymentDate = DateTime.Now,
+                Amount = 99.99m,
+                PaymentMethod = "Credit Card",
+                Status = "Completed"
+            };
+
+            var result = _restApiController.CreatePayment(entity);
+
+            var list = _restApiController.GetPayments(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetPaymentById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<Payment>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Amount, Is.EqualTo(entity.Amount));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_Payment_Entity(int id)
+        {
+            var entity = _restApiController.GetPaymentById(id);
+
+            entity.Value.Status = "Pending";
+
+            _restApiController.UpdatePayment(entity.Value);
+
+            var updateEntity = _restApiController.GetPaymentById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.Status, Is.EqualTo(entity.Value.Status));
+                Assert.That(entity?.Value?.Status, Is.EqualTo(updateEntity?.Value?.Status));
+            });
+        }
+
+        #endregion
+
+        #region Products table
+
+        [Test]
+        public void GetProducts_Return_2_Items()
+        {
+            var result = _restApiController.GetProducts(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<Product>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetProductById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetProductById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_Product_Entity(int id)
+        {
+            var result = _restApiController.DeleteProduct(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_Product_Entity()
+        {
+            var entity = new Product()
+            {
+                Id = 3,
+                Price = 19.99m,
+                StockQuantity = 100,
+                IsActive = true,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
+            };
+
+            var result = _restApiController.CreateProduct(entity);
+
+            var list = _restApiController.GetProducts(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetProductById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<Product>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Price, Is.EqualTo(entity.Price));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_Product_Entity(int id)
+        {
+            var entity = _restApiController.GetProductById(id);
+
+            entity.Value.Price = 29.99m;
+
+            _restApiController.UpdateProduct(entity.Value);
+
+            var updateEntity = _restApiController.GetProductById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.Price, Is.EqualTo(entity.Value.Price));
+                Assert.That(entity?.Value?.Price, Is.EqualTo(updateEntity?.Value?.Price));
+            });
+        }
+
+        #endregion
+
+        #region ProductImages table
+
+        [Test]
+        public void GetProductImages_Return_2_Items()
+        {
+            var result = _restApiController.GetProductImages(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<ProductImage>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetProductImageById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetProductImageById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_ProductImage_Entity(int id)
+        {
+            var result = _restApiController.DeleteProductImage(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_ProductImage_Entity()
+        {
+            var entity = new ProductImage()
+            {
+                Id = 3,
+                FkProducts = 1,
+                ImageData = Encoding.ASCII.GetBytes("https://example.com/image3.jpg")
+            };
+
+            var result = _restApiController.CreateProductImage(entity);
+
+            var list = _restApiController.GetProductImages(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetProductImageById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<ProductImage>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.ImageData, Is.EqualTo(entity.ImageData));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_ProductImage_Entity(int id)
+        {
+            var entity = _restApiController.GetProductImageById(id);
+
+            entity.Value.ImageData = Encoding.ASCII.GetBytes("https://example.com/updated_image.jpg");
+
+            _restApiController.UpdateProductImage(entity.Value);
+
+            var updateEntity = _restApiController.GetProductImageById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.ImageData, Is.EqualTo(entity.Value.ImageData));
+                Assert.That(entity?.Value?.ImageData, Is.EqualTo(updateEntity?.Value?.ImageData));
+            });
+        }
+
+        #endregion
+
+        #region ProductTranslations table
+
+        [Test]
+        public void GetProductTranslations_Return_2_Items()
+        {
+            var result = _restApiController.GetProductTranslations(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<ProductTranslation>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetProductTranslationById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetProductTranslationById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_ProductTranslation_Entity(int id)
+        {
+            var result = _restApiController.DeleteProductTranslation(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_ProductTranslation_Entity()
+        {
+            var entity = new ProductTranslation()
+            {
+                Id = 3,
+                FkLanguages = 1,
+                FkProducts = 1,               
+                Name = "Product 3",
+                Description = "Description for Product 3"
+            };
+
+            var result = _restApiController.CreateProductTranslation(entity);
+
+            var list = _restApiController.GetProductTranslations(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetProductTranslationById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<ProductTranslation>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Name, Is.EqualTo(entity.Name));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_ProductTranslation_Entity(int id)
+        {
+            var entity = _restApiController.GetProductTranslationById(id);
+
+            entity.Value.Name = "Updated Product Name";
+
+            _restApiController.UpdateProductTranslation(entity.Value);
+
+            var updateEntity = _restApiController.GetProductTranslationById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.Name, Is.EqualTo(entity.Value.Name));
+                Assert.That(entity?.Value?.Name, Is.EqualTo(updateEntity?.Value?.Name));
+            });
+        }
+
+        #endregion
+
+        #region Reviews table
+
+        [Test]
+        public void GetReviews_Return_2_Items()
+        {
+            var result = _restApiController.GetReviews(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<Review>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void GetReviewById_Return_Correct_Entity(int id)
+        {
+            var result = _restApiController.GetReviewById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Delete_Review_Entity(int id)
+        {
+            var result = _restApiController.DeleteReview(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public void Add_Review_Entity()
+        {
+            var entity = new Review()
+            {
+                Id = 3,
+                FkProducts = 1,
+                FkUsers = 1,
+                Rating = 5,
+                Comment = "Excellent product!",
+                CreatedAt = DateTime.Now
+            };
+
+            var result = _restApiController.CreateReview(entity);
+
+            var list = _restApiController.GetReviews(_limit, _page);
+            var entityThatWasAdded = _restApiController.GetReviewById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<Review>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Comment, Is.EqualTo(entity.Comment));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public void Update_Review_Entity(int id)
+        {
+            var entity = _restApiController.GetReviewById(id);
+
+            entity.Value.Comment = "Updated comment.";
+
+            _restApiController.UpdateReview(entity.Value);
+
+            var updateEntity = _restApiController.GetReviewById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.Comment, Is.EqualTo(entity.Value.Comment));
+                Assert.That(entity?.Value?.Comment, Is.EqualTo(updateEntity?.Value?.Comment));
             });
         }
 
@@ -693,8 +1921,6 @@ namespace NUnitTests.RestAPI
                 Login = "Login 3",
                 Email = "Email 3",
                 Password = "Password 3",
-                DateLink = "DateLink 3",
-                TimeLink = "TimeLink 3",
                 ConfirmEmail = 0,
                 Hash = "Hash 3"
             };
@@ -784,14 +2010,11 @@ namespace NUnitTests.RestAPI
             {
                 Id = 3,
                 FkUsers = 1,
-                CreateDate = "CreateDate 3",
-                CreateTime = "CreateTime 3",
                 FirstName = "FirstName 3",
                 LastName = "LastName 3",
                 MiddleName = "MiddleName 3",
                 Address = "Address 3",
                 City = "City 3",
-                ZipPostCode = 00000,
                 StateProvince = "StateProvince 3",
                 Country = "Country 3",
                 Phone = "Phone 3",
