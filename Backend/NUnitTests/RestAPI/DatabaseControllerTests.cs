@@ -176,7 +176,7 @@ namespace NUnitTests.RestAPI
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result.Value as List<DB.About>, Has.Count.EqualTo(2));
+                Assert.That(result.Value as List<About>, Has.Count.EqualTo(2));
             });           
         }
 
@@ -658,7 +658,7 @@ namespace NUnitTests.RestAPI
             var entity = new Color()
             {
                 Id = 3,
-                Name = "Purple"
+                Name = "#A020F0"
             };
 
             var result = _restApiController.CreateColor(entity);
