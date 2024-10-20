@@ -1,24 +1,19 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DatabaseProvider.Models;
 
-public partial class PostsTranslation
+public partial class Category
 {
     public int Id { get; set; }
 
     public int FkLanguages { get; set; }
 
-    public int FkPosts { get; set; }
-
     public string Name { get; set; } = null!;
 
     public string Description { get; set; } = null!;
 
-    public string Text { get; set; } = null!;
+    public virtual ICollection<CategoryHierarchy> CategoryHierarchies { get; set; } = new List<CategoryHierarchy>();
 
-    [JsonIgnore]
     public virtual Language FkLanguagesNavigation { get; set; } = null!;
-
-    [JsonIgnore]
-    public virtual Post FkPostsNavigation { get; set; } = null!;
 }

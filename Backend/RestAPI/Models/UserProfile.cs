@@ -6,10 +6,6 @@ public class UserProfile
 
     public int FkUsers { get; set; }
 
-    public string CreateDate { get; set; } = null!;
-
-    public string CreateTime { get; set; } = null!;
-
     public string? FirstName { get; set; }
 
     public string? LastName { get; set; }
@@ -20,7 +16,7 @@ public class UserProfile
 
     public string? City { get; set; }
 
-    public int? ZipPostCode { get; set; }
+    public string? ZipPostCode { get; set; }
 
     public string? StateProvince { get; set; }
 
@@ -29,4 +25,8 @@ public class UserProfile
     public string? Phone { get; set; }
 
     public string? Avatar { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
 }

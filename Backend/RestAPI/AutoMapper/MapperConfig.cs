@@ -8,7 +8,7 @@ namespace RestAPI.AutoMapper
     {
         public static Mapper InitializeAutomapper()
         {
-            //Provide all the Mapping Configuration
+            // Provide all the Mapping Configuration
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AllowNullCollections = true;
@@ -16,7 +16,7 @@ namespace RestAPI.AutoMapper
 
                 #region API -> DB
 
-                //Configuring API to Database
+                // Configuring API to Database
                 cfg.CreateMap<API.About, DB.About>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkLanguages, opt => opt.MapFrom(s => s.FkLanguages))
@@ -28,12 +28,55 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Level, opt => opt.MapFrom(s => s.Level))
                     .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description));
 
+                cfg.CreateMap<API.Cart, DB.Cart>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
+                    .ForMember(d => d.Quantity, opt => opt.MapFrom(s => s.Quantity));
+
+                cfg.CreateMap<API.Category, DB.Category>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkLanguages, opt => opt.MapFrom(s => s.FkLanguages))
+                    .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
+                    .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description));
+
+                cfg.CreateMap<API.CategoryHierarchy, DB.CategoryHierarchy>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.ParentId, opt => opt.MapFrom(s => s.ParentId))
+                    .ForMember(d => d.FkCategories, opt => opt.MapFrom(s => s.FkCategories));
+
+                cfg.CreateMap<API.Color, DB.Color>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
+                    .ForMember(d => d.HexCode, opt => opt.MapFrom(s => s.HexCode));
+
                 cfg.CreateMap<API.Contact, DB.Contact>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkLanguages, opt => opt.MapFrom(s => s.FkLanguages))
                     .ForMember(d => d.Address, opt => opt.MapFrom(s => s.Address))
                     .ForMember(d => d.Phone, opt => opt.MapFrom(s => s.Phone))
                     .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email));
+
+                cfg.CreateMap<API.CustomizableProduct, DB.CustomizableProduct>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
+                    .ForMember(d => d.FkFabricTypes, opt => opt.MapFrom(s => s.FkFabricTypes))
+                    .ForMember(d => d.FkColors, opt => opt.MapFrom(s => s.FkColors))
+                    .ForMember(d => d.SizeOptions, opt => opt.MapFrom(s => s.SizeOptions))
+                    .ForMember(d => d.CustomizationDetails, opt => opt.MapFrom(s => s.CustomizationDetails));
+
+                cfg.CreateMap<API.CustomizationOrder, DB.CustomizationOrder>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
+                    .ForMember(d => d.FkFabricTypes, opt => opt.MapFrom(s => s.FkFabricTypes))
+                    .ForMember(d => d.FkColors, opt => opt.MapFrom(s => s.FkColors))
+                    .ForMember(d => d.Size, opt => opt.MapFrom(s => s.Size))
+                    .ForMember(d => d.AdditionalNotes, opt => opt.MapFrom(s => s.AdditionalNotes));
+
+                cfg.CreateMap<API.FabricType, DB.FabricType>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name));
 
                 cfg.CreateMap<API.Language, DB.Language>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -43,24 +86,60 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.DateFormat, opt => opt.MapFrom(s => s.DateFormat))
                     .ForMember(d => d.TimeFormat, opt => opt.MapFrom(s => s.TimeFormat));
 
-                cfg.CreateMap<API.Post, DB.Post>()
+                cfg.CreateMap<API.Order, DB.Order>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
-                    .ForMember(d => d.PostDate, opt => opt.MapFrom(s => s.PostDate))
-                    .ForMember(d => d.PostTime, opt => opt.MapFrom(s => s.PostTime))
-                    .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
-                    .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description))
-                    .ForMember(d => d.Text, opt => opt.MapFrom(s => s.Text))
-                    .ForMember(d => d.Tags, opt => opt.MapFrom(s => s.Tags))
-                    .ForMember(d => d.Photo, opt => opt.MapFrom(s => s.Photo))
-                    .ForMember(d => d.VisitCount, opt => opt.MapFrom(s => s.VisitCount));
+                    .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers))
+                    .ForMember(d => d.FkOrderStatus, opt => opt.MapFrom(s => s.FkOrderStatus))
+                    .ForMember(d => d.TotalAmount, opt => opt.MapFrom(s => s.TotalAmount))
+                    .ForMember(d => d.OrderDate, opt => opt.MapFrom(s => s.OrderDate))
+                    .ForMember(d => d.ShippingAddress, opt => opt.MapFrom(s => s.ShippingAddress))
+                    .ForMember(d => d.TrackingNumber, opt => opt.MapFrom(s => s.TrackingNumber))
+                    .ForMember(d => d.ShippingMethod, opt => opt.MapFrom(s => s.ShippingMethod))
+                    .ForMember(d => d.PaymentStatus, opt => opt.MapFrom(s => s.PaymentStatus));
 
-                cfg.CreateMap<API.PostsTranslation, DB.PostsTranslation>()
+                cfg.CreateMap<API.OrderHistory, DB.OrderHistory>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders))
+                    .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status))
+                    .ForMember(d => d.ChangedAt, opt => opt.MapFrom(s => s.ChangedAt));
+
+                cfg.CreateMap<API.OrderStatus, DB.OrderStatus>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status));
+
+                cfg.CreateMap<API.Payment, DB.Payment>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders))
+                    .ForMember(d => d.PaymentDate, opt => opt.MapFrom(s => s.PaymentDate))
+                    .ForMember(d => d.Amount, opt => opt.MapFrom(s => s.Amount))
+                    .ForMember(d => d.PaymentMethod, opt => opt.MapFrom(s => s.PaymentMethod));
+
+                cfg.CreateMap<API.Product, DB.Product>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Price, opt => opt.MapFrom(s => s.Price))
+                    .ForMember(d => d.StockQuantity, opt => opt.MapFrom(s => s.StockQuantity))
+                    .ForMember(d => d.IsActive, opt => opt.MapFrom(s => s.IsActive))
+                    .ForMember(d => d.IsCustomizable, opt => opt.MapFrom(s => s.IsCustomizable));
+
+                cfg.CreateMap<API.ProductImage, DB.ProductImage>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
+                    .ForMember(d => d.ImageData, opt => opt.MapFrom(s => s.ImageData));
+
+                cfg.CreateMap<API.ProductTranslation, DB.ProductTranslation>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkLanguages, opt => opt.MapFrom(s => s.FkLanguages))
-                    .ForMember(d => d.FkPosts, opt => opt.MapFrom(s => s.FkPosts))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
                     .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
-                    .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description))
-                    .ForMember(d => d.Text, opt => opt.MapFrom(s => s.Text));
+                    .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description));
+
+                cfg.CreateMap<API.Review, DB.Review>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
+                    .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers))
+                    .ForMember(d => d.Rating, opt => opt.MapFrom(s => s.Rating))
+                    .ForMember(d => d.Comment, opt => opt.MapFrom(s => s.Comment))
+                    .ForMember(d => d.CreatedAt, opt => opt.MapFrom(s => s.CreatedAt));
 
                 cfg.CreateMap<API.User, DB.User>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -68,16 +147,12 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Login, opt => opt.MapFrom(s => s.Login))
                     .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email))
                     .ForMember(d => d.Password, opt => opt.MapFrom(s => s.Password))
-                    .ForMember(d => d.DateLink, opt => opt.MapFrom(s => s.DateLink))
-                    .ForMember(d => d.TimeLink, opt => opt.MapFrom(s => s.TimeLink))
                     .ForMember(d => d.ConfirmEmail, opt => opt.MapFrom(s => s.ConfirmEmail))
                     .ForMember(d => d.Hash, opt => opt.MapFrom(s => s.Hash));
 
                 cfg.CreateMap<API.UserProfile, DB.UserProfile>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers))
-                    .ForMember(d => d.CreateDate, opt => opt.MapFrom(s => s.CreateDate))
-                    .ForMember(d => d.CreateTime, opt => opt.MapFrom(s => s.CreateTime))
                     .ForMember(d => d.FirstName, opt => opt.MapFrom(s => s.FirstName))
                     .ForMember(d => d.LastName, opt => opt.MapFrom(s => s.LastName))
                     .ForMember(d => d.MiddleName, opt => opt.MapFrom(s => s.MiddleName))
@@ -98,7 +173,6 @@ namespace RestAPI.AutoMapper
 
                 #region DB -> API
 
-                //Configuring Database to API
                 cfg.CreateMap<DB.About, API.About>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkLanguages, opt => opt.MapFrom(s => s.FkLanguages))
@@ -110,12 +184,55 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Level, opt => opt.MapFrom(s => s.Level))
                     .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description));
 
+                cfg.CreateMap<DB.Cart, API.Cart>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
+                    .ForMember(d => d.Quantity, opt => opt.MapFrom(s => s.Quantity));
+
+                cfg.CreateMap<DB.Category, API.Category>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkLanguages, opt => opt.MapFrom(s => s.FkLanguages))
+                    .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
+                    .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description));
+
+                cfg.CreateMap<DB.CategoryHierarchy, API.CategoryHierarchy>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.ParentId, opt => opt.MapFrom(s => s.ParentId))
+                    .ForMember(d => d.FkCategories, opt => opt.MapFrom(s => s.FkCategories));
+
+                cfg.CreateMap<DB.Color, API.Color>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
+                    .ForMember(d => d.HexCode, opt => opt.MapFrom(s => s.HexCode));
+
                 cfg.CreateMap<DB.Contact, API.Contact>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkLanguages, opt => opt.MapFrom(s => s.FkLanguages))
                     .ForMember(d => d.Address, opt => opt.MapFrom(s => s.Address))
                     .ForMember(d => d.Phone, opt => opt.MapFrom(s => s.Phone))
                     .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email));
+
+                cfg.CreateMap<DB.CustomizableProduct, API.CustomizableProduct>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
+                    .ForMember(d => d.FkFabricTypes, opt => opt.MapFrom(s => s.FkFabricTypes))
+                    .ForMember(d => d.FkColors, opt => opt.MapFrom(s => s.FkColors))
+                    .ForMember(d => d.SizeOptions, opt => opt.MapFrom(s => s.SizeOptions))
+                    .ForMember(d => d.CustomizationDetails, opt => opt.MapFrom(s => s.CustomizationDetails));
+
+                cfg.CreateMap<DB.CustomizationOrder, API.CustomizationOrder>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
+                    .ForMember(d => d.FkFabricTypes, opt => opt.MapFrom(s => s.FkFabricTypes))
+                    .ForMember(d => d.FkColors, opt => opt.MapFrom(s => s.FkColors))
+                    .ForMember(d => d.Size, opt => opt.MapFrom(s => s.Size))
+                    .ForMember(d => d.AdditionalNotes, opt => opt.MapFrom(s => s.AdditionalNotes));
+
+                cfg.CreateMap<DB.FabricType, API.FabricType>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name));
 
                 cfg.CreateMap<DB.Language, API.Language>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -125,24 +242,60 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.DateFormat, opt => opt.MapFrom(s => s.DateFormat))
                     .ForMember(d => d.TimeFormat, opt => opt.MapFrom(s => s.TimeFormat));
 
-                cfg.CreateMap<DB.Post, API.Post>()
+                cfg.CreateMap<DB.Order, API.Order>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
-                    .ForMember(d => d.PostDate, opt => opt.MapFrom(s => s.PostDate))
-                    .ForMember(d => d.PostTime, opt => opt.MapFrom(s => s.PostTime))
-                    .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
-                    .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description))
-                    .ForMember(d => d.Text, opt => opt.MapFrom(s => s.Text))
-                    .ForMember(d => d.Tags, opt => opt.MapFrom(s => s.Tags))
-                    .ForMember(d => d.Photo, opt => opt.MapFrom(s => s.Photo))
-                    .ForMember(d => d.VisitCount, opt => opt.MapFrom(s => s.VisitCount));
+                    .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers))
+                    .ForMember(d => d.FkOrderStatus, opt => opt.MapFrom(s => s.FkOrderStatus))
+                    .ForMember(d => d.TotalAmount, opt => opt.MapFrom(s => s.TotalAmount))
+                    .ForMember(d => d.OrderDate, opt => opt.MapFrom(s => s.OrderDate))
+                    .ForMember(d => d.ShippingAddress, opt => opt.MapFrom(s => s.ShippingAddress))
+                    .ForMember(d => d.TrackingNumber, opt => opt.MapFrom(s => s.TrackingNumber))
+                    .ForMember(d => d.ShippingMethod, opt => opt.MapFrom(s => s.ShippingMethod))
+                    .ForMember(d => d.PaymentStatus, opt => opt.MapFrom(s => s.PaymentStatus));
 
-                cfg.CreateMap<DB.PostsTranslation, API.PostsTranslation>()
+                cfg.CreateMap<DB.OrderHistory, API.OrderHistory>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders))
+                    .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status))
+                    .ForMember(d => d.ChangedAt, opt => opt.MapFrom(s => s.ChangedAt));
+
+                cfg.CreateMap<DB.OrderStatus, API.OrderStatus>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status));
+
+                cfg.CreateMap<DB.Payment, API.Payment>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders))
+                    .ForMember(d => d.PaymentDate, opt => opt.MapFrom(s => s.PaymentDate))
+                    .ForMember(d => d.Amount, opt => opt.MapFrom(s => s.Amount))
+                    .ForMember(d => d.PaymentMethod, opt => opt.MapFrom(s => s.PaymentMethod));
+
+                cfg.CreateMap<DB.Product, API.Product>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Price, opt => opt.MapFrom(s => s.Price))
+                    .ForMember(d => d.StockQuantity, opt => opt.MapFrom(s => s.StockQuantity))
+                    .ForMember(d => d.IsActive, opt => opt.MapFrom(s => s.IsActive))
+                    .ForMember(d => d.IsCustomizable, opt => opt.MapFrom(s => s.IsCustomizable));
+
+                cfg.CreateMap<DB.ProductImage, API.ProductImage>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
+                    .ForMember(d => d.ImageData, opt => opt.MapFrom(s => s.ImageData));
+
+                cfg.CreateMap<DB.ProductTranslation, API.ProductTranslation>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkLanguages, opt => opt.MapFrom(s => s.FkLanguages))
-                    .ForMember(d => d.FkPosts, opt => opt.MapFrom(s => s.FkPosts))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
                     .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
-                    .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description))
-                    .ForMember(d => d.Text, opt => opt.MapFrom(s => s.Text));
+                    .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description));
+
+                cfg.CreateMap<DB.Review, API.Review>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkProducts, opt => opt.MapFrom(s => s.FkProducts))
+                    .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers))
+                    .ForMember(d => d.Rating, opt => opt.MapFrom(s => s.Rating))
+                    .ForMember(d => d.Comment, opt => opt.MapFrom(s => s.Comment))
+                    .ForMember(d => d.CreatedAt, opt => opt.MapFrom(s => s.CreatedAt));
 
                 cfg.CreateMap<DB.User, API.User>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -150,16 +303,12 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Login, opt => opt.MapFrom(s => s.Login))
                     .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email))
                     .ForMember(d => d.Password, opt => opt.MapFrom(s => s.Password))
-                    .ForMember(d => d.DateLink, opt => opt.MapFrom(s => s.DateLink))
-                    .ForMember(d => d.TimeLink, opt => opt.MapFrom(s => s.TimeLink))
                     .ForMember(d => d.ConfirmEmail, opt => opt.MapFrom(s => s.ConfirmEmail))
                     .ForMember(d => d.Hash, opt => opt.MapFrom(s => s.Hash));
 
                 cfg.CreateMap<DB.UserProfile, API.UserProfile>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers))
-                    .ForMember(d => d.CreateDate, opt => opt.MapFrom(s => s.CreateDate))
-                    .ForMember(d => d.CreateTime, opt => opt.MapFrom(s => s.CreateTime))
                     .ForMember(d => d.FirstName, opt => opt.MapFrom(s => s.FirstName))
                     .ForMember(d => d.LastName, opt => opt.MapFrom(s => s.LastName))
                     .ForMember(d => d.MiddleName, opt => opt.MapFrom(s => s.MiddleName))
@@ -178,9 +327,8 @@ namespace RestAPI.AutoMapper
 
                 #endregion
             });
-            //Create an Instance of Mapper and return that Instance
-            var mapper = new Mapper(config);
-            return mapper;
+
+            return new Mapper(config);
         }
     }
 }

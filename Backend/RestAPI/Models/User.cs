@@ -12,11 +12,11 @@ public class User
 
     public string Password { get; set; } = null!;
 
-    public string? DateLink { get; set; }
-
-    public string? TimeLink { get; set; }
-
     public int ConfirmEmail { get; set; }
 
     public string Hash { get; set; } = null!;
+
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
 }

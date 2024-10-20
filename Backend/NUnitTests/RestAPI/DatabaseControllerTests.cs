@@ -17,10 +17,23 @@ namespace NUnitTests.RestAPI
         private Mock<ILogger<DatabaseController>> _logger;
         private IRepository<DB.About>? _aboutRepository;
         private IRepository<DB.AccessLevel>? _accessLevelRepository;
+        private IRepository<DB.Cart>? _cartRepository; // Добавлено
+        private IRepository<DB.Category>? _categoryRepository; // Добавлено
+        private IRepository<DB.CategoryHierarchy>? _categoryHierarchyRepository; // Добавлено
+        private IRepository<DB.Color>? _colorRepository; // Добавлено
         private IRepository<DB.Contact>? _contactRepository;
+        private IRepository<DB.CustomizableProduct>? _customizableProductRepository; // Добавлено
+        private IRepository<DB.CustomizationOrder>? _customizationOrderRepository; // Добавлено
+        private IRepository<DB.FabricType>? _fabricTypeRepository; // Добавлено
         private IRepository<DB.Language>? _languageRepository;
-        private IRepository<DB.Post>? _postRepository;
-        private IRepository<DB.PostsTranslation>? _postsTranslationRepository;
+        private IRepository<DB.Order>? _orderRepository; // Добавлено
+        private IRepository<DB.OrderHistory>? _orderHistoryRepository; // Добавлено
+        private IRepository<DB.OrderStatus>? _orderStatusRepository; // Добавлено
+        private IRepository<DB.Payment>? _paymentRepository; // Добавлено
+        private IRepository<DB.Product>? _productRepository;
+        private IRepository<DB.ProductImage>? _productImageRepository; // Добавлено
+        private IRepository<DB.ProductTranslation>? _productTranslationRepository; // Исправлено название
+        private IRepository<DB.Review>? _reviewRepository; // Добавлено
         private IRepository<DB.User>? _userRepository;
         private IRepository<DB.UserProfile>? _userProfileRepository;
         private IRepository<DB.UserRole>? _userRoleRepository;
@@ -41,13 +54,26 @@ namespace NUnitTests.RestAPI
             // Create a fake DbContext
             _context = new DbContextFake(options);
 
-            // Create a fake data
+            // Create fake data
             var abouts = DatabaseDataFake.GetFakeAboutList();
             var accessLevels = DatabaseDataFake.GetFakeAccessLevelList();
+            var carts = DatabaseDataFake.GetFakeCartsList(); // Добавлено
+            var categories = DatabaseDataFake.GetFakeCategoryList(); // Добавлено
+            var categoryHierarchies = DatabaseDataFake.GetFakeCategoryHierarchyList(); // Добавлено
+            var colors = DatabaseDataFake.GetFakeColorList(); // Добавлено
             var contacts = DatabaseDataFake.GetFakeContactList();
+            var customizableProducts = DatabaseDataFake.GetFakeCustomizableProductList(); // Добавлено
+            var customizationOrders = DatabaseDataFake.GetFakeCustomizationOrderList(); // Добавлено
+            var fabricTypes = DatabaseDataFake.GetFakeFabricTypeList(); // Добавлено
             var languages = DatabaseDataFake.GetFakeLanguageList();
-            var posts = DatabaseDataFake.GetFakePostList();
-            var postTranslations = DatabaseDataFake.GetFakePostsTranslationList();
+            var orders = DatabaseDataFake.GetFakeOrderList(); // Добавлено
+            var orderHistories = DatabaseDataFake.GetFakeOrderHistoryList(); // Добавлено
+            var orderStatuses = DatabaseDataFake.GetFakeOrderStatusList(); // Добавлено
+            var payments = DatabaseDataFake.GetFakePaymentList(); // Добавлено
+            var products = DatabaseDataFake.GetFakeProductList();
+            var productImages = DatabaseDataFake.GetFakeProductImageList(); // Добавлено
+            var productTranslations = DatabaseDataFake.GetFakeProductTranslationList(); // Исправлено название
+            var reviews = DatabaseDataFake.GetFakeReviewList(); // Добавлено
             var users = DatabaseDataFake.GetFakeUserList();
             var userProfiles = DatabaseDataFake.GetFakeUserProfileList();
             var userRoles = DatabaseDataFake.GetFakeUserRoleList();
@@ -55,10 +81,23 @@ namespace NUnitTests.RestAPI
             // Init base data in fake DbContext
             _context.Abouts.AddRange(abouts);
             _context.AccessLevels.AddRange(accessLevels);
+            _context.Carts.AddRange(carts); // Добавлено
+            _context.Categories.AddRange(categories); // Добавлено
+            _context.CategoryHierarchies.AddRange(categoryHierarchies); // Добавлено
+            _context.Colors.AddRange(colors); // Добавлено
             _context.Contacts.AddRange(contacts);
+            _context.CustomizableProducts.AddRange(customizableProducts); // Добавлено
+            _context.CustomizationOrders.AddRange(customizationOrders); // Добавлено
+            _context.FabricTypes.AddRange(fabricTypes); // Добавлено
             _context.Languages.AddRange(languages);
-            _context.Posts.AddRange(posts);
-            _context.PostsTranslations.AddRange(postTranslations);
+            _context.Orders.AddRange(orders); // Добавлено
+            _context.OrderHistories.AddRange(orderHistories); // Добавлено
+            _context.OrderStatuses.AddRange(orderStatuses); // Добавлено
+            _context.Payments.AddRange(payments); // Добавлено
+            _context.Products.AddRange(products);
+            _context.ProductImages.AddRange(productImages); // Добавлено
+            _context.ProductTranslations.AddRange(productTranslations); // Исправлено название
+            _context.Reviews.AddRange(reviews); // Добавлено
             _context.Users.AddRange(users);
             _context.UserProfiles.AddRange(userProfiles);
             _context.UserRoles.AddRange(userRoles);
@@ -69,21 +108,48 @@ namespace NUnitTests.RestAPI
             _logger = new Mock<ILogger<DatabaseController>>();
             _aboutRepository = new Repository<DB.About>(_context);
             _accessLevelRepository = new Repository<DB.AccessLevel>(_context);
+            _cartRepository = new Repository<DB.Cart>(_context); // Добавлено
+            _categoryRepository = new Repository<DB.Category>(_context); // Добавлено
+            _categoryHierarchyRepository = new Repository<DB.CategoryHierarchy>(_context); // Добавлено
+            _colorRepository = new Repository<DB.Color>(_context); // Добавлено
             _contactRepository = new Repository<DB.Contact>(_context);
+            _customizableProductRepository = new Repository<DB.CustomizableProduct>(_context); // Добавлено
+            _customizationOrderRepository = new Repository<DB.CustomizationOrder>(_context); // Добавлено
+            _fabricTypeRepository = new Repository<DB.FabricType>(_context); // Добавлено
             _languageRepository = new Repository<DB.Language>(_context);
-            _postRepository = new Repository<DB.Post>(_context);
-            _postsTranslationRepository = new Repository<DB.PostsTranslation>(_context);
+            _orderRepository = new Repository<DB.Order>(_context); // Добавлено
+            _orderHistoryRepository = new Repository<DB.OrderHistory>(_context); // Добавлено
+            _orderStatusRepository = new Repository<DB.OrderStatus>(_context); // Добавлено
+            _paymentRepository = new Repository<DB.Payment>(_context); // Добавлено
+            _productRepository = new Repository<DB.Product>(_context);
+            _productImageRepository = new Repository<DB.ProductImage>(_context); // Добавлено
+            _productTranslationRepository = new Repository<DB.ProductTranslation>(_context); // Исправлено название
+            _reviewRepository = new Repository<DB.Review>(_context); // Добавлено
             _userRepository = new Repository<DB.User>(_context);
             _userProfileRepository = new Repository<DB.UserProfile>(_context);
             _userRoleRepository = new Repository<DB.UserRole>(_context);
 
-            _restApiController = new DatabaseController(_logger.Object,
+            _restApiController = new DatabaseController(
+                _logger.Object,
                 _aboutRepository,
                 _accessLevelRepository,
+                _cartRepository, // Добавлено
+                _categoryRepository, // Добавлено
+                _categoryHierarchyRepository, // Добавлено
+                _colorRepository, // Добавлено
                 _contactRepository,
+                _customizableProductRepository, // Добавлено
+                _customizationOrderRepository, // Добавлено
+                _fabricTypeRepository, // Добавлено
                 _languageRepository,
-                _postRepository,
-                _postsTranslationRepository,
+                _orderRepository, // Добавлено
+                _orderHistoryRepository, // Добавлено
+                _orderStatusRepository, // Добавлено
+                _paymentRepository, // Добавлено
+                _productRepository,
+                _productImageRepository, // Добавлено
+                _productTranslationRepository, // Исправлено название
+                _reviewRepository, // Добавлено
                 _userRepository,
                 _userProfileRepository,
                 _userRoleRepository);
@@ -91,6 +157,7 @@ namespace NUnitTests.RestAPI
             _limit = 100;
             _page = 1;
         }
+
 
         [TearDown]
         public void FinishTest()
@@ -456,191 +523,6 @@ namespace NUnitTests.RestAPI
 
         #endregion
 
-        #region Posts table
-
-        [Test]
-        public void GetPosts_Return_2_Items()
-        {
-            var result = _restApiController.GetPosts(_limit, _page);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result.Value as List<Post>, Has.Count.EqualTo(2));
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public void GetPostById_Return_Correct_Entity(int id)
-        {
-            var result = _restApiController.GetPostById(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result?.Value?.Id, Is.EqualTo(id));
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public void Delete_Post_Entity(int id)
-        {
-            var result = _restApiController.DeletePost(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result, Is.InstanceOf<OkResult>());
-            });
-        }
-
-        [Test]
-        public void Add_Post_Entity()
-        {
-            var entity = new Post()
-            {
-                Id = 3,
-                PostDate = DateOnly.Parse("07/02/2024"),
-                PostTime = TimeOnly.Parse("12:00:00"),
-                Name = "Name 3",
-                Description = "Description 3",
-                Text = "Text 3",
-                Tags = "#Tag3",
-                Photo = "Photo 3",
-                VisitCount = 3
-            };
-
-            var result = _restApiController.CreatePost(entity);
-
-            var list = _restApiController.GetPosts(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetPostById(3);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(list.Value as List<Post>, Has.Count.EqualTo(3));
-                Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded.Value?.VisitCount, Is.EqualTo(entity.VisitCount));
-                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public void Update_Post_Entity(int id)
-        {
-            var entity = _restApiController.GetPostById(id);
-
-            entity.Value.Text = "Text 3";
-
-            _restApiController.UpdatePost(entity.Value);
-
-            var updateEntity = _restApiController.GetPostById(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(updateEntity?.Value?.Text, Is.EqualTo(entity.Value.Text));
-                Assert.That(entity?.Value?.Text, Is.EqualTo(updateEntity?.Value?.Text));
-            });
-        }
-
-        #endregion
-
-        #region PostTranslations table
-
-        [Test]
-        public void GetPostTranslations_Return_2_Items()
-        {
-            var result = _restApiController.GetPostsTranslations(_limit, _page);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result.Value as List<PostsTranslation>, Has.Count.EqualTo(2));
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public void GetPostTranslationById_Return_Correct_Entity(int id)
-        {
-            var result = _restApiController.GetPostsTranslationById(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result?.Value?.Id, Is.EqualTo(id));
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public void Delete_PostTranslation_Entity(int id)
-        {
-            var result = _restApiController.DeletePostsTranslation(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result, Is.InstanceOf<OkResult>());
-            });
-        }
-
-        [Test]
-        public void Add_PostTranslation_Entity()
-        {
-            var entity = new PostsTranslation()
-            {
-                Id = 3,
-                FkLanguages = 1,
-                FkPosts = 1,
-                Name = "Name 3",
-                Description = "Description 3",
-                Text = "Text 3"
-            };
-
-            var result = _restApiController.CreatePostsTranslation(entity);
-
-            var list = _restApiController.GetPostsTranslations(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetPostsTranslationById(3);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(list.Value as List<PostsTranslation>, Has.Count.EqualTo(3));
-                Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded.Value?.FkLanguages, Is.EqualTo(entity.FkLanguages));
-                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public void Update_PostTranslation_Entity(int id)
-        {
-            var entity = _restApiController.GetPostsTranslationById(id);
-
-            entity.Value.Text = "Text 3";
-
-            _restApiController.UpdatePostsTranslation(entity.Value);
-
-            var updateEntity = _restApiController.GetPostsTranslationById(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(updateEntity?.Value?.Text, Is.EqualTo(entity.Value.Text));
-                Assert.That(entity?.Value?.Text, Is.EqualTo(updateEntity?.Value?.Text));
-            });
-        }
-
-        #endregion
-
         #region Users table
 
         [Test]
@@ -693,8 +575,6 @@ namespace NUnitTests.RestAPI
                 Login = "Login 3",
                 Email = "Email 3",
                 Password = "Password 3",
-                DateLink = "DateLink 3",
-                TimeLink = "TimeLink 3",
                 ConfirmEmail = 0,
                 Hash = "Hash 3"
             };
@@ -784,14 +664,11 @@ namespace NUnitTests.RestAPI
             {
                 Id = 3,
                 FkUsers = 1,
-                CreateDate = "CreateDate 3",
-                CreateTime = "CreateTime 3",
                 FirstName = "FirstName 3",
                 LastName = "LastName 3",
                 MiddleName = "MiddleName 3",
                 Address = "Address 3",
                 City = "City 3",
-                ZipPostCode = 00000,
                 StateProvince = "StateProvince 3",
                 Country = "Country 3",
                 Phone = "Phone 3",

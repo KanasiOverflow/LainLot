@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DatabaseProvider.Models;
 
@@ -10,6 +11,5 @@ public partial class AccessLevel
 
     public string Description { get; set; } = null!;
 
-    [JsonIgnore]
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
 }

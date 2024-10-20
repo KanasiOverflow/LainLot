@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
 
 namespace DatabaseProvider.Models;
 
@@ -7,10 +8,6 @@ public partial class UserProfile
     public int Id { get; set; }
 
     public int FkUsers { get; set; }
-
-    public string CreateDate { get; set; } = null!;
-
-    public string CreateTime { get; set; } = null!;
 
     public string? FirstName { get; set; }
 
@@ -22,7 +19,7 @@ public partial class UserProfile
 
     public string? City { get; set; }
 
-    public int? ZipPostCode { get; set; }
+    public string? ZipPostCode { get; set; }
 
     public string? StateProvince { get; set; }
 
@@ -32,6 +29,9 @@ public partial class UserProfile
 
     public string? Avatar { get; set; }
 
-    [JsonIgnore]
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
+
     public virtual User FkUsersNavigation { get; set; } = null!;
 }
