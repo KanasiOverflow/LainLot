@@ -57,11 +57,11 @@ export default class AccessLevelsService {
         return null;
     };
 
-    static async GetAccessLevelById(id) {
+    static async GetAccessLevelsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetAccessLevelById`,
+            url: `${getRestAPIUrl()}/Database/GetAccessLevelsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class AccessLevelsService {
         return null;
     };
 
-    static async CreateAccessLevel(newRecord) {
+    static async CreateAccessLevels(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateAccessLevel`,
+            url: `${getRestAPIUrl()}/Database/CreateAccessLevels`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class AccessLevelsService {
         }
     };
 
-    static async UpdateAccessLevel(oldRecord) {
+    static async UpdateAccessLevels(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateAccessLevel`,
+            url: `${getRestAPIUrl()}/Database/UpdateAccessLevels`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class AccessLevelsService {
         }
     };
 
-    static async DeleteAccessLevel(id) {
+    static async DeleteAccessLevels(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteAccessLevel`,
+            url: `${getRestAPIUrl()}/Database/DeleteAccessLevels`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

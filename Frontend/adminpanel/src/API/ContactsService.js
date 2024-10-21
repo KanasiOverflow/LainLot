@@ -57,11 +57,11 @@ export default class ContactsService {
         return null;
     };
 
-    static async GetContactById(id) {
+    static async GetContactsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetContactById`,
+            url: `${getRestAPIUrl()}/Database/GetContactsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class ContactsService {
         return null;
     };
 
-    static async CreateContact(newRecord) {
+    static async CreateContacts(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateContact`,
+            url: `${getRestAPIUrl()}/Database/CreateContacts`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class ContactsService {
         }
     };
 
-    static async UpdateContact(oldRecord) {
+    static async UpdateContacts(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateContact`,
+            url: `${getRestAPIUrl()}/Database/UpdateContacts`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class ContactsService {
         }
     };
 
-    static async DeleteContact(id) {
+    static async DeleteContacts(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteContact`,
+            url: `${getRestAPIUrl()}/Database/DeleteContacts`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

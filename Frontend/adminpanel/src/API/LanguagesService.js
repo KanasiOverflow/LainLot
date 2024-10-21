@@ -78,11 +78,11 @@ export default class LanguagesService {
         return null;
     };
 
-    static async CreateLanguage(newRecord) {
+    static async CreateLanguages(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateLanguage`,
+            url: `${getRestAPIUrl()}/Database/CreateLanguages`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -108,11 +108,11 @@ export default class LanguagesService {
         }
     };
 
-    static async UpdateLanguage(oldRecord) {
+    static async UpdateLanguages(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateLanguage`,
+            url: `${getRestAPIUrl()}/Database/UpdateLanguages`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -138,11 +138,11 @@ export default class LanguagesService {
         }
     };
 
-    static async DeleteLanguage(id) {
+    static async DeleteLanguages(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteLanguage`,
+            url: `${getRestAPIUrl()}/Database/DeleteLanguages`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

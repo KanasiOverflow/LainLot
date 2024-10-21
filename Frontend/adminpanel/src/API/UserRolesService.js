@@ -57,11 +57,11 @@ export default class UserRolesService {
         return null;
     };
 
-    static async GetUserRoleById(id) {
+    static async GetUserRolesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserRoleById`,
+            url: `${getRestAPIUrl()}/Database/GetUserRolesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class UserRolesService {
         return null;
     };
 
-    static async CreateUserRole(newRecord) {
+    static async CreateUserRoles(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateUserRole`,
+            url: `${getRestAPIUrl()}/Database/CreateUserRoles`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class UserRolesService {
         }
     };
 
-    static async UpdateUserRole(oldRecord) {
+    static async UpdateUserRoles(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateUserRole`,
+            url: `${getRestAPIUrl()}/Database/UpdateUserRoles`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class UserRolesService {
         }
     };
 
-    static async DeleteUserRole(id) {
+    static async DeleteUserRoles(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteUserRole`,
+            url: `${getRestAPIUrl()}/Database/DeleteUserRoles`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

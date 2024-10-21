@@ -3,13 +3,13 @@ import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
 import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class UsersService {
+export default class PaymentsService {
 
-    static async GetUsersCount() {
+    static async GetPaymentsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUsersCount`,
+            url: `${getRestAPIUrl()}/Database/GetPaymentsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,17 +23,16 @@ export default class UsersService {
         return null;
     };
 
-    static async GetUsersFields() {
-
+    static async GetPaymentsFields() {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUsersFields`,
+            url: `${getRestAPIUrl()}/Database/GetPaymentsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
-
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -41,17 +40,16 @@ export default class UsersService {
         return null;
     };
 
-    static async GetUsers(limit, page) {
-
+    static async GetPayments(limit, page) {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUsers?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetPayments?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
-
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -59,18 +57,17 @@ export default class UsersService {
         return null;
     };
 
-    static async GetUsersById(id) {
+    static async GetPaymentsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUsersById`,
+            url: `${getRestAPIUrl()}/Database/Database/GetPaymentsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
-
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -78,11 +75,11 @@ export default class UsersService {
         return null;
     };
 
-    static async CreateUsers(newRecord) {
+    static async CreatePayments(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateUsers`,
+            url: `${getRestAPIUrl()}/Database/CreatePayments`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -108,11 +105,11 @@ export default class UsersService {
         }
     };
 
-    static async UpdateUsers(oldRecord) {
+    static async UpdatePayments(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateUsers`,
+            url: `${getRestAPIUrl()}/Database/UpdatePayments`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -138,18 +135,17 @@ export default class UsersService {
         }
     };
 
-    static async DeleteUsers(id) {
+    static async DeletePayments(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteUsers`,
+            url: `${getRestAPIUrl()}/Database/DeletePayments`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
-
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
