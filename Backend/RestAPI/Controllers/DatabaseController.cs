@@ -2253,6 +2253,17 @@ namespace RestAPI.Controllers
 
         #region Get Foreign Keys
 
+        [HttpGet("GetFkLanguagesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public string? GetFkLanguagesData(int id)
+        {
+            var dbEntity = _languageRepository.GetById(id);
+            return dbEntity == null
+                ? string.Empty
+                : $"FullName: {dbEntity?.FullName} | Abbreviation: {dbEntity?.Abbreviation}| Description: {dbEntity?.Description}";
+        }
+
         [HttpGet("GetFkCategoriesData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
