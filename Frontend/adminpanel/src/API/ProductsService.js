@@ -3,13 +3,13 @@ import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
 import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class GetContactsCount {
+export default class ProductsService {
 
-    static async GetUserProfilesCount() {
+    static async GetProductsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfilesCount`,
+            url: `${getRestAPIUrl()}/Database/GetProductsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class GetContactsCount {
         return null;
     };
 
-    static async GetUserProfilesFields() {
-
+    static async GetProductsFields() {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfilesFields`,
+            url: `${getRestAPIUrl()}/Database/GetProductsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class GetContactsCount {
         return null;
     };
 
-    static async GetUserProfiles(limit, page) {
-
+    static async GetProducts(limit, page) {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfiles?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetProducts?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class GetContactsCount {
         return null;
     };
 
-    static async GetUserProfilesById(id) {
+    static async GetProductsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfilesById`,
+            url: `${getRestAPIUrl()}/Database/Database/GetProductsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class GetContactsCount {
         return null;
     };
 
-    static async CreateUserProfile(newRecord) {
+    static async CreateProducts(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateUserProfile`,
+            url: `${getRestAPIUrl()}/Database/CreateProducts`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class GetContactsCount {
         }
     };
 
-    static async UpdateUserProfile(oldRecord) {
+    static async UpdateProducts(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateUserProfile`,
+            url: `${getRestAPIUrl()}/Database/UpdateProducts`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class GetContactsCount {
         }
     };
 
-    static async DeleteUserProfile(id) {
+    static async DeleteProducts(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteUserProfile`,
+            url: `${getRestAPIUrl()}/Database/DeleteProducts`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

@@ -3,13 +3,13 @@ import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
 import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class PostsService {
+export default class OrderHistoryService {
 
-    static async GetPostsCount() {
+    static async GetOrderHistoryCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPostsCount`,
+            url: `${getRestAPIUrl()}/Database/GetOrderHistoryCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class PostsService {
         return null;
     };
 
-    static async GetPostsFields() {
-
+    static async GetOrderHistoryFields() {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPostsFields`,
+            url: `${getRestAPIUrl()}/Database/GetOrderHistoryFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class PostsService {
         return null;
     };
 
-    static async GetPosts(limit, page) {
-
+    static async GetOrderHistory(limit, page) {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPosts?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetOrderHistory?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class PostsService {
         return null;
     };
 
-    static async GetPostById(id) {
+    static async GetOrderHistoryById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPostById`,
+            url: `${getRestAPIUrl()}/Database/Database/GetOrderHistoryById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class PostsService {
         return null;
     };
 
-    static async CreatePost(newRecord) {
+    static async CreateOrderHistory(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreatePost`,
+            url: `${getRestAPIUrl()}/Database/CreateOrderHistory`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class PostsService {
         }
     };
 
-    static async UpdatePost(oldRecord) {
+    static async UpdateOrderHistory(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdatePost`,
+            url: `${getRestAPIUrl()}/Database/UpdateOrderHistory`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class PostsService {
         }
     };
 
-    static async DeletePost(id) {
+    static async DeleteOrderHistory(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeletePost`,
+            url: `${getRestAPIUrl()}/Database/DeleteOrderHistory`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

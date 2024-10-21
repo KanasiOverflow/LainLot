@@ -274,7 +274,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetAccessLevelById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetAccessLevelById(id);
+            var result = _restApiController.GetAccessLevelsById(id);
 
             Assert.Multiple(() =>
             {
@@ -288,7 +288,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_AccessLevel_Entity(int id)
         {
-            var result = _restApiController.DeleteAccessLevel(id);
+            var result = _restApiController.DeleteAccessLevels(id);
 
             Assert.Multiple(() =>
             {
@@ -307,10 +307,10 @@ namespace NUnitTests.RestAPI
                 Level = 3
             };
 
-            var result = _restApiController.CreateAccessLevel(entity);
+            var result = _restApiController.CreateAccessLevels(entity);
 
             var list = _restApiController.GetAccessLevels(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetAccessLevelById(3);
+            var entityThatWasAdded = _restApiController.GetAccessLevelsById(3);
 
             Assert.Multiple(() =>
             {
@@ -326,13 +326,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_AccessLevel_Entity(int id)
         {
-            var entity = _restApiController.GetAccessLevelById(id);
+            var entity = _restApiController.GetAccessLevelsById(id);
 
             entity.Value.Description = "Text 3";
 
-            _restApiController.UpdateAccessLevel(entity.Value);
+            _restApiController.UpdateAccessLevels(entity.Value);
 
-            var updateEntity = _restApiController.GetAccessLevelById(id);
+            var updateEntity = _restApiController.GetAccessLevelsById(id);
 
             Assert.Multiple(() =>
             {
@@ -348,7 +348,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetCarts_Return_2_Items()
         {
-            var result = _restApiController.GetCarts(_limit, _page);
+            var result = _restApiController.GetCart(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -399,7 +399,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreateCart(entity);
 
-            var list = _restApiController.GetCarts(_limit, _page);
+            var list = _restApiController.GetCart(_limit, _page);
             var entityThatWasAdded = _restApiController.GetCartById(3);
 
             Assert.Multiple(() =>
@@ -452,7 +452,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetCategoryById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetCategoryById(id);
+            var result = _restApiController.GetCategoriesById(id);
 
             Assert.Multiple(() =>
             {
@@ -466,7 +466,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_Category_Entity(int id)
         {
-            var result = _restApiController.DeleteCategory(id);
+            var result = _restApiController.DeleteCategories(id);
 
             Assert.Multiple(() =>
             {
@@ -486,10 +486,10 @@ namespace NUnitTests.RestAPI
                 Description = "Category Description"
             };
 
-            var result = _restApiController.CreateCategory(entity);
+            var result = _restApiController.CreateCategories(entity);
 
             var list = _restApiController.GetCategories(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetCategoryById(3);
+            var entityThatWasAdded = _restApiController.GetCategoriesById(3);
 
             Assert.Multiple(() =>
             {
@@ -505,13 +505,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_Category_Entity(int id)
         {
-            var entity = _restApiController.GetCategoryById(id);
+            var entity = _restApiController.GetCategoriesById(id);
 
             entity.Value.Name = "Updated Name";
 
-            _restApiController.UpdateCategory(entity.Value);
+            _restApiController.UpdateCategories(entity.Value);
 
-            var updateEntity = _restApiController.GetCategoryById(id);
+            var updateEntity = _restApiController.GetCategoriesById(id);
 
             Assert.Multiple(() =>
             {
@@ -527,7 +527,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetCategoryHierarchies_Return_2_Items()
         {
-            var result = _restApiController.GetCategoryHierarchies(_limit, _page);
+            var result = _restApiController.GetCategoryHierarchy(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -576,7 +576,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreateCategoryHierarchy(entity);
 
-            var list = _restApiController.GetCategoryHierarchies(_limit, _page);
+            var list = _restApiController.GetCategoryHierarchy(_limit, _page);
             var entityThatWasAdded = _restApiController.GetCategoryHierarchyById(3);
 
             Assert.Multiple(() =>
@@ -629,7 +629,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetColorById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetColorById(id);
+            var result = _restApiController.GetColorsById(id);
 
             Assert.Multiple(() =>
             {
@@ -643,7 +643,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_Color_Entity(int id)
         {
-            var result = _restApiController.DeleteColor(id);
+            var result = _restApiController.DeleteColors(id);
 
             Assert.Multiple(() =>
             {
@@ -662,10 +662,10 @@ namespace NUnitTests.RestAPI
                 HexCode = "#A020F0"
             };
 
-            var result = _restApiController.CreateColor(entity);
+            var result = _restApiController.CreateColors(entity);
 
             var list = _restApiController.GetColors(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetColorById(3);
+            var entityThatWasAdded = _restApiController.GetColorsById(3);
 
             Assert.Multiple(() =>
             {
@@ -681,13 +681,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_Color_Entity(int id)
         {
-            var entity = _restApiController.GetColorById(id);
+            var entity = _restApiController.GetColorsById(id);
 
             entity.Value.Name = "Updated Name";
 
-            _restApiController.UpdateColor(entity.Value);
+            _restApiController.UpdateColors(entity.Value);
 
-            var updateEntity = _restApiController.GetColorById(id);
+            var updateEntity = _restApiController.GetColorsById(id);
 
             Assert.Multiple(() =>
             {
@@ -717,7 +717,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetContactById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetContactById(id);
+            var result = _restApiController.GetContactsById(id);
 
             Assert.Multiple(() =>
             {
@@ -731,7 +731,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_Contact_Entity(int id)
         {
-            var result = _restApiController.DeleteContact(id);
+            var result = _restApiController.DeleteContacts(id);
 
             Assert.Multiple(() =>
             {
@@ -752,10 +752,10 @@ namespace NUnitTests.RestAPI
                 Phone = "000-000-000"
             };
 
-            var result = _restApiController.CreateContact(entity);
+            var result = _restApiController.CreateContacts(entity);
 
             var list = _restApiController.GetContacts(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetContactById(3);
+            var entityThatWasAdded = _restApiController.GetContactsById(3);
 
             Assert.Multiple(() =>
             {
@@ -771,13 +771,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_Contact_Entity(int id)
         {
-            var entity = _restApiController.GetContactById(id);
+            var entity = _restApiController.GetContactsById(id);
 
             entity.Value.Email = "Text 3";
 
-            _restApiController.UpdateContact(entity.Value);
+            _restApiController.UpdateContacts(entity.Value);
 
-            var updateEntity = _restApiController.GetContactById(id);
+            var updateEntity = _restApiController.GetContactsById(id);
 
             Assert.Multiple(() =>
             {
@@ -807,7 +807,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetCustomizableProductById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetCustomizableProductById(id);
+            var result = _restApiController.GetCustomizableProductsById(id);
 
             Assert.Multiple(() =>
             {
@@ -821,7 +821,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_CustomizableProduct_Entity(int id)
         {
-            var result = _restApiController.DeleteCustomizableProduct(id);
+            var result = _restApiController.DeleteCustomizableProducts(id);
 
             Assert.Multiple(() =>
             {
@@ -842,10 +842,10 @@ namespace NUnitTests.RestAPI
                 CustomizationDetails = "Custom Detail 1"
             };
 
-            var result = _restApiController.CreateCustomizableProduct(entity);
+            var result = _restApiController.CreateCustomizableProducts(entity);
 
             var list = _restApiController.GetCustomizableProducts(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetCustomizableProductById(3);
+            var entityThatWasAdded = _restApiController.GetCustomizableProductsById(3);
 
             Assert.Multiple(() =>
             {
@@ -861,13 +861,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_CustomizableProduct_Entity(int id)
         {
-            var entity = _restApiController.GetCustomizableProductById(id);
+            var entity = _restApiController.GetCustomizableProductsById(id);
 
             entity.Value.CustomizationDetails = "Updated Detail";
 
-            _restApiController.UpdateCustomizableProduct(entity.Value);
+            _restApiController.UpdateCustomizableProducts(entity.Value);
 
-            var updateEntity = _restApiController.GetCustomizableProductById(id);
+            var updateEntity = _restApiController.GetCustomizableProductsById(id);
 
             Assert.Multiple(() =>
             {
@@ -897,7 +897,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetCustomizationOrderById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetCustomizationOrderById(id);
+            var result = _restApiController.GetCustomizationOrdersById(id);
 
             Assert.Multiple(() =>
             {
@@ -911,7 +911,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_CustomizationOrder_Entity(int id)
         {
-            var result = _restApiController.DeleteCustomizationOrder(id);
+            var result = _restApiController.DeleteCustomizationOrders(id);
 
             Assert.Multiple(() =>
             {
@@ -934,10 +934,10 @@ namespace NUnitTests.RestAPI
                 AdditionalNotes = "Additional Note"
             };
 
-            var result = _restApiController.CreateCustomizationOrder(entity);
+            var result = _restApiController.CreateCustomizationOrders(entity);
 
             var list = _restApiController.GetCustomizationOrders(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetCustomizationOrderById(3);
+            var entityThatWasAdded = _restApiController.GetCustomizationOrdersById(3);
 
             Assert.Multiple(() =>
             {
@@ -953,13 +953,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_CustomizationOrder_Entity(int id)
         {
-            var entity = _restApiController.GetCustomizationOrderById(id);
+            var entity = _restApiController.GetCustomizationOrdersById(id);
 
             entity.Value.AdditionalNotes = "Updated Note";
 
-            _restApiController.UpdateCustomizationOrder(entity.Value);
+            _restApiController.UpdateCustomizationOrders(entity.Value);
 
-            var updateEntity = _restApiController.GetCustomizationOrderById(id);
+            var updateEntity = _restApiController.GetCustomizationOrdersById(id);
 
             Assert.Multiple(() =>
             {
@@ -989,7 +989,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetFabricTypeById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetFabricTypeById(id);
+            var result = _restApiController.GetFabricTypesById(id);
 
             Assert.Multiple(() =>
             {
@@ -1003,7 +1003,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_FabricType_Entity(int id)
         {
-            var result = _restApiController.DeleteFabricType(id);
+            var result = _restApiController.DeleteFabricTypes(id);
 
             Assert.Multiple(() =>
             {
@@ -1021,10 +1021,10 @@ namespace NUnitTests.RestAPI
                 Name = "Silk"
             };
 
-            var result = _restApiController.CreateFabricType(entity);
+            var result = _restApiController.CreateFabricTypes(entity);
 
             var list = _restApiController.GetFabricTypes(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetFabricTypeById(3);
+            var entityThatWasAdded = _restApiController.GetFabricTypesById(3);
 
             Assert.Multiple(() =>
             {
@@ -1040,13 +1040,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_FabricType_Entity(int id)
         {
-            var entity = _restApiController.GetFabricTypeById(id);
+            var entity = _restApiController.GetFabricTypesById(id);
 
             entity.Value.Name = "Updated Name";
 
-            _restApiController.UpdateFabricType(entity.Value);
+            _restApiController.UpdateFabricTypes(entity.Value);
 
-            var updateEntity = _restApiController.GetFabricTypeById(id);
+            var updateEntity = _restApiController.GetFabricTypesById(id);
 
             Assert.Multiple(() =>
             {
@@ -1076,7 +1076,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetLanguageById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetLanguageById(id);
+            var result = _restApiController.GetLanguagesById(id);
 
             Assert.Multiple(() =>
             {
@@ -1090,7 +1090,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_Language_Entity(int id)
         {
-            var result = _restApiController.DeleteLanguage(id);
+            var result = _restApiController.DeleteLanguages(id);
 
             Assert.Multiple(() =>
             {
@@ -1112,10 +1112,10 @@ namespace NUnitTests.RestAPI
                 TimeFormat = "HH:MM:SS"
             };
 
-            var result = _restApiController.CreateLanguage(entity);
+            var result = _restApiController.CreateLanguages(entity);
 
             var list = _restApiController.GetLanguages(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetLanguageById(3);
+            var entityThatWasAdded = _restApiController.GetLanguagesById(3);
 
             Assert.Multiple(() =>
             {
@@ -1131,13 +1131,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_Language_Entity(int id)
         {
-            var entity = _restApiController.GetLanguageById(id);
+            var entity = _restApiController.GetLanguagesById(id);
 
             entity.Value.FullName = "Text 3";
 
-            _restApiController.UpdateLanguage(entity.Value);
+            _restApiController.UpdateLanguages(entity.Value);
 
-            var updateEntity = _restApiController.GetLanguageById(id);
+            var updateEntity = _restApiController.GetLanguagesById(id);
 
             Assert.Multiple(() =>
             {
@@ -1167,7 +1167,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetOrderById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetOrderById(id);
+            var result = _restApiController.GetOrdersById(id);
 
             Assert.Multiple(() =>
             {
@@ -1181,7 +1181,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_Order_Entity(int id)
         {
-            var result = _restApiController.DeleteOrder(id);
+            var result = _restApiController.DeleteOrders(id);
 
             Assert.Multiple(() =>
             {
@@ -1208,10 +1208,10 @@ namespace NUnitTests.RestAPI
                 UpdatedAt = DateTime.Now
             };
 
-            var result = _restApiController.CreateOrder(entity);
+            var result = _restApiController.CreateOrders(entity);
 
             var list = _restApiController.GetOrders(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetOrderById(3);
+            var entityThatWasAdded = _restApiController.GetOrdersById(3);
 
             Assert.Multiple(() =>
             {
@@ -1226,13 +1226,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_Order_Entity(int id)
         {
-            var entity = _restApiController.GetOrderById(id);
+            var entity = _restApiController.GetOrdersById(id);
 
             entity.Value.TotalAmount = 200.75M;
 
-            _restApiController.UpdateOrder(entity.Value);
+            _restApiController.UpdateOrders(entity.Value);
 
-            var updateEntity = _restApiController.GetOrderById(id);
+            var updateEntity = _restApiController.GetOrdersById(id);
 
             Assert.Multiple(() =>
             {
@@ -1248,7 +1248,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetOrderHistory_Return_2_Items()
         {
-            var result = _restApiController.GetOrderHistories(_limit, _page);
+            var result = _restApiController.GetOrderHistory(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -1298,7 +1298,7 @@ namespace NUnitTests.RestAPI
 
             var result = _restApiController.CreateOrderHistory(entity);
 
-            var list = _restApiController.GetOrderHistories(_limit, _page);
+            var list = _restApiController.GetOrderHistory(_limit, _page);
             var entityThatWasAdded = _restApiController.GetOrderHistoryById(3);
 
             Assert.Multiple(() =>
@@ -1350,7 +1350,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetOrderStatusById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetOrderStatusById(id);
+            var result = _restApiController.GetOrderStatusesById(id);
 
             Assert.Multiple(() =>
             {
@@ -1364,7 +1364,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_OrderStatus_Entity(int id)
         {
-            var result = _restApiController.DeleteOrderStatus(id);
+            var result = _restApiController.DeleteOrderStatuses(id);
 
             Assert.Multiple(() =>
             {
@@ -1382,10 +1382,10 @@ namespace NUnitTests.RestAPI
                 Status = "New Order"
             };
 
-            var result = _restApiController.CreateOrderStatus(entity);
+            var result = _restApiController.CreateOrderStatuses(entity);
 
             var list = _restApiController.GetOrderStatuses(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetOrderStatusById(3);
+            var entityThatWasAdded = _restApiController.GetOrderStatusesById(3);
 
             Assert.Multiple(() =>
             {
@@ -1401,13 +1401,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_OrderStatus_Entity(int id)
         {
-            var entity = _restApiController.GetOrderStatusById(id);
+            var entity = _restApiController.GetOrderStatusesById(id);
 
             entity.Value.Status = "Updated Status";
 
-            _restApiController.UpdateOrderStatus(entity.Value);
+            _restApiController.UpdateOrderStatuses(entity.Value);
 
-            var updateEntity = _restApiController.GetOrderStatusById(id);
+            var updateEntity = _restApiController.GetOrderStatusesById(id);
 
             Assert.Multiple(() =>
             {
@@ -1437,7 +1437,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetPaymentById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetPaymentById(id);
+            var result = _restApiController.GetPaymentsById(id);
 
             Assert.Multiple(() =>
             {
@@ -1451,7 +1451,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_Payment_Entity(int id)
         {
-            var result = _restApiController.DeletePayment(id);
+            var result = _restApiController.DeletePayments(id);
 
             Assert.Multiple(() =>
             {
@@ -1473,10 +1473,10 @@ namespace NUnitTests.RestAPI
                 Status = "Completed"
             };
 
-            var result = _restApiController.CreatePayment(entity);
+            var result = _restApiController.CreatePayments(entity);
 
             var list = _restApiController.GetPayments(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetPaymentById(3);
+            var entityThatWasAdded = _restApiController.GetPaymentsById(3);
 
             Assert.Multiple(() =>
             {
@@ -1492,13 +1492,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_Payment_Entity(int id)
         {
-            var entity = _restApiController.GetPaymentById(id);
+            var entity = _restApiController.GetPaymentsById(id);
 
             entity.Value.Status = "Pending";
 
-            _restApiController.UpdatePayment(entity.Value);
+            _restApiController.UpdatePayments(entity.Value);
 
-            var updateEntity = _restApiController.GetPaymentById(id);
+            var updateEntity = _restApiController.GetPaymentsById(id);
 
             Assert.Multiple(() =>
             {
@@ -1528,7 +1528,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetProductById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetProductById(id);
+            var result = _restApiController.GetProductsById(id);
 
             Assert.Multiple(() =>
             {
@@ -1542,7 +1542,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_Product_Entity(int id)
         {
-            var result = _restApiController.DeleteProduct(id);
+            var result = _restApiController.DeleteProducts(id);
 
             Assert.Multiple(() =>
             {
@@ -1564,10 +1564,10 @@ namespace NUnitTests.RestAPI
                 UpdatedAt = DateTime.Now
             };
 
-            var result = _restApiController.CreateProduct(entity);
+            var result = _restApiController.CreateProducts(entity);
 
             var list = _restApiController.GetProducts(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetProductById(3);
+            var entityThatWasAdded = _restApiController.GetProductsById(3);
 
             Assert.Multiple(() =>
             {
@@ -1583,13 +1583,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_Product_Entity(int id)
         {
-            var entity = _restApiController.GetProductById(id);
+            var entity = _restApiController.GetProductsById(id);
 
             entity.Value.Price = 29.99m;
 
-            _restApiController.UpdateProduct(entity.Value);
+            _restApiController.UpdateProducts(entity.Value);
 
-            var updateEntity = _restApiController.GetProductById(id);
+            var updateEntity = _restApiController.GetProductsById(id);
 
             Assert.Multiple(() =>
             {
@@ -1619,7 +1619,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetProductImageById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetProductImageById(id);
+            var result = _restApiController.GetProductImagesById(id);
 
             Assert.Multiple(() =>
             {
@@ -1633,7 +1633,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_ProductImage_Entity(int id)
         {
-            var result = _restApiController.DeleteProductImage(id);
+            var result = _restApiController.DeleteProductImages(id);
 
             Assert.Multiple(() =>
             {
@@ -1652,10 +1652,10 @@ namespace NUnitTests.RestAPI
                 ImageData = Encoding.ASCII.GetBytes("https://example.com/image3.jpg")
             };
 
-            var result = _restApiController.CreateProductImage(entity);
+            var result = _restApiController.CreateProductImages(entity);
 
             var list = _restApiController.GetProductImages(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetProductImageById(3);
+            var entityThatWasAdded = _restApiController.GetProductImagesById(3);
 
             Assert.Multiple(() =>
             {
@@ -1671,13 +1671,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_ProductImage_Entity(int id)
         {
-            var entity = _restApiController.GetProductImageById(id);
+            var entity = _restApiController.GetProductImagesById(id);
 
             entity.Value.ImageData = Encoding.ASCII.GetBytes("https://example.com/updated_image.jpg");
 
-            _restApiController.UpdateProductImage(entity.Value);
+            _restApiController.UpdateProductImages(entity.Value);
 
-            var updateEntity = _restApiController.GetProductImageById(id);
+            var updateEntity = _restApiController.GetProductImagesById(id);
 
             Assert.Multiple(() =>
             {
@@ -1707,7 +1707,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetProductTranslationById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetProductTranslationById(id);
+            var result = _restApiController.GetProductTranslationsById(id);
 
             Assert.Multiple(() =>
             {
@@ -1721,7 +1721,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_ProductTranslation_Entity(int id)
         {
-            var result = _restApiController.DeleteProductTranslation(id);
+            var result = _restApiController.DeleteProductTranslations(id);
 
             Assert.Multiple(() =>
             {
@@ -1742,10 +1742,10 @@ namespace NUnitTests.RestAPI
                 Description = "Description for Product 3"
             };
 
-            var result = _restApiController.CreateProductTranslation(entity);
+            var result = _restApiController.CreateProductTranslations(entity);
 
             var list = _restApiController.GetProductTranslations(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetProductTranslationById(3);
+            var entityThatWasAdded = _restApiController.GetProductTranslationsById(3);
 
             Assert.Multiple(() =>
             {
@@ -1761,13 +1761,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_ProductTranslation_Entity(int id)
         {
-            var entity = _restApiController.GetProductTranslationById(id);
+            var entity = _restApiController.GetProductTranslationsById(id);
 
             entity.Value.Name = "Updated Product Name";
 
-            _restApiController.UpdateProductTranslation(entity.Value);
+            _restApiController.UpdateProductTranslations(entity.Value);
 
-            var updateEntity = _restApiController.GetProductTranslationById(id);
+            var updateEntity = _restApiController.GetProductTranslationsById(id);
 
             Assert.Multiple(() =>
             {
@@ -1797,7 +1797,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetReviewById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetReviewById(id);
+            var result = _restApiController.GetReviewsById(id);
 
             Assert.Multiple(() =>
             {
@@ -1811,7 +1811,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_Review_Entity(int id)
         {
-            var result = _restApiController.DeleteReview(id);
+            var result = _restApiController.DeleteReviews(id);
 
             Assert.Multiple(() =>
             {
@@ -1833,10 +1833,10 @@ namespace NUnitTests.RestAPI
                 CreatedAt = DateTime.Now
             };
 
-            var result = _restApiController.CreateReview(entity);
+            var result = _restApiController.CreateReviews(entity);
 
             var list = _restApiController.GetReviews(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetReviewById(3);
+            var entityThatWasAdded = _restApiController.GetReviewsById(3);
 
             Assert.Multiple(() =>
             {
@@ -1852,13 +1852,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_Review_Entity(int id)
         {
-            var entity = _restApiController.GetReviewById(id);
+            var entity = _restApiController.GetReviewsById(id);
 
             entity.Value.Comment = "Updated comment.";
 
-            _restApiController.UpdateReview(entity.Value);
+            _restApiController.UpdateReviews(entity.Value);
 
-            var updateEntity = _restApiController.GetReviewById(id);
+            var updateEntity = _restApiController.GetReviewsById(id);
 
             Assert.Multiple(() =>
             {
@@ -1888,7 +1888,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetUserById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetUserById(id);
+            var result = _restApiController.GetUsersById(id);
 
             Assert.Multiple(() =>
             {
@@ -1902,7 +1902,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_User_Entity(int id)
         {
-            var result = _restApiController.DeleteUser(id);
+            var result = _restApiController.DeleteUsers(id);
 
             Assert.Multiple(() =>
             {
@@ -1925,10 +1925,10 @@ namespace NUnitTests.RestAPI
                 Hash = "Hash 3"
             };
 
-            var result = _restApiController.CreateUser(entity);
+            var result = _restApiController.CreateUsers(entity);
 
             var list = _restApiController.GetUsers(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetUserById(3);
+            var entityThatWasAdded = _restApiController.GetUsersById(3);
 
             Assert.Multiple(() =>
             {
@@ -1944,13 +1944,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_User_Entity(int id)
         {
-            var entity = _restApiController.GetUserById(id);
+            var entity = _restApiController.GetUsersById(id);
 
             entity.Value.Email = "Text 3";
 
-            _restApiController.UpdateUser(entity.Value);
+            _restApiController.UpdateUsers(entity.Value);
 
-            var updateEntity = _restApiController.GetUserById(id);
+            var updateEntity = _restApiController.GetUsersById(id);
 
             Assert.Multiple(() =>
             {
@@ -1980,7 +1980,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetUserProfileById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetUserProfileById(id);
+            var result = _restApiController.GetUserProfilesById(id);
 
             Assert.Multiple(() =>
             {
@@ -1994,7 +1994,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_UserProfile_Entity(int id)
         {
-            var result = _restApiController.DeleteUserProfile(id);
+            var result = _restApiController.DeleteUserProfiles(id);
 
             Assert.Multiple(() =>
             {
@@ -2021,10 +2021,10 @@ namespace NUnitTests.RestAPI
                 Avatar = "Avatar 3"
             };
 
-            var result = _restApiController.CreateUserProfile(entity);
+            var result = _restApiController.CreateUserProfiles(entity);
 
             var list = _restApiController.GetUserProfiles(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetUserProfileById(3);
+            var entityThatWasAdded = _restApiController.GetUserProfilesById(3);
 
             Assert.Multiple(() =>
             {
@@ -2040,13 +2040,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_UserProfile_Entity(int id)
         {
-            var entity = _restApiController.GetUserProfileById(id);
+            var entity = _restApiController.GetUserProfilesById(id);
 
             entity.Value.LastName = "Text 3";
 
-            _restApiController.UpdateUserProfile(entity.Value);
+            _restApiController.UpdateUserProfiles(entity.Value);
 
-            var updateEntity = _restApiController.GetUserProfileById(id);
+            var updateEntity = _restApiController.GetUserProfilesById(id);
 
             Assert.Multiple(() =>
             {
@@ -2076,7 +2076,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void GetUserRoleById_Return_Correct_Entity(int id)
         {
-            var result = _restApiController.GetUserRoleById(id);
+            var result = _restApiController.GetUserRolesById(id);
 
             Assert.Multiple(() =>
             {
@@ -2090,7 +2090,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Delete_UserRole_Entity(int id)
         {
-            var result = _restApiController.DeleteUserRole(id);
+            var result = _restApiController.DeleteUserRoles(id);
 
             Assert.Multiple(() =>
             {
@@ -2109,10 +2109,10 @@ namespace NUnitTests.RestAPI
                 Name = "Name 3"
             };
 
-            var result = _restApiController.CreateUserRole(entity);
+            var result = _restApiController.CreateUserRoles(entity);
 
             var list = _restApiController.GetUserRoles(_limit, _page);
-            var entityThatWasAdded = _restApiController.GetUserRoleById(3);
+            var entityThatWasAdded = _restApiController.GetUserRolesById(3);
 
             Assert.Multiple(() =>
             {
@@ -2128,13 +2128,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public void Update_UserRole_Entity(int id)
         {
-            var entity = _restApiController.GetUserRoleById(id);
+            var entity = _restApiController.GetUserRolesById(id);
 
             entity.Value.Name = "Text 3";
 
-            _restApiController.UpdateUserRole(entity.Value);
+            _restApiController.UpdateUserRoles(entity.Value);
 
-            var updateEntity = _restApiController.GetUserRoleById(id);
+            var updateEntity = _restApiController.GetUserRolesById(id);
 
             Assert.Multiple(() =>
             {

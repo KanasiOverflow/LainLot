@@ -2,12 +2,25 @@ export const getDBTablesList = () => {
     return [
         "About",
         "AccessLevels",
+        "Cart",
+        "Categories",
+        "CategoryHierarchy",
+        "Colors",
         "Contacts",
+        "CustomizableProducts",
+        "CustomizationOrders",
+        "FabricTypes",
         "Languages",
-        "Posts",
-        "PostsTranstations",
+        "Orders",
+        "OrderHistory",
+        "OrderStatuses",
+        "Payments",
+        "Products",
+        "ProductImages",
+        "ProductTranslations",
+        "Reviews",
         "Users",
-        "UserProfile",
+        "UserProfiles",
         "UserRoles"
     ]
 };

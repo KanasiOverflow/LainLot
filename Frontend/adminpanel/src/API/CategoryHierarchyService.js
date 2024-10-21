@@ -3,13 +3,13 @@ import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
 import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class PostsTranslationService {
+export default class CategoryHierarchyService {
 
-    static async GetPostsTranslationsCount() {
+    static async GetCategoryHierarchyCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPostsTranslationsCount`,
+            url: `${getRestAPIUrl()}/Database/GetCategoryHierarchyCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class PostsTranslationService {
         return null;
     };
 
-    static async GetPostsTranslationsFields() {
-
+    static async GetCategoryHierarchyFields() {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPostsTranslationsFields`,
+            url: `${getRestAPIUrl()}/Database/GetCategoryHierarchyFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class PostsTranslationService {
         return null;
     };
 
-    static async GetPostsTranslations(limit, page) {
-
+    static async GetCategoryHierarchy(limit, page) {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPostsTranslations?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetCategoryHierarchy?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class PostsTranslationService {
         return null;
     };
 
-    static async GetPostsTranslationById(id) {
+    static async GetCategoryHierarchyById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPostsTranslationById`,
+            url: `${getRestAPIUrl()}/Database/Database/GetCategoryHierarchyById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class PostsTranslationService {
         return null;
     };
 
-    static async CreatePostsTranslation(newRecord) {
+    static async CreateCategoryHierarchy(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreatePostsTranslation`,
+            url: `${getRestAPIUrl()}/Database/CreateCategoryHierarchy`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class PostsTranslationService {
         }
     };
 
-    static async UpdatePostsTranslation(oldRecord) {
+    static async UpdateCategoryHierarchy(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdatePostsTranslation`,
+            url: `${getRestAPIUrl()}/Database/UpdateCategoryHierarchy`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class PostsTranslationService {
         }
     };
 
-    static async DeletePostsTranslation(id) {
+    static async DeleteCategoryHierarchy(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeletePostsTranslation`,
+            url: `${getRestAPIUrl()}/Database/DeleteCategoryHierarchy`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
