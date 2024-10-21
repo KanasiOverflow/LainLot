@@ -127,10 +127,15 @@ namespace RestAPI.Controllers
         [HttpGet("GetAboutById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<About?> GetAboutById(int id)
+        public async Task<ActionResult<About?>> GetAboutById(int id)
         {
-            var dbEntity = _aboutRepository.GetById(id);
-            return dbEntity == null ? NotFound() : _mapper.Map<DB.About, About>(dbEntity);
+            var dbEntity = await _aboutRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.About, About>(dbEntity);
         }
 
         [HttpPost("CreateAbout")]
@@ -178,9 +183,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteAbout")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteAbout(int id)
+        public async Task<ActionResult> DeleteAbout(int id)
         {
-            var entity = _aboutRepository.GetById(id);
+            var entity = await _aboutRepository.GetById(id);
 
             if (entity != null)
             {
@@ -225,9 +230,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetAccessLevelsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<AccessLevel?> GetAccessLevelsById(int id)
+        public async Task<ActionResult<AccessLevel?>> GetAccessLevelsById(int id)
         {
-            var dbEntity = _accessLevelRepository.GetById(id);
+            var dbEntity = await _accessLevelRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.AccessLevel, AccessLevel>(dbEntity);
         }
 
@@ -276,9 +286,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteAccessLevels")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteAccessLevels(int id)
+        public async Task<ActionResult> DeleteAccessLevels(int id)
         {
-            var entity = _accessLevelRepository.GetById(id);
+            var entity = await _accessLevelRepository.GetById(id);
 
             if (entity != null)
             {
@@ -323,9 +333,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetCartById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Cart?> GetCartById(int id)
+        public async Task<ActionResult<Cart?>> GetCartById(int id)
         {
-            var dbEntity = _cartRepository.GetById(id);
+            var dbEntity = await _cartRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Cart, Cart>(dbEntity);
         }
 
@@ -374,9 +389,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteCart")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteCart(int id)
+        public async Task<ActionResult> DeleteCart(int id)
         {
-            var entity = _cartRepository.GetById(id);
+            var entity = await _cartRepository.GetById(id);
 
             if (entity != null)
             {
@@ -421,9 +436,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetCategoriesById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Category?> GetCategoriesById(int id)
+        public async Task<ActionResult<Category?>> GetCategoriesById(int id)
         {
-            var dbEntity = _categoryRepository.GetById(id);
+            var dbEntity = await _categoryRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Category, Category>(dbEntity);
         }
 
@@ -472,9 +492,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteCategories")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteCategories(int id)
+        public async Task<ActionResult> DeleteCategories(int id)
         {
-            var entity = _categoryRepository.GetById(id);
+            var entity = await _categoryRepository.GetById(id);
 
             if (entity != null)
             {
@@ -519,9 +539,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetCategoryHierarchyById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<CategoryHierarchy?> GetCategoryHierarchyById(int id)
+        public async Task<ActionResult<CategoryHierarchy?>> GetCategoryHierarchyById(int id)
         {
-            var dbEntity = _categoryHierarchyRepository.GetById(id);
+            var dbEntity = await _categoryHierarchyRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.CategoryHierarchy, CategoryHierarchy>(dbEntity);
         }
 
@@ -570,9 +595,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteCategoryHierarchy")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteCategoryHierarchy(int id)
+        public async Task<ActionResult> DeleteCategoryHierarchy(int id)
         {
-            var entity = _categoryHierarchyRepository.GetById(id);
+            var entity = await _categoryHierarchyRepository.GetById(id);
 
             if (entity != null)
             {
@@ -617,9 +642,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetColorsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Color?> GetColorsById(int id)
+        public async Task<ActionResult<Color?>> GetColorsById(int id)
         {
-            var dbEntity = _colorRepository.GetById(id);
+            var dbEntity = await _colorRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Color, Color>(dbEntity);
         }
 
@@ -668,9 +698,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteColors")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteColors(int id)
+        public async Task<ActionResult> DeleteColors(int id)
         {
-            var entity = _colorRepository.GetById(id);
+            var entity = await _colorRepository.GetById(id);
 
             if (entity != null)
             {
@@ -715,9 +745,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetContactsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Contact?> GetContactsById(int id)
+        public async Task<ActionResult<Contact?>> GetContactsById(int id)
         {
-            var dbEntity = _contactRepository.GetById(id);
+            var dbEntity = await _contactRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Contact, Contact>(dbEntity);
         }
 
@@ -766,9 +801,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteContacts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteContacts(int id)
+        public async Task<ActionResult> DeleteContacts(int id)
         {
-            var entity = _contactRepository.GetById(id);
+            var entity = await _contactRepository.GetById(id);
 
             if (entity != null)
             {
@@ -813,9 +848,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetCustomizableProductsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<CustomizableProduct?> GetCustomizableProductsById(int id)
+        public async Task<ActionResult<CustomizableProduct?>> GetCustomizableProductsById(int id)
         {
-            var dbEntity = _customizableProductRepository.GetById(id);
+            var dbEntity = await _customizableProductRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomizableProduct, CustomizableProduct>(dbEntity);
         }
 
@@ -864,9 +904,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteCustomizableProducts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteCustomizableProducts(int id)
+        public async Task<ActionResult> DeleteCustomizableProducts(int id)
         {
-            var entity = _customizableProductRepository.GetById(id);
+            var entity = await _customizableProductRepository.GetById(id);
 
             if (entity != null)
             {
@@ -911,9 +951,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetCustomizationOrdersById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<CustomizationOrder?> GetCustomizationOrdersById(int id)
+        public async Task<ActionResult<CustomizationOrder?>> GetCustomizationOrdersById(int id)
         {
-            var dbEntity = _customizationOrderRepository.GetById(id);
+            var dbEntity = await _customizationOrderRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomizationOrder, CustomizationOrder>(dbEntity);
         }
 
@@ -962,9 +1007,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteCustomizationOrders")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteCustomizationOrders(int id)
+        public async Task<ActionResult> DeleteCustomizationOrders(int id)
         {
-            var entity = _customizationOrderRepository.GetById(id);
+            var entity = await _customizationOrderRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1009,9 +1054,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetFabricTypesById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<FabricType?> GetFabricTypesById(int id)
+        public async Task<ActionResult<FabricType?>> GetFabricTypesById(int id)
         {
-            var dbEntity = _fabricTypeRepository.GetById(id);
+            var dbEntity = await _fabricTypeRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.FabricType, FabricType>(dbEntity);
         }
 
@@ -1060,9 +1110,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteFabricTypes")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteFabricTypes(int id)
+        public async Task<ActionResult> DeleteFabricTypes(int id)
         {
-            var entity = _fabricTypeRepository.GetById(id);
+            var entity = await _fabricTypeRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1107,9 +1157,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetLanguagesById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Language?> GetLanguagesById(int id)
+        public async Task<ActionResult<Language?>> GetLanguagesById(int id)
         {
-            var dbEntity = _languageRepository.GetById(id);
+            var dbEntity = await _languageRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Language, Language>(dbEntity);
         }
 
@@ -1158,9 +1213,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteLanguages")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteLanguages(int id)
+        public async Task<ActionResult> DeleteLanguages(int id)
         {
-            var entity = _languageRepository.GetById(id);
+            var entity = await _languageRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1205,9 +1260,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetOrdersById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Order?> GetOrdersById(int id)
+        public async Task<ActionResult<Order?>> GetOrdersById(int id)
         {
-            var dbEntity = _orderRepository.GetById(id);
+            var dbEntity = await _orderRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Order, Order>(dbEntity);
         }
 
@@ -1256,9 +1316,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteOrders")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteOrders(int id)
+        public async Task<ActionResult> DeleteOrders(int id)
         {
-            var entity = _orderRepository.GetById(id);
+            var entity = await _orderRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1303,9 +1363,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetOrderHistoryById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<OrderHistory?> GetOrderHistoryById(int id)
+        public async Task<ActionResult<OrderHistory?>> GetOrderHistoryById(int id)
         {
-            var dbEntity = _orderHistoryRepository.GetById(id);
+            var dbEntity = await _orderHistoryRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.OrderHistory, OrderHistory>(dbEntity);
         }
 
@@ -1354,9 +1419,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteOrderHistory")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteOrderHistory(int id)
+        public async Task<ActionResult> DeleteOrderHistory(int id)
         {
-            var entity = _orderHistoryRepository.GetById(id);
+            var entity = await _orderHistoryRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1401,9 +1466,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetOrderStatusesById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<OrderStatus?> GetOrderStatusesById(int id)
+        public async Task<ActionResult<OrderStatus?>> GetOrderStatusesById(int id)
         {
-            var dbEntity = _orderStatusRepository.GetById(id);
+            var dbEntity = await _orderStatusRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.OrderStatus, OrderStatus>(dbEntity);
         }
 
@@ -1452,9 +1522,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteOrderStatuses")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteOrderStatuses(int id)
+        public async Task<ActionResult> DeleteOrderStatuses(int id)
         {
-            var entity = _orderStatusRepository.GetById(id);
+            var entity = await _orderStatusRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1499,9 +1569,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetPaymentsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Payment?> GetPaymentsById(int id)
+        public async Task<ActionResult<Payment?>> GetPaymentsById(int id)
         {
-            var dbEntity = _paymentRepository.GetById(id);
+            var dbEntity = await _paymentRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Payment, Payment>(dbEntity);
         }
 
@@ -1550,9 +1625,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeletePayments")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeletePayments(int id)
+        public async Task<ActionResult> DeletePayments(int id)
         {
-            var entity = _paymentRepository.GetById(id);
+            var entity = await _paymentRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1597,9 +1672,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetProductsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Product?> GetProductsById(int id)
+        public async Task<ActionResult<Product?>> GetProductsById(int id)
         {
-            var dbEntity = _productRepository.GetById(id);
+            var dbEntity = await _productRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Product, Product>(dbEntity);
         }
 
@@ -1648,9 +1728,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteProducts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteProducts(int id)
+        public async Task<ActionResult> DeleteProducts(int id)
         {
-            var entity = _productRepository.GetById(id);
+            var entity = await _productRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1695,9 +1775,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetProductImagesById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ProductImage?> GetProductImagesById(int id)
+        public async Task<ActionResult<ProductImage?>> GetProductImagesById(int id)
         {
-            var dbEntity = _productImageRepository.GetById(id);
+            var dbEntity = await _productImageRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.ProductImage, ProductImage>(dbEntity);
         }
 
@@ -1746,9 +1831,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteProductImages")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteProductImages(int id)
+        public async Task<ActionResult> DeleteProductImages(int id)
         {
-            var entity = _productImageRepository.GetById(id);
+            var entity = await _productImageRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1793,9 +1878,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetProductTranslationsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ProductTranslation?> GetProductTranslationsById(int id)
+        public async Task<ActionResult<ProductTranslation?>> GetProductTranslationsById(int id)
         {
-            var dbEntity = _productTranslationRepository.GetById(id);
+            var dbEntity = await _productTranslationRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.ProductTranslation, ProductTranslation>(dbEntity);
         }
 
@@ -1844,9 +1934,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteProductTranslations")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteProductTranslations(int id)
+        public async Task<ActionResult> DeleteProductTranslations(int id)
         {
-            var entity = _productTranslationRepository.GetById(id);
+            var entity = await _productTranslationRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1891,9 +1981,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetReviewsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<Review?> GetReviewsById(int id)
+        public async Task<ActionResult<Review?>> GetReviewsById(int id)
         {
-            var dbEntity = _reviewRepository.GetById(id);
+            var dbEntity = await _reviewRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Review, Review>(dbEntity);
         }
 
@@ -1942,9 +2037,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteReviews")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteReviews(int id)
+        public async Task<ActionResult> DeleteReviews(int id)
         {
-            var entity = _reviewRepository.GetById(id);
+            var entity = await _reviewRepository.GetById(id);
 
             if (entity != null)
             {
@@ -1989,9 +2084,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetUsersById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<User?> GetUsersById(int id)
+        public async Task<ActionResult<User?>> GetUsersById(int id)
         {
-            var dbEntity = _userRepository.GetById(id);
+            var dbEntity = await _userRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.User, User>(dbEntity);
         }
 
@@ -2040,9 +2140,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteUsers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteUsers(int id)
+        public async Task<ActionResult> DeleteUsers(int id)
         {
-            var entity = _userRepository.GetById(id);
+            var entity = await _userRepository.GetById(id);
 
             if (entity != null)
             {
@@ -2087,9 +2187,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetUserProfilesById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<UserProfile?> GetUserProfilesById(int id)
+        public async Task<ActionResult<UserProfile?>> GetUserProfilesById(int id)
         {
-            var dbEntity = _userProfileRepository.GetById(id);
+            var dbEntity = await _userProfileRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.UserProfile, UserProfile>(dbEntity);
         }
 
@@ -2138,9 +2243,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteUserProfiles")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteUserProfiles(int id)
+        public async Task<ActionResult> DeleteUserProfiles(int id)
         {
-            var entity = _userProfileRepository.GetById(id);
+            var entity = await _userProfileRepository.GetById(id);
 
             if (entity != null)
             {
@@ -2185,9 +2290,14 @@ namespace RestAPI.Controllers
         [HttpGet("GetUserRolesById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<UserRole?> GetUserRolesById(int id)
+        public async Task<ActionResult<UserRole?>> GetUserRolesById(int id)
         {
-            var dbEntity = _userRoleRepository.GetById(id);
+            var dbEntity = await _userRoleRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
             return dbEntity == null ? NotFound() : _mapper.Map<DB.UserRole, UserRole>(dbEntity);
         }
 
@@ -2236,9 +2346,9 @@ namespace RestAPI.Controllers
         [HttpDelete("DeleteUserRoles")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteUserRoles(int id)
+        public async Task<ActionResult> DeleteUserRoles(int id)
         {
-            var entity = _userRoleRepository.GetById(id);
+            var entity = await _userRoleRepository.GetById(id);
 
             if (entity != null)
             {
@@ -2256,9 +2366,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkAccessLevelsData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkAccessLevelsData(int id)
+        public async Task<string?> GetFkAccessLevelsData(int id)
         {
-            var dbEntity = _accessLevelRepository.GetById(id);
+            var dbEntity = await _accessLevelRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | Level: {dbEntity?.Level} | Description: {dbEntity?.Description}";
@@ -2267,9 +2377,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkLanguagesData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkLanguagesData(int id)
+        public async Task<string?> GetFkLanguagesData(int id)
         {
-            var dbEntity = _languageRepository.GetById(id);
+            var dbEntity = await _languageRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | FullName: {dbEntity?.FullName} | Abbreviation: {dbEntity?.Abbreviation}| Description: {dbEntity?.Description}";
@@ -2278,9 +2388,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkCategoriesData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkCategoriesData(int id)
+        public async Task<string?> GetFkCategoriesData(int id)
         {
-            var dbEntity = _categoryRepository.GetById(id);
+            var dbEntity = await _categoryRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | ParentID: {dbEntity?.Description}";
@@ -2289,9 +2399,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkFabricTypesData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkFabricTypesData(int id)
+        public async Task<string?> GetFkFabricTypesData(int id)
         {
-            var dbEntity = _fabricTypeRepository.GetById(id);
+            var dbEntity = await _fabricTypeRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name}";
@@ -2300,9 +2410,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkProductsData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkProductsData(int id)
+        public async Task<string?> GetFkProductsData(int id)
         {
-            var dbEntity = _productRepository.GetById(id);
+            var dbEntity = await _productRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | Price: {dbEntity?.Price}";
@@ -2311,9 +2421,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkProductImagesData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkProductImagesData(int id)
+        public async Task<string?> GetFkProductImagesData(int id)
         {
-            var dbEntity = _productImageRepository.GetById(id);
+            var dbEntity = await _productImageRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | ImagePath: {dbEntity?.ImageData} | ProductID: {dbEntity?.FkProducts}";
@@ -2322,9 +2432,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkProductTranslationsData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkProductTranslationsData(int id)
+        public async Task<string?> GetFkProductTranslationsData(int id)
         {
-            var dbEntity = _productTranslationRepository.GetById(id);
+            var dbEntity = await _productTranslationRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | Description: {dbEntity?.Description} | LanguageID: {dbEntity?.FkLanguages}";
@@ -2333,9 +2443,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkReviewsData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkReviewsData(int id)
+        public async Task<string?> GetFkReviewsData(int id)
         {
-            var dbEntity = _reviewRepository.GetById(id);
+            var dbEntity = await _reviewRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | Rating: {dbEntity?.Rating} | Comment: {dbEntity?.Comment} | ProductID: {dbEntity?.FkProducts} | UserID: {dbEntity?.FkUsers}";
@@ -2344,9 +2454,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkOrdersData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkOrdersData(int id)
+        public async Task<string?> GetFkOrdersData(int id)
         {
-            var dbEntity = _orderRepository.GetById(id);
+            var dbEntity = await _orderRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | StatusID: {dbEntity?.FkOrderStatus}";
@@ -2355,9 +2465,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkOrderHistoryData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkOrderHistoryData(int id)
+        public async Task<string?> GetFkOrderHistoryData(int id)
         {
-            var dbEntity = _orderHistoryRepository.GetById(id);
+            var dbEntity = await _orderHistoryRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | StatusID: {dbEntity?.Status}";
@@ -2366,9 +2476,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkPaymentsData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkPaymentsData(int id)
+        public async Task<string?> GetFkPaymentsData(int id)
         {
-            var dbEntity = _paymentRepository.GetById(id);
+            var dbEntity = await _paymentRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | Amount: {dbEntity?.Amount} | PaymentMethod: {dbEntity?.PaymentMethod}";
@@ -2377,9 +2487,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkUsersData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkUsersData(int id)
+        public async Task<string?> GetFkUsersData(int id)
         {
-            var dbEntity = _userRepository.GetById(id);
+            var dbEntity = await _userRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | Login: {dbEntity?.Login}| Email: {dbEntity?.Email}";
@@ -2388,9 +2498,9 @@ namespace RestAPI.Controllers
         [HttpGet("GetFkUserRoles")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public string? GetFkUserRoles(int id)
+        public async Task<string?> GetFkUserRoles(int id)
         {
-            var dbEntity = _userRoleRepository.GetById(id);
+            var dbEntity = await _userRoleRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
                 : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name}";

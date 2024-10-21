@@ -74,11 +74,11 @@ namespace DatabaseRepository.Classes
             }
         }
 
-        public T? GetById(int id)
+        public async Task<T?> GetById(int id)
         {
             try
             {
-                var entity = _dbSet.Find(id);
+                var entity = await _dbSet.FindAsync(id);
                 if (entity != null)
                 {
                     _context.Entry(entity).State = EntityState.Detached;

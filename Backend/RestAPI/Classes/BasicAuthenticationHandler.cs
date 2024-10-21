@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using DatabaseProvider.Models;
 using DatabaseRepository.Interfaces;
 using RestAPI.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace RestAPI.Classes
 {
@@ -34,12 +35,12 @@ namespace RestAPI.Classes
             _userRoleRepository = userRoleRepository;
         }
 
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
             if (!Request.Headers.ContainsKey("Authorization"))
             {
                 Response.Headers.WWWAuthenticate = "Basic";
-                return Task.FromResult(AuthenticateResult.Fail("No contains header"));
+                return AuthenticateResult.Fail("No contains header");
             }
 
             var authHeader = Request.Headers.Authorization.ToString();
@@ -50,25 +51,26 @@ namespace RestAPI.Classes
                 var credentials = credentialstring.Split(':');
 
                 // Check user credentials from database
-                var user = _userRepository.GetAll().Where(x => x.Login == credentials[0] && x.Password == credentials[1]).FirstOrDefault();
+                var user = await _userRepository.GetAll()
+                    .FirstOrDefaultAsync(x => x.Login == credentials[0] && x.Password == credentials[1]);
 
                 if (user != null)
                 {
-                    var accessLevel = _userRoleRepository.GetById(user.FkUserRoles)?.Name;
+                    var accessLevel = await _userRoleRepository.GetById(user.FkUserRoles);
 
-                    if (!string.IsNullOrEmpty(accessLevel) && accessLevel == AccessLevels.Admin.ToString())
+                    if (!string.IsNullOrEmpty(accessLevel?.Name) && accessLevel.Name == AccessLevels.Admin.ToString())
                     {
-                        var claims = new[] { new Claim("login", user.Login), new Claim(ClaimTypes.Role, accessLevel) };
+                        var claims = new[] { new Claim("login", user.Login), new Claim(ClaimTypes.Role, accessLevel.Name) };
                         var identity = new ClaimsIdentity(claims, "Basic");
                         var claimsPrincipal = new ClaimsPrincipal(identity);
-                        return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name)));
+                        return AuthenticateResult.Success(new AuthenticationTicket(claimsPrincipal, Scheme.Name));
                     }
                 }
             }
 
             Response.StatusCode = 401;
             Response.Headers.Append(_webSiteName, _invalidAuthorizationHeader);
-            return Task.FromResult(AuthenticateResult.Fail(_invalidAuthorizationHeader));
+            return AuthenticateResult.Fail(_invalidAuthorizationHeader);
         }
     }
 }
