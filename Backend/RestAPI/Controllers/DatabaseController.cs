@@ -5,6 +5,7 @@ using RestAPI.AutoMapper;
 using DB = DatabaseProvider.Models;
 using DatabaseRepository.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using System.Diagnostics;
 
 namespace RestAPI.Controllers
 {
@@ -2368,10 +2369,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkAccessLevelsData(int id)
         {
-            var dbEntity = await _accessLevelRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | Level: {dbEntity?.Level} | Description: {dbEntity?.Description}";
+            try
+            {
+                var dbEntity = await _accessLevelRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Level: {dbEntity?.Level} | Description: {dbEntity?.Description}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkLanguagesData")]
@@ -2379,10 +2388,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkLanguagesData(int id)
         {
-            var dbEntity = await _languageRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | FullName: {dbEntity?.FullName} | Abbreviation: {dbEntity?.Abbreviation}| Description: {dbEntity?.Description}";
+            try
+            {
+                var dbEntity = await _languageRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | FullName: {dbEntity?.FullName} | Abbreviation: {dbEntity?.Abbreviation} | Description: {dbEntity?.Description}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkCategoriesData")]
@@ -2390,10 +2407,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkCategoriesData(int id)
         {
-            var dbEntity = await _categoryRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | ParentID: {dbEntity?.Description}";
+            try
+            {
+                var dbEntity = await _categoryRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | ParentID: {dbEntity?.Description}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkFabricTypesData")]
@@ -2401,10 +2426,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkFabricTypesData(int id)
         {
-            var dbEntity = await _fabricTypeRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name}";
+            try
+            {
+                var dbEntity = await _fabricTypeRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkProductsData")]
@@ -2412,10 +2445,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkProductsData(int id)
         {
-            var dbEntity = await _productRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | Price: {dbEntity?.Price}";
+            try
+            {
+                var dbEntity = await _productRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Price: {dbEntity?.Price}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkProductImagesData")]
@@ -2423,10 +2464,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkProductImagesData(int id)
         {
-            var dbEntity = await _productImageRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | ImagePath: {dbEntity?.ImageData} | ProductID: {dbEntity?.FkProducts}";
+            try
+            {
+                var dbEntity = await _productImageRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | ImagePath: {dbEntity?.ImageData} | ProductID: {dbEntity?.FkProducts}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkProductTranslationsData")]
@@ -2434,10 +2483,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkProductTranslationsData(int id)
         {
-            var dbEntity = await _productTranslationRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | Description: {dbEntity?.Description} | LanguageID: {dbEntity?.FkLanguages}";
+            try
+            {
+                var dbEntity = await _productTranslationRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | Description: {dbEntity?.Description} | LanguageID: {dbEntity?.FkLanguages}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkReviewsData")]
@@ -2445,10 +2502,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkReviewsData(int id)
         {
-            var dbEntity = await _reviewRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | Rating: {dbEntity?.Rating} | Comment: {dbEntity?.Comment} | ProductID: {dbEntity?.FkProducts} | UserID: {dbEntity?.FkUsers}";
+            try
+            {
+                var dbEntity = await _reviewRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Rating: {dbEntity?.Rating} | Comment: {dbEntity?.Comment} | ProductID: {dbEntity?.FkProducts} | UserID: {dbEntity?.FkUsers}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkOrdersData")]
@@ -2456,10 +2521,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkOrdersData(int id)
         {
-            var dbEntity = await _orderRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | StatusID: {dbEntity?.FkOrderStatus}";
+            try
+            {
+                var dbEntity = await _orderRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | StatusID: {dbEntity?.FkOrderStatus}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkOrderHistoryData")]
@@ -2467,10 +2540,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkOrderHistoryData(int id)
         {
-            var dbEntity = await _orderHistoryRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | StatusID: {dbEntity?.Status}";
+            try
+            {
+                var dbEntity = await _orderHistoryRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | StatusID: {dbEntity?.Status}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkPaymentsData")]
@@ -2478,10 +2559,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkPaymentsData(int id)
         {
-            var dbEntity = await _paymentRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | Amount: {dbEntity?.Amount} | PaymentMethod: {dbEntity?.PaymentMethod}";
+            try
+            {
+                var dbEntity = await _paymentRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Amount: {dbEntity?.Amount} | PaymentMethod: {dbEntity?.PaymentMethod}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkUsersData")]
@@ -2489,10 +2578,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkUsersData(int id)
         {
-            var dbEntity = await _userRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | Login: {dbEntity?.Login}| Email: {dbEntity?.Email}";
+            try
+            {
+                var dbEntity = await _userRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Login: {dbEntity?.Login}| Email: {dbEntity?.Email}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetFkUserRoles")]
@@ -2500,10 +2597,18 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkUserRoles(int id)
         {
-            var dbEntity = await _userRoleRepository.GetById(id);
-            return dbEntity == null
-                ? string.Empty
-                : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name}";
+            try
+            {
+                var dbEntity = await _userRoleRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name}";
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                throw;
+            }
         }
 
         #endregion
