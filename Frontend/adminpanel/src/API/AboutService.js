@@ -61,7 +61,7 @@ export default class AboutService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetAboutById`,
+            url: `${getRestAPIUrl()}/Database/GetAboutById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

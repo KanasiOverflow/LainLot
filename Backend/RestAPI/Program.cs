@@ -13,20 +13,23 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var LocalHostOrigins = "LocalHostOrigins";
+var HostOrigins = "HostOrigins";
 var corsAdresses = new string[]
 {
-    "http://localhost:3000/",
-    "http://localhost:8040/",
+    "http://localhost:3000",
+    "http://localhost:8040",
     "https://lainlot.com"
 };
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: LocalHostOrigins,
+    options.AddPolicy(name: HostOrigins,
         policy =>
         {
-            policy.WithOrigins(corsAdresses).AllowAnyHeader().AllowAnyMethod();
+            policy.WithOrigins(corsAdresses)
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
         });
 });
 
@@ -77,7 +80,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
-app.UseCors(LocalHostOrigins);
+app.UseCors(HostOrigins);
 
 app.UseAuthentication();
 

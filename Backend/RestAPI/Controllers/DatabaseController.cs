@@ -2253,6 +2253,17 @@ namespace RestAPI.Controllers
 
         #region Get Foreign Keys
 
+        [HttpGet("GetFkAccessLevelsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public string? GetFkAccessLevelsData(int id)
+        {
+            var dbEntity = _accessLevelRepository.GetById(id);
+            return dbEntity == null
+                ? string.Empty
+                : $"Id: {dbEntity?.Id} | Level: {dbEntity?.Level} | Description: {dbEntity?.Description}";
+        }
+
         [HttpGet("GetFkLanguagesData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -2261,7 +2272,7 @@ namespace RestAPI.Controllers
             var dbEntity = _languageRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
-                : $"FullName: {dbEntity?.FullName} | Abbreviation: {dbEntity?.Abbreviation}| Description: {dbEntity?.Description}";
+                : $"Id: {dbEntity?.Id} | FullName: {dbEntity?.FullName} | Abbreviation: {dbEntity?.Abbreviation}| Description: {dbEntity?.Description}";
         }
 
         [HttpGet("GetFkCategoriesData")]
@@ -2272,7 +2283,7 @@ namespace RestAPI.Controllers
             var dbEntity = _categoryRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
-                : $"Name: {dbEntity?.Name} | ParentID: {dbEntity?.Description}";
+                : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | ParentID: {dbEntity?.Description}";
         }
 
         [HttpGet("GetFkFabricTypesData")]
@@ -2283,7 +2294,7 @@ namespace RestAPI.Controllers
             var dbEntity = _fabricTypeRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
-                : $"Name: {dbEntity?.Name}";
+                : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name}";
         }
 
         [HttpGet("GetFkProductsData")]
@@ -2305,7 +2316,7 @@ namespace RestAPI.Controllers
             var dbEntity = _productImageRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
-                : $"ImagePath: {dbEntity?.ImageData} | ProductID: {dbEntity?.FkProducts}";
+                : $"Id: {dbEntity?.Id} | ImagePath: {dbEntity?.ImageData} | ProductID: {dbEntity?.FkProducts}";
         }
 
         [HttpGet("GetFkProductTranslationsData")]
@@ -2316,7 +2327,7 @@ namespace RestAPI.Controllers
             var dbEntity = _productTranslationRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
-                : $"Name: {dbEntity?.Name} | Description: {dbEntity?.Description} | LanguageID: {dbEntity?.FkLanguages}";
+                : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | Description: {dbEntity?.Description} | LanguageID: {dbEntity?.FkLanguages}";
         }
 
         [HttpGet("GetFkReviewsData")]
@@ -2327,7 +2338,7 @@ namespace RestAPI.Controllers
             var dbEntity = _reviewRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
-                : $"Rating: {dbEntity?.Rating} | Comment: {dbEntity?.Comment} | ProductID: {dbEntity?.FkProducts} | UserID: {dbEntity?.FkUsers}";
+                : $"Id: {dbEntity?.Id} | Rating: {dbEntity?.Rating} | Comment: {dbEntity?.Comment} | ProductID: {dbEntity?.FkProducts} | UserID: {dbEntity?.FkUsers}";
         }
 
         [HttpGet("GetFkOrdersData")]
@@ -2338,7 +2349,7 @@ namespace RestAPI.Controllers
             var dbEntity = _orderRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
-                : $"UserID: {dbEntity?.FkUsers} | StatusID: {dbEntity?.FkOrderStatus}";
+                : $"Id: {dbEntity?.Id} | StatusID: {dbEntity?.FkOrderStatus}";
         }
 
         [HttpGet("GetFkOrderHistoryData")]
@@ -2349,7 +2360,7 @@ namespace RestAPI.Controllers
             var dbEntity = _orderHistoryRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
-                : $"OrderID: {dbEntity?.Id} | StatusID: {dbEntity?.Status}";
+                : $"Id: {dbEntity?.Id} | StatusID: {dbEntity?.Status}";
         }
 
         [HttpGet("GetFkPaymentsData")]
@@ -2360,7 +2371,29 @@ namespace RestAPI.Controllers
             var dbEntity = _paymentRepository.GetById(id);
             return dbEntity == null
                 ? string.Empty
-                : $"OrderID: {dbEntity?.Id} | Amount: {dbEntity?.Amount} | PaymentMethod: {dbEntity?.PaymentMethod}";
+                : $"Id: {dbEntity?.Id} | Amount: {dbEntity?.Amount} | PaymentMethod: {dbEntity?.PaymentMethod}";
+        }
+
+        [HttpGet("GetFkUsersData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public string? GetFkUsersData(int id)
+        {
+            var dbEntity = _userRepository.GetById(id);
+            return dbEntity == null
+                ? string.Empty
+                : $"Id: {dbEntity?.Id} | Login: {dbEntity?.Login}| Email: {dbEntity?.Email}";
+        }
+
+        [HttpGet("GetFkUserRoles")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public string? GetFkUserRoles(int id)
+        {
+            var dbEntity = _userRoleRepository.GetById(id);
+            return dbEntity == null
+                ? string.Empty
+                : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name}";
         }
 
         #endregion
