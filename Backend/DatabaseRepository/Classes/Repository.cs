@@ -1,15 +1,16 @@
 ﻿using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using DatabaseRepository.Interfaces;
+using DatabaseProvider.Models;
 
 namespace DatabaseRepository.Classes
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly DbContext _context;
+        private readonly LainLotContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public Repository(DbContext context)
+        public Repository(LainLotContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();

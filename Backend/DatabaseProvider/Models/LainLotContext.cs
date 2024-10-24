@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
 
 namespace DatabaseProvider.Models;
 
@@ -9,8 +10,6 @@ public partial class LainLotContext : DbContext
     /// Add-Migration InitialCreate -Project DatabaseProvider
     /// Update-Database -Project DatabaseProvider
     /// </summary>
-
-    private string? _connectionString;
 
     public LainLotContext()
     {
@@ -67,13 +66,10 @@ public partial class LainLotContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.IsConfigured)
-        {
-            //_connectionString = ConnectionStrings.ConnectionString;
-            _connectionString = "Host=localhost;Port=5433;Database=LainLot;Username=postgres;Password=123456789";
-        }
+        var npgsqlOptions = optionsBuilder.Options.FindExtension<NpgsqlOptionsExtension>();
+        var connectionString = npgsqlOptions?.ConnectionString;
 
-        optionsBuilder.UseNpgsql(_connectionString);
+        optionsBuilder.UseNpgsql(connectionString);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
