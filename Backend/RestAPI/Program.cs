@@ -14,10 +14,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var LocalHostOrigins = "LocalHostOrigins";
+
+// **Removed trailing slashes from URLs to avoid CORS matching issues**
 var corsAdresses = new string[]
 {
-    "http://localhost:3000/",
-    "http://localhost:8040/",
+    "http://localhost:3000",
+    "http://localhost:8040",
     "https://lainlot.com"
 };
 
@@ -26,7 +28,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: LocalHostOrigins,
         policy =>
         {
-            policy.WithOrigins(corsAdresses).AllowAnyHeader().AllowAnyMethod();
+            policy.WithOrigins(corsAdresses) // **Fixed: removed trailing slashes**
+                  .AllowAnyHeader() // **Allowed all headers**
+                  .AllowAnyMethod() // **Allowed all HTTP methods**
+                  .AllowCredentials(); // **Added: allowed sending credentials (cookies, authorization headers, etc.)**
         });
 });
 
