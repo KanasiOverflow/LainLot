@@ -365,3 +365,5 @@ Config/Config/appsettings.json
 Backend/DatabaseProvider/Models/LainLotContext.cs
 Backend/RestAPI/RestAPI.http
 
+# Logger
+Backend/RestAPI/Logs

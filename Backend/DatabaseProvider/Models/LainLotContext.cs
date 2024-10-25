@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DatabaseProvider.Models;
 
@@ -10,15 +11,12 @@ public partial class LainLotContext : DbContext
     /// Update-Database -Project DatabaseProvider
     /// </summary>
 
-    private string? _connectionString;
+    private readonly ILogger<LainLotContext> _logger;
 
-    public LainLotContext()
-    {
-    }
-
-    public LainLotContext(DbContextOptions<LainLotContext> options)
+    public LainLotContext(DbContextOptions<LainLotContext> options, ILogger<LainLotContext> logger)
         : base(options)
     {
+        _logger = logger;
     }
 
     public virtual DbSet<About> Abouts { get; set; }
@@ -67,12 +65,10 @@ public partial class LainLotContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.IsConfigured)
+        if (_logger != null)
         {
-            _connectionString = ConnectionStrings.ConnectionString;
+            optionsBuilder.LogTo(message => _logger.LogInformation(message));
         }
-
-        optionsBuilder.UseNpgsql(_connectionString);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

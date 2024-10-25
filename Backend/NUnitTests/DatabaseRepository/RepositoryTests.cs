@@ -157,9 +157,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_About_Entity(int id)
+        public async Task Delete_About_Entity(int id)
         {
-            var result = _aboutRepository?.GetById(id);
+            var result = await _aboutRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -170,7 +170,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_About_Entity()
+        public async Task Add_About_Entity()
         {
             var entity = new About()
             {
@@ -183,7 +183,7 @@ namespace NUnitTests.DatabaseRepository
             _aboutRepository?.Add(entity);
 
             var list = _aboutRepository?.GetAll().ToList();
-            var entityThatWasAdded = _aboutRepository?.GetById(3);
+            var entityThatWasAdded = await _aboutRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -196,15 +196,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_About_Entity(int id)
+        public async Task Update_About_Entity(int id)
         {
-            var entity = _aboutRepository?.GetById(id);
+            var entity = await _aboutRepository?.GetById(id);
 
             entity.Text = "Updated Text";
 
             _aboutRepository?.Update(entity);
 
-            var updatedEntity = _aboutRepository?.GetById(id);
+            var updatedEntity = await _aboutRepository?.GetById(id);
 
             Assert.That(updatedEntity?.Text, Is.EqualTo(entity?.Text));
         }
@@ -242,9 +242,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_AccessLevel_Entity(int id)
+        public async Task Delete_AccessLevel_Entity(int id)
         {
-            var result = _accessLevelRepository?.GetById(id);
+            var result = await _accessLevelRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -255,7 +255,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_AccessLevel_Entity()
+        public async Task Add_AccessLevel_Entity()
         {
             var entity = new AccessLevel()
             {
@@ -266,7 +266,7 @@ namespace NUnitTests.DatabaseRepository
             _accessLevelRepository?.Add(entity);
 
             var list = _accessLevelRepository?.GetAll().ToList();
-            var entityThatWasAdded = _accessLevelRepository?.GetById(3);
+            var entityThatWasAdded = await _accessLevelRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -279,15 +279,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_AccessLevel_Entity(int id)
+        public async Task Update_AccessLevel_Entity(int id)
         {
-            var entity = _accessLevelRepository?.GetById(id);
+            var entity = await _accessLevelRepository?.GetById(id);
 
             entity.Description = "Updated Access Level";
 
             _accessLevelRepository?.Update(entity);
 
-            var updatedEntity = _accessLevelRepository?.GetById(id);
+            var updatedEntity = await _accessLevelRepository?.GetById(id);
 
             Assert.That(updatedEntity?.Description, Is.EqualTo(entity?.Description));
         }
@@ -325,9 +325,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Cart_Entity(int id)
+        public async Task Delete_Cart_Entity(int id)
         {
-            var result = _cartRepository?.GetById(id);
+            var result = await _cartRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -338,7 +338,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_Cart_Entity()
+        public async Task Add_Cart_Entity()
         {
             var entity = new Cart()
             {
@@ -350,7 +350,7 @@ namespace NUnitTests.DatabaseRepository
             _cartRepository?.Add(entity);
 
             var list = _cartRepository?.GetAll().ToList();
-            var entityThatWasAdded = _cartRepository?.GetById(3);
+            var entityThatWasAdded = await _cartRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -363,15 +363,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_Cart_Entity(int id)
+        public async Task Update_Cart_Entity(int id)
         {
-            var entity = _cartRepository?.GetById(id);
+            var entity = await _cartRepository?.GetById(id);
 
             entity.FkUsers = 2;
 
             _cartRepository?.Update(entity);
 
-            var updatedEntity = _cartRepository?.GetById(id);
+            var updatedEntity = await _cartRepository?.GetById(id);
 
             Assert.That(updatedEntity?.FkUsers, Is.EqualTo(entity?.FkUsers));
         }
@@ -409,9 +409,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Category_Entity(int id)
+        public async Task Delete_Category_Entity(int id)
         {
-            var result = _categoryRepository?.GetById(id);
+            var result = await _categoryRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -422,7 +422,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_Category_Entity()
+        public async Task Add_Category_Entity()
         {
             var entity = new Category()
             {
@@ -435,7 +435,7 @@ namespace NUnitTests.DatabaseRepository
             _categoryRepository?.Add(entity);
 
             var list = _categoryRepository?.GetAll().ToList();
-            var entityThatWasAdded = _categoryRepository?.GetById(3);
+            var entityThatWasAdded = await _categoryRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -448,15 +448,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_Category_Entity(int id)
+        public async Task Update_Category_Entity(int id)
         {
-            var entity = _categoryRepository?.GetById(id);
+            var entity = await _categoryRepository?.GetById(id);
 
             entity.Name = "Updated Category";
 
             _categoryRepository?.Update(entity);
 
-            var updatedEntity = _categoryRepository?.GetById(id);
+            var updatedEntity = await _categoryRepository?.GetById(id);
 
             Assert.That(updatedEntity?.Name, Is.EqualTo(entity?.Name));
         }
@@ -494,9 +494,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_CategoryHierarchy_Entity(int id)
+        public async Task Delete_CategoryHierarchy_Entity(int id)
         {
-            var result = _categoryHierarchyRepository?.GetById(id);
+            var result = await _categoryHierarchyRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -507,7 +507,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_CategoryHierarchy_Entity()
+        public async Task Add_CategoryHierarchy_Entity()
         {
             var entity = new CategoryHierarchy()
             {
@@ -519,7 +519,7 @@ namespace NUnitTests.DatabaseRepository
             _categoryHierarchyRepository?.Add(entity);
 
             var list = _categoryHierarchyRepository?.GetAll().ToList();
-            var entityThatWasAdded = _categoryHierarchyRepository?.GetById(3);
+            var entityThatWasAdded = await _categoryHierarchyRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -533,15 +533,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_CategoryHierarchy_Entity(int id)
+        public async Task Update_CategoryHierarchy_Entity(int id)
         {
-            var entity = _categoryHierarchyRepository?.GetById(id);
+            var entity = await _categoryHierarchyRepository?.GetById(id);
 
             entity.FkCategories = 3;
 
             _categoryHierarchyRepository?.Update(entity);
 
-            var updatedEntity = _categoryHierarchyRepository?.GetById(id);
+            var updatedEntity = await _categoryHierarchyRepository?.GetById(id);
 
             Assert.That(updatedEntity?.FkCategories, Is.EqualTo(entity?.FkCategories));
         }
@@ -579,9 +579,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Color_Entity(int id)
+        public async Task Delete_Color_Entity(int id)
         {
-            var result = _colorRepository?.GetById(id);
+            var result = await _colorRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -592,7 +592,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_Color_Entity()
+        public async Task Add_Color_Entity()
         {
             var entity = new Color()
             {
@@ -604,7 +604,7 @@ namespace NUnitTests.DatabaseRepository
             _colorRepository?.Add(entity);
 
             var list = _colorRepository?.GetAll().ToList();
-            var entityThatWasAdded = _colorRepository?.GetById(3);
+            var entityThatWasAdded = await _colorRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -617,15 +617,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_Color_Entity(int id)
+        public async Task Update_Color_Entity(int id)
         {
-            var entity = _colorRepository?.GetById(id);
+            var entity = await _colorRepository?.GetById(id);
 
             entity.Name = "Updated Color";
 
             _colorRepository?.Update(entity);
 
-            var updatedEntity = _colorRepository?.GetById(id);
+            var updatedEntity = await _colorRepository?.GetById(id);
 
             Assert.That(updatedEntity?.Name, Is.EqualTo(entity?.Name));
         }
@@ -663,9 +663,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Contact_Entity(int id)
+        public async Task Delete_Contact_Entity(int id)
         {
-            var result = _contactRepository?.GetById(id);
+            var result = await _contactRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -676,7 +676,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_Contact_Entity()
+        public async Task Add_Contact_Entity()
         {
             var entity = new Contact()
             {
@@ -689,7 +689,7 @@ namespace NUnitTests.DatabaseRepository
             _contactRepository?.Add(entity);
 
             var list = _contactRepository?.GetAll().ToList();
-            var entityThatWasAdded = _contactRepository?.GetById(3);
+            var entityThatWasAdded = await _contactRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -703,16 +703,16 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_Contact_Entity(int id)
+        public async Task Update_Contact_Entity(int id)
         {
-            var entity = _contactRepository?.GetById(id);
+            var entity = await _contactRepository?.GetById(id);
 
             entity.Email = "updatedcontact@example.com";
             entity.Phone = "987654321";
 
             _contactRepository?.Update(entity);
 
-            var updatedEntity = _contactRepository?.GetById(id);
+            var updatedEntity = await _contactRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -754,9 +754,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_CustomizableProduct_Entity(int id)
+        public async Task Delete_CustomizableProduct_Entity(int id)
         {
-            var result = _customizableProductRepository?.GetById(id);
+            var result = await _customizableProductRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -767,7 +767,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_CustomizableProduct_Entity()
+        public async Task Add_CustomizableProduct_Entity()
         {
             var entity = new CustomizableProduct()
             {
@@ -782,7 +782,7 @@ namespace NUnitTests.DatabaseRepository
             _customizableProductRepository?.Add(entity);
 
             var list = _customizableProductRepository?.GetAll().ToList();
-            var entityThatWasAdded = _customizableProductRepository?.GetById(3);
+            var entityThatWasAdded = await _customizableProductRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -796,16 +796,16 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_CustomizableProduct_Entity(int id)
+        public async Task Update_CustomizableProduct_Entity(int id)
         {
-            var entity = _customizableProductRepository?.GetById(id);
+            var entity = await _customizableProductRepository?.GetById(id);
 
             entity.FkProducts = 2;
             entity.CustomizationDetails = "Updated description";
 
             _customizableProductRepository?.Update(entity);
 
-            var updatedEntity = _customizableProductRepository?.GetById(id);
+            var updatedEntity = await _customizableProductRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -847,9 +847,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_CustomizationOrder_Entity(int id)
+        public async Task Delete_CustomizationOrder_Entity(int id)
         {
-            var result = _customizationOrderRepository?.GetById(id);
+            var result = await _customizationOrderRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -860,7 +860,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_CustomizationOrder_Entity()
+        public async Task Add_CustomizationOrder_Entity()
         {
             var entity = new CustomizationOrder()
             {
@@ -871,7 +871,7 @@ namespace NUnitTests.DatabaseRepository
             _customizationOrderRepository?.Add(entity);
 
             var list = _customizationOrderRepository?.GetAll().ToList();
-            var entityThatWasAdded = _customizationOrderRepository?.GetById(3);
+            var entityThatWasAdded = await _customizationOrderRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -884,15 +884,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_CustomizationOrder_Entity(int id)
+        public async Task Update_CustomizationOrder_Entity(int id)
         {
-            var entity = _customizationOrderRepository?.GetById(id);
+            var entity = await _customizationOrderRepository?.GetById(id);
 
             entity.Size = "XL";
 
             _customizationOrderRepository?.Update(entity);
 
-            var updatedEntity = _customizationOrderRepository?.GetById(id);
+            var updatedEntity = await _customizationOrderRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -933,9 +933,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_FabricType_Entity(int id)
+        public async Task Delete_FabricType_Entity(int id)
         {
-            var result = _fabricTypeRepository?.GetById(id);
+            var result = await _fabricTypeRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -946,7 +946,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_FabricType_Entity()
+        public async Task Add_FabricType_Entity()
         {
             var entity = new FabricType()
             {
@@ -957,7 +957,7 @@ namespace NUnitTests.DatabaseRepository
             _fabricTypeRepository?.Add(entity);
 
             var list = _fabricTypeRepository?.GetAll().ToList();
-            var entityThatWasAdded = _fabricTypeRepository?.GetById(3);
+            var entityThatWasAdded = await _fabricTypeRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -970,15 +970,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_FabricType_Entity(int id)
+        public async Task Update_FabricType_Entity(int id)
         {
-            var entity = _fabricTypeRepository?.GetById(id);
+            var entity = await _fabricTypeRepository?.GetById(id);
 
             entity.Name = "Polyester";
 
             _fabricTypeRepository?.Update(entity);
 
-            var updatedEntity = _fabricTypeRepository?.GetById(id);
+            var updatedEntity = await _fabricTypeRepository?.GetById(id);
 
             Assert.That(updatedEntity?.Name, Is.EqualTo(entity?.Name));
         }
@@ -1016,9 +1016,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Language_Entity(int id)
+        public async Task Delete_Language_Entity(int id)
         {
-            var result = _languageRepository?.GetById(id);
+            var result = await _languageRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1029,7 +1029,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_Language_Entity()
+        public async Task Add_Language_Entity()
         {
             var entity = new Language()
             {
@@ -1044,7 +1044,7 @@ namespace NUnitTests.DatabaseRepository
             _languageRepository?.Add(entity);
 
             var list = _languageRepository?.GetAll().ToList();
-            var entityThatWasAdded = _languageRepository?.GetById(3);
+            var entityThatWasAdded = await _languageRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1057,15 +1057,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_Language_Entity(int id)
+        public async Task Update_Language_Entity(int id)
         {
-            var entity = _languageRepository?.GetById(id);
+            var entity = await _languageRepository?.GetById(id);
 
             entity.FullName = "French";
 
             _languageRepository?.Update(entity);
 
-            var updatedEntity = _languageRepository?.GetById(id);
+            var updatedEntity = await _languageRepository?.GetById(id);
 
             Assert.That(updatedEntity?.FullName, Is.EqualTo(entity?.FullName));
         }
@@ -1103,9 +1103,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Order_Entity(int id)
+        public async Task Delete_Order_Entity(int id)
         {
-            var result = _orderRepository?.GetById(id);
+            var result = await _orderRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1116,7 +1116,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_Order_Entity()
+        public async Task Add_Order_Entity()
         {
             var entity = new Order()
             {
@@ -1136,7 +1136,7 @@ namespace NUnitTests.DatabaseRepository
             _orderRepository?.Add(entity);
 
             var list = _orderRepository?.GetAll().ToList();
-            var entityThatWasAdded = _orderRepository?.GetById(3);
+            var entityThatWasAdded = await _orderRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1151,15 +1151,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_Order_Entity(int id)
+        public async Task Update_Order_Entity(int id)
         {
-            var entity = _orderRepository?.GetById(id);
+            var entity = await _orderRepository?.GetById(id);
 
             entity.TotalAmount = 200.00M;
 
             _orderRepository?.Update(entity);
 
-            var updatedEntity = _orderRepository?.GetById(id);
+            var updatedEntity = await _orderRepository?.GetById(id);
 
             Assert.That(updatedEntity?.TotalAmount, Is.EqualTo(entity?.TotalAmount));
         }
@@ -1197,9 +1197,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_OrderHistory_Entity(int id)
+        public async Task Delete_OrderHistory_Entity(int id)
         {
-            var result = _orderHistoryRepository?.GetById(id);
+            var result = await _orderHistoryRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1210,7 +1210,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_OrderHistory_Entity()
+        public async Task Add_OrderHistory_Entity()
         {
             var entity = new OrderHistory()
             {
@@ -1223,7 +1223,7 @@ namespace NUnitTests.DatabaseRepository
             _orderHistoryRepository?.Add(entity);
 
             var list = _orderHistoryRepository?.GetAll().ToList();
-            var entityThatWasAdded = _orderHistoryRepository?.GetById(3);
+            var entityThatWasAdded = await _orderHistoryRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1236,15 +1236,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_OrderHistory_Entity(int id)
+        public async Task Update_OrderHistory_Entity(int id)
         {
-            var entity = _orderHistoryRepository?.GetById(id);
+            var entity = await _orderHistoryRepository?.GetById(id);
 
             entity.Status = 2;
 
             _orderHistoryRepository?.Update(entity);
 
-            var updatedEntity = _orderHistoryRepository?.GetById(id);
+            var updatedEntity = await _orderHistoryRepository?.GetById(id);
 
             Assert.That(updatedEntity?.Status, Is.EqualTo(entity?.Status));
         }
@@ -1282,9 +1282,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_OrderStatus_Entity(int id)
+        public async Task Delete_OrderStatus_Entity(int id)
         {
-            var result = _orderStatusRepository?.GetById(id);
+            var result = await _orderStatusRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1295,7 +1295,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_OrderStatus_Entity()
+        public async Task Add_OrderStatus_Entity()
         {
             var entity = new OrderStatus()
             {
@@ -1306,7 +1306,7 @@ namespace NUnitTests.DatabaseRepository
             _orderStatusRepository?.Add(entity);
 
             var list = _orderStatusRepository?.GetAll().ToList();
-            var entityThatWasAdded = _orderStatusRepository?.GetById(3);
+            var entityThatWasAdded = await _orderStatusRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1319,15 +1319,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_OrderStatus_Entity(int id)
+        public async Task Update_OrderStatus_Entity(int id)
         {
-            var entity = _orderStatusRepository?.GetById(id);
+            var entity = await _orderStatusRepository?.GetById(id);
 
             entity.Status = "Shipped";
 
             _orderStatusRepository?.Update(entity);
 
-            var updatedEntity = _orderStatusRepository?.GetById(id);
+            var updatedEntity = await _orderStatusRepository?.GetById(id);
 
             Assert.That(updatedEntity?.Status, Is.EqualTo(entity?.Status));
         }
@@ -1365,9 +1365,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Payment_Entity(int id)
+        public async Task Delete_Payment_Entity(int id)
         {
-            var result = _paymentRepository?.GetById(id);
+            var result = await _paymentRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1378,7 +1378,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_Payment_Entity()
+        public async Task Add_Payment_Entity()
         {
             var entity = new Payment()
             {
@@ -1391,7 +1391,7 @@ namespace NUnitTests.DatabaseRepository
             _paymentRepository?.Add(entity);
 
             var list = _paymentRepository?.GetAll().ToList();
-            var entityThatWasAdded = _paymentRepository?.GetById(3);
+            var entityThatWasAdded = await _paymentRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1404,15 +1404,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_Payment_Entity(int id)
+        public async Task Update_Payment_Entity(int id)
         {
-            var entity = _paymentRepository?.GetById(id);
+            var entity = await _paymentRepository?.GetById(id);
 
             entity.PaymentMethod = "PayPal";
 
             _paymentRepository?.Update(entity);
 
-            var updatedEntity = _paymentRepository?.GetById(id);
+            var updatedEntity = await _paymentRepository?.GetById(id);
 
             Assert.That(updatedEntity?.PaymentMethod, Is.EqualTo(entity?.PaymentMethod));
         }
@@ -1450,9 +1450,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Product_Entity(int id)
+        public async Task Delete_Product_Entity(int id)
         {
-            var result = _productRepository?.GetById(id);
+            var result = await _productRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1463,7 +1463,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_Product_Entity()
+        public async Task Add_Product_Entity()
         {
             var entity = new Product()
             {
@@ -1479,7 +1479,7 @@ namespace NUnitTests.DatabaseRepository
             _productRepository?.Add(entity);
 
             var list = _productRepository?.GetAll().ToList();
-            var entityThatWasAdded = _productRepository?.GetById(3);
+            var entityThatWasAdded = await _productRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1492,15 +1492,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_Product_Entity(int id)
+        public async Task Update_Product_Entity(int id)
         {
-            var entity = _productRepository?.GetById(id);
+            var entity = await _productRepository?.GetById(id);
 
             entity.Price = 199.99m;
 
             _productRepository?.Update(entity);
 
-            var updatedEntity = _productRepository?.GetById(id);
+            var updatedEntity = await _productRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1541,9 +1541,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_ProductImage_Entity(int id)
+        public async Task Delete_ProductImage_Entity(int id)
         {
-            var result = _productImageRepository?.GetById(id);
+            var result = await _productImageRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1578,15 +1578,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_ProductImage_Entity(int id)
+        public async Task Update_ProductImage_Entity(int id)
         {
-            var entity = _productImageRepository?.GetById(id);
+            var entity = await _productImageRepository?.GetById(id);
 
-            entity.ImageData = System.Text.Encoding.UTF8.GetBytes("http://example.com/updated-image.jpg");
+            entity.ImageData = Encoding.UTF8.GetBytes("http://example.com/updated-image.jpg");
 
             _productImageRepository?.Update(entity);
 
-            var updatedEntity = _productImageRepository?.GetById(id);
+            var updatedEntity = await _productImageRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1627,9 +1627,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_ProductTranslation_Entity(int id)
+        public async Task Delete_ProductTranslation_Entity(int id)
         {
-            var result = _productTranslationRepository?.GetById(id);
+            var result = await _productTranslationRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1640,7 +1640,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_ProductTranslation_Entity()
+        public async Task Add_ProductTranslation_Entity()
         {
             var entity = new ProductTranslation()
             {
@@ -1654,7 +1654,7 @@ namespace NUnitTests.DatabaseRepository
             _productTranslationRepository?.Add(entity);
 
             var list = _productTranslationRepository?.GetAll().ToList();
-            var entityThatWasAdded = _productTranslationRepository?.GetById(3);
+            var entityThatWasAdded = await _productTranslationRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1667,15 +1667,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_ProductTranslation_Entity(int id)
+        public async Task Update_ProductTranslation_Entity(int id)
         {
-            var entity = _productTranslationRepository?.GetById(id);
+            var entity = await _productTranslationRepository?.GetById(id);
 
             entity.Name = "Updated Title";
 
             _productTranslationRepository?.Update(entity);
 
-            var updatedEntity = _productTranslationRepository?.GetById(id);
+            var updatedEntity = await _productTranslationRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1716,9 +1716,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Review_Entity(int id)
+        public async Task Delete_Review_Entity(int id)
         {
-            var result = _reviewRepository?.GetById(id);
+            var result = await _reviewRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1729,7 +1729,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_Review_Entity()
+        public async Task Add_Review_Entity()
         {
             var entity = new Review()
             {
@@ -1743,7 +1743,7 @@ namespace NUnitTests.DatabaseRepository
             _reviewRepository?.Add(entity);
 
             var list = _reviewRepository?.GetAll().ToList();
-            var entityThatWasAdded = _reviewRepository?.GetById(3);
+            var entityThatWasAdded = await _reviewRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1756,15 +1756,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_Review_Entity(int id)
+        public async Task Update_Review_Entity(int id)
         {
-            var entity = _reviewRepository?.GetById(id);
+            var entity = await _reviewRepository?.GetById(id);
 
             entity.Rating = 4;
 
             _reviewRepository?.Update(entity);
 
-            var updatedEntity = _reviewRepository?.GetById(id);
+            var updatedEntity = await _reviewRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1805,9 +1805,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_User_Entity(int id)
+        public async Task Delete_User_Entity(int id)
         {
-            var result = _userRepository?.GetById(id);
+            var result = await _userRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1818,7 +1818,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_User_Entity()
+        public async Task Add_User_Entity()
         {
             var entity = new User()
             {
@@ -1836,7 +1836,7 @@ namespace NUnitTests.DatabaseRepository
             _userRepository?.Add(entity);
 
             var list = _userRepository?.GetAll().ToList();
-            var entityThatWasAdded = _userRepository?.GetById(3);
+            var entityThatWasAdded = await _userRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1849,15 +1849,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_User_Entity(int id)
+        public async Task Update_User_Entity(int id)
         {
-            var entity = _userRepository?.GetById(id);
+            var entity = await _userRepository?.GetById(id);
 
             entity.Email = "updated_email@example.com";
 
             _userRepository?.Update(entity);
 
-            var updatedEntity = _userRepository?.GetById(id);
+            var updatedEntity = await _userRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1898,9 +1898,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_UserProfile_Entity(int id)
+        public async Task Delete_UserProfile_Entity(int id)
         {
-            var result = _userProfileRepository?.GetById(id);
+            var result = await _userProfileRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -1911,7 +1911,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_UserProfile_Entity()
+        public async Task Add_UserProfile_Entity()
         {
             var entity = new UserProfile()
             {
@@ -1925,7 +1925,7 @@ namespace NUnitTests.DatabaseRepository
             _userProfileRepository?.Add(entity);
 
             var list = _userProfileRepository?.GetAll().ToList();
-            var entityThatWasAdded = _userProfileRepository?.GetById(3);
+            var entityThatWasAdded = await _userProfileRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1938,15 +1938,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_UserProfile_Entity(int id)
+        public async Task Update_UserProfile_Entity(int id)
         {
-            var entity = _userProfileRepository?.GetById(id);
+            var entity = await _userProfileRepository?.GetById(id);
 
             entity.LastName = "UpdatedLastName";
 
             _userProfileRepository?.Update(entity);
 
-            var updatedEntity = _userProfileRepository?.GetById(id);
+            var updatedEntity = await _userProfileRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1987,9 +1987,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_UserRole_Entity(int id)
+        public async Task Delete_UserRole_Entity(int id)
         {
-            var result = _userRoleRepository?.GetById(id);
+            var result = await _userRoleRepository?.GetById(id);
 
             Assert.That(result, Is.Not.Null);
 
@@ -2000,7 +2000,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public void Add_UserRole_Entity()
+        public async Task Add_UserRole_Entity()
         {
             var entity = new UserRole()
             {
@@ -2011,7 +2011,7 @@ namespace NUnitTests.DatabaseRepository
             _userRoleRepository?.Add(entity);
 
             var list = _userRoleRepository?.GetAll().ToList();
-            var entityThatWasAdded = _userRoleRepository?.GetById(3);
+            var entityThatWasAdded = await _userRoleRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -2024,15 +2024,15 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Update_UserRole_Entity(int id)
+        public async Task Update_UserRole_Entity(int id)
         {
-            var entity = _userRoleRepository?.GetById(id);
+            var entity = await _userRoleRepository?.GetById(id);
 
             entity.Name = "UpdatedRoleName";
 
             _userRoleRepository?.Update(entity);
 
-            var updatedEntity = _userRoleRepository?.GetById(id);
+            var updatedEntity = await _userRoleRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {

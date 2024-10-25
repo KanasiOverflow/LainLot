@@ -1,18 +1,21 @@
-﻿using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using DatabaseRepository.Interfaces;
+using DatabaseProvider.Models;
+using Microsoft.Extensions.Logging;
 
 namespace DatabaseRepository.Classes
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly DbContext _context;
+        private readonly ILogger<Repository<T>> _logger;
+        private readonly LainLotContext _context;
         private readonly DbSet<T> _dbSet;
 
-        public Repository(DbContext context)
+        public Repository(LainLotContext context, ILogger<Repository<T>> logger)
         {
             _context = context;
             _dbSet = _context.Set<T>();
+            _logger = logger;
         }
 
         public void Add(T entity)
@@ -27,7 +30,7 @@ namespace DatabaseRepository.Classes
             }
             catch (Exception exc)
             {
-                Debug.Write(exc.Message);
+                _logger.LogError($"Add method. {exc.Message}");
                 throw;
             }
             finally
@@ -48,7 +51,7 @@ namespace DatabaseRepository.Classes
             }
             catch (Exception exc)
             {
-                Debug.Write(exc.Message);
+                _logger.LogError($"Delete method. {exc.Message}");
                 throw;
             }
             finally
@@ -65,7 +68,7 @@ namespace DatabaseRepository.Classes
             }
             catch (Exception exc)
             {
-                Debug.Write(exc.Message);
+                _logger.LogError($"GetAll method. {exc.Message}");
                 throw;
             }
             finally
@@ -74,11 +77,11 @@ namespace DatabaseRepository.Classes
             }
         }
 
-        public T? GetById(int id)
+        public async Task<T?> GetById(int id)
         {
             try
             {
-                var entity = _dbSet.Find(id);
+                var entity = await _dbSet.FindAsync(id);
                 if (entity != null)
                 {
                     _context.Entry(entity).State = EntityState.Detached;
@@ -89,7 +92,7 @@ namespace DatabaseRepository.Classes
             }
             catch (Exception exc)
             {
-                Debug.Write(exc.Message);
+                _logger.LogError($"GetById method. {exc.Message}");
                 throw;
             }
             finally
@@ -111,7 +114,7 @@ namespace DatabaseRepository.Classes
             }
             catch (Exception exc)
             {
-                Debug.Write(exc.Message);
+                _logger.LogError($"Update method. {exc.Message}");
                 throw;
             }
             finally
