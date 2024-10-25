@@ -16,6 +16,11 @@ namespace DatabaseRepository.Classes
             _context = context;
             _dbSet = _context.Set<T>();
             _logger = logger;
+
+            if (!_context.IsConnected())
+            {
+                throw new DatabaseConnectionException("Cannot connect to the database, check database connection please!");
+            }
         }
 
         public void Add(T entity)
