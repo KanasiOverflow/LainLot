@@ -5,7 +5,6 @@ using RestAPI.AutoMapper;
 using DB = DatabaseProvider.Models;
 using DatabaseRepository.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using System.Diagnostics;
 
 namespace RestAPI.Controllers
 {
@@ -1231,7 +1230,7 @@ namespace RestAPI.Controllers
 
         #region Orders
 
-        [HttpGet("GetOrderCount")]
+        [HttpGet("GetOrdersCount")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public int GetOrdersCount()
