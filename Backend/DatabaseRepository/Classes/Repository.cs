@@ -11,21 +11,11 @@ namespace DatabaseRepository.Classes
         private readonly LainLotContext _context;
         private readonly DbSet<T> _dbSet;
 
-        private readonly string _connectionError;
-
         public Repository(LainLotContext context, ILogger<Repository<T>> logger)
         {
             _context = context;
             _dbSet = _context.Set<T>();
             _logger = logger;
-
-            _connectionError = "Cannot connect to the database, check database connection please!";
-
-            if (!_context.IsConnected())
-            {
-                _logger.LogError(_connectionError);
-                throw new DatabaseConnectionException(_connectionError);
-            }
         }
 
         public void Add(T entity)

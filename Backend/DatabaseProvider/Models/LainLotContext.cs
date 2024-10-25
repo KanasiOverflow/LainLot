@@ -19,8 +19,6 @@ public partial class LainLotContext : DbContext
         _logger = logger;
     }
 
-    public bool IsConnected() => IsConnected();
-
     public virtual DbSet<About> Abouts { get; set; }
 
     public virtual DbSet<AccessLevel> AccessLevels { get; set; }
