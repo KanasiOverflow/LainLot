@@ -5,6 +5,7 @@ using DatabaseRepository.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using RestAPI.Classes;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -37,6 +38,18 @@ builder.Services.AddCors(options =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<LainLotContext>(options =>
     options.UseNpgsql(connectionString));
+
+var logDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+if (!Directory.Exists(logDirectory))
+{
+    Directory.CreateDirectory(logDirectory);
+}
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddScoped<IRepository<About>, Repository<About>>();
 builder.Services.AddScoped<IRepository<AccessLevel>, Repository<AccessLevel>>();
@@ -74,6 +87,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapGet("/", (ILogger<Program> logger) =>
+{
+    logger.LogInformation("Hello from ASP.NET Core with Serilog!");
+    return "Hello World!";
+});
 
 app.UseHttpsRedirection();
 

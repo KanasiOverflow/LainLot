@@ -2378,7 +2378,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2397,7 +2397,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2416,7 +2416,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2435,7 +2435,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2454,7 +2454,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2473,7 +2473,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2492,7 +2492,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2511,7 +2511,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2530,7 +2530,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2549,7 +2549,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2568,7 +2568,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2587,7 +2587,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }
@@ -2606,7 +2606,7 @@ namespace RestAPI.Controllers
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error fetching data: {ex.Message}");
+                _logger.LogError($"Error fetching data: {ex.Message}");
                 throw;
             }
         }

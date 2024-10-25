@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal;
+using Microsoft.Extensions.Logging;
 
 namespace DatabaseProvider.Models;
 
@@ -11,13 +11,12 @@ public partial class LainLotContext : DbContext
     /// Update-Database -Project DatabaseProvider
     /// </summary>
 
-    public LainLotContext()
-    {
-    }
+    private readonly ILogger<LainLotContext> _logger;
 
-    public LainLotContext(DbContextOptions<LainLotContext> options)
+    public LainLotContext(DbContextOptions<LainLotContext> options, ILogger<LainLotContext> logger)
         : base(options)
     {
+        _logger = logger;
     }
 
     public virtual DbSet<About> Abouts { get; set; }
@@ -66,10 +65,10 @@ public partial class LainLotContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var npgsqlOptions = optionsBuilder.Options.FindExtension<NpgsqlOptionsExtension>();
-        var connectionString = npgsqlOptions?.ConnectionString;
-
-        optionsBuilder.UseNpgsql(connectionString);
+        if (_logger != null)
+        {
+            optionsBuilder.LogTo(message => _logger.LogInformation(message));
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
