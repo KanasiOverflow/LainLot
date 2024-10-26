@@ -142,15 +142,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<About> CreateAbout(About entity)
+        public async Task<ActionResult<About>> CreateAboutAsync(About entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _aboutRepository.Add(_mapper.Map<About, DB.About>(entity));
-                return CreatedAtAction(nameof(CreateAbout), new { id = entity.Id }, entity);
+                await _aboutRepository.Add(_mapper.Map<About, DB.About>(entity));
+                return CreatedAtAction(nameof(CreateAboutAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -163,15 +163,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<About> UpdateAbout(About entity)
+        public async Task<ActionResult<About>> UpdateAboutAsync(About entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _aboutRepository.Update(_mapper.Map<About, DB.About>(entity));
-                return CreatedAtAction(nameof(UpdateAbout), new { id = entity.Id }, entity);
+                await _aboutRepository.Update(_mapper.Map<About, DB.About>(entity));
+                return CreatedAtAction(nameof(UpdateAboutAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -189,7 +189,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _aboutRepository.Delete(entity);
+                await _aboutRepository.Delete(entity);
                 return Ok();
             }
 
@@ -245,15 +245,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<AccessLevel> CreateAccessLevels(AccessLevel entity)
+        public async Task<ActionResult<AccessLevel>> CreateAccessLevelsAsync(AccessLevel entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _accessLevelRepository.Add(_mapper.Map<AccessLevel, DB.AccessLevel>(entity));
-                return CreatedAtAction(nameof(CreateAccessLevels), new { id = entity.Id }, entity);
+                await _accessLevelRepository.Add(_mapper.Map<AccessLevel, DB.AccessLevel>(entity));
+                return CreatedAtAction(nameof(CreateAccessLevelsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -266,15 +266,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<AccessLevel> UpdateAccessLevels(AccessLevel entity)
+        public async Task<ActionResult<AccessLevel>> UpdateAccessLevelsAsync(AccessLevel entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _accessLevelRepository.Update(_mapper.Map<AccessLevel, DB.AccessLevel>(entity));
-                return CreatedAtAction(nameof(UpdateAccessLevels), new { id = entity.Id }, entity);
+                await _accessLevelRepository.Update(_mapper.Map<AccessLevel, DB.AccessLevel>(entity));
+                return CreatedAtAction(nameof(UpdateAccessLevelsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -292,7 +292,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _accessLevelRepository.Delete(entity);
+                await _accessLevelRepository.Delete(entity);
                 return Ok();
             }
 
@@ -348,15 +348,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Cart> CreateCart(Cart entity)
+        public async Task<ActionResult<Cart>> CreateCartAsync(Cart entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _cartRepository.Add(_mapper.Map<Cart, DB.Cart>(entity));
-                return CreatedAtAction(nameof(CreateCart), new { id = entity.Id }, entity);
+                await _cartRepository.Add(_mapper.Map<Cart, DB.Cart>(entity));
+                return CreatedAtAction(nameof(CreateCartAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -369,15 +369,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Cart> UpdateCart(Cart entity)
+        public async Task<ActionResult<Cart>> UpdateCartAsync(Cart entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _cartRepository.Update(_mapper.Map<Cart, DB.Cart>(entity));
-                return CreatedAtAction(nameof(UpdateCart), new { id = entity.Id }, entity);
+                await _cartRepository.Update(_mapper.Map<Cart, DB.Cart>(entity));
+                return CreatedAtAction(nameof(UpdateCartAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -395,7 +395,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _cartRepository.Delete(entity);
+                await _cartRepository.Delete(entity);
                 return Ok();
             }
 
@@ -451,15 +451,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Category> CreateCategories(Category entity)
+        public async Task<ActionResult<Category>> CreateCategoriesAsync(Category entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _categoryRepository.Add(_mapper.Map<Category, DB.Category>(entity));
-                return CreatedAtAction(nameof(CreateCategories), new { id = entity.Id }, entity);
+                await _categoryRepository.Add(_mapper.Map<Category, DB.Category>(entity));
+                return CreatedAtAction(nameof(CreateCategoriesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -472,15 +472,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Category> UpdateCategories(Category entity)
+        public async Task<ActionResult<Category>> UpdateCategoriesAsync(Category entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _categoryRepository.Update(_mapper.Map<Category, DB.Category>(entity));
-                return CreatedAtAction(nameof(UpdateCategories), new { id = entity.Id }, entity);
+                await _categoryRepository.Update(_mapper.Map<Category, DB.Category>(entity));
+                return CreatedAtAction(nameof(UpdateCategoriesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -498,7 +498,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _categoryRepository.Delete(entity);
+                await _categoryRepository.Delete(entity);
                 return Ok();
             }
 
@@ -554,15 +554,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<CategoryHierarchy> CreateCategoryHierarchy(CategoryHierarchy entity)
+        public async Task<ActionResult<CategoryHierarchy>> CreateCategoryHierarchyAsync(CategoryHierarchy entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _categoryHierarchyRepository.Add(_mapper.Map<CategoryHierarchy, DB.CategoryHierarchy>(entity));
-                return CreatedAtAction(nameof(CreateCategoryHierarchy), new { id = entity.Id }, entity);
+                await _categoryHierarchyRepository.Add(_mapper.Map<CategoryHierarchy, DB.CategoryHierarchy>(entity));
+                return CreatedAtAction(nameof(CreateCategoryHierarchyAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -575,15 +575,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<CategoryHierarchy> UpdateCategoryHierarchy(CategoryHierarchy entity)
+        public async Task<ActionResult<CategoryHierarchy>> UpdateCategoryHierarchyAsync(CategoryHierarchy entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _categoryHierarchyRepository.Update(_mapper.Map<CategoryHierarchy, DB.CategoryHierarchy>(entity));
-                return CreatedAtAction(nameof(UpdateCategoryHierarchy), new { id = entity.Id }, entity);
+                await _categoryHierarchyRepository.Update(_mapper.Map<CategoryHierarchy, DB.CategoryHierarchy>(entity));
+                return CreatedAtAction(nameof(UpdateCategoryHierarchyAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -601,7 +601,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _categoryHierarchyRepository.Delete(entity);
+                await _categoryHierarchyRepository.Delete(entity);
                 return Ok();
             }
 
@@ -657,15 +657,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Color> CreateColors(Color entity)
+        public async Task<ActionResult<Color>> CreateColorsAsync(Color entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _colorRepository.Add(_mapper.Map<Color, DB.Color>(entity));
-                return CreatedAtAction(nameof(CreateColors), new { id = entity.Id }, entity);
+                await _colorRepository.Add(_mapper.Map<Color, DB.Color>(entity));
+                return CreatedAtAction(nameof(CreateColorsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -678,15 +678,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Color> UpdateColors(Color entity)
+        public async Task<ActionResult<Color>> UpdateColorsAsync(Color entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _colorRepository.Update(_mapper.Map<Color, DB.Color>(entity));
-                return CreatedAtAction(nameof(UpdateColors), new { id = entity.Id }, entity);
+                await _colorRepository.Update(_mapper.Map<Color, DB.Color>(entity));
+                return CreatedAtAction(nameof(UpdateColorsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -704,7 +704,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _colorRepository.Delete(entity);
+                await _colorRepository.Delete(entity);
                 return Ok();
             }
 
@@ -760,15 +760,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Contact> CreateContacts(Contact entity)
+        public async Task<ActionResult<Contact>> CreateContactsAsync(Contact entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _contactRepository.Add(_mapper.Map<Contact, DB.Contact>(entity));
-                return CreatedAtAction(nameof(CreateContacts), new { id = entity.Id }, entity);
+                await _contactRepository.Add(_mapper.Map<Contact, DB.Contact>(entity));
+                return CreatedAtAction(nameof(CreateContactsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -781,15 +781,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Contact> UpdateContacts(Contact entity)
+        public async Task<ActionResult<Contact>> UpdateContactsAsync(Contact entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _contactRepository.Update(_mapper.Map<Contact, DB.Contact>(entity));
-                return CreatedAtAction(nameof(UpdateContacts), new { id = entity.Id }, entity);
+                await _contactRepository.Update(_mapper.Map<Contact, DB.Contact>(entity));
+                return CreatedAtAction(nameof(UpdateContactsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -807,7 +807,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _contactRepository.Delete(entity);
+                await _contactRepository.Delete(entity);
                 return Ok();
             }
 
@@ -863,15 +863,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<CustomizableProduct> CreateCustomizableProducts(CustomizableProduct entity)
+        public async Task<ActionResult<CustomizableProduct>> CreateCustomizableProductsAsync(CustomizableProduct entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _customizableProductRepository.Add(_mapper.Map<CustomizableProduct, DB.CustomizableProduct>(entity));
-                return CreatedAtAction(nameof(CreateCustomizableProducts), new { id = entity.Id }, entity);
+                await _customizableProductRepository.Add(_mapper.Map<CustomizableProduct, DB.CustomizableProduct>(entity));
+                return CreatedAtAction(nameof(CreateCustomizableProductsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -884,15 +884,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<CustomizableProduct> UpdateCustomizableProducts(CustomizableProduct entity)
+        public async Task<ActionResult<CustomizableProduct>> UpdateCustomizableProductsAsync(CustomizableProduct entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _customizableProductRepository.Update(_mapper.Map<CustomizableProduct, DB.CustomizableProduct>(entity));
-                return CreatedAtAction(nameof(UpdateCustomizableProducts), new { id = entity.Id }, entity);
+                await _customizableProductRepository.Update(_mapper.Map<CustomizableProduct, DB.CustomizableProduct>(entity));
+                return CreatedAtAction(nameof(UpdateCustomizableProductsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -910,7 +910,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _customizableProductRepository.Delete(entity);
+                await _customizableProductRepository.Delete(entity);
                 return Ok();
             }
 
@@ -966,15 +966,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<CustomizationOrder> CreateCustomizationOrders(CustomizationOrder entity)
+        public async Task<ActionResult<CustomizationOrder>> CreateCustomizationOrdersAsync(CustomizationOrder entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _customizationOrderRepository.Add(_mapper.Map<CustomizationOrder, DB.CustomizationOrder>(entity));
-                return CreatedAtAction(nameof(CreateCustomizationOrders), new { id = entity.Id }, entity);
+                await _customizationOrderRepository.Add(_mapper.Map<CustomizationOrder, DB.CustomizationOrder>(entity));
+                return CreatedAtAction(nameof(CreateCustomizationOrdersAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -987,15 +987,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<CustomizationOrder> UpdateCustomizationOrders(CustomizationOrder entity)
+        public async Task<ActionResult<CustomizationOrder>> UpdateCustomizationOrdersAsync(CustomizationOrder entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _customizationOrderRepository.Update(_mapper.Map<CustomizationOrder, DB.CustomizationOrder>(entity));
-                return CreatedAtAction(nameof(UpdateCustomizationOrders), new { id = entity.Id }, entity);
+                await _customizationOrderRepository.Update(_mapper.Map<CustomizationOrder, DB.CustomizationOrder>(entity));
+                return CreatedAtAction(nameof(UpdateCustomizationOrdersAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1013,7 +1013,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _customizationOrderRepository.Delete(entity);
+                await _customizationOrderRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1069,15 +1069,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<FabricType> CreateFabricTypes(FabricType entity)
+        public async Task<ActionResult<FabricType>> CreateFabricTypesAsync(FabricType entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _fabricTypeRepository.Add(_mapper.Map<FabricType, DB.FabricType>(entity));
-                return CreatedAtAction(nameof(CreateFabricTypes), new { id = entity.Id }, entity);
+                await _fabricTypeRepository.Add(_mapper.Map<FabricType, DB.FabricType>(entity));
+                return CreatedAtAction(nameof(CreateFabricTypesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1090,15 +1090,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<FabricType> UpdateFabricTypes(FabricType entity)
+        public async Task<ActionResult<FabricType>> UpdateFabricTypesAsync(FabricType entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _fabricTypeRepository.Update(_mapper.Map<FabricType, DB.FabricType>(entity));
-                return CreatedAtAction(nameof(UpdateFabricTypes), new { id = entity.Id }, entity);
+                await _fabricTypeRepository.Update(_mapper.Map<FabricType, DB.FabricType>(entity));
+                return CreatedAtAction(nameof(UpdateFabricTypesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1116,7 +1116,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _fabricTypeRepository.Delete(entity);
+                await _fabricTypeRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1172,15 +1172,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Language> CreateLanguages(Language entity)
+        public async Task<ActionResult<Language>> CreateLanguagesAsync(Language entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _languageRepository.Add(_mapper.Map<Language, DB.Language>(entity));
-                return CreatedAtAction(nameof(CreateLanguages), new { id = entity.Id }, entity);
+                await _languageRepository.Add(_mapper.Map<Language, DB.Language>(entity));
+                return CreatedAtAction(nameof(CreateLanguagesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1193,15 +1193,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Language> UpdateLanguages(Language entity)
+        public async Task<ActionResult<Language>> UpdateLanguagesAsync(Language entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _languageRepository.Update(_mapper.Map<Language, DB.Language>(entity));
-                return CreatedAtAction(nameof(UpdateLanguages), new { id = entity.Id }, entity);
+                await _languageRepository.Update(_mapper.Map<Language, DB.Language>(entity));
+                return CreatedAtAction(nameof(UpdateLanguagesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1219,7 +1219,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _languageRepository.Delete(entity);
+                await _languageRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1275,15 +1275,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Order> CreateOrders(Order entity)
+        public async Task<ActionResult<Order>> CreateOrdersAsync(Order entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _orderRepository.Add(_mapper.Map<Order, DB.Order>(entity));
-                return CreatedAtAction(nameof(CreateOrders), new { id = entity.Id }, entity);
+                await _orderRepository.Add(_mapper.Map<Order, DB.Order>(entity));
+                return CreatedAtAction(nameof(CreateOrdersAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1296,15 +1296,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Order> UpdateOrders(Order entity)
+        public async Task<ActionResult<Order>> UpdateOrdersAsync(Order entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _orderRepository.Update(_mapper.Map<Order, DB.Order>(entity));
-                return CreatedAtAction(nameof(UpdateOrders), new { id = entity.Id }, entity);
+                await _orderRepository.Update(_mapper.Map<Order, DB.Order>(entity));
+                return CreatedAtAction(nameof(UpdateOrdersAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1322,7 +1322,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _orderRepository.Delete(entity);
+                await _orderRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1378,15 +1378,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<OrderHistory> CreateOrderHistory(OrderHistory entity)
+        public async Task<ActionResult<OrderHistory>> CreateOrderHistoryAsync(OrderHistory entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _orderHistoryRepository.Add(_mapper.Map<OrderHistory, DB.OrderHistory>(entity));
-                return CreatedAtAction(nameof(CreateOrderHistory), new { id = entity.Id }, entity);
+                await _orderHistoryRepository.Add(_mapper.Map<OrderHistory, DB.OrderHistory>(entity));
+                return CreatedAtAction(nameof(CreateOrderHistoryAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1399,15 +1399,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<OrderHistory> UpdateOrderHistory(OrderHistory entity)
+        public async Task<ActionResult<OrderHistory>> UpdateOrderHistoryAsync(OrderHistory entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _orderHistoryRepository.Update(_mapper.Map<OrderHistory, DB.OrderHistory>(entity));
-                return CreatedAtAction(nameof(UpdateOrderHistory), new { id = entity.Id }, entity);
+                await _orderHistoryRepository.Update(_mapper.Map<OrderHistory, DB.OrderHistory>(entity));
+                return CreatedAtAction(nameof(UpdateOrderHistoryAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1425,7 +1425,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _orderHistoryRepository.Delete(entity);
+                await _orderHistoryRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1481,15 +1481,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<OrderStatus> CreateOrderStatuses(OrderStatus entity)
+        public async Task<ActionResult<OrderStatus>> CreateOrderStatusesAsync(OrderStatus entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _orderStatusRepository.Add(_mapper.Map<OrderStatus, DB.OrderStatus>(entity));
-                return CreatedAtAction(nameof(CreateOrderStatuses), new { id = entity.Id }, entity);
+                await _orderStatusRepository.Add(_mapper.Map<OrderStatus, DB.OrderStatus>(entity));
+                return CreatedAtAction(nameof(CreateOrderStatusesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1502,15 +1502,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<OrderStatus> UpdateOrderStatuses(OrderStatus entity)
+        public async Task<ActionResult<OrderStatus>> UpdateOrderStatusesAsync(OrderStatus entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _orderStatusRepository.Update(_mapper.Map<OrderStatus, DB.OrderStatus>(entity));
-                return CreatedAtAction(nameof(UpdateOrderStatuses), new { id = entity.Id }, entity);
+                await _orderStatusRepository.Update(_mapper.Map<OrderStatus, DB.OrderStatus>(entity));
+                return CreatedAtAction(nameof(UpdateOrderStatusesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1528,7 +1528,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _orderStatusRepository.Delete(entity);
+                await _orderStatusRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1584,15 +1584,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Payment> CreatePayments(Payment entity)
+        public async Task<ActionResult<Payment>> CreatePaymentsAsync(Payment entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _paymentRepository.Add(_mapper.Map<Payment, DB.Payment>(entity));
-                return CreatedAtAction(nameof(CreatePayments), new { id = entity.Id }, entity);
+                await _paymentRepository.Add(_mapper.Map<Payment, DB.Payment>(entity));
+                return CreatedAtAction(nameof(CreatePaymentsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1605,15 +1605,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Payment> UpdatePayments(Payment entity)
+        public async Task<ActionResult<Payment>> UpdatePaymentsAsync(Payment entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _paymentRepository.Update(_mapper.Map<Payment, DB.Payment>(entity));
-                return CreatedAtAction(nameof(UpdatePayments), new { id = entity.Id }, entity);
+                await _paymentRepository.Update(_mapper.Map<Payment, DB.Payment>(entity));
+                return CreatedAtAction(nameof(UpdatePaymentsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1631,7 +1631,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _paymentRepository.Delete(entity);
+                await _paymentRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1687,15 +1687,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Product> CreateProducts(Product entity)
+        public async Task<ActionResult<Product>> CreateProductsAsync(Product entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _productRepository.Add(_mapper.Map<Product, DB.Product>(entity));
-                return CreatedAtAction(nameof(CreateProducts), new { id = entity.Id }, entity);
+                await _productRepository.Add(_mapper.Map<Product, DB.Product>(entity));
+                return CreatedAtAction(nameof(CreateProductsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1708,15 +1708,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Product> UpdateProducts(Product entity)
+        public async Task<ActionResult<Product>> UpdateProductsAsync(Product entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _productRepository.Update(_mapper.Map<Product, DB.Product>(entity));
-                return CreatedAtAction(nameof(UpdateProducts), new { id = entity.Id }, entity);
+                await _productRepository.Update(_mapper.Map<Product, DB.Product>(entity));
+                return CreatedAtAction(nameof(UpdateProductsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1734,7 +1734,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _productRepository.Delete(entity);
+                await _productRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1790,15 +1790,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ProductImage> CreateProductImages(ProductImage entity)
+        public async Task<ActionResult<ProductImage>> CreateProductImagesAsync(ProductImage entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _productImageRepository.Add(_mapper.Map<ProductImage, DB.ProductImage>(entity));
-                return CreatedAtAction(nameof(CreateProductImages), new { id = entity.Id }, entity);
+                await _productImageRepository.Add(_mapper.Map<ProductImage, DB.ProductImage>(entity));
+                return CreatedAtAction(nameof(CreateProductImagesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1811,15 +1811,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ProductImage> UpdateProductImages(ProductImage entity)
+        public async Task<ActionResult<ProductImage>> UpdateProductImagesAsync(ProductImage entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _productImageRepository.Update(_mapper.Map<ProductImage, DB.ProductImage>(entity));
-                return CreatedAtAction(nameof(UpdateProductImages), new { id = entity.Id }, entity);
+                await _productImageRepository.Update(_mapper.Map<ProductImage, DB.ProductImage>(entity));
+                return CreatedAtAction(nameof(UpdateProductImagesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1837,7 +1837,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _productImageRepository.Delete(entity);
+                await _productImageRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1893,15 +1893,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ProductTranslation> CreateProductTranslations(ProductTranslation entity)
+        public async Task<ActionResult<ProductTranslation>> CreateProductTranslationsAsync(ProductTranslation entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _productTranslationRepository.Add(_mapper.Map<ProductTranslation, DB.ProductTranslation>(entity));
-                return CreatedAtAction(nameof(CreateProductTranslations), new { id = entity.Id }, entity);
+                await _productTranslationRepository.Add(_mapper.Map<ProductTranslation, DB.ProductTranslation>(entity));
+                return CreatedAtAction(nameof(CreateProductTranslationsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1914,15 +1914,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ProductTranslation> UpdateProductTranslations(ProductTranslation entity)
+        public async Task<ActionResult<ProductTranslation>> UpdateProductTranslationsAsync(ProductTranslation entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _productTranslationRepository.Update(_mapper.Map<ProductTranslation, DB.ProductTranslation>(entity));
-                return CreatedAtAction(nameof(UpdateProductTranslations), new { id = entity.Id }, entity);
+                await _productTranslationRepository.Update(_mapper.Map<ProductTranslation, DB.ProductTranslation>(entity));
+                return CreatedAtAction(nameof(UpdateProductTranslationsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1940,7 +1940,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _productTranslationRepository.Delete(entity);
+                await _productTranslationRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1996,15 +1996,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Review> CreateReviews(Review entity)
+        public async Task<ActionResult<Review>> CreateReviewsAsync(Review entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _reviewRepository.Add(_mapper.Map<Review, DB.Review>(entity));
-                return CreatedAtAction(nameof(CreateReviews), new { id = entity.Id }, entity);
+                await _reviewRepository.Add(_mapper.Map<Review, DB.Review>(entity));
+                return CreatedAtAction(nameof(CreateReviewsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2017,15 +2017,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<Review> UpdateReviews(Review entity)
+        public async Task<ActionResult<Review>> UpdateReviewsAsync(Review entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _reviewRepository.Update(_mapper.Map<Review, DB.Review>(entity));
-                return CreatedAtAction(nameof(UpdateReviews), new { id = entity.Id }, entity);
+                await _reviewRepository.Update(_mapper.Map<Review, DB.Review>(entity));
+                return CreatedAtAction(nameof(UpdateReviewsAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2043,7 +2043,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _reviewRepository.Delete(entity);
+                await _reviewRepository.Delete(entity);
                 return Ok();
             }
 
@@ -2099,15 +2099,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<User> CreateUsers(User entity)
+        public async Task<ActionResult<User>> CreateUsersAsync(User entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _userRepository.Add(_mapper.Map<User, DB.User>(entity));
-                return CreatedAtAction(nameof(CreateUsers), new { id = entity.Id }, entity);
+                await _userRepository.Add(_mapper.Map<User, DB.User>(entity));
+                return CreatedAtAction(nameof(CreateUsersAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2120,15 +2120,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<User> UpdateUsers(User entity)
+        public async Task<ActionResult<User>> UpdateUsersAsync(User entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _userRepository.Update(_mapper.Map<User, DB.User>(entity));
-                return CreatedAtAction(nameof(UpdateUsers), new { id = entity.Id }, entity);
+                await _userRepository.Update(_mapper.Map<User, DB.User>(entity));
+                return CreatedAtAction(nameof(UpdateUsersAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2146,7 +2146,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _userRepository.Delete(entity);
+                await _userRepository.Delete(entity);
                 return Ok();
             }
 
@@ -2202,15 +2202,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<UserProfile> CreateUserProfiles(UserProfile entity)
+        public async Task<ActionResult<UserProfile>> CreateUserProfilesAsync(UserProfile entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _userProfileRepository.Add(_mapper.Map<UserProfile, DB.UserProfile>(entity));
-                return CreatedAtAction(nameof(CreateUserProfiles), new { id = entity.Id }, entity);
+                await _userProfileRepository.Add(_mapper.Map<UserProfile, DB.UserProfile>(entity));
+                return CreatedAtAction(nameof(CreateUserProfilesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2223,15 +2223,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<UserProfile> UpdateUserProfiles(UserProfile entity)
+        public async Task<ActionResult<UserProfile>> UpdateUserProfilesAsync(UserProfile entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _userProfileRepository.Update(_mapper.Map<UserProfile, DB.UserProfile>(entity));
-                return CreatedAtAction(nameof(UpdateUserProfiles), new { id = entity.Id }, entity);
+                await _userProfileRepository.Update(_mapper.Map<UserProfile, DB.UserProfile>(entity));
+                return CreatedAtAction(nameof(UpdateUserProfilesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2249,7 +2249,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _userProfileRepository.Delete(entity);
+                await _userProfileRepository.Delete(entity);
                 return Ok();
             }
 
@@ -2305,15 +2305,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<UserRole> CreateUserRoles(UserRole entity)
+        public async Task<ActionResult<UserRole>> CreateUserRolesAsync(UserRole entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _userRoleRepository.Add(_mapper.Map<UserRole, DB.UserRole>(entity));
-                return CreatedAtAction(nameof(CreateUserRoles), new { id = entity.Id }, entity);
+                await _userRoleRepository.Add(_mapper.Map<UserRole, DB.UserRole>(entity));
+                return CreatedAtAction(nameof(CreateUserRolesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2326,15 +2326,15 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<UserRole> UpdateUserRoles(UserRole entity)
+        public async Task<ActionResult<UserRole>> UpdateUserRolesAsync(UserRole entity)
         {
             if (entity == null)
                 return BadRequest();
 
             try
             {
-                _userRoleRepository.Update(_mapper.Map<UserRole, DB.UserRole>(entity));
-                return CreatedAtAction(nameof(UpdateUserRoles), new { id = entity.Id }, entity);
+                await _userRoleRepository.Update(_mapper.Map<UserRole, DB.UserRole>(entity));
+                return CreatedAtAction(nameof(UpdateUserRolesAsync), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2352,7 +2352,7 @@ namespace RestAPI.Controllers
 
             if (entity != null)
             {
-                _userRoleRepository.Delete(entity);
+                await _userRoleRepository.Delete(entity);
                 return Ok();
             }
 

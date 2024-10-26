@@ -1,40 +1,65 @@
 using System.Text;
-using Moq;
-using NUnitTests.Classes;
-using RestAPI.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using DatabaseRepository.Interfaces;
+using NUnitTests.Classes;
+using Moq;
+using RestAPI.Controllers;
 using DatabaseRepository.Classes;
+using DatabaseRepository.Interfaces;
 using DB = DatabaseProvider.Models;
 using RestAPI.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace NUnitTests.RestAPI
 {
     public class Tests
     {
-        private DbContextFake? _context;
-        private Mock<ILogger<DatabaseController>> _logger;
+        private Mock<ILogger<DatabaseController>> _logger; 
+        private Mock<ILogger<DB.LainLotContext>> _contextLogger;
+        private DB.LainLotContext? _context;
+
+        private Mock<ILogger<Repository<DB.About>>> _aboutLogger;
+        private Mock<ILogger<Repository<DB.AccessLevel>>> _accessLevelLogger;
+        private Mock<ILogger<Repository<DB.Cart>>> _cartLogger;
+        private Mock<ILogger<Repository<DB.Category>>> _categoryLogger;
+        private Mock<ILogger<Repository<DB.CategoryHierarchy>>> _categoryHierarchyLogger;
+        private Mock<ILogger<Repository<DB.Color>>> _colorLogger;
+        private Mock<ILogger<Repository<DB.Contact>>> _contactLogger;
+        private Mock<ILogger<Repository<DB.CustomizableProduct>>> _customizableProductLogger;
+        private Mock<ILogger<Repository<DB.CustomizationOrder>>> _customizationOrderLogger;
+        private Mock<ILogger<Repository<DB.FabricType>>> _fabricTypeLogger;
+        private Mock<ILogger<Repository<DB.Language>>> _languageLogger;
+        private Mock<ILogger<Repository<DB.Order>>> _orderLogger;
+        private Mock<ILogger<Repository<DB.OrderHistory>>> _orderHistoryLogger;
+        private Mock<ILogger<Repository<DB.OrderStatus>>> _orderStatusLogger;
+        private Mock<ILogger<Repository<DB.Payment>>> _paymentLogger;
+        private Mock<ILogger<Repository<DB.Product>>> _productLogger;
+        private Mock<ILogger<Repository<DB.ProductImage>>> _productImageLogger;
+        private Mock<ILogger<Repository<DB.ProductTranslation>>> _productTranslationLogger;
+        private Mock<ILogger<Repository<DB.Review>>> _reviewLogger;
+        private Mock<ILogger<Repository<DB.User>>> _userLogger;
+        private Mock<ILogger<Repository<DB.UserProfile>>> _userProfileLogger;
+        private Mock<ILogger<Repository<DB.UserRole>>> _userRoleLogger;
+        // Repositories
         private IRepository<DB.About>? _aboutRepository;
         private IRepository<DB.AccessLevel>? _accessLevelRepository;
-        private IRepository<DB.Cart>? _cartRepository; 
-        private IRepository<DB.Category>? _categoryRepository; 
-        private IRepository<DB.CategoryHierarchy>? _categoryHierarchyRepository; 
-        private IRepository<DB.Color>? _colorRepository; 
+        private IRepository<DB.Cart>? _cartRepository;
+        private IRepository<DB.Category>? _categoryRepository;
+        private IRepository<DB.CategoryHierarchy>? _categoryHierarchyRepository;
+        private IRepository<DB.Color>? _colorRepository;
         private IRepository<DB.Contact>? _contactRepository;
-        private IRepository<DB.CustomizableProduct>? _customizableProductRepository; 
-        private IRepository<DB.CustomizationOrder>? _customizationOrderRepository; 
-        private IRepository<DB.FabricType>? _fabricTypeRepository; 
+        private IRepository<DB.CustomizableProduct>? _customizableProductRepository;
+        private IRepository<DB.CustomizationOrder>? _customizationOrderRepository;
+        private IRepository<DB.FabricType>? _fabricTypeRepository;
         private IRepository<DB.Language>? _languageRepository;
-        private IRepository<DB.Order>? _orderRepository; 
-        private IRepository<DB.OrderHistory>? _orderHistoryRepository; 
-        private IRepository<DB.OrderStatus>? _orderStatusRepository; 
-        private IRepository<DB.Payment>? _paymentRepository; 
+        private IRepository<DB.Order>? _orderRepository;
+        private IRepository<DB.OrderHistory>? _orderHistoryRepository;
+        private IRepository<DB.OrderStatus>? _orderStatusRepository;
+        private IRepository<DB.Payment>? _paymentRepository;
         private IRepository<DB.Product>? _productRepository;
-        private IRepository<DB.ProductImage>? _productImageRepository; 
-        private IRepository<DB.ProductTranslation>? _productTranslationRepository; 
-        private IRepository<DB.Review>? _reviewRepository; 
+        private IRepository<DB.ProductImage>? _productImageRepository;
+        private IRepository<DB.ProductTranslation>? _productTranslationRepository;
+        private IRepository<DB.Review>? _reviewRepository;
         private IRepository<DB.User>? _userRepository;
         private IRepository<DB.UserProfile>? _userProfileRepository;
         private IRepository<DB.UserRole>? _userRoleRepository;
@@ -47,13 +72,38 @@ namespace NUnitTests.RestAPI
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<DbContextFake>()
+            _contextLogger = new Mock<ILogger<DB.LainLotContext>>();
+
+            var options = new DbContextOptionsBuilder<DB.LainLotContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                 .Options;
 
             // Create a fake DbContext
-            _context = new DbContextFake(options);
+            _context = new DB.LainLotContext(options, _contextLogger.Object);
+
+            // Create fake loggers
+            _aboutLogger = new Mock<ILogger<Repository<DB.About>>>();
+            _accessLevelLogger = new Mock<ILogger<Repository<DB.AccessLevel>>>();
+            _cartLogger = new Mock<ILogger<Repository<DB.Cart>>>();
+            _categoryLogger = new Mock<ILogger<Repository<DB.Category>>>();
+            _categoryHierarchyLogger = new Mock<ILogger<Repository<DB.CategoryHierarchy>>>();
+            _colorLogger = new Mock<ILogger<Repository<DB.Color>>>();
+            _contactLogger = new Mock<ILogger<Repository<DB.Contact>>>();
+            _customizableProductLogger = new Mock<ILogger<Repository<DB.CustomizableProduct>>>();
+            _customizationOrderLogger = new Mock<ILogger<Repository<DB.CustomizationOrder>>>();
+            _fabricTypeLogger = new Mock<ILogger<Repository<DB.FabricType>>>();
+            _languageLogger = new Mock<ILogger<Repository<DB.Language>>>();
+            _orderLogger = new Mock<ILogger<Repository<DB.Order>>>();
+            _orderHistoryLogger = new Mock<ILogger<Repository<DB.OrderHistory>>>();
+            _orderStatusLogger = new Mock<ILogger<Repository<DB.OrderStatus>>>();
+            _paymentLogger = new Mock<ILogger<Repository<DB.Payment>>>();
+            _productLogger = new Mock<ILogger<Repository<DB.Product>>>();
+            _productImageLogger = new Mock<ILogger<Repository<DB.ProductImage>>>();
+            _productTranslationLogger = new Mock<ILogger<Repository<DB.ProductTranslation>>>();
+            _reviewLogger = new Mock<ILogger<Repository<DB.Review>>>();
+            _userLogger = new Mock<ILogger<Repository<DB.User>>>();
+            _userProfileLogger = new Mock<ILogger<Repository<DB.UserProfile>>>();
+            _userRoleLogger = new Mock<ILogger<Repository<DB.UserRole>>>();
 
             // Create fake data
             var abouts = DatabaseDataFake.GetFakeAboutList();
@@ -107,28 +157,29 @@ namespace NUnitTests.RestAPI
             _context.SaveChanges();
 
             _logger = new Mock<ILogger<DatabaseController>>();
-            _aboutRepository = new Repository<DB.About>(_context);
-            _accessLevelRepository = new Repository<DB.AccessLevel>(_context);
-            _cartRepository = new Repository<DB.Cart>(_context); 
-            _categoryRepository = new Repository<DB.Category>(_context); 
-            _categoryHierarchyRepository = new Repository<DB.CategoryHierarchy>(_context); 
-            _colorRepository = new Repository<DB.Color>(_context); 
-            _contactRepository = new Repository<DB.Contact>(_context);
-            _customizableProductRepository = new Repository<DB.CustomizableProduct>(_context); 
-            _customizationOrderRepository = new Repository<DB.CustomizationOrder>(_context); 
-            _fabricTypeRepository = new Repository<DB.FabricType>(_context); 
-            _languageRepository = new Repository<DB.Language>(_context);
-            _orderRepository = new Repository<DB.Order>(_context); 
-            _orderHistoryRepository = new Repository<DB.OrderHistory>(_context); 
-            _orderStatusRepository = new Repository<DB.OrderStatus>(_context); 
-            _paymentRepository = new Repository<DB.Payment>(_context); 
-            _productRepository = new Repository<DB.Product>(_context);
-            _productImageRepository = new Repository<DB.ProductImage>(_context); 
-            _productTranslationRepository = new Repository<DB.ProductTranslation>(_context); 
-            _reviewRepository = new Repository<DB.Review>(_context); 
-            _userRepository = new Repository<DB.User>(_context);
-            _userProfileRepository = new Repository<DB.UserProfile>(_context);
-            _userRoleRepository = new Repository<DB.UserRole>(_context);
+            // Create all instances for repositories
+            _aboutRepository = new Repository<DB.About>(_context, _aboutLogger.Object);
+            _accessLevelRepository = new Repository<DB.AccessLevel>(_context, _accessLevelLogger.Object);
+            _cartRepository = new Repository<DB.Cart>(_context, _cartLogger.Object);
+            _categoryRepository = new Repository<DB.Category>(_context, _categoryLogger.Object);
+            _categoryHierarchyRepository = new Repository<DB.CategoryHierarchy>(_context, _categoryHierarchyLogger.Object);
+            _colorRepository = new Repository<DB.Color>(_context, _colorLogger.Object);
+            _contactRepository = new Repository<DB.Contact>(_context, _contactLogger.Object);
+            _customizableProductRepository = new Repository<DB.CustomizableProduct>(_context, _customizableProductLogger.Object);
+            _customizationOrderRepository = new Repository<DB.CustomizationOrder>(_context, _customizationOrderLogger.Object);
+            _fabricTypeRepository = new Repository<DB.FabricType>(_context, _fabricTypeLogger.Object);
+            _languageRepository = new Repository<DB.Language>(_context, _languageLogger.Object);
+            _orderRepository = new Repository<DB.Order>(_context, _orderLogger.Object);
+            _orderHistoryRepository = new Repository<DB.OrderHistory>(_context, _orderHistoryLogger.Object);
+            _orderStatusRepository = new Repository<DB.OrderStatus>(_context, _orderStatusLogger.Object);
+            _paymentRepository = new Repository<DB.Payment>(_context, _paymentLogger.Object);
+            _productRepository = new Repository<DB.Product>(_context, _productLogger.Object);
+            _productImageRepository = new Repository<DB.ProductImage>(_context, _productImageLogger.Object);
+            _productTranslationRepository = new Repository<DB.ProductTranslation>(_context, _productTranslationLogger.Object);
+            _reviewRepository = new Repository<DB.Review>(_context, _reviewLogger.Object);
+            _userRepository = new Repository<DB.User>(_context, _userLogger.Object);
+            _userProfileRepository = new Repository<DB.UserProfile>(_context, _userProfileLogger.Object);
+            _userRoleRepository = new Repository<DB.UserRole>(_context, _userRoleLogger.Object);
 
             _restApiController = new DatabaseController(
                 _logger.Object,
@@ -163,6 +214,8 @@ namespace NUnitTests.RestAPI
         [TearDown]
         public void FinishTest()
         {
+            _context?.Database.EnsureDeleted();
+            _context?.ChangeTracker.Clear();
             _context?.Dispose();
         }
 
@@ -197,9 +250,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_About_Entity(int id)
+        public async Task Delete_About_Entity(int id)
         {
-            var result = _restApiController.DeleteAbout(id);
+            var result = await _restApiController.DeleteAbout(id);
 
             Assert.Multiple(() =>
             {
@@ -219,7 +272,7 @@ namespace NUnitTests.RestAPI
                 Text = "Text 3"
             };
 
-            var result = _restApiController.CreateAbout(entity);
+            var result = await _restApiController.CreateAboutAsync(entity);
 
             var list = _restApiController.GetAbout(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetAboutById(3);
@@ -242,7 +295,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Text = "Text 3";
 
-            _restApiController.UpdateAbout(entity.Value);
+            await _restApiController.UpdateAboutAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetAboutById(id);
 
@@ -286,9 +339,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_AccessLevel_Entity(int id)
+        public async Task Delete_AccessLevel_Entity(int id)
         {
-            var result = _restApiController.DeleteAccessLevels(id);
+            var result = await _restApiController.DeleteAccessLevels(id);
 
             Assert.Multiple(() =>
             {
@@ -307,7 +360,7 @@ namespace NUnitTests.RestAPI
                 Level = 3
             };
 
-            var result = _restApiController.CreateAccessLevels(entity);
+            var result = await _restApiController.CreateAccessLevelsAsync(entity);
 
             var list = _restApiController.GetAccessLevels(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetAccessLevelsById(3);
@@ -330,7 +383,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Description = "Text 3";
 
-            _restApiController.UpdateAccessLevels(entity.Value);
+            await _restApiController.UpdateAccessLevelsAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetAccessLevelsById(id);
 
@@ -374,9 +427,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Cart_Entity(int id)
+        public async Task Delete_Cart_Entity(int id)
         {
-            var result = _restApiController.DeleteCart(id);
+            var result = await _restApiController.DeleteCart(id);
 
             Assert.Multiple(() =>
             {
@@ -397,7 +450,7 @@ namespace NUnitTests.RestAPI
                 CreatedAt = DateTime.Now
             };
 
-            var result = _restApiController.CreateCart(entity);
+            var result = await _restApiController.CreateCartAsync(entity);
 
             var list = _restApiController.GetCart(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetCartById(3);
@@ -420,7 +473,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Quantity = 5;
 
-            _restApiController.UpdateCart(entity.Value);
+            await _restApiController.UpdateCartAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetCartById(id);
 
@@ -464,9 +517,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Category_Entity(int id)
+        public async Task Delete_Category_Entity(int id)
         {
-            var result = _restApiController.DeleteCategories(id);
+            var result = await _restApiController.DeleteCategories(id);
 
             Assert.Multiple(() =>
             {
@@ -486,7 +539,7 @@ namespace NUnitTests.RestAPI
                 Description = "Category Description"
             };
 
-            var result = _restApiController.CreateCategories(entity);
+            var result = await _restApiController.CreateCategoriesAsync(entity);
 
             var list = _restApiController.GetCategories(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetCategoriesById(3);
@@ -509,7 +562,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Name = "Updated Name";
 
-            _restApiController.UpdateCategories(entity.Value);
+            await _restApiController.UpdateCategoriesAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetCategoriesById(id);
 
@@ -553,9 +606,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_CategoryHierarchy_Entity(int id)
+        public async Task Delete_CategoryHierarchy_Entity(int id)
         {
-            var result = _restApiController.DeleteCategoryHierarchy(id);
+            var result = await _restApiController.DeleteCategoryHierarchy(id);
 
             Assert.Multiple(() =>
             {
@@ -574,7 +627,7 @@ namespace NUnitTests.RestAPI
                 FkCategories = 2
             };
 
-            var result = _restApiController.CreateCategoryHierarchy(entity);
+            var result = await _restApiController.CreateCategoryHierarchyAsync(entity);
 
             var list = _restApiController.GetCategoryHierarchy(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetCategoryHierarchyById(3);
@@ -597,7 +650,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.ParentId = 2;
 
-            _restApiController.UpdateCategoryHierarchy(entity.Value);
+            await _restApiController.UpdateCategoryHierarchyAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetCategoryHierarchyById(id);
 
@@ -641,9 +694,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Color_Entity(int id)
+        public async Task Delete_Color_Entity(int id)
         {
-            var result = _restApiController.DeleteColors(id);
+            var result = await _restApiController.DeleteColors(id);
 
             Assert.Multiple(() =>
             {
@@ -662,7 +715,7 @@ namespace NUnitTests.RestAPI
                 HexCode = "#A020F0"
             };
 
-            var result = _restApiController.CreateColors(entity);
+            var result = await _restApiController.CreateColorsAsync(entity);
 
             var list = _restApiController.GetColors(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetColorsById(3);
@@ -685,7 +738,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Name = "Updated Name";
 
-            _restApiController.UpdateColors(entity.Value);
+            await _restApiController.UpdateColorsAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetColorsById(id);
 
@@ -729,9 +782,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Contact_Entity(int id)
+        public async Task Delete_Contact_Entity(int id)
         {
-            var result = _restApiController.DeleteContacts(id);
+            var result = await _restApiController.DeleteContacts(id);
 
             Assert.Multiple(() =>
             {
@@ -752,7 +805,7 @@ namespace NUnitTests.RestAPI
                 Phone = "000-000-000"
             };
 
-            var result = _restApiController.CreateContacts(entity);
+            var result = await _restApiController.CreateContactsAsync(entity);
 
             var list = _restApiController.GetContacts(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetContactsById(3);
@@ -775,7 +828,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Email = "Text 3";
 
-            _restApiController.UpdateContacts(entity.Value);
+            await _restApiController.UpdateContactsAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetContactsById(id);
 
@@ -819,9 +872,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_CustomizableProduct_Entity(int id)
+        public async Task Delete_CustomizableProduct_Entity(int id)
         {
-            var result = _restApiController.DeleteCustomizableProducts(id);
+            var result = await _restApiController.DeleteCustomizableProducts(id);
 
             Assert.Multiple(() =>
             {
@@ -842,7 +895,7 @@ namespace NUnitTests.RestAPI
                 CustomizationDetails = "Custom Detail 1"
             };
 
-            var result = _restApiController.CreateCustomizableProducts(entity);
+            var result = await _restApiController.CreateCustomizableProductsAsync(entity);
 
             var list = _restApiController.GetCustomizableProducts(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetCustomizableProductsById(3);
@@ -865,7 +918,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.CustomizationDetails = "Updated Detail";
 
-            _restApiController.UpdateCustomizableProducts(entity.Value);
+            await _restApiController.UpdateCustomizableProductsAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetCustomizableProductsById(id);
 
@@ -909,9 +962,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_CustomizationOrder_Entity(int id)
+        public async Task Delete_CustomizationOrder_Entity(int id)
         {
-            var result = _restApiController.DeleteCustomizationOrders(id);
+            var result = await _restApiController.DeleteCustomizationOrders(id);
 
             Assert.Multiple(() =>
             {
@@ -934,7 +987,7 @@ namespace NUnitTests.RestAPI
                 AdditionalNotes = "Additional Note"
             };
 
-            var result = _restApiController.CreateCustomizationOrders(entity);
+            var result = await _restApiController.CreateCustomizationOrdersAsync(entity);
 
             var list = _restApiController.GetCustomizationOrders(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetCustomizationOrdersById(3);
@@ -957,7 +1010,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.AdditionalNotes = "Updated Note";
 
-            _restApiController.UpdateCustomizationOrders(entity.Value);
+            await _restApiController.UpdateCustomizationOrdersAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetCustomizationOrdersById(id);
 
@@ -1001,9 +1054,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_FabricType_Entity(int id)
+        public async Task Delete_FabricType_Entity(int id)
         {
-            var result = _restApiController.DeleteFabricTypes(id);
+            var result = await _restApiController.DeleteFabricTypes(id);
 
             Assert.Multiple(() =>
             {
@@ -1021,7 +1074,7 @@ namespace NUnitTests.RestAPI
                 Name = "Silk"
             };
 
-            var result = _restApiController.CreateFabricTypes(entity);
+            var result = await _restApiController.CreateFabricTypesAsync(entity);
 
             var list = _restApiController.GetFabricTypes(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetFabricTypesById(3);
@@ -1044,7 +1097,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Name = "Updated Name";
 
-            _restApiController.UpdateFabricTypes(entity.Value);
+            await _restApiController.UpdateFabricTypesAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetFabricTypesById(id);
 
@@ -1088,9 +1141,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Language_Entity(int id)
+        public async Task Delete_Language_Entity(int id)
         {
-            var result = _restApiController.DeleteLanguages(id);
+            var result = await _restApiController.DeleteLanguages(id);
 
             Assert.Multiple(() =>
             {
@@ -1112,7 +1165,7 @@ namespace NUnitTests.RestAPI
                 TimeFormat = "HH:MM:SS"
             };
 
-            var result = _restApiController.CreateLanguages(entity);
+            var result = await _restApiController.CreateLanguagesAsync(entity);
 
             var list = _restApiController.GetLanguages(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetLanguagesById(3);
@@ -1135,7 +1188,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.FullName = "Text 3";
 
-            _restApiController.UpdateLanguages(entity.Value);
+            await _restApiController.UpdateLanguagesAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetLanguagesById(id);
 
@@ -1179,9 +1232,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Order_Entity(int id)
+        public async Task Delete_Order_Entity(int id)
         {
-            var result = _restApiController.DeleteOrders(id);
+            var result = await _restApiController.DeleteOrders(id);
 
             Assert.Multiple(() =>
             {
@@ -1208,7 +1261,7 @@ namespace NUnitTests.RestAPI
                 UpdatedAt = DateTime.Now
             };
 
-            var result = _restApiController.CreateOrders(entity);
+            var result = await _restApiController.CreateOrdersAsync(entity);
 
             var list = _restApiController.GetOrders(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetOrdersById(3);
@@ -1230,7 +1283,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.TotalAmount = 200.75M;
 
-            _restApiController.UpdateOrders(entity.Value);
+            await _restApiController.UpdateOrdersAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetOrdersById(id);
 
@@ -1274,9 +1327,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_OrderHistory_Entity(int id)
+        public async Task Delete_OrderHistory_Entity(int id)
         {
-            var result = _restApiController.DeleteOrderHistory(id);
+            var result = await _restApiController.DeleteOrderHistory(id);
 
             Assert.Multiple(() =>
             {
@@ -1296,7 +1349,7 @@ namespace NUnitTests.RestAPI
                 ChangedAt = DateTime.Now
             };
 
-            var result = _restApiController.CreateOrderHistory(entity);
+            var result = await _restApiController.CreateOrderHistoryAsync(entity);
 
             var list = _restApiController.GetOrderHistory(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetOrderHistoryById(3);
@@ -1318,7 +1371,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Status = 3;
 
-            _restApiController.UpdateOrderHistory(entity.Value);
+            await _restApiController.UpdateOrderHistoryAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetOrderHistoryById(id);
 
@@ -1362,9 +1415,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_OrderStatus_Entity(int id)
+        public async Task Delete_OrderStatus_Entity(int id)
         {
-            var result = _restApiController.DeleteOrderStatuses(id);
+            var result = await _restApiController.DeleteOrderStatuses(id);
 
             Assert.Multiple(() =>
             {
@@ -1382,7 +1435,7 @@ namespace NUnitTests.RestAPI
                 Status = "New Order"
             };
 
-            var result = _restApiController.CreateOrderStatuses(entity);
+            var result = await _restApiController.CreateOrderStatusesAsync(entity);
 
             var list = _restApiController.GetOrderStatuses(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetOrderStatusesById(3);
@@ -1405,7 +1458,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Status = "Updated Status";
 
-            _restApiController.UpdateOrderStatuses(entity.Value);
+            await _restApiController.UpdateOrderStatusesAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetOrderStatusesById(id);
 
@@ -1449,9 +1502,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Payment_Entity(int id)
+        public async Task Delete_Payment_Entity(int id)
         {
-            var result = _restApiController.DeletePayments(id);
+            var result = await _restApiController.DeletePayments(id);
 
             Assert.Multiple(() =>
             {
@@ -1473,7 +1526,7 @@ namespace NUnitTests.RestAPI
                 Status = "Completed"
             };
 
-            var result = _restApiController.CreatePayments(entity);
+            var result = await _restApiController.CreatePaymentsAsync(entity);
 
             var list = _restApiController.GetPayments(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetPaymentsById(3);
@@ -1496,7 +1549,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Status = "Pending";
 
-            _restApiController.UpdatePayments(entity.Value);
+            await _restApiController.UpdatePaymentsAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetPaymentsById(id);
 
@@ -1540,9 +1593,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Product_Entity(int id)
+        public async Task Delete_Product_Entity(int id)
         {
-            var result = _restApiController.DeleteProducts(id);
+            var result = await _restApiController.DeleteProducts(id);
 
             Assert.Multiple(() =>
             {
@@ -1564,7 +1617,7 @@ namespace NUnitTests.RestAPI
                 UpdatedAt = DateTime.Now
             };
 
-            var result = _restApiController.CreateProducts(entity);
+            var result = await _restApiController.CreateProductsAsync(entity);
 
             var list = _restApiController.GetProducts(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetProductsById(3);
@@ -1587,7 +1640,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Price = 29.99m;
 
-            _restApiController.UpdateProducts(entity.Value);
+            await _restApiController.UpdateProductsAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetProductsById(id);
 
@@ -1631,9 +1684,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_ProductImage_Entity(int id)
+        public async Task Delete_ProductImage_Entity(int id)
         {
-            var result = _restApiController.DeleteProductImages(id);
+            var result = await _restApiController.DeleteProductImages(id);
 
             Assert.Multiple(() =>
             {
@@ -1652,7 +1705,7 @@ namespace NUnitTests.RestAPI
                 ImageData = Encoding.ASCII.GetBytes("https://example.com/image3.jpg")
             };
 
-            var result = _restApiController.CreateProductImages(entity);
+            var result = await _restApiController.CreateProductImagesAsync(entity);
 
             var list = _restApiController.GetProductImages(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetProductImagesById(3);
@@ -1675,7 +1728,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.ImageData = Encoding.ASCII.GetBytes("https://example.com/updated_image.jpg");
 
-            _restApiController.UpdateProductImages(entity.Value);
+            await _restApiController.UpdateProductImagesAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetProductImagesById(id);
 
@@ -1719,9 +1772,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_ProductTranslation_Entity(int id)
+        public async Task Delete_ProductTranslation_Entity(int id)
         {
-            var result = _restApiController.DeleteProductTranslations(id);
+            var result = await _restApiController.DeleteProductTranslations(id);
 
             Assert.Multiple(() =>
             {
@@ -1742,7 +1795,7 @@ namespace NUnitTests.RestAPI
                 Description = "Description for Product 3"
             };
 
-            var result = _restApiController.CreateProductTranslations(entity);
+            var result = await _restApiController.CreateProductTranslationsAsync(entity);
 
             var list = _restApiController.GetProductTranslations(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetProductTranslationsById(3);
@@ -1765,7 +1818,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Name = "Updated Product Name";
 
-            _restApiController.UpdateProductTranslations(entity.Value);
+            await _restApiController.UpdateProductTranslationsAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetProductTranslationsById(id);
 
@@ -1809,9 +1862,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_Review_Entity(int id)
+        public async Task Delete_Review_Entity(int id)
         {
-            var result = _restApiController.DeleteReviews(id);
+            var result = await _restApiController.DeleteReviews(id);
 
             Assert.Multiple(() =>
             {
@@ -1833,7 +1886,7 @@ namespace NUnitTests.RestAPI
                 CreatedAt = DateTime.Now
             };
 
-            var result = _restApiController.CreateReviews(entity);
+            var result = await _restApiController.CreateReviewsAsync(entity);
 
             var list = _restApiController.GetReviews(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetReviewsById(3);
@@ -1856,7 +1909,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Comment = "Updated comment.";
 
-            _restApiController.UpdateReviews(entity.Value);
+            await _restApiController.UpdateReviewsAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetReviewsById(id);
 
@@ -1900,9 +1953,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_User_Entity(int id)
+        public async Task Delete_User_Entity(int id)
         {
-            var result = _restApiController.DeleteUsers(id);
+            var result = await _restApiController.DeleteUsers(id);
 
             Assert.Multiple(() =>
             {
@@ -1925,7 +1978,7 @@ namespace NUnitTests.RestAPI
                 Hash = "Hash 3"
             };
 
-            var result = _restApiController.CreateUsers(entity);
+            var result = await _restApiController.CreateUsersAsync(entity);
 
             var list = _restApiController.GetUsers(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetUsersById(3);
@@ -1948,7 +2001,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Email = "Text 3";
 
-            _restApiController.UpdateUsers(entity.Value);
+            await _restApiController.UpdateUsersAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetUsersById(id);
 
@@ -1992,9 +2045,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_UserProfile_Entity(int id)
+        public async Task Delete_UserProfile_Entity(int id)
         {
-            var result = _restApiController.DeleteUserProfiles(id);
+            var result = await _restApiController.DeleteUserProfiles(id);
 
             Assert.Multiple(() =>
             {
@@ -2021,7 +2074,7 @@ namespace NUnitTests.RestAPI
                 Avatar = "Avatar 3"
             };
 
-            var result = _restApiController.CreateUserProfiles(entity);
+            var result = await _restApiController.CreateUserProfilesAsync(entity);
 
             var list = _restApiController.GetUserProfiles(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetUserProfilesById(3);
@@ -2044,7 +2097,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.LastName = "Text 3";
 
-            _restApiController.UpdateUserProfiles(entity.Value);
+            await _restApiController.UpdateUserProfilesAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetUserProfilesById(id);
 
@@ -2088,9 +2141,9 @@ namespace NUnitTests.RestAPI
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void Delete_UserRole_Entity(int id)
+        public async Task Delete_UserRole_Entity(int id)
         {
-            var result = _restApiController.DeleteUserRoles(id);
+            var result = await _restApiController.DeleteUserRoles(id);
 
             Assert.Multiple(() =>
             {
@@ -2109,7 +2162,7 @@ namespace NUnitTests.RestAPI
                 Name = "Name 3"
             };
 
-            var result = _restApiController.CreateUserRoles(entity);
+            var result = await _restApiController.CreateUserRolesAsync(entity);
 
             var list = _restApiController.GetUserRoles(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetUserRolesById(3);
@@ -2132,7 +2185,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Name = "Text 3";
 
-            _restApiController.UpdateUserRoles(entity.Value);
+            await _restApiController.UpdateUserRolesAsync(entity.Value);
 
             var updateEntity = await _restApiController.GetUserRolesById(id);
 
