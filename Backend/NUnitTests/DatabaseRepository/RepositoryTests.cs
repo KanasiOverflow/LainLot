@@ -1,15 +1,42 @@
-﻿using NUnitTests.Classes;
+﻿using System.Text;
+using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using NUnitTests.Classes;
+using Moq;
 using DatabaseProvider.Models;
-using DatabaseRepository.Interfaces;
 using DatabaseRepository.Classes;
-using System.Text;
+using DatabaseRepository.Interfaces;
 
 namespace NUnitTests.DatabaseRepository
 {
     public class RepositoryTests
     {
-        private DbContextFake? _context;
+        private Mock<ILogger<LainLotContext>> _contextLogger;
+        private LainLotContext? _context;
+        // Fake loggers
+        private Mock<ILogger<Repository<About>>> _aboutLogger;
+        private Mock<ILogger<Repository<AccessLevel>>> _accessLevelLogger;
+        private Mock<ILogger<Repository<Cart>>> _cartLogger;
+        private Mock<ILogger<Repository<Category>>> _categoryLogger;
+        private Mock<ILogger<Repository<CategoryHierarchy>>> _categoryHierarchyLogger;
+        private Mock<ILogger<Repository<Color>>> _colorLogger;
+        private Mock<ILogger<Repository<Contact>>> _contactLogger;
+        private Mock<ILogger<Repository<CustomizableProduct>>> _customizableProductLogger;
+        private Mock<ILogger<Repository<CustomizationOrder>>> _customizationOrderLogger;
+        private Mock<ILogger<Repository<FabricType>>> _fabricTypeLogger;
+        private Mock<ILogger<Repository<Language>>> _languageLogger;
+        private Mock<ILogger<Repository<Order>>> _orderLogger;
+        private Mock<ILogger<Repository<OrderHistory>>> _orderHistoryLogger;
+        private Mock<ILogger<Repository<OrderStatus>>> _orderStatusLogger;
+        private Mock<ILogger<Repository<Payment>>> _paymentLogger;
+        private Mock<ILogger<Repository<Product>>> _productLogger;
+        private Mock<ILogger<Repository<ProductImage>>> _productImageLogger;
+        private Mock<ILogger<Repository<ProductTranslation>>> _productTranslationLogger;
+        private Mock<ILogger<Repository<Review>>> _reviewLogger;
+        private Mock<ILogger<Repository<User>>> _userLogger;
+        private Mock<ILogger<Repository<UserProfile>>> _userProfileLogger;
+        private Mock<ILogger<Repository<UserRole>>> _userRoleLogger;
+        // Repositories
         private IRepository<About>? _aboutRepository;
         private IRepository<AccessLevel>? _accessLevelRepository;
         private IRepository<Cart>? _cartRepository;
@@ -33,16 +60,43 @@ namespace NUnitTests.DatabaseRepository
         private IRepository<UserProfile>? _userProfileRepository;
         private IRepository<UserRole>? _userRoleRepository;
 
+
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<DbContextFake>()
+            _contextLogger = new Mock<ILogger<LainLotContext>>();
+
+            var options = new DbContextOptionsBuilder<LainLotContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                .EnableSensitiveDataLogging()
                 .Options;
 
             // Create a fake DbContext
-            _context = new DbContextFake(options);
+            _context = new LainLotContext(options, _contextLogger.Object);
+
+            // Create fake loggers
+            _aboutLogger = new Mock<ILogger<Repository<About>>>();
+            _accessLevelLogger = new Mock<ILogger<Repository<AccessLevel>>>();
+            _cartLogger = new Mock<ILogger<Repository<Cart>>>();
+            _categoryLogger = new Mock<ILogger<Repository<Category>>>();
+            _categoryHierarchyLogger = new Mock<ILogger<Repository<CategoryHierarchy>>>();
+            _colorLogger = new Mock<ILogger<Repository<Color>>>();
+            _contactLogger = new Mock<ILogger<Repository<Contact>>>();
+            _customizableProductLogger = new Mock<ILogger<Repository<CustomizableProduct>>>();
+            _customizationOrderLogger = new Mock<ILogger<Repository<CustomizationOrder>>>();
+            _fabricTypeLogger = new Mock<ILogger<Repository<FabricType>>>();
+            _languageLogger = new Mock<ILogger<Repository<Language>>>();
+            _orderLogger = new Mock<ILogger<Repository<Order>>>();
+            _orderHistoryLogger = new Mock<ILogger<Repository<OrderHistory>>>();
+            _orderStatusLogger = new Mock<ILogger<Repository<OrderStatus>>>();
+            _paymentLogger = new Mock<ILogger<Repository<Payment>>>();
+            _productLogger = new Mock<ILogger<Repository<Product>>>();
+            _productImageLogger = new Mock<ILogger<Repository<ProductImage>>>();
+            _productTranslationLogger = new Mock<ILogger<Repository<ProductTranslation>>>();
+            _reviewLogger = new Mock<ILogger<Repository<Review>>>();
+            _userLogger = new Mock<ILogger<Repository<User>>>();
+            _userProfileLogger = new Mock<ILogger<Repository<UserProfile>>>();
+            _userRoleLogger = new Mock<ILogger<Repository<UserRole>>>();
 
             // Create fake data
             var abouts = DatabaseDataFake.GetFakeAboutList();
@@ -95,34 +149,37 @@ namespace NUnitTests.DatabaseRepository
             // Save data in fake DbContext
             _context.SaveChanges();
 
-            _aboutRepository = new Repository<About>(_context);
-            _accessLevelRepository = new Repository<AccessLevel>(_context);
-            _cartRepository = new Repository<Cart>(_context);
-            _categoryRepository = new Repository<Category>(_context);
-            _categoryHierarchyRepository = new Repository<CategoryHierarchy>(_context);
-            _colorRepository = new Repository<Color>(_context);
-            _contactRepository = new Repository<Contact>(_context);
-            _customizableProductRepository = new Repository<CustomizableProduct>(_context);
-            _customizationOrderRepository = new Repository<CustomizationOrder>(_context);
-            _fabricTypeRepository = new Repository<FabricType>(_context);
-            _languageRepository = new Repository<Language>(_context);
-            _orderRepository = new Repository<Order>(_context);
-            _orderHistoryRepository = new Repository<OrderHistory>(_context);
-            _orderStatusRepository = new Repository<OrderStatus>(_context);
-            _paymentRepository = new Repository<Payment>(_context);
-            _productRepository = new Repository<Product>(_context);
-            _productImageRepository = new Repository<ProductImage>(_context);
-            _productTranslationRepository = new Repository<ProductTranslation>(_context);
-            _reviewRepository = new Repository<Review>(_context);
-            _userRepository = new Repository<User>(_context);
-            _userProfileRepository = new Repository<UserProfile>(_context);
-            _userRoleRepository = new Repository<UserRole>(_context);
-        }
+            // Create all instances for repositories
+            _aboutRepository = new Repository<About>(_context, _aboutLogger.Object);
+            _accessLevelRepository = new Repository<AccessLevel>(_context, _accessLevelLogger.Object);
+            _cartRepository = new Repository<Cart>(_context, _cartLogger.Object);
+            _categoryRepository = new Repository<Category>(_context, _categoryLogger.Object);
+            _categoryHierarchyRepository = new Repository<CategoryHierarchy>(_context, _categoryHierarchyLogger.Object);
+            _colorRepository = new Repository<Color>(_context, _colorLogger.Object);
+            _contactRepository = new Repository<Contact>(_context, _contactLogger.Object);
+            _customizableProductRepository = new Repository<CustomizableProduct>(_context, _customizableProductLogger.Object);
+            _customizationOrderRepository = new Repository<CustomizationOrder>(_context, _customizationOrderLogger.Object);
+            _fabricTypeRepository = new Repository<FabricType>(_context, _fabricTypeLogger.Object);
+            _languageRepository = new Repository<Language>(_context, _languageLogger.Object);
+            _orderRepository = new Repository<Order>(_context, _orderLogger.Object);
+            _orderHistoryRepository = new Repository<OrderHistory>(_context, _orderHistoryLogger.Object);
+            _orderStatusRepository = new Repository<OrderStatus>(_context, _orderStatusLogger.Object);
+            _paymentRepository = new Repository<Payment>(_context, _paymentLogger.Object);
+            _productRepository = new Repository<Product>(_context, _productLogger.Object);
+            _productImageRepository = new Repository<ProductImage>(_context, _productImageLogger.Object);
+            _productTranslationRepository = new Repository<ProductTranslation>(_context, _productTranslationLogger.Object);
+            _reviewRepository = new Repository<Review>(_context, _reviewLogger.Object);
+            _userRepository = new Repository<User>(_context, _userLogger.Object);
+            _userProfileRepository = new Repository<UserProfile>(_context, _userProfileLogger.Object);
+            _userRoleRepository = new Repository<UserRole>(_context, _userRoleLogger.Object);
 
+        }
 
         [TearDown]
         public void FinishTest()
         {
+            _context?.Database.EnsureDeleted();
+            _context?.ChangeTracker.Clear();
             _context?.Dispose();
         }
 
@@ -143,9 +200,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetAboutById_Return_Correct_Entity(int id)
+        public async Task GetAboutById_Return_Correct_EntityAsync(int id)
         {
-            var result = _aboutRepository?.GetById(id);
+            var result = await _aboutRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -163,7 +220,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _aboutRepository?.Delete(result);
+            await _aboutRepository?.Delete(result);
             var count = _aboutRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -180,7 +237,7 @@ namespace NUnitTests.DatabaseRepository
                 Text = "Text 3"
             };
 
-            _aboutRepository?.Add(entity);
+            await _aboutRepository?.Add(entity);
 
             var list = _aboutRepository?.GetAll().ToList();
             var entityThatWasAdded = await _aboutRepository?.GetById(3);
@@ -202,7 +259,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Text = "Updated Text";
 
-            _aboutRepository?.Update(entity);
+            await _aboutRepository?.Update(entity);
 
             var updatedEntity = await _aboutRepository?.GetById(id);
 
@@ -228,9 +285,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetAccessLevelById_Return_Correct_Entity(int id)
+        public async Task GetAccessLevelById_Return_Correct_Entity(int id)
         {
-            var result = _accessLevelRepository?.GetById(id);
+            var result = await _accessLevelRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -248,7 +305,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _accessLevelRepository?.Delete(result);
+            await _accessLevelRepository?.Delete(result);
             var count = _accessLevelRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -263,7 +320,7 @@ namespace NUnitTests.DatabaseRepository
                 Description = "Access Level 3"
             };
 
-            _accessLevelRepository?.Add(entity);
+            await _accessLevelRepository?.Add(entity);
 
             var list = _accessLevelRepository?.GetAll().ToList();
             var entityThatWasAdded = await _accessLevelRepository?.GetById(3);
@@ -285,7 +342,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Description = "Updated Access Level";
 
-            _accessLevelRepository?.Update(entity);
+            await _accessLevelRepository?.Update(entity);
 
             var updatedEntity = await _accessLevelRepository?.GetById(id);
 
@@ -311,9 +368,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetCartById_Return_Correct_Entity(int id)
+        public async Task GetCartById_Return_Correct_Entity(int id)
         {
-            var result = _cartRepository?.GetById(id);
+            var result = await _cartRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -331,7 +388,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _cartRepository?.Delete(result);
+            await _cartRepository?.Delete(result);
             var count = _cartRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -347,7 +404,7 @@ namespace NUnitTests.DatabaseRepository
                 CreatedAt = DateTime.UtcNow
             };
 
-            _cartRepository?.Add(entity);
+            await _cartRepository?.Add(entity);
 
             var list = _cartRepository?.GetAll().ToList();
             var entityThatWasAdded = await _cartRepository?.GetById(3);
@@ -369,7 +426,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.FkUsers = 2;
 
-            _cartRepository?.Update(entity);
+            await _cartRepository?.Update(entity);
 
             var updatedEntity = await _cartRepository?.GetById(id);
 
@@ -395,9 +452,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetCategoryById_Return_Correct_Entity(int id)
+        public async Task GetCategoryById_Return_Correct_Entity(int id)
         {
-            var result = _categoryRepository?.GetById(id);
+            var result = await _categoryRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -415,7 +472,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _categoryRepository?.Delete(result);
+            await _categoryRepository?.Delete(result);
             var count = _categoryRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -432,7 +489,7 @@ namespace NUnitTests.DatabaseRepository
                 Description = "Description"
             };
 
-            _categoryRepository?.Add(entity);
+            await _categoryRepository?.Add(entity);
 
             var list = _categoryRepository?.GetAll().ToList();
             var entityThatWasAdded = await _categoryRepository?.GetById(3);
@@ -454,7 +511,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Name = "Updated Category";
 
-            _categoryRepository?.Update(entity);
+            await _categoryRepository?.Update(entity);
 
             var updatedEntity = await _categoryRepository?.GetById(id);
 
@@ -480,9 +537,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetCategoryHierarchyById_Return_Correct_Entity(int id)
+        public async Task GetCategoryHierarchyById_Return_Correct_Entity(int id)
         {
-            var result = _categoryHierarchyRepository?.GetById(id);
+            var result = await _categoryHierarchyRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -500,10 +557,17 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _categoryHierarchyRepository?.Delete(result);
+            await _categoryHierarchyRepository?.Delete(result);
             var count = _categoryHierarchyRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(1));
+            if (id == 1)
+            {
+                Assert.That(count, Is.EqualTo(0));
+            }
+            else
+            {
+                Assert.That(count, Is.EqualTo(1));
+            }            
         }
 
         [Test]
@@ -516,7 +580,7 @@ namespace NUnitTests.DatabaseRepository
                 FkCategories = 2
             };
 
-            _categoryHierarchyRepository?.Add(entity);
+            await _categoryHierarchyRepository?.Add(entity);
 
             var list = _categoryHierarchyRepository?.GetAll().ToList();
             var entityThatWasAdded = await _categoryHierarchyRepository?.GetById(3);
@@ -539,7 +603,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.FkCategories = 3;
 
-            _categoryHierarchyRepository?.Update(entity);
+            await _categoryHierarchyRepository?.Update(entity);
 
             var updatedEntity = await _categoryHierarchyRepository?.GetById(id);
 
@@ -565,9 +629,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetColorById_Return_Correct_Entity(int id)
+        public async Task GetColorById_Return_Correct_Entity(int id)
         {
-            var result = _colorRepository?.GetById(id);
+            var result = await _colorRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -585,7 +649,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _colorRepository?.Delete(result);
+            await _colorRepository?.Delete(result);
             var count = _colorRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -601,7 +665,7 @@ namespace NUnitTests.DatabaseRepository
                 HexCode = "#0000FF"
             };
 
-            _colorRepository?.Add(entity);
+            await _colorRepository?.Add(entity);
 
             var list = _colorRepository?.GetAll().ToList();
             var entityThatWasAdded = await _colorRepository?.GetById(3);
@@ -623,7 +687,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Name = "Updated Color";
 
-            _colorRepository?.Update(entity);
+            await _colorRepository?.Update(entity);
 
             var updatedEntity = await _colorRepository?.GetById(id);
 
@@ -649,9 +713,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetContactById_Return_Correct_Entity(int id)
+        public async Task GetContactById_Return_Correct_Entity(int id)
         {
-            var result = _contactRepository?.GetById(id);
+            var result = await _contactRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -669,7 +733,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _contactRepository?.Delete(result);
+            await _contactRepository?.Delete(result);
             var count = _contactRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -686,7 +750,7 @@ namespace NUnitTests.DatabaseRepository
                 Address = "Address"
             };
 
-            _contactRepository?.Add(entity);
+            await _contactRepository?.Add(entity);
 
             var list = _contactRepository?.GetAll().ToList();
             var entityThatWasAdded = await _contactRepository?.GetById(3);
@@ -710,7 +774,7 @@ namespace NUnitTests.DatabaseRepository
             entity.Email = "updatedcontact@example.com";
             entity.Phone = "987654321";
 
-            _contactRepository?.Update(entity);
+            await _contactRepository?.Update(entity);
 
             var updatedEntity = await _contactRepository?.GetById(id);
 
@@ -740,9 +804,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetCustomizableProductById_Return_Correct_Entity(int id)
+        public async Task GetCustomizableProductById_Return_Correct_Entity(int id)
         {
-            var result = _customizableProductRepository?.GetById(id);
+            var result = await _customizableProductRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -760,7 +824,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _customizableProductRepository?.Delete(result);
+            await _customizableProductRepository?.Delete(result);
             var count = _customizableProductRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -779,7 +843,7 @@ namespace NUnitTests.DatabaseRepository
                 SizeOptions = "M"
             };
 
-            _customizableProductRepository?.Add(entity);
+            await _customizableProductRepository?.Add(entity);
 
             var list = _customizableProductRepository?.GetAll().ToList();
             var entityThatWasAdded = await _customizableProductRepository?.GetById(3);
@@ -803,7 +867,7 @@ namespace NUnitTests.DatabaseRepository
             entity.FkProducts = 2;
             entity.CustomizationDetails = "Updated description";
 
-            _customizableProductRepository?.Update(entity);
+            await _customizableProductRepository?.Update(entity);
 
             var updatedEntity = await _customizableProductRepository?.GetById(id);
 
@@ -833,9 +897,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetCustomizationOrderById_Return_Correct_Entity(int id)
+        public async Task GetCustomizationOrderById_Return_Correct_Entity(int id)
         {
-            var result = _customizationOrderRepository?.GetById(id);
+            var result = await _customizationOrderRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -853,7 +917,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _customizationOrderRepository?.Delete(result);
+            await _customizationOrderRepository?.Delete(result);
             var count = _customizationOrderRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -868,7 +932,7 @@ namespace NUnitTests.DatabaseRepository
                 Size = "M"
             };
 
-            _customizationOrderRepository?.Add(entity);
+            await _customizationOrderRepository?.Add(entity);
 
             var list = _customizationOrderRepository?.GetAll().ToList();
             var entityThatWasAdded = await _customizationOrderRepository?.GetById(3);
@@ -890,7 +954,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Size = "XL";
 
-            _customizationOrderRepository?.Update(entity);
+            await _customizationOrderRepository?.Update(entity);
 
             var updatedEntity = await _customizationOrderRepository?.GetById(id);
 
@@ -919,9 +983,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetFabricTypeById_Return_Correct_Entity(int id)
+        public async Task GetFabricTypeById_Return_Correct_Entity(int id)
         {
-            var result = _fabricTypeRepository?.GetById(id);
+            var result = await _fabricTypeRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -939,7 +1003,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _fabricTypeRepository?.Delete(result);
+            await _fabricTypeRepository?.Delete(result);
             var count = _fabricTypeRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -954,7 +1018,7 @@ namespace NUnitTests.DatabaseRepository
                 Name = "Cotton"
             };
 
-            _fabricTypeRepository?.Add(entity);
+            await _fabricTypeRepository?.Add(entity);
 
             var list = _fabricTypeRepository?.GetAll().ToList();
             var entityThatWasAdded = await _fabricTypeRepository?.GetById(3);
@@ -976,7 +1040,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Name = "Polyester";
 
-            _fabricTypeRepository?.Update(entity);
+            await _fabricTypeRepository?.Update(entity);
 
             var updatedEntity = await _fabricTypeRepository?.GetById(id);
 
@@ -1002,9 +1066,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetLanguageById_Return_Correct_Entity(int id)
+        public async Task GetLanguageById_Return_Correct_Entity(int id)
         {
-            var result = _languageRepository?.GetById(id);
+            var result = await _languageRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1022,7 +1086,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _languageRepository?.Delete(result);
+            await _languageRepository?.Delete(result);
             var count = _languageRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -1041,7 +1105,7 @@ namespace NUnitTests.DatabaseRepository
                 Description = "Description"
             };
 
-            _languageRepository?.Add(entity);
+            await _languageRepository?.Add(entity);
 
             var list = _languageRepository?.GetAll().ToList();
             var entityThatWasAdded = await _languageRepository?.GetById(3);
@@ -1063,7 +1127,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.FullName = "French";
 
-            _languageRepository?.Update(entity);
+            await _languageRepository?.Update(entity);
 
             var updatedEntity = await _languageRepository?.GetById(id);
 
@@ -1089,9 +1153,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetOrderById_Return_Correct_Entity(int id)
+        public async Task GetOrderById_Return_Correct_Entity(int id)
         {
-            var result = _orderRepository?.GetById(id);
+            var result = await _orderRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1109,7 +1173,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _orderRepository?.Delete(result);
+            await _orderRepository?.Delete(result);
             var count = _orderRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -1133,7 +1197,7 @@ namespace NUnitTests.DatabaseRepository
                 TrackingNumber = "TrackingNumber"
             };
 
-            _orderRepository?.Add(entity);
+            await _orderRepository?.Add(entity);
 
             var list = _orderRepository?.GetAll().ToList();
             var entityThatWasAdded = await _orderRepository?.GetById(3);
@@ -1157,7 +1221,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.TotalAmount = 200.00M;
 
-            _orderRepository?.Update(entity);
+            await _orderRepository?.Update(entity);
 
             var updatedEntity = await _orderRepository?.GetById(id);
 
@@ -1183,9 +1247,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetOrderHistoryById_Return_Correct_Entity(int id)
+        public async Task GetOrderHistoryById_Return_Correct_Entity(int id)
         {
-            var result = _orderHistoryRepository?.GetById(id);
+            var result = await _orderHistoryRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1203,7 +1267,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _orderHistoryRepository?.Delete(result);
+            await _orderHistoryRepository?.Delete(result);
             var count = _orderHistoryRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -1220,7 +1284,7 @@ namespace NUnitTests.DatabaseRepository
                 ChangedAt = DateTime.Now
             };
 
-            _orderHistoryRepository?.Add(entity);
+            await _orderHistoryRepository?.Add(entity);
 
             var list = _orderHistoryRepository?.GetAll().ToList();
             var entityThatWasAdded = await _orderHistoryRepository?.GetById(3);
@@ -1242,7 +1306,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Status = 2;
 
-            _orderHistoryRepository?.Update(entity);
+            await _orderHistoryRepository?.Update(entity);
 
             var updatedEntity = await _orderHistoryRepository?.GetById(id);
 
@@ -1268,9 +1332,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetOrderStatusById_Return_Correct_Entity(int id)
+        public async Task GetOrderStatusById_Return_Correct_Entity(int id)
         {
-            var result = _orderStatusRepository?.GetById(id);
+            var result = await _orderStatusRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1288,7 +1352,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _orderStatusRepository?.Delete(result);
+            await _orderStatusRepository?.Delete(result);
             var count = _orderStatusRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -1303,7 +1367,7 @@ namespace NUnitTests.DatabaseRepository
                 Status = "Cancelled"
             };
 
-            _orderStatusRepository?.Add(entity);
+            await _orderStatusRepository?.Add(entity);
 
             var list = _orderStatusRepository?.GetAll().ToList();
             var entityThatWasAdded = await _orderStatusRepository?.GetById(3);
@@ -1325,7 +1389,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Status = "Shipped";
 
-            _orderStatusRepository?.Update(entity);
+            await _orderStatusRepository?.Update(entity);
 
             var updatedEntity = await _orderStatusRepository?.GetById(id);
 
@@ -1351,9 +1415,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetPaymentById_Return_Correct_Entity(int id)
+        public async Task GetPaymentById_Return_Correct_Entity(int id)
         {
-            var result = _paymentRepository?.GetById(id);
+            var result = await _paymentRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1371,7 +1435,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _paymentRepository?.Delete(result);
+            await _paymentRepository?.Delete(result);
             var count = _paymentRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -1388,7 +1452,7 @@ namespace NUnitTests.DatabaseRepository
                 Amount = 10
             };
 
-            _paymentRepository?.Add(entity);
+            await _paymentRepository?.Add(entity);
 
             var list = _paymentRepository?.GetAll().ToList();
             var entityThatWasAdded = await _paymentRepository?.GetById(3);
@@ -1410,7 +1474,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.PaymentMethod = "PayPal";
 
-            _paymentRepository?.Update(entity);
+            await _paymentRepository?.Update(entity);
 
             var updatedEntity = await _paymentRepository?.GetById(id);
 
@@ -1436,9 +1500,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetProductById_Return_Correct_Entity(int id)
+        public async Task GetProductById_Return_Correct_Entity(int id)
         {
-            var result = _productRepository?.GetById(id);
+            var result = await _productRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1456,7 +1520,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _productRepository?.Delete(result);
+            await _productRepository?.Delete(result);
             var count = _productRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -1476,7 +1540,7 @@ namespace NUnitTests.DatabaseRepository
                 StockQuantity = 1
             };
 
-            _productRepository?.Add(entity);
+            await _productRepository?.Add(entity);
 
             var list = _productRepository?.GetAll().ToList();
             var entityThatWasAdded = await _productRepository?.GetById(3);
@@ -1498,7 +1562,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Price = 199.99m;
 
-            _productRepository?.Update(entity);
+            await _productRepository?.Update(entity);
 
             var updatedEntity = await _productRepository?.GetById(id);
 
@@ -1527,9 +1591,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetProductImageById_Return_Correct_Entity(int id)
+        public async Task GetProductImageById_Return_Correct_Entity(int id)
         {
-            var result = _productImageRepository?.GetById(id);
+            var result = await _productImageRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1547,14 +1611,14 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _productImageRepository?.Delete(result);
+            await _productImageRepository?.Delete(result);
             var count = _productImageRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
-        public void Add_ProductImage_Entity()
+        public async Task Add_ProductImage_EntityAsync()
         {
             var entity = new ProductImage()
             {
@@ -1563,10 +1627,10 @@ namespace NUnitTests.DatabaseRepository
                 ImageData = Encoding.ASCII.GetBytes("https://example.com/image1.jpg")
             };
 
-            _productImageRepository?.Add(entity);
+            await _productImageRepository?.Add(entity);
 
             var list = _productImageRepository?.GetAll().ToList();
-            var entityThatWasAdded = _productImageRepository?.GetById(3);
+            var entityThatWasAdded = await _productImageRepository?.GetById(3);
 
             Assert.Multiple(() =>
             {
@@ -1584,7 +1648,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.ImageData = Encoding.UTF8.GetBytes("http://example.com/updated-image.jpg");
 
-            _productImageRepository?.Update(entity);
+            await _productImageRepository?.Update(entity);
 
             var updatedEntity = await _productImageRepository?.GetById(id);
 
@@ -1613,9 +1677,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetProductTranslationById_Return_Correct_Entity(int id)
+        public async Task GetProductTranslationById_Return_Correct_Entity(int id)
         {
-            var result = _productTranslationRepository?.GetById(id);
+            var result = await _productTranslationRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1633,7 +1697,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _productTranslationRepository?.Delete(result);
+            await _productTranslationRepository?.Delete(result);
             var count = _productTranslationRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -1651,7 +1715,7 @@ namespace NUnitTests.DatabaseRepository
                 Description = "Description of new product"
             };
 
-            _productTranslationRepository?.Add(entity);
+            await _productTranslationRepository?.Add(entity);
 
             var list = _productTranslationRepository?.GetAll().ToList();
             var entityThatWasAdded = await _productTranslationRepository?.GetById(3);
@@ -1673,7 +1737,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Name = "Updated Title";
 
-            _productTranslationRepository?.Update(entity);
+            await _productTranslationRepository?.Update(entity);
 
             var updatedEntity = await _productTranslationRepository?.GetById(id);
 
@@ -1702,9 +1766,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetReviewById_Return_Correct_Entity(int id)
+        public async Task GetReviewById_Return_Correct_Entity(int id)
         {
-            var result = _reviewRepository?.GetById(id);
+            var result = await _reviewRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1722,7 +1786,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _reviewRepository?.Delete(result);
+            await _reviewRepository?.Delete(result);
             var count = _reviewRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -1740,7 +1804,7 @@ namespace NUnitTests.DatabaseRepository
                 Comment = "Excellent product!"
             };
 
-            _reviewRepository?.Add(entity);
+            await _reviewRepository?.Add(entity);
 
             var list = _reviewRepository?.GetAll().ToList();
             var entityThatWasAdded = await _reviewRepository?.GetById(3);
@@ -1762,7 +1826,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Rating = 4;
 
-            _reviewRepository?.Update(entity);
+            await _reviewRepository?.Update(entity);
 
             var updatedEntity = await _reviewRepository?.GetById(id);
 
@@ -1791,9 +1855,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetUserById_Return_Correct_Entity(int id)
+        public async Task GetUserById_Return_Correct_Entity(int id)
         {
-            var result = _userRepository?.GetById(id);
+            var result = await _userRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1811,7 +1875,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _userRepository?.Delete(result);
+            await _userRepository?.Delete(result);
             var count = _userRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -1833,7 +1897,7 @@ namespace NUnitTests.DatabaseRepository
                 ConfirmEmail = 0
             };
 
-            _userRepository?.Add(entity);
+            await _userRepository?.Add(entity);
 
             var list = _userRepository?.GetAll().ToList();
             var entityThatWasAdded = await _userRepository?.GetById(3);
@@ -1855,7 +1919,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Email = "updated_email@example.com";
 
-            _userRepository?.Update(entity);
+            await _userRepository?.Update(entity);
 
             var updatedEntity = await _userRepository?.GetById(id);
 
@@ -1884,9 +1948,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetUserProfileById_Return_Correct_Entity(int id)
+        public async Task GetUserProfileById_Return_Correct_Entity(int id)
         {
-            var result = _userProfileRepository?.GetById(id);
+            var result = await _userProfileRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1904,7 +1968,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _userProfileRepository?.Delete(result);
+            await _userProfileRepository?.Delete(result);
             var count = _userProfileRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -1922,7 +1986,7 @@ namespace NUnitTests.DatabaseRepository
                 Phone = "123456789"
             };
 
-            _userProfileRepository?.Add(entity);
+            await _userProfileRepository?.Add(entity);
 
             var list = _userProfileRepository?.GetAll().ToList();
             var entityThatWasAdded = await _userProfileRepository?.GetById(3);
@@ -1944,7 +2008,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.LastName = "UpdatedLastName";
 
-            _userProfileRepository?.Update(entity);
+            await _userProfileRepository?.Update(entity);
 
             var updatedEntity = await _userProfileRepository?.GetById(id);
 
@@ -1973,9 +2037,9 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public void GetUserRoleById_Return_Correct_Entity(int id)
+        public async Task GetUserRoleById_Return_Correct_Entity(int id)
         {
-            var result = _userRoleRepository?.GetById(id);
+            var result = await _userRoleRepository?.GetById(id);
 
             Assert.Multiple(() =>
             {
@@ -1993,7 +2057,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.That(result, Is.Not.Null);
 
-            _userRoleRepository?.Delete(result);
+            await _userRoleRepository?.Delete(result);
             var count = _userRoleRepository?.GetAll().Count();
 
             Assert.That(count, Is.EqualTo(1));
@@ -2008,7 +2072,7 @@ namespace NUnitTests.DatabaseRepository
                 Name = "NewRole"
             };
 
-            _userRoleRepository?.Add(entity);
+            await _userRoleRepository?.Add(entity);
 
             var list = _userRoleRepository?.GetAll().ToList();
             var entityThatWasAdded = await _userRoleRepository?.GetById(3);
@@ -2030,7 +2094,7 @@ namespace NUnitTests.DatabaseRepository
 
             entity.Name = "UpdatedRoleName";
 
-            _userRoleRepository?.Update(entity);
+            await _userRoleRepository?.Update(entity);
 
             var updatedEntity = await _userRoleRepository?.GetById(id);
 
