@@ -6,7 +6,7 @@
 
         public int FkOrders { get; set; }
 
-        public int Status { get; set; }
+        public int FkOrderStatuses { get; set; }
 
         public DateTime ChangedAt { get; set; }
     }

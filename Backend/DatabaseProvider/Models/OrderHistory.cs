@@ -9,11 +9,11 @@ public partial class OrderHistory
 
     public int FkOrders { get; set; }
 
-    public int Status { get; set; }
+    public int FkOrderStatuses { get; set; }
 
     public DateTime ChangedAt { get; set; }
 
-    public virtual Order FkOrdersNavigation { get; set; } = null!;
+    public virtual OrderStatus FkOrderStatusesNavigation { get; set; } = null!;
 
-    public virtual OrderStatus StatusNavigation { get; set; } = null!;
+    public virtual Order FkOrdersNavigation { get; set; } = null!;
 }

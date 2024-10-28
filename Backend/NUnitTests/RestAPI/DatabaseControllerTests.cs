@@ -1345,7 +1345,7 @@ namespace NUnitTests.RestAPI
             {
                 Id = 3,
                 FkOrders = 1,
-                Status = 1,
+                FkOrderStatuses = 1,
                 ChangedAt = DateTime.Now
             };
 
@@ -1369,7 +1369,7 @@ namespace NUnitTests.RestAPI
         {
             var entity = await _restApiController.GetOrderHistoryById(id);
 
-            entity.Value.Status = 3;
+            entity.Value.FkOrderStatuses = 3;
 
             await _restApiController.UpdateOrderHistoryAsync(entity.Value);
 
@@ -1377,8 +1377,8 @@ namespace NUnitTests.RestAPI
 
             Assert.Multiple(() =>
             {
-                Assert.That(updateEntity?.Value?.Status, Is.EqualTo(entity.Value.Status));
-                Assert.That(entity?.Value?.Status, Is.EqualTo(updateEntity?.Value?.Status));
+                Assert.That(updateEntity?.Value?.FkOrderStatuses, Is.EqualTo(entity.Value.FkOrderStatuses));
+                Assert.That(entity?.Value?.FkOrderStatuses, Is.EqualTo(updateEntity?.Value?.FkOrderStatuses));
             });
         }
 

@@ -2544,7 +2544,7 @@ namespace RestAPI.Controllers
                 var dbEntity = await _orderHistoryRepository.GetById(id);
                 return dbEntity == null
                     ? string.Empty
-                    : $"Id: {dbEntity?.Id} | StatusID: {dbEntity?.Status}";
+                    : $"Id: {dbEntity?.Id} | FkOrderStatuses: {dbEntity?.FkOrderStatuses}";
             }
             catch (Exception ex)
             {
