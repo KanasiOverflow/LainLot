@@ -2610,6 +2610,44 @@ namespace RestAPI.Controllers
             }
         }
 
+        [HttpGet("GetFkOrderStatusData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkOrderStatusData(int id)
+        {
+            try
+            {
+                var dbEntity = await _orderStatusRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Status: {dbEntity?.Status}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkColorsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkColorsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _colorRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | HexCode: {dbEntity?.HexCode}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
         #endregion
     }
 }
