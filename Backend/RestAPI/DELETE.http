@@ -1,0 +1,87 @@
+﻿### DeleteAbout
+DELETE {{RestAPI_HostAddress}}DeleteAbout?id=1
+Authorization: {{Credentials}}
+
+### DeleteAccessLevels
+DELETE {{RestAPI_HostAddress}}DeleteAccessLevels?id=1
+Authorization: {{Credentials}}
+
+### DeleteCart
+DELETE {{RestAPI_HostAddress}}DeleteCart?id=1
+Authorization: {{Credentials}}
+
+### DeleteCategories
+DELETE {{RestAPI_HostAddress}}DeleteCategories?id=1
+Authorization: {{Credentials}}
+
+### DeleteColors
+DELETE {{RestAPI_HostAddress}}DeleteColors?id=1
+Authorization: {{Credentials}}
+
+### DeleteContacts
+DELETE {{RestAPI_HostAddress}}DeleteContacts?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomizableProducts
+DELETE {{RestAPI_HostAddress}}DeleteCustomizableProducts?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomizationOrders
+DELETE {{RestAPI_HostAddress}}DeleteCustomizationOrders?id=1
+Authorization: {{Credentials}}
+
+### DeleteFabricTypes
+DELETE {{RestAPI_HostAddress}}DeleteFabricTypes?id=1
+Authorization: {{Credentials}}
+
+### DeleteLanguages
+DELETE {{RestAPI_HostAddress}}DeleteLanguages?id=1
+Authorization: {{Credentials}}
+
+### DeleteOrders
+DELETE {{RestAPI_HostAddress}}DeleteOrders?id=1
+Authorization: {{Credentials}}
+
+### DeleteOrderHistory
+DELETE {{RestAPI_HostAddress}}DeleteOrderHistory?id=1
+Authorization: {{Credentials}}
+
+### DeleteOrderHistory
+DELETE {{RestAPI_HostAddress}}DeleteOrderHistory?id=1
+Authorization: {{Credentials}}
+
+### DeleteOrderStatuses
+DELETE {{RestAPI_HostAddress}}DeleteOrderStatuses?id=1
+Authorization: {{Credentials}}
+
+### DeletePayments
+DELETE {{RestAPI_HostAddress}}DeletePayments?id=1
+Authorization: {{Credentials}}
+
+### DeleteProducts
+DELETE {{RestAPI_HostAddress}}DeleteProducts?id=1
+Authorization: {{Credentials}}
+
+### DeleteProductImages
+DELETE {{RestAPI_HostAddress}}DeleteProductImages?id=1
+Authorization: {{Credentials}}
+
+### DeleteProductTranslations
+DELETE {{RestAPI_HostAddress}}DeleteProductTranslations?id=1
+Authorization: {{Credentials}}
+
+### DeleteReviews
+DELETE {{RestAPI_HostAddress}}DeleteReviews?id=1
+Authorization: {{Credentials}}
+
+### DeleteUsers
+DELETE {{RestAPI_HostAddress}}DeleteUsers?id=1
+Authorization: {{Credentials}}
+
+### DeleteUserProfiles
+DELETE {{RestAPI_HostAddress}}DeleteUserProfiles?id=1
+Authorization: {{Credentials}}
+
+### DeleteUserRoles
+DELETE {{RestAPI_HostAddress}}DeleteUserRoles?id=1
+Authorization: {{Credentials}}

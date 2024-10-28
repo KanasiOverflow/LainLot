@@ -1,0 +1,354 @@
+GET http://localhost:8040/weatherforecast/
+Accept: application/json
+
+### GetAbout
+GET {{RestAPI_HostAddress}}GetAbout?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetAboutCount
+GET {{RestAPI_HostAddress}}GetAboutCount
+Authorization: {{Credentials}}
+
+### GetAboutFields
+GET {{RestAPI_HostAddress}}GetAboutFields
+Authorization: {{Credentials}}
+
+### GetAboutById
+GET {{RestAPI_HostAddress}}GetAboutById?id=1
+Authorization: {{Credentials}}
+
+### GetAccessLevels
+GET {{RestAPI_HostAddress}}GetAccessLevels?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetAccessLevelsCount
+GET {{RestAPI_HostAddress}}GetAccessLevelsCount
+Authorization: {{Credentials}}
+
+### GetAccessLevelsFields
+GET {{RestAPI_HostAddress}}GetAccessLevelsFields
+Authorization: {{Credentials}}
+
+### GetAccessLevelsById
+GET {{RestAPI_HostAddress}}GetAccessLevelsById?id=1
+Authorization: {{Credentials}}
+
+### GetCart
+GET {{RestAPI_HostAddress}}GetCart?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCartCount
+GET {{RestAPI_HostAddress}}GetCartCount?userId=1
+Authorization: {{Credentials}}
+
+### GetCartFields
+GET {{RestAPI_HostAddress}}GetCartFields
+Authorization: {{Credentials}}
+
+### GetCartById
+GET {{RestAPI_HostAddress}}GetCartById?id=1
+Authorization: {{Credentials}}
+
+### GetCategories
+GET {{RestAPI_HostAddress}}GetCategories?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCategoriesCount
+GET {{RestAPI_HostAddress}}GetCategoriesCount
+Authorization: {{Credentials}}
+
+### GetCategoriesFields
+GET {{RestAPI_HostAddress}}GetCategoriesFields
+Authorization: {{Credentials}}
+
+### GetCategoriesById
+GET {{RestAPI_HostAddress}}GetCategoriesById?id=1
+Authorization: {{Credentials}}
+
+### GetCategoryHierarchy
+GET {{RestAPI_HostAddress}}GetCategoryHierarchy?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCategoryHierarchyCount
+GET {{RestAPI_HostAddress}}GetCategoryHierarchyCount
+Authorization: {{Credentials}}
+
+### GetCategoryHierarchyFields
+GET {{RestAPI_HostAddress}}GetCategoryHierarchyFields
+Authorization: {{Credentials}}
+
+### GetCategoryHierarchyById
+GET {{RestAPI_HostAddress}}GetCategoryHierarchyById?id=1
+Authorization: {{Credentials}}
+
+### GetColors
+GET {{RestAPI_HostAddress}}GetColors?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetColorsCount
+GET {{RestAPI_HostAddress}}GetColorsCount
+Authorization: {{Credentials}}
+
+### GetColorsFields
+GET {{RestAPI_HostAddress}}GetColorsFields
+Authorization: {{Credentials}}
+
+### GetColorsById
+GET {{RestAPI_HostAddress}}GetColorsById?id=1
+Authorization: {{Credentials}}
+
+### GetContacts
+GET {{RestAPI_HostAddress}}GetContacts?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetContactsCount
+GET {{RestAPI_HostAddress}}GetContactsCount
+Authorization: {{Credentials}}
+
+### GetContactsFields
+GET {{RestAPI_HostAddress}}GetContactsFields
+Authorization: {{Credentials}}
+
+### GetContactsById
+GET {{RestAPI_HostAddress}}GetContactsById?id=1
+Authorization: {{Credentials}}
+
+### GetCustomizableProducts
+GET {{RestAPI_HostAddress}}GetCustomizableProducts?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCustomizableProductsCount
+GET {{RestAPI_HostAddress}}GetCustomizableProductsCount
+Authorization: {{Credentials}}
+
+### GetCustomizableProductsFields
+GET {{RestAPI_HostAddress}}GetCustomizableProductsFields
+Authorization: {{Credentials}}
+
+### GetCustomizableProductsById
+GET {{RestAPI_HostAddress}}GetCustomizableProductsById?id=1
+Authorization: {{Credentials}}
+
+### GetCustomizationOrders
+GET {{RestAPI_HostAddress}}GetCustomizationOrders?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCustomizationOrdersCount
+GET {{RestAPI_HostAddress}}GetCustomizationOrdersCount
+Authorization: {{Credentials}}
+
+### GetCustomizationOrdersFields
+GET {{RestAPI_HostAddress}}GetCustomizationOrdersFields
+Authorization: {{Credentials}}
+
+### GetCustomizationOrdersById
+GET {{RestAPI_HostAddress}}GetCustomizationOrdersById?id=1
+Authorization: {{Credentials}}
+
+### GetFabricTypes
+GET {{RestAPI_HostAddress}}GetFabricTypes?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetFabricTypesCount
+GET {{RestAPI_HostAddress}}GetFabricTypesCount
+Authorization: {{Credentials}}
+
+### GetFabricTypesFields
+GET {{RestAPI_HostAddress}}GetFabricTypesFields
+Authorization: {{Credentials}}
+
+### GetFabricTypesById
+GET {{RestAPI_HostAddress}}GetFabricTypesById?id=1
+Authorization: {{Credentials}}
+
+### GetLanguages
+GET {{RestAPI_HostAddress}}GetLanguages?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetLanguagesCount
+GET {{RestAPI_HostAddress}}GetLanguagesCount
+Authorization: {{Credentials}}
+
+### GetLanguagesFields
+GET {{RestAPI_HostAddress}}GetLanguagesFields
+Authorization: {{Credentials}}
+
+### GetLanguagesById
+GET {{RestAPI_HostAddress}}GetLanguagesById?id=3
+Authorization: {{Credentials}}
+
+### GetOrders
+GET {{RestAPI_HostAddress}}GetOrders?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetOrdersCount
+GET {{RestAPI_HostAddress}}GetOrdersCount
+Authorization: {{Credentials}}
+
+### GetOrdersFields
+GET {{RestAPI_HostAddress}}GetOrdersFields
+Authorization: {{Credentials}}
+
+### GetOrdersById
+GET {{RestAPI_HostAddress}}GetOrdersById?id=1
+Authorization: {{Credentials}}
+
+### GetOrderHistory
+GET {{RestAPI_HostAddress}}GetOrderHistory?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetOrderHistoryCount
+GET {{RestAPI_HostAddress}}GetOrderHistoryCount
+Authorization: {{Credentials}}
+
+### GetOrderHistoryFields
+GET {{RestAPI_HostAddress}}GetOrderHistoryFields
+Authorization: {{Credentials}}
+
+### GetOrderHistoryById
+GET {{RestAPI_HostAddress}}GetOrderHistoryById?id=1
+Authorization: {{Credentials}}
+
+### GetOrderStatuses
+GET {{RestAPI_HostAddress}}GetOrderStatuses?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetOrderStatusesCount
+GET {{RestAPI_HostAddress}}GetOrderStatusesCount
+Authorization: {{Credentials}}
+
+### GetOrderStatusesFields
+GET {{RestAPI_HostAddress}}GetOrderStatusesFields
+Authorization: {{Credentials}}
+
+### GetOrderStatusesById
+GET {{RestAPI_HostAddress}}GetOrderStatusesById?id=1
+Authorization: {{Credentials}}
+
+### GetPayments
+GET {{RestAPI_HostAddress}}GetPayments?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetPaymentsCount
+GET {{RestAPI_HostAddress}}GetPaymentsCount
+Authorization: {{Credentials}}
+
+### GetPaymentsFields
+GET {{RestAPI_HostAddress}}GetPaymentsFields
+Authorization: {{Credentials}}
+
+### GetPaymentsById
+GET {{RestAPI_HostAddress}}GetPaymentsById?id=1
+Authorization: {{Credentials}}
+
+### GetProducts
+GET {{RestAPI_HostAddress}}GetProducts?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetProductsCount
+GET {{RestAPI_HostAddress}}GetProductsCount
+Authorization: {{Credentials}}
+
+### GetProductsFields
+GET {{RestAPI_HostAddress}}GetProductsFields
+Authorization: {{Credentials}}
+
+### GetProductsById
+GET {{RestAPI_HostAddress}}GetProductsById?id=1
+Authorization: {{Credentials}}
+
+### GetProductImages
+GET {{RestAPI_HostAddress}}GetProductImages?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetProductImagesCount
+GET {{RestAPI_HostAddress}}GetProductImagesCount
+Authorization: {{Credentials}}
+
+### GetProductImagesFields
+GET {{RestAPI_HostAddress}}GetProductImagesFields
+Authorization: {{Credentials}}
+
+### GetProductImagesById
+GET {{RestAPI_HostAddress}}GetProductImagesById?id=1
+Authorization: {{Credentials}}
+
+### GetProductTranslations
+GET {{RestAPI_HostAddress}}GetProductTranslations?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetProductTranslationsCount
+GET {{RestAPI_HostAddress}}GetProductTranslationsCount
+Authorization: {{Credentials}}
+
+### GetProductTranslationsFields
+GET {{RestAPI_HostAddress}}GetProductTranslationsFields
+Authorization: {{Credentials}}
+
+### GetProductTranslationsById
+GET {{RestAPI_HostAddress}}GetProductTranslationsById?id=1
+Authorization: {{Credentials}}
+
+### GetReviews
+GET {{RestAPI_HostAddress}}GetReviews?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetReviewsCount
+GET {{RestAPI_HostAddress}}GetReviewsCount
+Authorization: {{Credentials}}
+
+### GetReviewsFields
+GET {{RestAPI_HostAddress}}GetReviewsFields
+Authorization: {{Credentials}}
+
+### GetReviewsById
+GET {{RestAPI_HostAddress}}GetReviewsById?id=1
+Authorization: {{Credentials}}
+
+### GetUsers
+GET {{RestAPI_HostAddress}}GetUsers?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetUsersCount
+GET {{RestAPI_HostAddress}}GetUsersCount
+Authorization: {{Credentials}}
+
+### GetUsersFields
+GET {{RestAPI_HostAddress}}GetUsersFields
+Authorization: {{Credentials}}
+
+### GetUsersById
+GET {{RestAPI_HostAddress}}GetUsersById?id=1
+Authorization: {{Credentials}}
+
+### GetUserProfiles
+GET {{RestAPI_HostAddress}}GetUserProfiles?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetUserProfilesCount
+GET {{RestAPI_HostAddress}}GetUserProfilesCount
+Authorization: {{Credentials}}
+
+### GetUserProfilesFields
+GET {{RestAPI_HostAddress}}GetUserProfilesFields
+Authorization: {{Credentials}}
+
+### GetUserProfilesById
+GET {{RestAPI_HostAddress}}GetUserProfilesById?id=1
+Authorization: {{Credentials}}
+
+### GetUserRoles
+GET {{RestAPI_HostAddress}}GetUserRoles?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetUserRolesCount
+GET {{RestAPI_HostAddress}}GetUserRolesCount
+Authorization: {{Credentials}}
+
+### GetUserRolesFields
+GET {{RestAPI_HostAddress}}GetUserRolesFields
+Authorization: {{Credentials}}
+
+### GetUserRolesById
+GET {{RestAPI_HostAddress}}GetUserRolesById?id=1
+Authorization: {{Credentials}}

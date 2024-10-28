@@ -1,0 +1,250 @@
+﻿### CreateAbout
+POST {{RestAPI_HostAddress}}CreateAbout
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkLanguages": 1,
+  "header": "string 3",
+  "text": "string 3"
+}
+
+### CreateAccessLevels
+POST {{RestAPI_HostAddress}}CreateAccessLevels
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "level": 0,
+  "description": "string"
+}
+
+### CreateCart
+POST {{RestAPI_HostAddress}}CreateCart
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkUsers": 1,
+  "fkProducts": 1,
+  "quantity": 1
+}
+
+### CreateCategories
+POST {{RestAPI_HostAddress}}CreateCategories
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkLanguages": 1,
+  "name": "Category Name",
+  "description": "Description of the category"
+}
+
+### CreateCategoryHierarchy
+POST {{RestAPI_HostAddress}}CreateCategoryHierarchy
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "parentId": null,
+  "fkCategories": 1
+}
+
+### CreateColors
+POST {{RestAPI_HostAddress}}CreateColors
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "name": "Red",
+  "hexCode": "#FF0000"
+}
+
+### CreateContacts
+POST {{RestAPI_HostAddress}}CreateContacts
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 0,
+  "fkLanguages": 0,
+  "address": "string",
+  "phone": "string",
+  "email": "string"
+}
+
+### CreateCustomizableProducts
+POST {{RestAPI_HostAddress}}CreateCustomizableProducts
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkProducts": 1,
+  "fkFabricTypes": 1,
+  "fkColors": 1,
+  "sizeOptions": "S, M, L",
+  "customizationDetails": "{\"detail\":\"example\"}"
+}
+
+
+### CreateCustomizationOrders
+POST {{RestAPI_HostAddress}}CreateCustomizationOrders
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkOrders": 1,
+  "fkProducts": 1,
+  "fkFabricTypes": 1,
+  "fkColors": 1,
+  "size": "M",
+  "additionalNotes": "Some notes"
+}
+
+### CreateFabricTypes
+POST {{RestAPI_HostAddress}}CreateFabricTypes
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "name": "Cotton",
+  "description": "Soft and breathable fabric."
+}
+
+### CreateLanguages
+POST {{RestAPI_HostAddress}}CreateLanguages
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 3,
+  "fullName": "string 3",
+  "abbreviation": "UNKW",
+  "description": "string 3",
+  "dateFormat": "string 3",
+  "timeFormat": "string 3"
+}
+
+### CreateOrders
+POST {{RestAPI_HostAddress}}CreateOrders
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkUsers": 1,
+  "fkOrderStatus": 1,
+  "totalAmount": 100.00,
+  "shippingAddress": "123 Main St, Gdańsk",
+  "trackingNumber": "TRACK12345",
+  "shippingMethod": "Standard",
+  "paymentStatus": "Paid"
+}
+
+### CreateOrderHistory
+POST {{RestAPI_HostAddress}}CreateOrderHistory
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkOrders": 1,
+  "fkOrderStatuses": 1,
+  "changedAt": "2024-10-28T12:00:00"
+}
+
+### CreateOrderStatuses
+POST {{RestAPI_HostAddress}}CreateOrderStatuses
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "status": "Pending"
+}
+
+### CreatePayments
+POST {{RestAPI_HostAddress}}CreatePayments
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkOrders": 1,
+  "amount": 100.00,
+  "paymentMethod": "Credit Card",
+  "status": "Completed"
+}
+
+### CreateProducts
+POST {{RestAPI_HostAddress}}CreateProducts
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkCategories": 1,
+  "name": "Sample Product",
+  "description": "This is a sample product.",
+  "price": 29.99,
+  "stock": 100
+}
+### CreateProductImages
+POST {{RestAPI_HostAddress}}CreateProductImages
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkProducts": 1,
+  "imageData": "BASE64_ENCODED_IMAGE_DATA"
+}
+
+### CreateProductTranslation
+POST {{RestAPI_HostAddress}}CreateProductTranslation
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkLanguages": 1,
+  "fkProducts": 1,
+  "name": "Sample Product Name",
+  "description": "Sample Product Description"
+}
+
+### CreateReviews
+POST {{RestAPI_HostAddress}}CreateReviews
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkProducts": 1,
+  "fkUsers": 1,
+  "rating": 5,
+  "comment": "Great product!"
+}
+
+### CreateUsers
+POST {{RestAPI_HostAddress}}CreateUsers
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 0,
+  "fkUserRoles": 0,
+  "login": "string",
+  "email": "string",
+  "password": "string",
+  "dateLink": "string",
+  "timeLink": "string",
+  "confirmEmail": 0,
+  "hash": "string"
+}
+
+### CreateUserProfiles
+POST {{RestAPI_HostAddress}}CreateUserProfiles
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 0,
+  "fkUsers": 0,
+  "createDate": "string",
+  "createTime": "string",
+  "firstName": "string",
+  "lastName": "string",
+  "middleName": "string",
+  "address": "string",
+  "city": "string",
+  "zipPostCode": 0,
+  "stateProvince": "string",
+  "country": "string",
+  "phone": "string",
+  "avatar": "string"
+}
+
+### CreateUserRoles
+POST {{RestAPI_HostAddress}}CreateUserRoles
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 0,
+  "fkAccessLevels": 0,
+  "name": "string"
+}
