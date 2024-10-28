@@ -104,7 +104,7 @@ namespace RestAPI.AutoMapper
                 cfg.CreateMap<API.OrderHistory, DB.OrderHistory>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders))
-                    .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status))
+                    .ForMember(d => d.FkOrderStatuses, opt => opt.MapFrom(s => s.FkOrderStatuses))
                     .ForMember(d => d.ChangedAt, opt => opt.MapFrom(s => s.ChangedAt));
 
                 cfg.CreateMap<API.OrderStatus, DB.OrderStatus>()
@@ -271,7 +271,7 @@ namespace RestAPI.AutoMapper
                 cfg.CreateMap<DB.OrderHistory, API.OrderHistory>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders))
-                    .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status))
+                    .ForMember(d => d.FkOrderStatuses, opt => opt.MapFrom(s => s.FkOrderStatuses))
                     .ForMember(d => d.ChangedAt, opt => opt.MapFrom(s => s.ChangedAt));
 
                 cfg.CreateMap<DB.OrderStatus, API.OrderStatus>()

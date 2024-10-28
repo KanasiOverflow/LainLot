@@ -6,7 +6,7 @@ namespace DatabaseProvider.Models;
 public partial class LainLotContext : DbContext
 {
     /// <summary>
-    /// Scaffold-DbContext "Host=localhost;Database=LainLot;Username=postgres;Password=123456789" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models -Context LainLotContext
+    /// Scaffold-DbContext "Host=127.0.0.1:5433;Database=LainLot;Username=postgres;Password=123456789" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models -Context LainLotContext
     /// Add-Migration InitialCreate -Project DatabaseProvider
     /// Update-Database -Project DatabaseProvider
     /// </summary>
@@ -257,13 +257,13 @@ public partial class LainLotContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone");
 
+            entity.HasOne(d => d.FkOrderStatusesNavigation).WithMany(p => p.OrderHistories)
+                .HasForeignKey(d => d.FkOrderStatuses)
+                .HasConstraintName("OrderHistory_FkOrderStatuses_fkey");
+
             entity.HasOne(d => d.FkOrdersNavigation).WithMany(p => p.OrderHistories)
                 .HasForeignKey(d => d.FkOrders)
                 .HasConstraintName("OrderHistory_FkOrders_fkey");
-
-            entity.HasOne(d => d.StatusNavigation).WithMany(p => p.OrderHistories)
-                .HasForeignKey(d => d.Status)
-                .HasConstraintName("OrderHistory_Status_fkey");
         });
 
         modelBuilder.Entity<OrderStatus>(entity =>

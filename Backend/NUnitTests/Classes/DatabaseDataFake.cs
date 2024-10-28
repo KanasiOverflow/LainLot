@@ -117,8 +117,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new OrderHistory { Id = 1, FkOrders = 1, Status = 1, ChangedAt = DateTime.Now },
-                new OrderHistory { Id = 2, FkOrders = 2, Status = 2, ChangedAt = DateTime.Now.AddDays(-1) }
+                new OrderHistory { Id = 1, FkOrders = 1, FkOrderStatuses = 1, ChangedAt = DateTime.Now },
+                new OrderHistory { Id = 2, FkOrders = 2, FkOrderStatuses = 2, ChangedAt = DateTime.Now.AddDays(-1) }
             ];
         }
 

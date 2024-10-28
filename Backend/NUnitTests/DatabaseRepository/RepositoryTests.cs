@@ -1280,7 +1280,7 @@ namespace NUnitTests.DatabaseRepository
             {
                 Id = 3,
                 FkOrders = 1,
-                Status = 1,
+                FkOrderStatuses = 1,
                 ChangedAt = DateTime.Now
             };
 
@@ -1293,7 +1293,7 @@ namespace NUnitTests.DatabaseRepository
             {
                 Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded?.Status, Is.EqualTo(entity?.Status));
+                Assert.That(entityThatWasAdded?.FkOrderStatuses, Is.EqualTo(entity?.FkOrderStatuses));
             });
         }
 
@@ -1304,13 +1304,13 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = await _orderHistoryRepository?.GetById(id);
 
-            entity.Status = 2;
+            entity.FkOrderStatuses = 2;
 
             await _orderHistoryRepository?.Update(entity);
 
             var updatedEntity = await _orderHistoryRepository?.GetById(id);
 
-            Assert.That(updatedEntity?.Status, Is.EqualTo(entity?.Status));
+            Assert.That(updatedEntity?.FkOrderStatuses, Is.EqualTo(entity?.FkOrderStatuses));
         }
 
         #endregion
