@@ -49,7 +49,7 @@ function Records() {
   }, []);
 
   return (
-    <div className="App">
+    <div className="records page">
 
       {tablesError &&
         <h1>Cannot load list of tables!</h1>

@@ -18,7 +18,7 @@ export default function TablesList({ setCurrentTable, tables, title }) {
             </h4>
             <div className='container'>
                 {tables.map((tableName, i) =>
-                    <GeneralButton style={{ width: '150px' }}
+                    <GeneralButton 
                         key={i}
                         onClick={() => setCurrentTable(tableName)}
                     >
