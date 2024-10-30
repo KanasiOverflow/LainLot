@@ -1,11 +1,14 @@
 .generalBtn{
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
     padding: 5px 5px;
     color: teal;
     font-size: 14px;
     background: transparent;
     border: 1px solid teal;
     cursor: pointer;
-    min-width: 100px;
+  
 }
 
 .generalBtn:hover{
