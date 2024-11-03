@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class ReviewsService {
+export default class UserProfilesService {
 
-    static async GetReviewsCount() {
+    static async GetUserProfilesCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetReviewsCount`,
+            url: `${getRestAPIUrl()}/Database/GetUserProfilesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class ReviewsService {
         return null;
     };
 
-    static async GetReviewsFields() {
-        
+    static async GetUserProfilesFields() {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetReviewsFields`,
+            url: `${getRestAPIUrl()}/Database/GetUserProfilesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class ReviewsService {
         return null;
     };
 
-    static async GetReviews(limit, page) {
-        
+    static async GetUserProfiles(limit, page) {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetReviews?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetUserProfiles?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class ReviewsService {
         return null;
     };
 
-    static async GetReviewsById(id) {
+    static async GetUserProfilesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetReviewsById`,
+            url: `${getRestAPIUrl()}/Database/GetUserProfilesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class ReviewsService {
         return null;
     };
 
-    static async CreateReviews(newRecord) {
+    static async CreateUserProfiles(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateReviews`,
+            url: `${getRestAPIUrl()}/Database/CreateUserProfiles`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class ReviewsService {
         }
     };
 
-    static async UpdateReviews(oldRecord) {
+    static async UpdateUserProfiles(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateReviews`,
+            url: `${getRestAPIUrl()}/Database/UpdateUserProfiles`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class ReviewsService {
         }
     };
 
-    static async DeleteReviews(id) {
+    static async DeleteUserProfiles(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteReviews`,
+            url: `${getRestAPIUrl()}/Database/DeleteUserProfiles`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

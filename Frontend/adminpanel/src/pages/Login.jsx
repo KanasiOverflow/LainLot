@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
 import GeneralInput from '../components/UI/input/GeneralInput';
 import GeneralButton from '../components/UI/button/GeneralButton';
-import CheckCredentialsService from '../API/CheckCredentialsService';
+import CheckCredentialsService from 'api/CheckCredentialsService';
 import { AuthContext } from '../provider/context/AuthProvider';
 
 export default function Login() {

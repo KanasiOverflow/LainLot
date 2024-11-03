@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class CartService {
+export default class ReviewsService {
 
-    static async GetCartCount() {
+    static async GetReviewsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCartCount`,
+            url: `${getRestAPIUrl()}/Database/GetReviewsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class CartService {
         return null;
     };
 
-    static async GetCartFields() {
+    static async GetReviewsFields() {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCartFields`,
+            url: `${getRestAPIUrl()}/Database/GetReviewsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class CartService {
         return null;
     };
 
-    static async GetCart(limit, page) {
+    static async GetReviews(limit, page) {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCart?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetReviews?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class CartService {
         return null;
     };
 
-    static async GetCartById(id) {
+    static async GetReviewsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetCartById`,
+            url: `${getRestAPIUrl()}/Database/Database/GetReviewsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class CartService {
         return null;
     };
 
-    static async CreateCart(newRecord) {
+    static async CreateReviews(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateCart`,
+            url: `${getRestAPIUrl()}/Database/CreateReviews`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class CartService {
         }
     };
 
-    static async UpdateCart(oldRecord) {
+    static async UpdateReviews(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateCart`,
+            url: `${getRestAPIUrl()}/Database/UpdateReviews`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class CartService {
         }
     };
 
-    static async DeleteCart(id) {
+    static async DeleteReviews(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteCart`,
+            url: `${getRestAPIUrl()}/Database/DeleteReviews`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

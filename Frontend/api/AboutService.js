@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class OrdersService {
+export default class AboutService {
 
-    static async GetOrdersCount() {
+    static async GetAboutCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetOrdersCount`,
+            url: `${getRestAPIUrl()}/Database/GetAboutCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class OrdersService {
         return null;
     };
 
-    static async GetOrdersFields() {
+    static async GetAboutFields() {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetOrdersFields`,
+            url: `${getRestAPIUrl()}/Database/GetAboutFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class OrdersService {
         return null;
     };
 
-    static async GetOrders(limit, page) {
+    static async GetAbout(limit, page) {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetOrders?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetAbout?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class OrdersService {
         return null;
     };
 
-    static async GetOrdersById(id) {
+    static async GetAboutById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetOrdersById`,
+            url: `${getRestAPIUrl()}/Database/GetAboutById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class OrdersService {
         return null;
     };
 
-    static async CreateOrders(newRecord) {
+    static async CreateAbout(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateOrders`,
+            url: `${getRestAPIUrl()}/Database/CreateAbout`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class OrdersService {
         }
     };
 
-    static async UpdateOrders(oldRecord) {
+    static async UpdateAbout(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateOrders`,
+            url: `${getRestAPIUrl()}/Database/UpdateAbout`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class OrdersService {
         }
     };
 
-    static async DeleteOrders(id) {
+    static async DeleteAbout(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteOrders`,
+            url: `${getRestAPIUrl()}/Database/DeleteAbout`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

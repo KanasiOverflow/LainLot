@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class CustomizationOrdersService {
+export default class CategoriesService {
 
-    static async GetCustomizationOrdersCount() {
+    static async GetCategoriesCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCustomizationOrdersCount`,
+            url: `${getRestAPIUrl()}/Database/GetCategoriesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class CustomizationOrdersService {
         return null;
     };
 
-    static async GetCustomizationOrdersFields() {
+    static async GetCategoriesFields() {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCustomizationOrdersFields`,
+            url: `${getRestAPIUrl()}/Database/GetCategoriesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class CustomizationOrdersService {
         return null;
     };
 
-    static async GetCustomizationOrders(limit, page) {
+    static async GetCategories(limit, page) {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCustomizationOrders?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetCategories?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class CustomizationOrdersService {
         return null;
     };
 
-    static async GetCustomizationOrdersById(id) {
+    static async GetCategoriesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetCustomizationOrdersById`,
+            url: `${getRestAPIUrl()}/Database/Database/GetCategoriesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class CustomizationOrdersService {
         return null;
     };
 
-    static async CreateCustomizationOrders(newRecord) {
+    static async CreateCategories(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateCustomizationOrders`,
+            url: `${getRestAPIUrl()}/Database/CreateCategories`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class CustomizationOrdersService {
         }
     };
 
-    static async UpdateCustomizationOrders(oldRecord) {
+    static async UpdateCategories(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateCustomizationOrders`,
+            url: `${getRestAPIUrl()}/Database/UpdateCategories`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class CustomizationOrdersService {
         }
     };
 
-    static async DeleteCustomizationOrders(id) {
+    static async DeleteCategories(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteCustomizationOrders`,
+            url: `${getRestAPIUrl()}/Database/DeleteCategories`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

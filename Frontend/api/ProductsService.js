@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class ProductTranslationsService {
+export default class ProductsService {
 
-    static async GetProductTranslationsCount() {
+    static async GetProductsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductTranslationsCount`,
+            url: `${getRestAPIUrl()}/Database/GetProductsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class ProductTranslationsService {
         return null;
     };
 
-    static async GetProductTranslationsFields() {
+    static async GetProductsFields() {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductTranslationsFields`,
+            url: `${getRestAPIUrl()}/Database/GetProductsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class ProductTranslationsService {
         return null;
     };
 
-    static async GetProductTranslations(limit, page) {
+    static async GetProducts(limit, page) {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductTranslations?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetProducts?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class ProductTranslationsService {
         return null;
     };
 
-    static async GetProductTranslationsById(id) {
+    static async GetProductsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetProductTranslationsById`,
+            url: `${getRestAPIUrl()}/Database/Database/GetProductsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class ProductTranslationsService {
         return null;
     };
 
-    static async CreateProductTranslations(newRecord) {
+    static async CreateProducts(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateProductTranslations`,
+            url: `${getRestAPIUrl()}/Database/CreateProducts`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class ProductTranslationsService {
         }
     };
 
-    static async UpdateProductTranslations(oldRecord) {
+    static async UpdateProducts(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateProductTranslations`,
+            url: `${getRestAPIUrl()}/Database/UpdateProducts`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class ProductTranslationsService {
         }
     };
 
-    static async DeleteProductTranslations(id) {
+    static async DeleteProducts(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteProductTranslations`,
+            url: `${getRestAPIUrl()}/Database/DeleteProducts`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

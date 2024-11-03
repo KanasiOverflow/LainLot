@@ -1,7 +1,7 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
 export default class ForeignKeysService {
 

@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class LanguagesService {
+export default class OrderHistoryService {
 
-    static async GetLanguagesCount() {
+    static async GetOrderHistoryCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetLanguagesCount`,
+            url: `${getRestAPIUrl()}/Database/GetOrderHistoryCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,17 +23,16 @@ export default class LanguagesService {
         return null;
     };
 
-    static async GetLanguagesFields() {
+    static async GetOrderHistoryFields() {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetLanguagesFields`,
+            url: `${getRestAPIUrl()}/Database/GetOrderHistoryFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
-        
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -41,17 +40,16 @@ export default class LanguagesService {
         return null;
     };
 
-    static async GetLanguages(limit, page) {
+    static async GetOrderHistory(limit, page) {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetLanguages?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetOrderHistory?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
-        
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -59,18 +57,17 @@ export default class LanguagesService {
         return null;
     };
 
-    static async GetLanguagesById(id) {
+    static async GetOrderHistoryById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetLanguagesById`,
+            url: `${getRestAPIUrl()}/Database/Database/GetOrderHistoryById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
-
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -78,11 +75,11 @@ export default class LanguagesService {
         return null;
     };
 
-    static async CreateLanguages(newRecord) {
+    static async CreateOrderHistory(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateLanguages`,
+            url: `${getRestAPIUrl()}/Database/CreateOrderHistory`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -108,11 +105,11 @@ export default class LanguagesService {
         }
     };
 
-    static async UpdateLanguages(oldRecord) {
+    static async UpdateOrderHistory(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateLanguages`,
+            url: `${getRestAPIUrl()}/Database/UpdateOrderHistory`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -138,18 +135,17 @@ export default class LanguagesService {
         }
     };
 
-    static async DeleteLanguages(id) {
+    static async DeleteOrderHistory(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteLanguages`,
+            url: `${getRestAPIUrl()}/Database/DeleteOrderHistory`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
-
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;

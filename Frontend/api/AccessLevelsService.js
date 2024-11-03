@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class CustomizableProductsService {
+export default class AccessLevelsService {
 
-    static async GetCustomizableProductsCount() {
+    static async GetAccessLevelsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCustomizableProductsCount`,
+            url: `${getRestAPIUrl()}/Database/GetAccessLevelsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class CustomizableProductsService {
         return null;
     };
 
-    static async GetCustomizableProductsFields() {
-        
+    static async GetAccessLevelsFields() {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCustomizableProductsFields`,
+            url: `${getRestAPIUrl()}/Database/GetAccessLevelsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class CustomizableProductsService {
         return null;
     };
 
-    static async GetCustomizableProducts(limit, page) {
-        
+    static async GetAccessLevels(limit, page) {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCustomizableProducts?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetAccessLevels?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class CustomizableProductsService {
         return null;
     };
 
-    static async GetCustomizableProductsById(id) {
+    static async GetAccessLevelsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetCustomizableProductsById`,
+            url: `${getRestAPIUrl()}/Database/GetAccessLevelsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class CustomizableProductsService {
         return null;
     };
 
-    static async CreateCustomizableProducts(newRecord) {
+    static async CreateAccessLevels(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateCustomizableProducts`,
+            url: `${getRestAPIUrl()}/Database/CreateAccessLevels`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class CustomizableProductsService {
         }
     };
 
-    static async UpdateCustomizableProducts(oldRecord) {
+    static async UpdateAccessLevels(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateCustomizableProducts`,
+            url: `${getRestAPIUrl()}/Database/UpdateAccessLevels`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class CustomizableProductsService {
         }
     };
 
-    static async DeleteCustomizableProducts(id) {
+    static async DeleteAccessLevels(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteCustomizableProducts`,
+            url: `${getRestAPIUrl()}/Database/DeleteAccessLevels`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
