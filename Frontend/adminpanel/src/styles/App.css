@@ -43,10 +43,6 @@ li {
   flex-wrap: wrap;
 }
 
-.listHeader {
-  text-align: center;
-}
-
 .post-enter {
   transform: translateX(-350px);
 }
@@ -106,17 +102,5 @@ li {
   
   column-gap: 5px;
   row-gap: 5px;
-  margin-top: 5px;
-}
-
-.container-form {
-  width: 100%;
-  display: flex;
-  column-gap: 5px;
-  justify-content: space-between;
-}
-
-.add-photo > * {
-  width: 100%;
   margin-top: 5px;
 }
