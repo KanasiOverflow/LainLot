@@ -13,7 +13,7 @@ import GeneralModal from '../components/UI/modal/GeneralModal';
 import Loader from '../components/UI/loader/Loader';
 import Pagination from '../components/UI/pagination/Pagination';
 import TablesList from '../components/TablesList/TablesList';
-import '../styles/App.css';
+
 
 
 // rsc - create template component
