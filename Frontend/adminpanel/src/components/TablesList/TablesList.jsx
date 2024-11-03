@@ -17,7 +17,7 @@ export default function TablesList({ setCurrentTable, tables, title }) {
             <h4 className={cl.listHeader}>
                 {title}
             </h4>
-            <div className='container'>
+            <div className={cl.container}>
                 {tables.map((tableName, i) =>
                     <GeneralButton 
                         key={i}
