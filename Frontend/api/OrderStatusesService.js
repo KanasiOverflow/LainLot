@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class UserProfilesService {
+export default class OrderStatusesService {
 
-    static async GetUserProfilesCount() {
+    static async GetOrderStatusesCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfilesCount`,
+            url: `${getRestAPIUrl()}/Database/GetOrderStatusesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class UserProfilesService {
         return null;
     };
 
-    static async GetUserProfilesFields() {
-
+    static async GetOrderStatusesFields() {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfilesFields`,
+            url: `${getRestAPIUrl()}/Database/GetOrderStatusesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class UserProfilesService {
         return null;
     };
 
-    static async GetUserProfiles(limit, page) {
-
+    static async GetOrderStatuses(limit, page) {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfiles?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetOrderStatuses?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class UserProfilesService {
         return null;
     };
 
-    static async GetUserProfilesById(id) {
+    static async GetOrderStatusesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfilesById`,
+            url: `${getRestAPIUrl()}/Database/Database/GetOrderStatusesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class UserProfilesService {
         return null;
     };
 
-    static async CreateUserProfiles(newRecord) {
+    static async CreateOrderStatuses(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateUserProfiles`,
+            url: `${getRestAPIUrl()}/Database/CreateOrderStatuses`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class UserProfilesService {
         }
     };
 
-    static async UpdateUserProfiles(oldRecord) {
+    static async UpdateOrderStatuses(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateUserProfiles`,
+            url: `${getRestAPIUrl()}/Database/UpdateOrderStatuses`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class UserProfilesService {
         }
     };
 
-    static async DeleteUserProfiles(id) {
+    static async DeleteOrderStatuses(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteUserProfiles`,
+            url: `${getRestAPIUrl()}/Database/DeleteOrderStatuses`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

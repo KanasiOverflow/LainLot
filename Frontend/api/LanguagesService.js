@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class UserRolesService {
+export default class LanguagesService {
 
-    static async GetUserRolesCount() {
+    static async GetLanguagesCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserRolesCount`,
+            url: `${getRestAPIUrl()}/Database/GetLanguagesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,16 +23,17 @@ export default class UserRolesService {
         return null;
     };
 
-    static async GetUserRolesFields() {
-
+    static async GetLanguagesFields() {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserRolesFields`,
+            url: `${getRestAPIUrl()}/Database/GetLanguagesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
+        
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -40,16 +41,17 @@ export default class UserRolesService {
         return null;
     };
 
-    static async GetUserRoles(limit, page) {
-
+    static async GetLanguages(limit, page) {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserRoles?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetLanguages?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
+        
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -57,17 +59,18 @@ export default class UserRolesService {
         return null;
     };
 
-    static async GetUserRolesById(id) {
+    static async GetLanguagesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserRolesById`,
+            url: `${getRestAPIUrl()}/Database/GetLanguagesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
+
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -75,11 +78,11 @@ export default class UserRolesService {
         return null;
     };
 
-    static async CreateUserRoles(newRecord) {
+    static async CreateLanguages(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateUserRoles`,
+            url: `${getRestAPIUrl()}/Database/CreateLanguages`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +108,11 @@ export default class UserRolesService {
         }
     };
 
-    static async UpdateUserRoles(oldRecord) {
+    static async UpdateLanguages(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateUserRoles`,
+            url: `${getRestAPIUrl()}/Database/UpdateLanguages`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,17 +138,18 @@ export default class UserRolesService {
         }
     };
 
-    static async DeleteUserRoles(id) {
+    static async DeleteLanguages(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteUserRoles`,
+            url: `${getRestAPIUrl()}/Database/DeleteLanguages`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
+
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;

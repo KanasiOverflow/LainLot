@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class CategoriesService {
+export default class ContactsService {
 
-    static async GetCategoriesCount() {
+    static async GetContactsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCategoriesCount`,
+            url: `${getRestAPIUrl()}/Database/GetContactsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class CategoriesService {
         return null;
     };
 
-    static async GetCategoriesFields() {
-        
+    static async GetContactsFields() {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCategoriesFields`,
+            url: `${getRestAPIUrl()}/Database/GetContactsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class CategoriesService {
         return null;
     };
 
-    static async GetCategories(limit, page) {
-        
+    static async GetContacts(limit, page) {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCategories?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetContacts?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class CategoriesService {
         return null;
     };
 
-    static async GetCategoriesById(id) {
+    static async GetContactsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetCategoriesById`,
+            url: `${getRestAPIUrl()}/Database/GetContactsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class CategoriesService {
         return null;
     };
 
-    static async CreateCategories(newRecord) {
+    static async CreateContacts(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateCategories`,
+            url: `${getRestAPIUrl()}/Database/CreateContacts`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class CategoriesService {
         }
     };
 
-    static async UpdateCategories(oldRecord) {
+    static async UpdateContacts(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateCategories`,
+            url: `${getRestAPIUrl()}/Database/UpdateContacts`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class CategoriesService {
         }
     };
 
-    static async DeleteCategories(id) {
+    static async DeleteContacts(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteCategories`,
+            url: `${getRestAPIUrl()}/Database/DeleteContacts`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

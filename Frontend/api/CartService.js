@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class FabricTypesService {
+export default class CartService {
 
-    static async GetFabricTypesCount() {
+    static async GetCartCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFabricTypesCount`,
+            url: `${getRestAPIUrl()}/Database/GetCartCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class FabricTypesService {
         return null;
     };
 
-    static async GetFabricTypesFields() {
+    static async GetCartFields() {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFabricTypesFields`,
+            url: `${getRestAPIUrl()}/Database/GetCartFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class FabricTypesService {
         return null;
     };
 
-    static async GetFabricTypes(limit, page) {
+    static async GetCart(limit, page) {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFabricTypes?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetCart?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class FabricTypesService {
         return null;
     };
 
-    static async GetFabricTypesById(id) {
+    static async GetCartById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetFabricTypesById`,
+            url: `${getRestAPIUrl()}/Database/Database/GetCartById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class FabricTypesService {
         return null;
     };
 
-    static async CreateFabricTypes(newRecord) {
+    static async CreateCart(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateFabricTypes`,
+            url: `${getRestAPIUrl()}/Database/CreateCart`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class FabricTypesService {
         }
     };
 
-    static async UpdateFabricTypes(oldRecord) {
+    static async UpdateCart(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateFabricTypes`,
+            url: `${getRestAPIUrl()}/Database/UpdateCart`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class FabricTypesService {
         }
     };
 
-    static async DeleteFabricTypes(id) {
+    static async DeleteCart(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteFabricTypes`,
+            url: `${getRestAPIUrl()}/Database/DeleteCart`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

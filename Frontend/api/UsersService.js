@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class OrderHistoryService {
+export default class UsersService {
 
-    static async GetOrderHistoryCount() {
+    static async GetUsersCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetOrderHistoryCount`,
+            url: `${getRestAPIUrl()}/Database/GetUsersCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,16 +23,17 @@ export default class OrderHistoryService {
         return null;
     };
 
-    static async GetOrderHistoryFields() {
-        
+    static async GetUsersFields() {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetOrderHistoryFields`,
+            url: `${getRestAPIUrl()}/Database/GetUsersFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
+
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -40,16 +41,17 @@ export default class OrderHistoryService {
         return null;
     };
 
-    static async GetOrderHistory(limit, page) {
-        
+    static async GetUsers(limit, page) {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetOrderHistory?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetUsers?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
+
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -57,17 +59,18 @@ export default class OrderHistoryService {
         return null;
     };
 
-    static async GetOrderHistoryById(id) {
+    static async GetUsersById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetOrderHistoryById`,
+            url: `${getRestAPIUrl()}/Database/GetUsersById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
+
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -75,11 +78,11 @@ export default class OrderHistoryService {
         return null;
     };
 
-    static async CreateOrderHistory(newRecord) {
+    static async CreateUsers(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateOrderHistory`,
+            url: `${getRestAPIUrl()}/Database/CreateUsers`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +108,11 @@ export default class OrderHistoryService {
         }
     };
 
-    static async UpdateOrderHistory(oldRecord) {
+    static async UpdateUsers(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateOrderHistory`,
+            url: `${getRestAPIUrl()}/Database/UpdateUsers`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,17 +138,18 @@ export default class OrderHistoryService {
         }
     };
 
-    static async DeleteOrderHistory(id) {
+    static async DeleteUsers(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteOrderHistory`,
+            url: `${getRestAPIUrl()}/Database/DeleteUsers`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
+
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;

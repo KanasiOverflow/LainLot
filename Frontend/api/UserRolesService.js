@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200, get201 } from './utils/responseCodes';
+import { getRestAPIUrl } from './utils/getRestAPIUrl';
 
-export default class CategoryHierarchyService {
+export default class UserRolesService {
 
-    static async GetCategoryHierarchyCount() {
+    static async GetUserRolesCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCategoryHierarchyCount`,
+            url: `${getRestAPIUrl()}/Database/GetUserRolesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class CategoryHierarchyService {
         return null;
     };
 
-    static async GetCategoryHierarchyFields() {
-        
+    static async GetUserRolesFields() {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCategoryHierarchyFields`,
+            url: `${getRestAPIUrl()}/Database/GetUserRolesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class CategoryHierarchyService {
         return null;
     };
 
-    static async GetCategoryHierarchy(limit, page) {
-        
+    static async GetUserRoles(limit, page) {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCategoryHierarchy?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetUserRoles?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class CategoryHierarchyService {
         return null;
     };
 
-    static async GetCategoryHierarchyById(id) {
+    static async GetUserRolesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetCategoryHierarchyById`,
+            url: `${getRestAPIUrl()}/Database/GetUserRolesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class CategoryHierarchyService {
         return null;
     };
 
-    static async CreateCategoryHierarchy(newRecord) {
+    static async CreateUserRoles(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateCategoryHierarchy`,
+            url: `${getRestAPIUrl()}/Database/CreateUserRoles`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class CategoryHierarchyService {
         }
     };
 
-    static async UpdateCategoryHierarchy(oldRecord) {
+    static async UpdateUserRoles(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateCategoryHierarchy`,
+            url: `${getRestAPIUrl()}/Database/UpdateUserRoles`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class CategoryHierarchyService {
         }
     };
 
-    static async DeleteCategoryHierarchy(id) {
+    static async DeleteUserRoles(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteCategoryHierarchy`,
+            url: `${getRestAPIUrl()}/Database/DeleteUserRoles`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
