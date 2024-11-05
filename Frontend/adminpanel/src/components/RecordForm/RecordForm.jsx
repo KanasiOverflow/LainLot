@@ -4,7 +4,7 @@ import GeneralButton from '../UI/button/GeneralButton';
 import GeneralInput from '../UI/input/GeneralInput';
 import OpenImgDialog from '../UI/openImgDialog/OpenImgDialog';
 import { ModalContext } from '../../provider/context/ModalProvider';
-import cl from './index.module.css'
+import mcss from './RecordForm.module.css'
 
 export default function RecordForm() {
     const {
@@ -105,7 +105,7 @@ export default function RecordForm() {
                 <div key={index}>
                     <label>{field}:</label>
                     {field === "photo" ?
-                        <div className={cl.addPhoto}>
+                        <div className={mcss.addPhoto}>
                             <OpenImgDialog 
                             onData={handleDataFromChild} 
                             setFiles={setImages} 
@@ -123,7 +123,7 @@ export default function RecordForm() {
                     />
                 </div>
             ))}
-            <div className={cl.containerForm}>
+            <div className={mcss.containerForm}>
                 <GeneralButton type="submit">
                     Submit
                 </GeneralButton>

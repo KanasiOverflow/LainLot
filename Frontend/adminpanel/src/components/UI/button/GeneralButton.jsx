@@ -1,9 +1,9 @@
 import React from 'react';
-import style from './GeneralButton.module.css';
+import mcss from './GeneralButton.module.css';
 
 const GeneralButton = React.memo(({ children, ...props }) => {
   return (
-    <button {...props} className={style.generalBtn}>
+    <button {...props} className={mcss.generalBtn}>
       {children}
     </button>
   );

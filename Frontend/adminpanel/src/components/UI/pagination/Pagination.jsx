@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { usePagination } from '../../../hooks/usePagination';
 import { DataContext } from '../../../provider/context/DataProvider';
 import { PaginationContext } from '../../../provider/context/PaginationProvider';
-import cl from './index.module.css'
+import mcss from './index.module.css'
 
 export default function Pagination() {
 
@@ -17,7 +17,7 @@ export default function Pagination() {
     let pagesArray = usePagination(totalPages);
 
     return (
-        <div className={cl.container}>
+        <div className={mcss.container}>
             {pagesArray.map(pageNumber =>
                 <span
                     onClick={() => changePage(pageNumber)}

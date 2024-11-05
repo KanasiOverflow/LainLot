@@ -1,6 +1,6 @@
 import React from 'react';
 import GeneralButton from '../UI/button/GeneralButton';
-import cl from './index.module.css'
+import mcss from './TablesList.module.css'
 
 export default function TablesList({ setCurrentTable, tables, title }) {
 
@@ -14,10 +14,10 @@ export default function TablesList({ setCurrentTable, tables, title }) {
 
     return (
         <div>
-            <h4 className={cl.listHeader}>
+            <h4 className={mcss.listHeader}>
                 {title}
             </h4>
-            <div className={cl.container}>
+            <div className={mcss.container}>
                 {tables.map((tableName, i) =>
                     <GeneralButton 
                         key={i}
