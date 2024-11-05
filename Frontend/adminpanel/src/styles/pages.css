@@ -1,0 +1,36 @@
+/*--------Unusable--Styles-------------*/
+/* .post-enter {
+  transform: translateX(-350px);
+}
+
+.post-enter-active {
+  transform: translateX(0px);
+  transition: all 500ms ease-in;
+}
+
+.post-exit {
+  opacity: 1;
+}
+
+.post-exit-active {
+  transform: translateX(-350px);
+  transition: all 500ms ease-in;
+} */
+/*--------Unusable--Styles-------------*/
+
+.page {
+    padding: 10px;
+    cursor: pointer;
+    margin-left: 2px;
+    max-width: 800px;
+}
+
+.page__current {
+    border: 2px solid orange;
+    font-weight: bold;
+}
+
+.records {
+    margin: 0 20px;
+    width: 100%;
+}

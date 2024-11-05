@@ -1,12 +1,13 @@
 import { useContext, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ModalContext } from '../provider/context/ModalProvider';
-import { ForeignKeysContext } from '../provider/context/ForeignKeysProvider';
-import { findValueByPrefix } from '../utils/findValueByPrefix';
-import GeneralButton from './UI/button/GeneralButton';
-import DisplayImage from './UI/image/DisplayImage';
+import { ModalContext } from '../../provider/context/ModalProvider';
+import { ForeignKeysContext } from '../../provider/context/ForeignKeysProvider';
+import { findValueByPrefix } from '../../utils/findValueByPrefix';
+import GeneralButton from '../UI/button/GeneralButton';
+import DisplayImage from '../UI/image/DisplayImage';
+import cl from './index.module.css'
 
-export default function RecordItem({ record }) {
+export default function RecordItem({ record, ref }) {
 
     const { openEditModal, removeRecord, currentTable } = useContext(ModalContext);
     const { fetchFkData, fkError, foreignKeyValue } = useContext(ForeignKeysContext);
@@ -36,7 +37,7 @@ export default function RecordItem({ record }) {
     }, []);
 
     return (
-        <div className='post'>
+        <div className={cl.post} ref={ref}>
             <div className='post__content'>
                 {Object.keys(record).map(key =>
                     <div key={key}>
@@ -52,7 +53,7 @@ export default function RecordItem({ record }) {
                     </div>
                 )}
             </div>
-            <div className='post__btns'>
+            <div className={cl.postBtns}>
                 <GeneralButton onClick={handleOpenRecordIdPage}>
                     Open
                 </GeneralButton>

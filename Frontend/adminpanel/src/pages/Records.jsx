@@ -4,16 +4,16 @@ import { useFetching } from '../hooks/useFetching';
 import { getDBTablesList } from '../utils/getDBTablesList';
 import { ModalContext } from '../provider/context/ModalProvider';
 import { PaginationContext } from '../provider/context/PaginationProvider';
-import RecordList from '../components/RecordList';
-import PageCountSwitcher from '../components/PageCountSwitcher';
-import RecordForm from '../components/RecordForm';
-import RecordFilter from '../components/RecordFilter';
+import RecordList from '../components/RecordList/RecordList';
+import PageCountSwitcher from '../components/PageCountSwitcher/PageCountSwitcher';
+import RecordForm from '../components/RecordForm/RecordForm';
+import RecordFilter from '../components/RecordFilter/RecordFilter';
 import GeneralButton from '../components/UI/button/GeneralButton';
 import GeneralModal from '../components/UI/modal/GeneralModal';
 import Loader from '../components/UI/loader/Loader';
 import Pagination from '../components/UI/pagination/Pagination';
-import TablesList from '../components/TablesList';
-import '../styles/App.css';
+import TablesList from '../components/TablesList/TablesList';
+
 
 
 // rsc - create template component

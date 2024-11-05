@@ -1,5 +1,6 @@
 import React from 'react';
-import GeneralButton from './UI/button/GeneralButton';
+import GeneralButton from '../UI/button/GeneralButton';
+import cl from './index.module.css'
 
 export default function TablesList({ setCurrentTable, tables, title }) {
 
@@ -13,10 +14,10 @@ export default function TablesList({ setCurrentTable, tables, title }) {
 
     return (
         <div>
-            <h4 className='listHeader'>
+            <h4 className={cl.listHeader}>
                 {title}
             </h4>
-            <div className='container'>
+            <div className={cl.container}>
                 {tables.map((tableName, i) =>
                     <GeneralButton 
                         key={i}

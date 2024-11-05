@@ -1,4 +1,5 @@
 @import url('./animations.css');
+@import url('./pages.css');
 
 :root {
   --hover-link-color: rgb(150, 150, 150);
@@ -28,95 +29,5 @@ li {
   text-decoration: none;
 }
 
-.post {
-  display: flex;
-  padding: 15px;
-  border: 2px solid teal;
-  margin-top: 15px;
-  justify-content: space-between;
-  align-items: center;
-}
 
-.post__btns {
-  display: flex;
-  column-gap: 5px;
-  flex-wrap: wrap;
-}
 
-.listHeader {
-  text-align: center;
-}
-
-.post-enter {
-  transform: translateX(-350px);
-}
-
-.post-enter-active {
-  transform: translateX(0px);
-  transition: all 500ms ease-in;
-}
-
-.post-exit {
-  opacity: 1;
-}
-
-.post-exit-active {
-  transform: translateX(-350px);
-  transition: all 500ms ease-in;
-}
-
-.page__wrapper {
-  margin-top: 30px;
-  margin-bottom: 10px;
-  display: flex;
-}
-
-.page {
-  padding: 10px;
-  cursor: pointer;
-  margin-left: 2px;
-  max-width: 800px;
-}
-
-.page:hover {
-  font-weight: bold;
-}
-
-.page__current {
-  border: 2px solid orange;
-  font-weight: bold;
-}
-
-.records {
-  margin: 0 20px;
-  width: 100%;
-}
-
-.container {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(200px, 1fr));
-
-  @media (max-width: 770px) {
-    grid-template-columns: repeat(2, minmax(200px, 1fr));
-  }
-
-  @media (max-width: 430px) {
-    grid-template-columns: repeat(1, minmax(200px, 1fr));
-  }
-  
-  column-gap: 5px;
-  row-gap: 5px;
-  margin-top: 5px;
-}
-
-.container-form {
-  width: 100%;
-  display: flex;
-  column-gap: 5px;
-  justify-content: space-between;
-}
-
-.add-photo > * {
-  width: 100%;
-  margin-top: 5px;
-}

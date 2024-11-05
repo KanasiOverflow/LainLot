@@ -1,12 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, forwardRef } from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import { ModalContext } from '../provider/context/ModalProvider';
-import RecordItem from './RecordItem';
+import { ModalContext } from '../../provider/context/ModalProvider';
+import RecordItem from '../RecordItem/RecordItem';
+
+const MemoizedRecordItem = React.memo(
+    forwardRef((props, ref) => <RecordItem ref={ref} {...props} />)
+);
 
 export default function RecordList({ records }) {
-    
-    const MemoizedRecordItem = React.memo(({ record }) => <RecordItem record={record} />);
-
+     
     let { currentTable } = useContext(ModalContext);
 
     if (currentTable === "") {

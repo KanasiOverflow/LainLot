@@ -8,7 +8,7 @@ import { PaginationContext } from '../provider/context/PaginationProvider';
 import Loader from '../components/UI/loader/Loader';
 import GeneralButton from '../components/UI/button/GeneralButton';
 import GeneralModal from '../components/UI/modal/GeneralModal';
-import RecordForm from '../components/RecordForm';
+import RecordForm from '../components/RecordForm/RecordForm';
 import DisplayImage from '../components/UI/image/DisplayImage';
 
 export default function RecordIdPage() {

@@ -1,9 +1,10 @@
 import { useRef, useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import GeneralButton from './UI/button/GeneralButton';
-import GeneralInput from './UI/input/GeneralInput';
-import OpenImgDialog from './UI/openImgDialog/OpenImgDialog';
-import { ModalContext } from '../provider/context/ModalProvider';
+import GeneralButton from '../UI/button/GeneralButton';
+import GeneralInput from '../UI/input/GeneralInput';
+import OpenImgDialog from '../UI/openImgDialog/OpenImgDialog';
+import { ModalContext } from '../../provider/context/ModalProvider';
+import cl from './index.module.css'
 
 export default function RecordForm() {
     const {
@@ -104,7 +105,7 @@ export default function RecordForm() {
                 <div key={index}>
                     <label>{field}:</label>
                     {field === "photo" ?
-                        <div className='add-photo'>
+                        <div className={cl.addPhoto}>
                             <OpenImgDialog 
                             onData={handleDataFromChild} 
                             setFiles={setImages} 
@@ -122,7 +123,7 @@ export default function RecordForm() {
                     />
                 </div>
             ))}
-            <div className='container-form'>
+            <div className={cl.containerForm}>
                 <GeneralButton type="submit">
                     Submit
                 </GeneralButton>
