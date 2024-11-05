@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import imageToBase64 from '../../../utils/base64Converter';
-import cl from './OpenImgDialog.module.css'
+import mcss from './OpenImgDialog.module.css'
 
 export default function OpenImgDialog({ onData, files, setFiles }) {
     let base64Files = [];
@@ -23,7 +23,7 @@ export default function OpenImgDialog({ onData, files, setFiles }) {
         <img
             alt='Preview'
             src={file.preview}
-            className={cl.previewImg}
+            className={mcss.previewImg}
             // Revoke data uri after image is loaded
             onLoad={() => { URL.revokeObjectURL(file.preview) }}
         />
@@ -49,11 +49,11 @@ export default function OpenImgDialog({ onData, files, setFiles }) {
     
     return (
         <section>
-            <div className={cl.dropzone} {...getRootProps()}>
+            <div className={mcss.dropzone} {...getRootProps()}>
                 <input {...getInputProps()} />
                 <p>Drag 'n' drop file here, or click to select file</p>
             </div>
-            <aside className={cl.previewList}>
+            <aside className={mcss.previewList}>
                 {preview}
             </aside>
         </section>

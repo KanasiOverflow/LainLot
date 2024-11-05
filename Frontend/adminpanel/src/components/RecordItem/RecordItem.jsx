@@ -5,7 +5,7 @@ import { ForeignKeysContext } from '../../provider/context/ForeignKeysProvider';
 import { findValueByPrefix } from '../../utils/findValueByPrefix';
 import GeneralButton from '../UI/button/GeneralButton';
 import DisplayImage from '../UI/image/DisplayImage';
-import cl from './index.module.css'
+import mcss from './RecordItem.module.css'
 
 export default function RecordItem({ record, ref }) {
 
@@ -37,7 +37,7 @@ export default function RecordItem({ record, ref }) {
     }, []);
 
     return (
-        <div className={cl.post} ref={ref}>
+        <div className={mcss.post} ref={ref}>
             <div className='post__content'>
                 {Object.keys(record).map(key =>
                     <div key={key}>
@@ -53,7 +53,7 @@ export default function RecordItem({ record, ref }) {
                     </div>
                 )}
             </div>
-            <div className={cl.postBtns}>
+            <div className={mcss.postBtns}>
                 <GeneralButton onClick={handleOpenRecordIdPage}>
                     Open
                 </GeneralButton>

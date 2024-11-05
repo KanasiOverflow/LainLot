@@ -3,7 +3,7 @@ import secureLocalStorage from 'react-secure-storage'
 import { NavLink } from 'react-router-dom'
 import GeneralButton from '../button/GeneralButton'
 import { AuthContext } from '../../../provider/context/AuthProvider'
-import cl from './Navbar.module.css'
+import mcss from './Navbar.module.css'
 
 export default function Navbar() {
   const { setIsAuth } = useContext(AuthContext)
@@ -16,7 +16,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className={cl.navigation}>
+    <nav className={mcss.navigation}>
       <GeneralButton onClick={logout}>Sign out</GeneralButton>
       <ul className="stroke-animation">
         <li>

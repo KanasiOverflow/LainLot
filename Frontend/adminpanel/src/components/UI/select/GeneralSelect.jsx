@@ -1,10 +1,10 @@
 import React from 'react';
-import style from './GeneralSelect.module.css';
+import mcss from './GeneralSelect.module.css';
 
 export default function GeneralSelect({ options, defaultValue, value, onChange }) {
     return (
         <select
-            className={style.generalSelect}
+            className={mcss.generalSelect}
             value={value}
             onChange={e => onChange(e.target.value)}
         >
