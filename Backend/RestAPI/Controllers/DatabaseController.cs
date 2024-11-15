@@ -150,7 +150,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _aboutRepository.Add(_mapper.Map<About, DB.About>(entity));
-                return CreatedAtAction(nameof(CreateAboutAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetAboutById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -171,7 +171,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _aboutRepository.Update(_mapper.Map<About, DB.About>(entity));
-                return CreatedAtAction(nameof(UpdateAboutAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetAboutById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -253,7 +253,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _accessLevelRepository.Add(_mapper.Map<AccessLevel, DB.AccessLevel>(entity));
-                return CreatedAtAction(nameof(CreateAccessLevelsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetAccessLevelsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -274,7 +274,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _accessLevelRepository.Update(_mapper.Map<AccessLevel, DB.AccessLevel>(entity));
-                return CreatedAtAction(nameof(UpdateAccessLevelsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetAccessLevelsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -356,7 +356,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _cartRepository.Add(_mapper.Map<Cart, DB.Cart>(entity));
-                return CreatedAtAction(nameof(CreateCartAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetCartById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -377,7 +377,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _cartRepository.Update(_mapper.Map<Cart, DB.Cart>(entity));
-                return CreatedAtAction(nameof(UpdateCartAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetCartById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -459,7 +459,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _categoryRepository.Add(_mapper.Map<Category, DB.Category>(entity));
-                return CreatedAtAction(nameof(CreateCategoriesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetCategoriesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -480,7 +480,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _categoryRepository.Update(_mapper.Map<Category, DB.Category>(entity));
-                return CreatedAtAction(nameof(UpdateCategoriesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetCategoriesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -562,7 +562,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _categoryHierarchyRepository.Add(_mapper.Map<CategoryHierarchy, DB.CategoryHierarchy>(entity));
-                return CreatedAtAction(nameof(CreateCategoryHierarchyAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetCategoryHierarchyById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -583,7 +583,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _categoryHierarchyRepository.Update(_mapper.Map<CategoryHierarchy, DB.CategoryHierarchy>(entity));
-                return CreatedAtAction(nameof(UpdateCategoryHierarchyAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetCategoryHierarchyById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -665,7 +665,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _colorRepository.Add(_mapper.Map<Color, DB.Color>(entity));
-                return CreatedAtAction(nameof(CreateColorsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetColorsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -686,7 +686,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _colorRepository.Update(_mapper.Map<Color, DB.Color>(entity));
-                return CreatedAtAction(nameof(UpdateColorsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetColorsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -768,7 +768,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _contactRepository.Add(_mapper.Map<Contact, DB.Contact>(entity));
-                return CreatedAtAction(nameof(CreateContactsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetContactsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -789,7 +789,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _contactRepository.Update(_mapper.Map<Contact, DB.Contact>(entity));
-                return CreatedAtAction(nameof(UpdateContactsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetContactsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -871,7 +871,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _customizableProductRepository.Add(_mapper.Map<CustomizableProduct, DB.CustomizableProduct>(entity));
-                return CreatedAtAction(nameof(CreateCustomizableProductsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetCustomizableProductsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -892,7 +892,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _customizableProductRepository.Update(_mapper.Map<CustomizableProduct, DB.CustomizableProduct>(entity));
-                return CreatedAtAction(nameof(UpdateCustomizableProductsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetCustomizableProductsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -974,7 +974,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _customizationOrderRepository.Add(_mapper.Map<CustomizationOrder, DB.CustomizationOrder>(entity));
-                return CreatedAtAction(nameof(CreateCustomizationOrdersAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetCustomizationOrdersById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -995,7 +995,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _customizationOrderRepository.Update(_mapper.Map<CustomizationOrder, DB.CustomizationOrder>(entity));
-                return CreatedAtAction(nameof(UpdateCustomizationOrdersAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetCustomizationOrdersById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1077,7 +1077,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _fabricTypeRepository.Add(_mapper.Map<FabricType, DB.FabricType>(entity));
-                return CreatedAtAction(nameof(CreateFabricTypesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetFabricTypesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1098,7 +1098,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _fabricTypeRepository.Update(_mapper.Map<FabricType, DB.FabricType>(entity));
-                return CreatedAtAction(nameof(UpdateFabricTypesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetFabricTypesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1180,7 +1180,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _languageRepository.Add(_mapper.Map<Language, DB.Language>(entity));
-                return CreatedAtAction(nameof(CreateLanguagesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetLanguagesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1201,7 +1201,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _languageRepository.Update(_mapper.Map<Language, DB.Language>(entity));
-                return CreatedAtAction(nameof(UpdateLanguagesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetLanguagesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1283,7 +1283,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _orderRepository.Add(_mapper.Map<Order, DB.Order>(entity));
-                return CreatedAtAction(nameof(CreateOrdersAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetOrdersById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1304,7 +1304,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _orderRepository.Update(_mapper.Map<Order, DB.Order>(entity));
-                return CreatedAtAction(nameof(UpdateOrdersAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetOrdersById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1386,7 +1386,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _orderHistoryRepository.Add(_mapper.Map<OrderHistory, DB.OrderHistory>(entity));
-                return CreatedAtAction(nameof(CreateOrderHistoryAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetOrderHistoryById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1407,7 +1407,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _orderHistoryRepository.Update(_mapper.Map<OrderHistory, DB.OrderHistory>(entity));
-                return CreatedAtAction(nameof(UpdateOrderHistoryAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetOrderHistoryById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1489,7 +1489,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _orderStatusRepository.Add(_mapper.Map<OrderStatus, DB.OrderStatus>(entity));
-                return CreatedAtAction(nameof(CreateOrderStatusesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetOrderStatusesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1510,7 +1510,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _orderStatusRepository.Update(_mapper.Map<OrderStatus, DB.OrderStatus>(entity));
-                return CreatedAtAction(nameof(UpdateOrderStatusesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetOrderStatusesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1592,7 +1592,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _paymentRepository.Add(_mapper.Map<Payment, DB.Payment>(entity));
-                return CreatedAtAction(nameof(CreatePaymentsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetPaymentsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1613,7 +1613,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _paymentRepository.Update(_mapper.Map<Payment, DB.Payment>(entity));
-                return CreatedAtAction(nameof(UpdatePaymentsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetPaymentsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1695,7 +1695,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _productRepository.Add(_mapper.Map<Product, DB.Product>(entity));
-                return CreatedAtAction(nameof(CreateProductsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetProductsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1716,7 +1716,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _productRepository.Update(_mapper.Map<Product, DB.Product>(entity));
-                return CreatedAtAction(nameof(UpdateProductsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetProductsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1798,7 +1798,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _productImageRepository.Add(_mapper.Map<ProductImage, DB.ProductImage>(entity));
-                return CreatedAtAction(nameof(CreateProductImagesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetProductImagesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1819,7 +1819,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _productImageRepository.Update(_mapper.Map<ProductImage, DB.ProductImage>(entity));
-                return CreatedAtAction(nameof(UpdateProductImagesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetProductImagesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1901,7 +1901,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _productTranslationRepository.Add(_mapper.Map<ProductTranslation, DB.ProductTranslation>(entity));
-                return CreatedAtAction(nameof(CreateProductTranslationsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetProductTranslationsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1922,7 +1922,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _productTranslationRepository.Update(_mapper.Map<ProductTranslation, DB.ProductTranslation>(entity));
-                return CreatedAtAction(nameof(UpdateProductTranslationsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetProductTranslationsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2004,7 +2004,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _reviewRepository.Add(_mapper.Map<Review, DB.Review>(entity));
-                return CreatedAtAction(nameof(CreateReviewsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetReviewsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2025,7 +2025,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _reviewRepository.Update(_mapper.Map<Review, DB.Review>(entity));
-                return CreatedAtAction(nameof(UpdateReviewsAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetReviewsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2107,7 +2107,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _userRepository.Add(_mapper.Map<User, DB.User>(entity));
-                return CreatedAtAction(nameof(CreateUsersAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetUsersById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2128,7 +2128,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _userRepository.Update(_mapper.Map<User, DB.User>(entity));
-                return CreatedAtAction(nameof(UpdateUsersAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetUsersById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2210,7 +2210,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _userProfileRepository.Add(_mapper.Map<UserProfile, DB.UserProfile>(entity));
-                return CreatedAtAction(nameof(CreateUserProfilesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetUserProfilesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2231,7 +2231,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _userProfileRepository.Update(_mapper.Map<UserProfile, DB.UserProfile>(entity));
-                return CreatedAtAction(nameof(UpdateUserProfilesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetUserProfilesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2313,7 +2313,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _userRoleRepository.Add(_mapper.Map<UserRole, DB.UserRole>(entity));
-                return CreatedAtAction(nameof(CreateUserRolesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetUserRolesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -2334,7 +2334,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _userRoleRepository.Update(_mapper.Map<UserRole, DB.UserRole>(entity));
-                return CreatedAtAction(nameof(UpdateUserRolesAsync), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetUserRolesById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
