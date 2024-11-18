@@ -60,7 +60,7 @@ function Records() {
 
       <hr style={{ margin: '15px 0' }} />
 
-      {currentTable &&
+      {currentTable && !isTablesLoading &&
         <GeneralButton onClick={openCreateModal}>
           Create {currentTable}
         </GeneralButton>
