@@ -2,11 +2,13 @@ import React, { useContext, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
 import GeneralInput from '../components/UI/input/GeneralInput';
 import GeneralButton from '../components/UI/button/GeneralButton';
+import Loader from '../components/UI/loader/Loader';
 import CheckCredentialsService from 'api/CheckCredentialsService';
 import { AuthContext } from '../provider/context/AuthProvider';
 
 export default function Login() {
 
+    const [isLoading, setIsLoading] = useState(false);
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const [authError, setAuthError] = useState(false);
@@ -15,14 +17,16 @@ export default function Login() {
     const auth = async event => {
         event.preventDefault();
 
-        var response = await CheckCredentialsService.CheckCredentials(login, password);
+        setIsLoading(true);
 
+        var response = await CheckCredentialsService.CheckCredentials(login, password);
+        debugger
         if (response) {
             if (response.data === "Connected!") {
                 setIsAuth(true);
                 secureLocalStorage.setItem('auth', 'true');
                 secureLocalStorage.setItem('login', login);
-                secureLocalStorage.setItem('password',  password);
+                secureLocalStorage.setItem('password', password);
             }
             else {
                 console.log("Wrong credentials!");
@@ -32,8 +36,9 @@ export default function Login() {
             setAuthError(true);
         }
 
+        setIsLoading(false);
         setLogin('');
-        setPassword('');       
+        setPassword('');
     };
 
     return (
@@ -54,7 +59,12 @@ export default function Login() {
                     placeholder='password'
                     required
                 />
-                <GeneralButton>Sign in</GeneralButton>
+
+                {isLoading
+                    ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}><Loader /></div>
+                    : <GeneralButton>Sign in</GeneralButton>
+                }
+                
             </form>
             {authError &&
                 <h4>Wrong Credentials!</h4>
