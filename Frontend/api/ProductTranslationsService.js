@@ -61,7 +61,7 @@ export default class ProductTranslationsService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetProductTranslationsById`,
+            url: `${getRestAPIUrl()}/Database/GetProductTranslationsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

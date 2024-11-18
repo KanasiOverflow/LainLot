@@ -61,7 +61,7 @@ export default class CategoriesService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetCategoriesById`,
+            url: `${getRestAPIUrl()}/Database/GetCategoriesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

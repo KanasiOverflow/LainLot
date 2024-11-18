@@ -61,7 +61,7 @@ export default class PaymentsService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetPaymentsById`,
+            url: `${getRestAPIUrl()}/Database/GetPaymentsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

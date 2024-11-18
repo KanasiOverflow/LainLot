@@ -61,7 +61,7 @@ export default class CategoryHierarchyService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetCategoryHierarchyById`,
+            url: `${getRestAPIUrl()}/Database/GetCategoryHierarchyById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

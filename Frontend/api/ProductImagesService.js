@@ -61,7 +61,7 @@ export default class ProductImagesService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetProductImagesById`,
+            url: `${getRestAPIUrl()}/Database/GetProductImagesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

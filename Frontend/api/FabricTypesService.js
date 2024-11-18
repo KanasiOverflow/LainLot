@@ -61,7 +61,7 @@ export default class FabricTypesService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetFabricTypesById`,
+            url: `${getRestAPIUrl()}/Database/GetFabricTypesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

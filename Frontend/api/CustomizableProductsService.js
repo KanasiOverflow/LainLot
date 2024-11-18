@@ -61,13 +61,14 @@ export default class CustomizableProductsService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetCustomizableProductsById`,
+            url: `${getRestAPIUrl()}/Database/GetCustomizableProductsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
+        debugger
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;

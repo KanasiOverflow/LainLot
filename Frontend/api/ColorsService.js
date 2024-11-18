@@ -61,7 +61,7 @@ export default class ColorsService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetColorsById`,
+            url: `${getRestAPIUrl()}/Database/GetColorsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
