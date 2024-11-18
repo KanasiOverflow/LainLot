@@ -61,7 +61,7 @@ export default class CustomizationOrdersService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetCustomizationOrdersById`,
+            url: `${getRestAPIUrl()}/Database/GetCustomizationOrdersById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

@@ -61,7 +61,7 @@ export default class ReviewsService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetReviewsById`,
+            url: `${getRestAPIUrl()}/Database/GetReviewsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

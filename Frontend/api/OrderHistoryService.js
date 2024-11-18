@@ -61,7 +61,7 @@ export default class OrderHistoryService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetOrderHistoryById`,
+            url: `${getRestAPIUrl()}/Database/GetOrderHistoryById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

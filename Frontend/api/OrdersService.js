@@ -61,7 +61,7 @@ export default class OrdersService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetOrdersById`,
+            url: `${getRestAPIUrl()}/Database/GetOrdersById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

@@ -61,7 +61,7 @@ export default class CartService {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/Database/GetCartById`,
+            url: `${getRestAPIUrl()}/Database/GetCartById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
