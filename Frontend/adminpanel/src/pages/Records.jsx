@@ -14,8 +14,6 @@ import Loader from '../components/UI/loader/Loader';
 import Pagination from '../components/UI/pagination/Pagination';
 import TablesList from '../components/TablesList/TablesList';
 
-
-
 // rsc - create template component
 
 function Records() {
