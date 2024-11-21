@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import imageToBase64 from '../../../utils/base64Converter';
 import mcss from './OpenImgDialog.module.css'
 
 export default function OpenImgDialog({ onData, files, setFiles }) {
-    let base64Files = [];
-    
+        
     const { getRootProps, getInputProps } = useDropzone({
         accept: {
             'image/*': []
         },
-        maxFiles: 5,
+        maxFiles: 1,
         onDrop: acceptedFiles => {
             setFiles(acceptedFiles.map(file => Object.assign(file, {
                 preview: URL.createObjectURL(file)
@@ -38,11 +36,7 @@ export default function OpenImgDialog({ onData, files, setFiles }) {
     
     useEffect(() => {
         if (files.length > 0) {
-            files.forEach(file => {
-                // Push promise into array
-                base64Files.push(imageToBase64(file));
-            });
-            onData(base64Files);
+            onData(files);
         }
         // eslint-disable-next-line
     }, [files, onData]);

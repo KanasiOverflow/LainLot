@@ -17,38 +17,29 @@ export default function RecordForm() {
         modifyRecordError,
     } = useContext(ModalContext);
 
-    var submitFormRef = useRef();
-
+    const { register, setValue, handleSubmit } = useForm();
     const [validation, setValidation] = useState(undefined);
-    const [base64String, setBase64String] = useState("");
-    
-    //State for images which are used in child component
+    const [byteImg, setByteImg] = useState([]);
     const [images, setImages] = useState([]);
 
-    const {
-        register,
-        setValue,
-        handleSubmit,
-    } = useForm();
+    var submitFormRef = useRef();
 
-    const handleDataFromChild = async (data) => {
-        if (data !== null || data !== undefined) {
-            
-            let promiseArray = (await Promise.all(data)).map((obj) => obj);
-            let base64Buffer = "";
-            
-            promiseArray.forEach(base64File => {
-                base64Buffer += base64File + "|";
-            });
-            
-            setBase64String(base64Buffer);
+    const handleImageUpload = (event) => {
+        const file = event[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const byteArray = new Uint8Array(event.target.result);
+                setByteImg(Array.from(byteArray));
+            };
+            reader.readAsArrayBuffer(file);
         }
     };
-    
-    const onSubmit = (data) => {
+
+    const onSubmit = (data) => {        
         var isValid = true;
-        data["photo"] = base64String;
-        
+        data["imageData"] = byteImg;
+
         for (var i = 0; i < recordFields.length; i++) {
             if (data[recordFields[i]] === undefined) {
                 isValid = false;
@@ -57,7 +48,7 @@ export default function RecordForm() {
             }
             setValidation(undefined);
         }
-        
+
         if (isValid) {
             if (mode === "Edit") {
                 editRecord(data);
@@ -65,10 +56,10 @@ export default function RecordForm() {
                 addRecord(data);
             }
         }
-        
+
         submitFormRef.reset();
     };
-    
+
     const clearImages = () => {
         images.forEach(file => URL.revokeObjectURL(file.preview));
         setImages([]);
@@ -104,12 +95,12 @@ export default function RecordForm() {
             {recordFields.map((field, index) => (
                 <div key={index}>
                     <label>{field}:</label>
-                    {field === "photo" ?
+                    {field === "imageData" ?
                         <div className={mcss.addPhoto}>
-                            <OpenImgDialog 
-                            onData={handleDataFromChild} 
-                            setFiles={setImages} 
-                            files={images} />
+                            <OpenImgDialog
+                                onData={handleImageUpload}
+                                setFiles={setImages}
+                                files={images} />
                         </div>
                         : ""
                     }
@@ -119,7 +110,7 @@ export default function RecordForm() {
                         type="text"
                         defaultValue={(oldRecord && oldRecord[field]) ?? ""}
                         onChange={e => setValue(field, e.target.value)}
-                        disabled={field === "photo" ? true : false}
+                        disabled={field === "imageData" ? true : false}
                     />
                 </div>
             ))}
