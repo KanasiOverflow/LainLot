@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFetching } from '../hooks/useFetching';
 import { getRecordById } from '../utils/getRecordById';
+import { byteArrayToBase64 } from '../utils/convertByteArrayToBase64';
 import { DataContext } from '../provider/context/DataProvider';
 import { ModalContext } from '../provider/context/ModalProvider';
 import { PaginationContext } from '../provider/context/PaginationProvider';
@@ -67,8 +68,8 @@ export default function RecordIdPage() {
                         {Object.keys(record).map(key =>
                             <div key={key}>
                                 {key}: {
-                                    (key === "photo"
-                                        ? <DisplayImage base64Img={record[key]} fullSize={true}/>
+                                    (key === "imageData"
+                                        ? <DisplayImage base64Img={byteArrayToBase64(record[key])} fullSize={false} />
                                         : record[key]
                                     )
                                 }

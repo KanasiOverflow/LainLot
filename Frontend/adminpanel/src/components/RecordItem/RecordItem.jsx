@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ModalContext } from '../../provider/context/ModalProvider';
 import { ForeignKeysContext } from '../../provider/context/ForeignKeysProvider';
 import { findValueByPrefix } from '../../utils/findValueByPrefix';
+import { byteArrayToBase64 } from '../../utils/convertByteArrayToBase64';
 import GeneralButton from '../UI/button/GeneralButton';
 import DisplayImage from '../UI/image/DisplayImage';
 import mcss from './RecordItem.module.css'
@@ -46,8 +47,8 @@ export default function RecordItem({ record, ref }) {
                                 ? fkError
                                 : foreignKeyValue + "(" + record[key] + ")"
                             )
-                            : (key === "photo"
-                                ? <DisplayImage base64Img={record[key]} fullSize={false}/>
+                            : (key === "imageData"
+                                ? <DisplayImage base64Img={byteArrayToBase64(record[key])} fullSize={false}/>
                                 : record[key]
                             )}
                     </div>
