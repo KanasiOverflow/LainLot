@@ -4,6 +4,7 @@ import GeneralButton from '../UI/button/GeneralButton';
 import GeneralInput from '../UI/input/GeneralInput';
 import OpenImgDialog from '../UI/openImgDialog/OpenImgDialog';
 import { ModalContext } from '../../provider/context/ModalProvider';
+import { checkDateOrTimeField } from '../../utils/checkDateOrTimeField';
 import mcss from './RecordForm.module.css'
 
 export default function RecordForm() {
@@ -107,7 +108,7 @@ export default function RecordForm() {
                     <GeneralInput
                         refs={register(`${field}`)}
                         placeholder={field}
-                        type="text"
+                        type={checkDateOrTimeField(field)}
                         defaultValue={(oldRecord && oldRecord[field]) ?? ""}
                         onChange={e => setValue(field, e.target.value)}
                         disabled={field === "imageData" ? true : false}
