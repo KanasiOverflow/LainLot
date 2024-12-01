@@ -3,8 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useFetching } from '../hooks/useFetching';
 import { getRecordById } from '../utils/getRecordById';
 import { byteArrayToBase64 } from '../utils/convertByteArrayToBase64';
+import { findValueByPrefix } from '../utils/findValueByPrefix';
 import { DataContext } from '../provider/context/DataProvider';
 import { ModalContext } from '../provider/context/ModalProvider';
+import { ForeignKeysContext } from '../provider/context/ForeignKeysProvider';
 import { PaginationContext } from '../provider/context/PaginationProvider';
 import Loader from '../components/UI/loader/Loader';
 import GeneralButton from '../components/UI/button/GeneralButton';
@@ -20,7 +22,7 @@ export default function RecordIdPage() {
     const { page, limit } = useContext(PaginationContext);
     const { openEditModal, removeRecord } = useContext(ModalContext);
     const { setCurrentTable, currentTable, currentRecords } = useContext(DataContext)
-
+    const { fetchFkData, fkError, foreignKeyValue } = useContext(ForeignKeysContext);
 
     const params = useParams();
     const navigate = useNavigate();
@@ -51,10 +53,20 @@ export default function RecordIdPage() {
         fetchRecordById(params.table, params.id);
         // eslint-disable-next-line
     }, [currentTable]);
+
     useEffect(() => {
         fetchRecordById(params.table, params.id);
         // eslint-disable-next-line
     }, [currentRecords])
+
+    useEffect(() => {
+        var fkData = findValueByPrefix(record, "fk");
+        if (fkData) {
+            fetchFkData(fkData.key, fkData.value);
+        }
+        // eslint-disable-next-line
+    }, []);
+
     return (
         <div>
             <GeneralModal visible={modal} setVisible={setModal} >
@@ -67,12 +79,15 @@ export default function RecordIdPage() {
                     : <div>
                         {Object.keys(record).map(key =>
                             <div key={key}>
-                                {key}: {
-                                    (key === "imageData"
+                                {key}: {key.startsWith("fk")
+                                    ? (fkError
+                                        ? fkError
+                                        : foreignKeyValue + "(" + record[key] + ")"
+                                    )
+                                    : (key === "imageData"
                                         ? <DisplayImage base64Img={byteArrayToBase64(record[key])} fullSize={false} />
                                         : record[key]
-                                    )
-                                }
+                                    )}
                             </div>
                         )}
                     </div>
