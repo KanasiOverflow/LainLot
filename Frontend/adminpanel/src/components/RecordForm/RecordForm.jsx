@@ -37,7 +37,7 @@ export default function RecordForm() {
         }
     };
 
-    const onSubmit = (data) => {        
+    const onSubmit = (data) => {
         var isValid = true;
         data["imageData"] = byteImg;
 
@@ -95,7 +95,7 @@ export default function RecordForm() {
             <h3>{mode} mode for {currentTable}</h3>
             {recordFields.map((field, index) => (
                 <div key={index}>
-                    <label>{field}:</label>
+                    {field === "updatedAt" ? null : <label>{field}:</label>}
                     {field === "imageData" ?
                         <div className={mcss.addPhoto}>
                             <OpenImgDialog
@@ -103,16 +103,18 @@ export default function RecordForm() {
                                 setFiles={setImages}
                                 files={images} />
                         </div>
-                        : ""
+                        : null
                     }
-                    <GeneralInput
-                        refs={register(`${field}`)}
-                        placeholder={field}
-                        type={checkDateOrTimeField(field)}
-                        defaultValue={(oldRecord && oldRecord[field]) ?? ""}
-                        onChange={e => setValue(field, e.target.value)}
-                        disabled={field === "imageData" ? true : false}
-                    />
+                    {field === "updatedAt" ? null :
+                        <GeneralInput
+                            refs={register(`${field}`)}
+                            placeholder={field}
+                            type={checkDateOrTimeField(field)}
+                            defaultValue={(oldRecord && oldRecord[field]) ?? ""}
+                            onChange={e => setValue(field, e.target.value)}
+                            disabled={field === "imageData" ? true : false}
+                        />
+                    }
                 </div>
             ))}
             <div className={mcss.containerForm}>
