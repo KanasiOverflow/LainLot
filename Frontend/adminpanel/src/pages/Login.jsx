@@ -20,7 +20,7 @@ export default function Login() {
         setIsLoading(true);
 
         var response = await CheckCredentialsService.CheckCredentials(login, password);
-        debugger
+        
         if (response) {
             if (response.data === "Connected!") {
                 setIsAuth(true);
