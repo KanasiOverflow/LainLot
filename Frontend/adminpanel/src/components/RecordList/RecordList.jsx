@@ -1,6 +1,7 @@
 import React, { useContext, forwardRef } from 'react';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ModalContext } from '../../provider/context/ModalProvider';
+import { itemVariants } from '../../utils/animationVariants';
 import RecordItem from '../RecordItem/RecordItem';
 
 const MemoizedRecordItem = React.memo(
@@ -8,7 +9,7 @@ const MemoizedRecordItem = React.memo(
 );
 
 export default function RecordList({ records }) {
-     
+
     let { currentTable } = useContext(ModalContext);
 
     if (currentTable === "") {
@@ -28,19 +29,20 @@ export default function RecordList({ records }) {
             <h1 className='listHeader'>
                 {currentTable}
             </h1>
-            <TransitionGroup>
+            <AnimatePresence>
                 {records.map((record) =>
-                    <CSSTransition
+                    <motion.div
                         key={record.id}
-                        timeout={500}
-                        classNames="post"
+                        variants={itemVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        layout
                     >
                         <MemoizedRecordItem record={record} />
-                    </CSSTransition>
-
+                    </motion.div>
                 )}
-            </TransitionGroup>
-
+            </AnimatePresence>
         </div>
     );
 };
