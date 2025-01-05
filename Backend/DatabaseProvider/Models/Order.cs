@@ -7,33 +7,33 @@ public partial class Order
 {
     public int Id { get; set; }
 
-    public int FkUsers { get; set; }
+    public int FkProductOrders { get; set; }
 
     public int FkOrderStatus { get; set; }
 
-    public decimal TotalAmount { get; set; }
+    public int FkPayments { get; set; }
+
+    public int FkShippingAdresses { get; set; }
+
+    public decimal Price { get; set; }
+
+    public int Amount { get; set; }
 
     public DateTime OrderDate { get; set; }
-
-    public string ShippingAddress { get; set; } = null!;
-
-    public string? TrackingNumber { get; set; }
-
-    public string? ShippingMethod { get; set; }
-
-    public string? PaymentStatus { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
 
-    public virtual ICollection<CustomizationOrder> CustomizationOrders { get; set; } = new List<CustomizationOrder>();
-
     public virtual OrderStatus FkOrderStatusNavigation { get; set; } = null!;
 
-    public virtual User FkUsersNavigation { get; set; } = null!;
+    public virtual Payment FkPaymentsNavigation { get; set; } = null!;
+
+    public virtual ProductOrder FkProductOrdersNavigation { get; set; } = null!;
+
+    public virtual ShippingAdress FkShippingAdressesNavigation { get; set; } = null!;
 
     public virtual ICollection<OrderHistory> OrderHistories { get; set; } = new List<OrderHistory>();
 
-    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+    public virtual ICollection<UserOrderHistory> UserOrderHistories { get; set; } = new List<UserOrderHistory>();
 }

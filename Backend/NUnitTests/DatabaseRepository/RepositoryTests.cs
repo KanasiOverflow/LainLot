@@ -6,6 +6,7 @@ using Moq;
 using DatabaseProvider.Models;
 using DatabaseRepository.Classes;
 using DatabaseRepository.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace NUnitTests.DatabaseRepository
 {
@@ -22,7 +23,6 @@ namespace NUnitTests.DatabaseRepository
         private Mock<ILogger<Repository<Color>>> _colorLogger;
         private Mock<ILogger<Repository<Contact>>> _contactLogger;
         private Mock<ILogger<Repository<CustomizableProduct>>> _customizableProductLogger;
-        private Mock<ILogger<Repository<CustomizationOrder>>> _customizationOrderLogger;
         private Mock<ILogger<Repository<FabricType>>> _fabricTypeLogger;
         private Mock<ILogger<Repository<Language>>> _languageLogger;
         private Mock<ILogger<Repository<Order>>> _orderLogger;
@@ -45,7 +45,6 @@ namespace NUnitTests.DatabaseRepository
         private IRepository<Color>? _colorRepository;
         private IRepository<Contact>? _contactRepository;
         private IRepository<CustomizableProduct>? _customizableProductRepository;
-        private IRepository<CustomizationOrder>? _customizationOrderRepository;
         private IRepository<FabricType>? _fabricTypeRepository;
         private IRepository<Language>? _languageRepository;
         private IRepository<Order>? _orderRepository;
@@ -83,7 +82,6 @@ namespace NUnitTests.DatabaseRepository
             _colorLogger = new Mock<ILogger<Repository<Color>>>();
             _contactLogger = new Mock<ILogger<Repository<Contact>>>();
             _customizableProductLogger = new Mock<ILogger<Repository<CustomizableProduct>>>();
-            _customizationOrderLogger = new Mock<ILogger<Repository<CustomizationOrder>>>();
             _fabricTypeLogger = new Mock<ILogger<Repository<FabricType>>>();
             _languageLogger = new Mock<ILogger<Repository<Language>>>();
             _orderLogger = new Mock<ILogger<Repository<Order>>>();
@@ -107,7 +105,6 @@ namespace NUnitTests.DatabaseRepository
             var colors = DatabaseDataFake.GetFakeColorList();
             var contacts = DatabaseDataFake.GetFakeContactList();
             var customizableProducts = DatabaseDataFake.GetFakeCustomizableProductList();
-            var customizationOrders = DatabaseDataFake.GetFakeCustomizationOrderList();
             var fabricTypes = DatabaseDataFake.GetFakeFabricTypeList();
             var languages = DatabaseDataFake.GetFakeLanguageList();
             var orders = DatabaseDataFake.GetFakeOrderList();
@@ -131,7 +128,6 @@ namespace NUnitTests.DatabaseRepository
             _context.Colors.AddRange(colors);
             _context.Contacts.AddRange(contacts);
             _context.CustomizableProducts.AddRange(customizableProducts);
-            _context.CustomizationOrders.AddRange(customizationOrders);
             _context.FabricTypes.AddRange(fabricTypes);
             _context.Languages.AddRange(languages);
             _context.Orders.AddRange(orders);
@@ -158,7 +154,6 @@ namespace NUnitTests.DatabaseRepository
             _colorRepository = new Repository<Color>(_context, _colorLogger.Object);
             _contactRepository = new Repository<Contact>(_context, _contactLogger.Object);
             _customizableProductRepository = new Repository<CustomizableProduct>(_context, _customizableProductLogger.Object);
-            _customizationOrderRepository = new Repository<CustomizationOrder>(_context, _customizationOrderLogger.Object);
             _fabricTypeRepository = new Repository<FabricType>(_context, _fabricTypeLogger.Object);
             _languageRepository = new Repository<Language>(_context, _languageLogger.Object);
             _orderRepository = new Repository<Order>(_context, _orderLogger.Object);
@@ -400,7 +395,10 @@ namespace NUnitTests.DatabaseRepository
             var entity = new Cart()
             {
                 Id = 3,
-                FkUsers = 1,
+                FkProductOrders = 1,
+                FkCurrencies = 1,
+                Price = 100,
+                Amount = 10,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -413,7 +411,7 @@ namespace NUnitTests.DatabaseRepository
             {
                 Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded?.FkUsers, Is.EqualTo(entity?.FkUsers));
+                Assert.That(entityThatWasAdded?.Amount, Is.EqualTo(entity?.Amount));
             });
         }
 
@@ -424,13 +422,13 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = await _cartRepository?.GetById(id);
 
-            entity.FkUsers = 2;
+            entity.Amount = 20;
 
             await _cartRepository?.Update(entity);
 
             var updatedEntity = await _cartRepository?.GetById(id);
 
-            Assert.That(updatedEntity?.FkUsers, Is.EqualTo(entity?.FkUsers));
+            Assert.That(updatedEntity?.Amount, Is.EqualTo(entity?.Amount));
         }
 
         #endregion
@@ -567,7 +565,7 @@ namespace NUnitTests.DatabaseRepository
             else
             {
                 Assert.That(count, Is.EqualTo(1));
-            }            
+            }
         }
 
         [Test]
@@ -662,7 +660,7 @@ namespace NUnitTests.DatabaseRepository
             {
                 Id = 3,
                 Name = "Blue",
-                HexCode = "#0000FF"
+                ImageData = Encoding.ASCII.GetBytes("https://example.com/image1.jpg")
             };
 
             await _colorRepository?.Add(entity);
@@ -836,11 +834,13 @@ namespace NUnitTests.DatabaseRepository
             var entity = new CustomizableProduct()
             {
                 Id = 3,
-                FkProducts = 1,
-                CustomizationDetails = "Description of new customizable product",
-                FkColors = 1,
+                FkSportSuitConstructor = 1,
                 FkFabricTypes = 1,
-                SizeOptions = "M"
+                FkSizeOptions = 1,
+                Price = 100,
+                CustomizationDetails = "",
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
 
             await _customizableProductRepository?.Add(entity);
@@ -852,7 +852,7 @@ namespace NUnitTests.DatabaseRepository
             {
                 Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded?.FkProducts, Is.EqualTo(entity?.FkProducts));
+                Assert.That(entityThatWasAdded?.FkSportSuitConstructor, Is.EqualTo(entity?.FkSportSuitConstructor));
                 Assert.That(entityThatWasAdded?.CustomizationDetails, Is.EqualTo(entity?.CustomizationDetails));
             });
         }
@@ -864,7 +864,7 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = await _customizableProductRepository?.GetById(id);
 
-            entity.FkProducts = 2;
+            entity.FkSportSuitConstructor = 2;
             entity.CustomizationDetails = "Updated description";
 
             await _customizableProductRepository?.Update(entity);
@@ -873,94 +873,8 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.Multiple(() =>
             {
-                Assert.That(updatedEntity?.FkProducts, Is.EqualTo(entity?.FkProducts));
+                Assert.That(updatedEntity?.FkSportSuitConstructor, Is.EqualTo(entity?.FkSportSuitConstructor));
                 Assert.That(updatedEntity?.CustomizationDetails, Is.EqualTo(entity?.CustomizationDetails));
-            });
-        }
-
-        #endregion
-
-        #region CustomizationOrder table
-
-        [Test]
-        public void GetCustomizationOrders_Return_2_Items()
-        {
-            var result = _customizationOrderRepository?.GetAll().ToList();
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(2));
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public async Task GetCustomizationOrderById_Return_Correct_Entity(int id)
-        {
-            var result = await _customizationOrderRepository?.GetById(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result?.Id, Is.EqualTo(id));
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public async Task Delete_CustomizationOrder_Entity(int id)
-        {
-            var result = await _customizationOrderRepository?.GetById(id);
-
-            Assert.That(result, Is.Not.Null);
-
-            await _customizationOrderRepository?.Delete(result);
-            var count = _customizationOrderRepository?.GetAll().Count();
-
-            Assert.That(count, Is.EqualTo(1));
-        }
-
-        [Test]
-        public async Task Add_CustomizationOrder_Entity()
-        {
-            var entity = new CustomizationOrder()
-            {
-                Id = 3,
-                Size = "M"
-            };
-
-            await _customizationOrderRepository?.Add(entity);
-
-            var list = _customizationOrderRepository?.GetAll().ToList();
-            var entityThatWasAdded = await _customizationOrderRepository?.GetById(3);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(list, Has.Count.EqualTo(3));
-                Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded?.Size, Is.EqualTo(entity?.Size));
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public async Task Update_CustomizationOrder_Entity(int id)
-        {
-            var entity = await _customizationOrderRepository?.GetById(id);
-
-            entity.Size = "XL";
-
-            await _customizationOrderRepository?.Update(entity);
-
-            var updatedEntity = await _customizationOrderRepository?.GetById(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(updatedEntity?.Size, Is.EqualTo(entity?.Size));
             });
         }
 
@@ -1185,16 +1099,15 @@ namespace NUnitTests.DatabaseRepository
             var entity = new Order()
             {
                 Id = 3,
-                FkUsers = 1,
+                FkProductOrders = 1,
                 FkOrderStatus = 1,
-                TotalAmount = 100.00M,
-                ShippingAddress = "ShippingAddress",
-                CreatedAt = DateTime.UtcNow,
+                FkPayments = 1,
+                FkShippingAdresses = 1,
+                Price = 411,
+                Amount = 14,
                 OrderDate = DateTime.UtcNow,
-                PaymentStatus = "PaymentStatus",
-                ShippingMethod = "ShippingMethod",
-                UpdatedAt = DateTime.UtcNow,
-                TrackingNumber = "TrackingNumber"
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
 
             await _orderRepository?.Add(entity);
@@ -1206,9 +1119,9 @@ namespace NUnitTests.DatabaseRepository
             {
                 Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded?.FkUsers, Is.EqualTo(entity?.FkUsers));
+                Assert.That(entityThatWasAdded?.FkProductOrders, Is.EqualTo(entity?.FkProductOrders));
                 Assert.That(entityThatWasAdded?.FkOrderStatus, Is.EqualTo(entity?.FkOrderStatus));
-                Assert.That(entityThatWasAdded?.TotalAmount, Is.EqualTo(entity?.TotalAmount));
+                Assert.That(entityThatWasAdded?.Amount, Is.EqualTo(entity?.Amount));
             });
         }
 
@@ -1219,13 +1132,13 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = await _orderRepository?.GetById(id);
 
-            entity.TotalAmount = 200.00M;
+            entity.Amount = 200;
 
             await _orderRepository?.Update(entity);
 
             var updatedEntity = await _orderRepository?.GetById(id);
 
-            Assert.That(updatedEntity?.TotalAmount, Is.EqualTo(entity?.TotalAmount));
+            Assert.That(updatedEntity?.Amount, Is.EqualTo(entity?.Amount));
         }
 
         #endregion
@@ -1447,9 +1360,12 @@ namespace NUnitTests.DatabaseRepository
             var entity = new Payment()
             {
                 Id = 3,
-                PaymentMethod = "Credit Card",
-                Status = "Status",
-                Amount = 10
+                FkPaymentMethods = 1,
+                FkCurrencies = 1,
+                FkPaymentStatuses = 1,
+                Price = 100,
+                PaymentDate = DateTime.Now,
+                PaymentNumber = "123"
             };
 
             await _paymentRepository?.Add(entity);
@@ -1461,7 +1377,7 @@ namespace NUnitTests.DatabaseRepository
             {
                 Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded?.PaymentMethod, Is.EqualTo(entity?.PaymentMethod));
+                Assert.That(entityThatWasAdded?.PaymentNumber, Is.EqualTo(entity?.PaymentNumber));
             });
         }
 
@@ -1472,13 +1388,13 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = await _paymentRepository?.GetById(id);
 
-            entity.PaymentMethod = "PayPal";
+            entity.PaymentNumber = "456";
 
             await _paymentRepository?.Update(entity);
 
             var updatedEntity = await _paymentRepository?.GetById(id);
 
-            Assert.That(updatedEntity?.PaymentMethod, Is.EqualTo(entity?.PaymentMethod));
+            Assert.That(updatedEntity?.PaymentNumber, Is.EqualTo(entity?.PaymentNumber));
         }
 
         #endregion

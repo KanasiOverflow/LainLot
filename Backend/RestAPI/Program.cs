@@ -59,7 +59,6 @@ builder.Services.AddScoped<IRepository<CategoryHierarchy>, Repository<CategoryHi
 builder.Services.AddScoped<IRepository<Color>, Repository<Color>>();
 builder.Services.AddScoped<IRepository<Contact>, Repository<Contact>>();
 builder.Services.AddScoped<IRepository<CustomizableProduct>, Repository<CustomizableProduct>>();
-builder.Services.AddScoped<IRepository<CustomizationOrder>, Repository<CustomizationOrder>>();
 builder.Services.AddScoped<IRepository<FabricType>, Repository<FabricType>>();
 builder.Services.AddScoped<IRepository<Language>, Repository<Language>>();
 builder.Services.AddScoped<IRepository<Order>, Repository<Order>>();

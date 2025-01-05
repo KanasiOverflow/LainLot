@@ -28,7 +28,6 @@ namespace RestAPI.Controllers
         private readonly IRepository<DB.Color> _colorRepository;
         private readonly IRepository<DB.Contact> _contactRepository;
         private readonly IRepository<DB.CustomizableProduct> _customizableProductRepository;
-        private readonly IRepository<DB.CustomizationOrder> _customizationOrderRepository;
         private readonly IRepository<DB.FabricType> _fabricTypeRepository;
         private readonly IRepository<DB.Language> _languageRepository;
         private readonly IRepository<DB.Order> _orderRepository;
@@ -53,7 +52,6 @@ namespace RestAPI.Controllers
             IRepository<DB.Color> colorRepository,
             IRepository<DB.Contact> contactRepository,
             IRepository<DB.CustomizableProduct> customizableProductRepository,
-            IRepository<DB.CustomizationOrder> customizationOrderRepository,
             IRepository<DB.FabricType> fabricTypeRepository,
             IRepository<DB.Language> languageRepository,
             IRepository<DB.Order> orderRepository,
@@ -79,7 +77,6 @@ namespace RestAPI.Controllers
             _colorRepository = colorRepository;
             _contactRepository = contactRepository;
             _customizableProductRepository = customizableProductRepository;
-            _customizationOrderRepository = customizationOrderRepository;
             _fabricTypeRepository = fabricTypeRepository;
             _languageRepository = languageRepository;
             _orderRepository = orderRepository;
@@ -911,109 +908,6 @@ namespace RestAPI.Controllers
             if (entity != null)
             {
                 await _customizableProductRepository.Delete(entity);
-                return Ok();
-            }
-
-            return BadRequest();
-        }
-
-        #endregion
-
-        #region CustomizationOrders
-
-        [HttpGet("GetCustomizationOrdersCount")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public int GetCustomizationOrdersCount()
-        {
-            return _customizationOrderRepository.GetAll().Count();
-        }
-
-        [HttpGet("GetCustomizationOrdersFields")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IEnumerable<string> GetCustomizationOrdersFields()
-        {
-            return new CustomizationOrder().GetType().GetProperties().Select(x => x.Name);
-        }
-
-        [HttpGet("GetCustomizationOrders")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<CustomizationOrder>> GetCustomizationOrders(int limit, int page)
-        {
-            var dbList = _customizationOrderRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
-            var apiList = _mapper.Map<List<DB.CustomizationOrder>, List<CustomizationOrder>>(dbList);
-
-            return apiList == null ? NotFound() : apiList;
-        }
-
-        [HttpGet("GetCustomizationOrdersById")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CustomizationOrder?>> GetCustomizationOrdersById(int id)
-        {
-            var dbEntity = await _customizationOrderRepository.GetById(id);
-            if (dbEntity == null)
-            {
-                return NotFound();
-            }
-
-            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomizationOrder, CustomizationOrder>(dbEntity);
-        }
-
-        [HttpPost("CreateCustomizationOrders")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomizationOrder>> CreateCustomizationOrdersAsync(CustomizationOrder entity)
-        {
-            if (entity == null)
-                return BadRequest();
-
-            try
-            {
-                await _customizationOrderRepository.Add(_mapper.Map<CustomizationOrder, DB.CustomizationOrder>(entity));
-                return CreatedAtAction(nameof(GetCustomizationOrdersById), new { id = entity.Id }, entity);
-            }
-            catch (Exception exc)
-            {
-                _logger.LogError(exc.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
-            }
-        }
-
-        [HttpPut("UpdateCustomizationOrders")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomizationOrder>> UpdateCustomizationOrdersAsync(CustomizationOrder entity)
-        {
-            if (entity == null)
-                return BadRequest();
-
-            try
-            {
-                await _customizationOrderRepository.Update(_mapper.Map<CustomizationOrder, DB.CustomizationOrder>(entity));
-                return CreatedAtAction(nameof(GetCustomizationOrdersById), new { id = entity.Id }, entity);
-            }
-            catch (Exception exc)
-            {
-                _logger.LogError(exc.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
-            }
-        }
-
-        [HttpDelete("DeleteCustomizationOrders")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> DeleteCustomizationOrders(int id)
-        {
-            var entity = await _customizationOrderRepository.GetById(id);
-
-            if (entity != null)
-            {
-                await _customizationOrderRepository.Delete(entity);
                 return Ok();
             }
 
@@ -2563,7 +2457,7 @@ namespace RestAPI.Controllers
                 var dbEntity = await _paymentRepository.GetById(id);
                 return dbEntity == null
                     ? string.Empty
-                    : $"Id: {dbEntity?.Id} | Amount: {dbEntity?.Amount} | PaymentMethod: {dbEntity?.PaymentMethod}";
+                    : $"Id: {dbEntity?.Id} | Price: {dbEntity?.Price} | PaymentMethod: {dbEntity?.PaymentNumber}";
             }
             catch (Exception ex)
             {
@@ -2639,7 +2533,7 @@ namespace RestAPI.Controllers
                 var dbEntity = await _colorRepository.GetById(id);
                 return dbEntity == null
                     ? string.Empty
-                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | HexCode: {dbEntity?.HexCode}";
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | ImageData: {dbEntity?.ImageData}";
             }
             catch (Exception ex)
             {

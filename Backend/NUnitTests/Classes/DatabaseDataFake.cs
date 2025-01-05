@@ -27,8 +27,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new Cart { Id = 1, FkUsers = 1, FkProducts = 1, Quantity = 2, CreatedAt = DateTime.Now },
-                new Cart { Id = 2, FkUsers = 1, FkProducts = 2, Quantity = 1, CreatedAt = DateTime.Now }
+                new Cart { Id = 1, FkProductOrders = 1, FkCurrencies = 1, Price = 100, Amount = 10, CreatedAt = DateTime.Now },
+                new Cart { Id = 2, FkProductOrders = 1, FkCurrencies = 2, Price = 200, Amount = 20, CreatedAt = DateTime.Now }
             ];
         }
 
@@ -54,8 +54,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new Color { Id = 1, Name = "Red", HexCode = "#FF0000" },
-                new Color { Id = 2, Name = "Green", HexCode = "#00FF00" }
+                new Color { Id = 1, Name = "Red", ImageData = Encoding.ASCII.GetBytes("https://example.com/image1.jpg") },
+                new Color { Id = 2, Name = "Green", ImageData = Encoding.ASCII.GetBytes("https://example.com/image3.jpg")}
             ];
         }
 
@@ -72,17 +72,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new CustomizableProduct { Id = 1, FkProducts = 1, FkFabricTypes = 1, FkColors = 1, SizeOptions = "S,M,L", CustomizationDetails = "{}" },
-                new CustomizableProduct { Id = 2, FkProducts = 2, FkFabricTypes = 2, FkColors = 2, SizeOptions = "M,L", CustomizationDetails = "{}" }
-            ];
-        }
-
-        public static List<CustomizationOrder> GetFakeCustomizationOrderList()
-        {
-            return
-            [
-                new CustomizationOrder { Id = 1, FkOrders = 1, FkProducts = 1, FkFabricTypes = 1, FkColors = 1, Size = "M", AdditionalNotes = "Custom request" },
-                new CustomizationOrder { Id = 2, FkOrders = 2, FkProducts = 2, FkFabricTypes = 2, FkColors = 2, Size = "L", AdditionalNotes = "Urgent delivery" }
+                new CustomizableProduct { Id = 1, FkSportSuitConstructor = 1, FkFabricTypes = 1, FkSizeOptions = 1, Price = 100, CustomizationDetails = "{}", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new CustomizableProduct { Id = 2, FkSportSuitConstructor = 2, FkFabricTypes = 2, FkSizeOptions = 2, Price = 200, CustomizationDetails = "{}", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
             ];
         }
 
@@ -108,8 +99,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new Order { Id = 1, FkUsers = 1, FkOrderStatus = 1, TotalAmount = 100.00m, OrderDate = DateTime.Now, ShippingAddress = "123 Main St", TrackingNumber = "TRACK123", ShippingMethod = "Standard", PaymentStatus = "Paid" },
-                new Order { Id = 2, FkUsers = 2, FkOrderStatus = 2, TotalAmount = 50.00m, OrderDate = DateTime.Now, ShippingAddress = "456 Elm St", TrackingNumber = "TRACK456", ShippingMethod = "Express", PaymentStatus = "Pending" }
+                new Order { Id = 1, FkProductOrders = 1, FkOrderStatus = 1, FkPayments = 1, FkShippingAdresses = 1, Price = 100, Amount = 10, OrderDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now  },
+                new Order { Id = 2, FkProductOrders = 2, FkOrderStatus = 2, FkPayments = 2, FkShippingAdresses = 1, Price = 100, Amount = 10, OrderDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now  }
             ];
         }
 
@@ -135,8 +126,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new Payment { Id = 1, FkOrders = 1, PaymentDate = DateTime.Now, Amount = 100.00m, PaymentMethod = "Credit Card", Status = "Completed" },
-                new Payment { Id = 2, FkOrders = 2, PaymentDate = DateTime.Now, Amount = 50.00m, PaymentMethod = "PayPal", Status = "Pending" }
+                new Payment { Id = 1, FkPaymentMethods = 1, FkCurrencies = 1, FkPaymentStatuses = 1, Price = 100, PaymentDate = DateTime.Now, PaymentNumber = "123" },
+                new Payment { Id = 2, FkPaymentMethods = 2, FkCurrencies = 2, FkPaymentStatuses = 1, Price = 100, PaymentDate = DateTime.Now, PaymentNumber = "456" }
             ];
         }
 

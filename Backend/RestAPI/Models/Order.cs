@@ -4,21 +4,19 @@
     {
         public int Id { get; set; }
 
-        public int FkUsers { get; set; }
+        public int FkProductOrders { get; set; }
 
         public int FkOrderStatus { get; set; }
 
-        public decimal TotalAmount { get; set; }
+        public int FkPayments { get; set; }
+
+        public int FkShippingAdresses { get; set; }
+
+        public decimal Price { get; set; }
+
+        public int Amount { get; set; }
 
         public DateTime OrderDate { get; set; }
-
-        public string ShippingAddress { get; set; } = null!;
-
-        public string? TrackingNumber { get; set; }
-
-        public string? ShippingMethod { get; set; }
-
-        public string? PaymentStatus { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

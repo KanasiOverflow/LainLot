@@ -26,7 +26,6 @@ namespace NUnitTests.RestAPI
         private Mock<ILogger<Repository<DB.Color>>> _colorLogger;
         private Mock<ILogger<Repository<DB.Contact>>> _contactLogger;
         private Mock<ILogger<Repository<DB.CustomizableProduct>>> _customizableProductLogger;
-        private Mock<ILogger<Repository<DB.CustomizationOrder>>> _customizationOrderLogger;
         private Mock<ILogger<Repository<DB.FabricType>>> _fabricTypeLogger;
         private Mock<ILogger<Repository<DB.Language>>> _languageLogger;
         private Mock<ILogger<Repository<DB.Order>>> _orderLogger;
@@ -49,7 +48,6 @@ namespace NUnitTests.RestAPI
         private IRepository<DB.Color>? _colorRepository;
         private IRepository<DB.Contact>? _contactRepository;
         private IRepository<DB.CustomizableProduct>? _customizableProductRepository;
-        private IRepository<DB.CustomizationOrder>? _customizationOrderRepository;
         private IRepository<DB.FabricType>? _fabricTypeRepository;
         private IRepository<DB.Language>? _languageRepository;
         private IRepository<DB.Order>? _orderRepository;
@@ -90,7 +88,6 @@ namespace NUnitTests.RestAPI
             _colorLogger = new Mock<ILogger<Repository<DB.Color>>>();
             _contactLogger = new Mock<ILogger<Repository<DB.Contact>>>();
             _customizableProductLogger = new Mock<ILogger<Repository<DB.CustomizableProduct>>>();
-            _customizationOrderLogger = new Mock<ILogger<Repository<DB.CustomizationOrder>>>();
             _fabricTypeLogger = new Mock<ILogger<Repository<DB.FabricType>>>();
             _languageLogger = new Mock<ILogger<Repository<DB.Language>>>();
             _orderLogger = new Mock<ILogger<Repository<DB.Order>>>();
@@ -113,8 +110,7 @@ namespace NUnitTests.RestAPI
             var categoryHierarchies = DatabaseDataFake.GetFakeCategoryHierarchyList(); 
             var colors = DatabaseDataFake.GetFakeColorList(); 
             var contacts = DatabaseDataFake.GetFakeContactList();
-            var customizableProducts = DatabaseDataFake.GetFakeCustomizableProductList(); 
-            var customizationOrders = DatabaseDataFake.GetFakeCustomizationOrderList(); 
+            var customizableProducts = DatabaseDataFake.GetFakeCustomizableProductList();
             var fabricTypes = DatabaseDataFake.GetFakeFabricTypeList(); 
             var languages = DatabaseDataFake.GetFakeLanguageList();
             var orders = DatabaseDataFake.GetFakeOrderList(); 
@@ -137,8 +133,7 @@ namespace NUnitTests.RestAPI
             _context.CategoryHierarchies.AddRange(categoryHierarchies); 
             _context.Colors.AddRange(colors); 
             _context.Contacts.AddRange(contacts);
-            _context.CustomizableProducts.AddRange(customizableProducts); 
-            _context.CustomizationOrders.AddRange(customizationOrders); 
+            _context.CustomizableProducts.AddRange(customizableProducts);
             _context.FabricTypes.AddRange(fabricTypes); 
             _context.Languages.AddRange(languages);
             _context.Orders.AddRange(orders); 
@@ -166,7 +161,6 @@ namespace NUnitTests.RestAPI
             _colorRepository = new Repository<DB.Color>(_context, _colorLogger.Object);
             _contactRepository = new Repository<DB.Contact>(_context, _contactLogger.Object);
             _customizableProductRepository = new Repository<DB.CustomizableProduct>(_context, _customizableProductLogger.Object);
-            _customizationOrderRepository = new Repository<DB.CustomizationOrder>(_context, _customizationOrderLogger.Object);
             _fabricTypeRepository = new Repository<DB.FabricType>(_context, _fabricTypeLogger.Object);
             _languageRepository = new Repository<DB.Language>(_context, _languageLogger.Object);
             _orderRepository = new Repository<DB.Order>(_context, _orderLogger.Object);
@@ -190,8 +184,7 @@ namespace NUnitTests.RestAPI
                 _categoryHierarchyRepository, 
                 _colorRepository, 
                 _contactRepository,
-                _customizableProductRepository, 
-                _customizationOrderRepository, 
+                _customizableProductRepository,
                 _fabricTypeRepository, 
                 _languageRepository,
                 _orderRepository, 
@@ -444,10 +437,11 @@ namespace NUnitTests.RestAPI
             var entity = new Cart()
             {
                 Id = 3,
-                FkUsers = 1,
-                FkProducts = 1,
-                Quantity = 2,
-                CreatedAt = DateTime.Now
+                FkProductOrders = 1,
+                FkCurrencies = 1,
+                Price = 100,
+                Amount = 10,
+                CreatedAt = DateTime.UtcNow
             };
 
             var result = await _restApiController.CreateCartAsync(entity);
@@ -459,7 +453,7 @@ namespace NUnitTests.RestAPI
             {
                 Assert.That(list.Value as List<Cart>, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded.Value?.Quantity, Is.EqualTo(entity.Quantity));
+                Assert.That(entityThatWasAdded.Value?.Amount, Is.EqualTo(entity.Amount));
                 Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
             });
         }
@@ -471,7 +465,7 @@ namespace NUnitTests.RestAPI
         {
             var entity = await _restApiController.GetCartById(id);
 
-            entity.Value.Quantity = 5;
+            entity.Value.Amount = 5;
 
             await _restApiController.UpdateCartAsync(entity.Value);
 
@@ -479,8 +473,8 @@ namespace NUnitTests.RestAPI
 
             Assert.Multiple(() =>
             {
-                Assert.That(updateEntity?.Value?.Quantity, Is.EqualTo(entity.Value.Quantity));
-                Assert.That(entity?.Value?.Quantity, Is.EqualTo(updateEntity?.Value?.Quantity));
+                Assert.That(updateEntity?.Value?.Amount, Is.EqualTo(entity.Value.Amount));
+                Assert.That(entity?.Value?.Amount, Is.EqualTo(updateEntity?.Value?.Amount));
             });
         }
 
@@ -712,7 +706,7 @@ namespace NUnitTests.RestAPI
             {
                 Id = 3,
                 Name = "Purple",
-                HexCode = "#A020F0"
+                ImageData = Encoding.ASCII.GetBytes("https://example.com/image1.jpg")
             };
 
             var result = await _restApiController.CreateColorsAsync(entity);
@@ -889,10 +883,13 @@ namespace NUnitTests.RestAPI
             var entity = new CustomizableProduct()
             {
                 Id = 3,
-                FkProducts = 1,
-                FkColors = 2,
-                FkFabricTypes = 3,
-                CustomizationDetails = "Custom Detail 1"
+                FkSportSuitConstructor = 1,
+                FkFabricTypes = 1,
+                FkSizeOptions = 1,
+                Price = 100,
+                CustomizationDetails = "",
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now
             };
 
             var result = await _restApiController.CreateCustomizableProductsAsync(entity);
@@ -926,98 +923,6 @@ namespace NUnitTests.RestAPI
             {
                 Assert.That(updateEntity?.Value?.CustomizationDetails, Is.EqualTo(entity.Value.CustomizationDetails));
                 Assert.That(entity?.Value?.CustomizationDetails, Is.EqualTo(updateEntity?.Value?.CustomizationDetails));
-            });
-        }
-
-        #endregion
-
-        #region CustomizationOrders table
-
-        [Test]
-        public void GetCustomizationOrders_Return_2_Items()
-        {
-            var result = _restApiController.GetCustomizationOrders(_limit, _page);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result.Value as List<CustomizationOrder>, Has.Count.EqualTo(2));
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public async Task GetCustomizationOrderById_Return_Correct_Entity(int id)
-        {
-            var result = await _restApiController.GetCustomizationOrdersById(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result?.Value?.Id, Is.EqualTo(id));
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public async Task Delete_CustomizationOrder_Entity(int id)
-        {
-            var result = await _restApiController.DeleteCustomizationOrders(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result, Is.InstanceOf<OkResult>());
-            });
-        }
-
-        [Test]
-        public async Task Add_CustomizationOrder_Entity()
-        {
-            var entity = new CustomizationOrder()
-            {
-                Id = 3,
-                FkOrders = 1,
-                FkProducts = 2,
-                FkFabricTypes = 1,
-                FkColors = 1,
-                Size = "M",
-                AdditionalNotes = "Additional Note"
-            };
-
-            var result = await _restApiController.CreateCustomizationOrdersAsync(entity);
-
-            var list = _restApiController.GetCustomizationOrders(_limit, _page);
-            var entityThatWasAdded = await _restApiController.GetCustomizationOrdersById(3);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(list.Value as List<CustomizationOrder>, Has.Count.EqualTo(3));
-                Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded.Value?.AdditionalNotes, Is.EqualTo(entity.AdditionalNotes));
-                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
-            });
-        }
-
-        [Test]
-        [TestCase(1)]
-        [TestCase(2)]
-        public async Task Update_CustomizationOrder_Entity(int id)
-        {
-            var entity = await _restApiController.GetCustomizationOrdersById(id);
-
-            entity.Value.AdditionalNotes = "Updated Note";
-
-            await _restApiController.UpdateCustomizationOrdersAsync(entity.Value);
-
-            var updateEntity = await _restApiController.GetCustomizationOrdersById(id);
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(updateEntity?.Value?.AdditionalNotes, Is.EqualTo(entity.Value.AdditionalNotes));
-                Assert.That(entity?.Value?.AdditionalNotes, Is.EqualTo(updateEntity?.Value?.AdditionalNotes));
             });
         }
 
@@ -1249,16 +1154,15 @@ namespace NUnitTests.RestAPI
             var entity = new Order()
             {
                 Id = 3,
-                FkUsers = 1,
+                FkProductOrders = 1,
                 FkOrderStatus = 1,
-                TotalAmount = 150.50M,
-                OrderDate = DateTime.Now,
-                ShippingAddress = "ShippingAddress",
-                TrackingNumber = "TrackingNumber-000",
-                ShippingMethod = "ShippingMethod",
-                PaymentStatus = "PaymentStatus",
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                FkPayments = 1,
+                FkShippingAdresses = 1,
+                Price = 411,
+                Amount = 14,
+                OrderDate = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
 
             var result = await _restApiController.CreateOrdersAsync(entity);
@@ -1281,7 +1185,7 @@ namespace NUnitTests.RestAPI
         {
             var entity = await _restApiController.GetOrdersById(id);
 
-            entity.Value.TotalAmount = 200.75M;
+            entity.Value.Amount = 200;
 
             await _restApiController.UpdateOrdersAsync(entity.Value);
 
@@ -1289,8 +1193,8 @@ namespace NUnitTests.RestAPI
 
             Assert.Multiple(() =>
             {
-                Assert.That(updateEntity?.Value?.TotalAmount, Is.EqualTo(entity.Value.TotalAmount));
-                Assert.That(entity?.Value?.TotalAmount, Is.EqualTo(updateEntity?.Value?.TotalAmount));
+                Assert.That(updateEntity?.Value?.Amount, Is.EqualTo(entity.Value.Amount));
+                Assert.That(entity?.Value?.Amount, Is.EqualTo(updateEntity?.Value?.Amount));
             });
         }
 
@@ -1519,11 +1423,12 @@ namespace NUnitTests.RestAPI
             var entity = new Payment()
             {
                 Id = 3,
-                FkOrders = 1,
+                FkPaymentMethods = 1,
+                FkCurrencies = 1,
+                FkPaymentStatuses = 1,
+                Price = 100,
                 PaymentDate = DateTime.Now,
-                Amount = 99.99m,
-                PaymentMethod = "Credit Card",
-                Status = "Completed"
+                PaymentNumber = "123"
             };
 
             var result = await _restApiController.CreatePaymentsAsync(entity);
@@ -1535,7 +1440,7 @@ namespace NUnitTests.RestAPI
             {
                 Assert.That(list.Value as List<Payment>, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded.Value?.Amount, Is.EqualTo(entity.Amount));
+                Assert.That(entityThatWasAdded.Value?.PaymentNumber, Is.EqualTo(entity.PaymentNumber));
                 Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
             });
         }
@@ -1547,7 +1452,7 @@ namespace NUnitTests.RestAPI
         {
             var entity = await _restApiController.GetPaymentsById(id);
 
-            entity.Value.Status = "Pending";
+            entity.Value.PaymentNumber = "456";
 
             await _restApiController.UpdatePaymentsAsync(entity.Value);
 
@@ -1555,8 +1460,8 @@ namespace NUnitTests.RestAPI
 
             Assert.Multiple(() =>
             {
-                Assert.That(updateEntity?.Value?.Status, Is.EqualTo(entity.Value.Status));
-                Assert.That(entity?.Value?.Status, Is.EqualTo(updateEntity?.Value?.Status));
+                Assert.That(updateEntity?.Value?.PaymentNumber, Is.EqualTo(entity.Value.PaymentNumber));
+                Assert.That(entity?.Value?.PaymentNumber, Is.EqualTo(updateEntity?.Value?.PaymentNumber));
             });
         }
 
