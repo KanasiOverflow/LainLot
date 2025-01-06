@@ -23,6 +23,24 @@ namespace NUnitTests.Classes
             ];
         }
 
+        public static List<BeltConstructor> GetFakeBeltConstructorList()
+        {
+            return
+            [
+                new BeltConstructor { Id = 1, FkBeltConstructor = 1, FkColors = 1 },
+                new BeltConstructor { Id = 2, FkBeltConstructor = 2, FkColors = 2 }
+            ];
+        }
+
+        public static List<BeltType> GetFakeBeltTypeList()
+        {
+            return
+            [
+                new BeltType { Id = 1, ImageData = [0x01, 0x02, 0x03] },
+                new BeltType { Id = 2, ImageData = [0x04, 0x05, 0x06] }
+            ];
+        }
+
         public static List<Cart> GetFakeCartsList()
         {
             return
@@ -68,6 +86,24 @@ namespace NUnitTests.Classes
             ];
         }
 
+        public static List<Country> GetFakeCountryList()
+        {
+            return
+            [
+                new Country { Id = 1, Name = "USA" },
+                new Country { Id = 2, Name = "Canada" }
+            ];
+        }
+
+        public static List<Currency> GetFakeCurrencyList()
+        {
+            return
+            [
+                new Currency { Id = 1, Name = "USD" },
+                new Currency { Id = 2, Name = "EUR" }
+            ];
+        }
+
         public static List<CustomizableProduct> GetFakeCustomizableProductList()
         {
             return
@@ -92,6 +128,24 @@ namespace NUnitTests.Classes
             [
                 new Language { Id = 1, FullName = "English", Abbreviation = "EN", Description = "English language.", DateFormat = "MM/dd/yyyy", TimeFormat = "hh:mm tt" },
                 new Language { Id = 2, FullName = "Russian", Abbreviation = "RU", Description = "Russian language.", DateFormat = "dd/MM/yyyy", TimeFormat = "HH:mm" }
+            ];
+        }
+
+        public static List<NeckConstructor> GetFakeNeckConstructorList()
+        {
+            return
+            [
+                new NeckConstructor { Id = 1, FkNeckTypes = 1, FkColors = 1 },
+                new NeckConstructor { Id = 2, FkNeckTypes = 2, FkColors = 2 }
+            ];
+        }
+
+        public static List<NeckType> GetFakeNeckTypeList()
+        {
+            return
+            [
+                new NeckType { Id = 1, ImageData = [0x11, 0x12, 0x13] },
+                new NeckType { Id = 2, ImageData = [0x21, 0x22, 0x23] }
             ];
         }
 
@@ -122,12 +176,66 @@ namespace NUnitTests.Classes
             ];
         }
 
+        public static List<PantsConstructor> GetFakePantsConstructorList()
+        {
+            return
+            [
+                new PantsConstructor { Id = 1, FkPantsTypes = 1, FkColors = 1 },
+                new PantsConstructor { Id = 2, FkPantsTypes = 2, FkColors = 2 }
+            ];
+        }
+
+        public static List<PantsCuffConstructor> GetFakePantsCuffConstructorList()
+        {
+            return
+            [
+                new PantsCuffConstructor { Id = 1, FkPantsCuffTypes = 1, FkColorsLeft = 1, FkColorsRight = 2 },
+                new PantsCuffConstructor { Id = 2, FkPantsCuffTypes = 2, FkColorsLeft = 2, FkColorsRight = 3 }
+            ];
+        }
+
+        public static List<PantsCuffType> GetFakePantsCuffTypeList()
+        {
+            return
+            [
+                new PantsCuffType { Id = 1, ImageData = [0x31, 0x32, 0x33] },
+                new PantsCuffType { Id = 2, ImageData = [0x41, 0x42, 0x43] }
+            ];
+        }
+
+        public static List<PantsType> GetFakePantsTypeList()
+        {
+            return
+            [
+                new PantsType { Id = 1, ImageData = [0x51, 0x52, 0x53] },
+                new PantsType { Id = 2, ImageData = [0x61, 0x62, 0x63] }
+            ];
+        }
+
         public static List<Payment> GetFakePaymentList()
         {
             return
             [
                 new Payment { Id = 1, FkPaymentMethods = 1, FkCurrencies = 1, FkPaymentStatuses = 1, Price = 100, PaymentDate = DateTime.Now, PaymentNumber = "123" },
                 new Payment { Id = 2, FkPaymentMethods = 2, FkCurrencies = 2, FkPaymentStatuses = 1, Price = 100, PaymentDate = DateTime.Now, PaymentNumber = "456" }
+            ];
+        }
+
+        public static List<PaymentMethod> GetFakePaymentMethodList()
+        {
+            return
+            [
+                new PaymentMethod { Id = 1, Method = "Credit Card" },
+                new PaymentMethod { Id = 2, Method = "PayPal" }
+            ];
+        }
+
+        public static List<PaymentStatus> GetFakePaymentStatusList()
+        {
+            return
+            [
+                new PaymentStatus { Id = 1, Status = "Pending" },
+                new PaymentStatus { Id = 2, Status = "Completed" }
             ];
         }
 
@@ -149,6 +257,15 @@ namespace NUnitTests.Classes
             ];
         }
 
+        public static List<ProductOrder> GetFakeProductOrderList()
+        {
+            return
+            [
+                new ProductOrder { Id = 1, FkProducts = 1, FkCustomizableProducts = null },
+                new ProductOrder { Id = 2, FkProducts = null, FkCustomizableProducts = 1 }
+            ];
+        }
+
         public static List<ProductTranslation> GetFakeProductTranslationList()
         {
             return
@@ -167,12 +284,100 @@ namespace NUnitTests.Classes
             ];
         }
 
+        public static List<ShippingAdress> GetFakeShippingAddressList()
+        {
+            return
+            [
+                new ShippingAdress { Id = 1, FkCountries = 1, Address = "123 Main St", City = "Metropolis", ZipPostCode = "12345", StateProvince = "State1" },
+                new ShippingAdress { Id = 2, FkCountries = 2, Address = "456 Elm St", City = "Smallville", ZipPostCode = "67890", StateProvince = "State2" }
+            ];
+        }
+
+        public static List<SizeOption> GetFakeSizeOptionList()
+        {
+            return
+            [
+                new SizeOption { Id = 1, Size = "S" },
+                new SizeOption { Id = 2, Size = "M" }
+            ];
+        }
+
+        public static List<SleeveConstructor> GetFakeSleeveConstructorList()
+        {
+            return
+            [
+                new SleeveConstructor { Id = 1, FkSleeveTypes = 1, FkColors = 1 },
+                new SleeveConstructor { Id = 2, FkSleeveTypes = 2, FkColors = 2 }
+            ];
+        }
+
+        public static List<SleeveCuffConstructor> GetFakeSleeveCuffConstructorList()
+        {
+            return
+            [
+                new SleeveCuffConstructor { Id = 1, FkSleeveCuffTypes = 1, FkColorsLeft = 1, FkColorsRight = 2 },
+                new SleeveCuffConstructor { Id = 2, FkSleeveCuffTypes = 2, FkColorsLeft = 2, FkColorsRight = 3 }
+            ];
+        }
+
+        public static List<SleeveCuffType> GetFakeSleeveCuffTypeList() => [
+                new SleeveCuffType { Id = 1, ImageData = [0x71, 0x72, 0x73] },
+                new SleeveCuffType { Id = 2, ImageData = new byte[] { 0x81, 0x82, 0x83 } }
+            ];
+
+        public static List<SleeveType> GetFakeSleeveTypeList()
+        {
+            return
+            [
+                new SleeveType { Id = 1, ImageData = [0x91, 0x92, 0x93] },
+                new SleeveType { Id = 2, ImageData = [0xA1, 0xA2, 0xA3] }
+            ];
+        }
+
+        public static List<SportSuitConstructor> GetFakeSportSuitConstructorList()
+        {
+            return
+            [
+                new SportSuitConstructor { Id = 1, FkSweaterConstructor = 1, FkSleeveConstructor = 1, FkSleeveCuffConstructor = 1,
+                                    FkBeltConstructor = 1, FkPantsConstructor = 1, FkPantsCuffConstructor = 1 },
+                new SportSuitConstructor { Id = 2, FkSweaterConstructor = 2, FkSleeveConstructor = 2, FkSleeveCuffConstructor = 2,
+                                    FkBeltConstructor = 2, FkPantsConstructor = 2, FkPantsCuffConstructor = 2 }
+            ];
+        }
+
+        public static List<SweaterConstructor> GetFakeSweaterConstructorList()
+        {
+            return
+            [
+                new SweaterConstructor { Id = 1, FkSweaterTypes = 1, FkColors = 1 },
+                new SweaterConstructor { Id = 2, FkSweaterTypes = 2, FkColors = 2 }
+            ];
+        }
+
+        public static List<SweaterType> GetFakeSweaterTypeList()
+        {
+            return
+            [
+                new SweaterType { Id = 1, ImageData = [0xB1, 0xB2, 0xB3] },
+                new SweaterType { Id = 2, ImageData = [0xC1, 0xC2, 0xC3] }
+            ];
+        }
+
         public static List<User> GetFakeUserList()
         {
             return
             [
                 new User { Id = 1, FkUserRoles = 1, Login = "user1", Email = "user1@example.com", Password = "password1", ConfirmEmail = 1, Hash = "hash1", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
                 new User { Id = 2, FkUserRoles = 2, Login = "user2", Email = "user2@example.com", Password = "password2", ConfirmEmail = 1, Hash = "hash2", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+            ];
+        }
+
+        public static List<UserOrderHistory> GetFakeUserOrderHistoryList()
+        {
+            return
+            [
+                new UserOrderHistory { Id = 1, FkOrders = 1 },
+                new UserOrderHistory { Id = 2, FkOrders = 2 }
             ];
         }
 
