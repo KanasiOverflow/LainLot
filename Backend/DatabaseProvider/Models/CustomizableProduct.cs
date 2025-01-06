@@ -7,7 +7,7 @@ public partial class CustomizableProduct
 {
     public int Id { get; set; }
 
-    public int FkSportSuitConstructor { get; set; }
+    public int FkCustomSportSuits { get; set; }
 
     public int FkFabricTypes { get; set; }
 
@@ -21,11 +21,11 @@ public partial class CustomizableProduct
 
     public DateTime UpdatedAt { get; set; }
 
+    public virtual CustomSportSuit FkCustomSportSuitsNavigation { get; set; } = null!;
+
     public virtual FabricType FkFabricTypesNavigation { get; set; } = null!;
 
     public virtual SizeOption FkSizeOptionsNavigation { get; set; } = null!;
-
-    public virtual SportSuitConstructor FkSportSuitConstructorNavigation { get; set; } = null!;
 
     public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
 }

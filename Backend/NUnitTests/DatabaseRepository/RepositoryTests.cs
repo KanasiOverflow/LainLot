@@ -834,7 +834,7 @@ namespace NUnitTests.DatabaseRepository
             var entity = new CustomizableProduct()
             {
                 Id = 3,
-                FkSportSuitConstructor = 1,
+                FkCustomSportSuits = 1,
                 FkFabricTypes = 1,
                 FkSizeOptions = 1,
                 Price = 100,
@@ -852,7 +852,7 @@ namespace NUnitTests.DatabaseRepository
             {
                 Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded?.FkSportSuitConstructor, Is.EqualTo(entity?.FkSportSuitConstructor));
+                Assert.That(entityThatWasAdded?.FkCustomSportSuits, Is.EqualTo(entity?.FkCustomSportSuits));
                 Assert.That(entityThatWasAdded?.CustomizationDetails, Is.EqualTo(entity?.CustomizationDetails));
             });
         }
@@ -864,7 +864,7 @@ namespace NUnitTests.DatabaseRepository
         {
             var entity = await _customizableProductRepository?.GetById(id);
 
-            entity.FkSportSuitConstructor = 2;
+            entity.FkCustomSportSuits = 2;
             entity.CustomizationDetails = "Updated description";
 
             await _customizableProductRepository?.Update(entity);
@@ -873,7 +873,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.Multiple(() =>
             {
-                Assert.That(updatedEntity?.FkSportSuitConstructor, Is.EqualTo(entity?.FkSportSuitConstructor));
+                Assert.That(updatedEntity?.FkCustomSportSuits, Is.EqualTo(entity?.FkCustomSportSuits));
                 Assert.That(updatedEntity?.CustomizationDetails, Is.EqualTo(entity?.CustomizationDetails));
             });
         }

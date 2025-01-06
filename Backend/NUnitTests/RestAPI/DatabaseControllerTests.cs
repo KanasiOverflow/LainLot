@@ -21,8 +21,6 @@ namespace NUnitTests.RestAPI
         #region Mock loggers
         private Mock<ILogger<Repository<DB.About>>> _aboutLogger;
         private Mock<ILogger<Repository<DB.AccessLevel>>> _accessLevelLogger;
-        private Mock<ILogger<Repository<DB.BeltConstructor>>> _beltConstructorLogger;
-        private Mock<ILogger<Repository<DB.BeltType>>> _beltTypeLogger;
         private Mock<ILogger<Repository<DB.Cart>>> _cartLogger;
         private Mock<ILogger<Repository<DB.Category>>> _categoryLogger;
         private Mock<ILogger<Repository<DB.CategoryHierarchy>>> _categoryHierarchyLogger;
@@ -33,15 +31,9 @@ namespace NUnitTests.RestAPI
         private Mock<ILogger<Repository<DB.CustomizableProduct>>> _customizableProductLogger;
         private Mock<ILogger<Repository<DB.FabricType>>> _fabricTypeLogger;
         private Mock<ILogger<Repository<DB.Language>>> _languageLogger;
-        private Mock<ILogger<Repository<DB.NeckConstructor>>> _neckConstructorLogger;
-        private Mock<ILogger<Repository<DB.NeckType>>> _neckTypeLogger;
         private Mock<ILogger<Repository<DB.Order>>> _orderLogger;
         private Mock<ILogger<Repository<DB.OrderHistory>>> _orderHistoryLogger;
         private Mock<ILogger<Repository<DB.OrderStatus>>> _orderStatusLogger;
-        private Mock<ILogger<Repository<DB.PantsConstructor>>> _pantsConstructorLogger;
-        private Mock<ILogger<Repository<DB.PantsCuffConstructor>>> _pantsCuffConstructorLogger;
-        private Mock<ILogger<Repository<DB.PantsCuffType>>> _pantsCuffTypeLogger;
-        private Mock<ILogger<Repository<DB.PantsType>>> _pantsTypeLogger;
         private Mock<ILogger<Repository<DB.Payment>>> _paymentLogger;
         private Mock<ILogger<Repository<DB.PaymentMethod>>> _paymentMethodLogger;
         private Mock<ILogger<Repository<DB.PaymentStatus>>> _paymentStatusLogger;
@@ -52,13 +44,6 @@ namespace NUnitTests.RestAPI
         private Mock<ILogger<Repository<DB.Review>>> _reviewLogger;
         private Mock<ILogger<Repository<DB.ShippingAdress>>> _shippingAdressLogger;
         private Mock<ILogger<Repository<DB.SizeOption>>> _sizeOptionLogger;
-        private Mock<ILogger<Repository<DB.SleeveConstructor>>> _sleeveConstructorLogger;
-        private Mock<ILogger<Repository<DB.SleeveCuffConstructor>>> _sleeveCuffConstructorLogger;
-        private Mock<ILogger<Repository<DB.SleeveCuffType>>> _sleeveCuffTypeLogger;
-        private Mock<ILogger<Repository<DB.SleeveType>>> _sleeveTypeLogger;
-        private Mock<ILogger<Repository<DB.SportSuitConstructor>>> _sportSuitConstructorLogger;
-        private Mock<ILogger<Repository<DB.SweaterConstructor>>> _sweaterConstructorLogger;
-        private Mock<ILogger<Repository<DB.SweaterType>>> _sweaterTypeLogger;
         private Mock<ILogger<Repository<DB.User>>> _userLogger;
         private Mock<ILogger<Repository<DB.UserOrderHistory>>> _userOrderHistoryLogger;
         private Mock<ILogger<Repository<DB.UserProfile>>> _userProfileLogger;
@@ -67,8 +52,6 @@ namespace NUnitTests.RestAPI
         #region Repositories
         private IRepository<DB.About>? _aboutRepository;
         private IRepository<DB.AccessLevel>? _accessLevelRepository;
-        private IRepository<DB.BeltConstructor>? _beltConstructorRepository;
-        private IRepository<DB.BeltType>? _beltTypeRepository;
         private IRepository<DB.Cart>? _cartRepository;
         private IRepository<DB.Category>? _categoryRepository;
         private IRepository<DB.CategoryHierarchy>? _categoryHierarchyRepository;
@@ -79,15 +62,9 @@ namespace NUnitTests.RestAPI
         private IRepository<DB.CustomizableProduct>? _customizableProductRepository;
         private IRepository<DB.FabricType>? _fabricTypeRepository;
         private IRepository<DB.Language>? _languageRepository;
-        private IRepository<DB.NeckConstructor>? _neckConstructorRepository;
-        private IRepository<DB.NeckType>? _neckTypeRepository;
         private IRepository<DB.Order>? _orderRepository;
         private IRepository<DB.OrderHistory>? _orderHistoryRepository;
         private IRepository<DB.OrderStatus>? _orderStatusRepository;
-        private IRepository<DB.PantsConstructor>? _pantsConstructorRepository;
-        private IRepository<DB.PantsCuffConstructor>? _pantsCuffConstructorRepository;
-        private IRepository<DB.PantsCuffType>? _pantsCuffTypeRepository;
-        private IRepository<DB.PantsType>? _pantsTypeRepository;
         private IRepository<DB.Payment>? _paymentRepository;
         private IRepository<DB.PaymentMethod>? _paymentMethodRepository;
         private IRepository<DB.PaymentStatus>? _paymentStatusRepository;
@@ -98,13 +75,6 @@ namespace NUnitTests.RestAPI
         private IRepository<DB.Review>? _reviewRepository;
         private IRepository<DB.ShippingAdress>? _shippingAdressRepository;
         private IRepository<DB.SizeOption>? _sizeOptionRepository;
-        private IRepository<DB.SleeveConstructor>? _sleeveConstructorRepository;
-        private IRepository<DB.SleeveCuffConstructor>? _sleeveCuffConstructorRepository;
-        private IRepository<DB.SleeveCuffType>? _sleeveCuffTypeRepository;
-        private IRepository<DB.SleeveType>? _sleeveTypeRepository;
-        private IRepository<DB.SportSuitConstructor>? _sportSuitConstructorRepository;
-        private IRepository<DB.SweaterConstructor>? _sweaterConstructorRepository;
-        private IRepository<DB.SweaterType>? _sweaterTypeRepository;
         private IRepository<DB.User>? _userRepository;
         private IRepository<DB.UserOrderHistory>? _userOrderHistoryRepository;
         private IRepository<DB.UserProfile>? _userProfileRepository;
@@ -131,8 +101,6 @@ namespace NUnitTests.RestAPI
             #region Create fake loggers
             _aboutLogger = new Mock<ILogger<Repository<DB.About>>>();
             _accessLevelLogger = new Mock<ILogger<Repository<DB.AccessLevel>>>();
-            _beltConstructorLogger = new Mock<ILogger<Repository<DB.BeltConstructor>>>();
-            _beltTypeLogger = new Mock<ILogger<Repository<DB.BeltType>>>();
             _cartLogger = new Mock<ILogger<Repository<DB.Cart>>>();
             _categoryLogger = new Mock<ILogger<Repository<DB.Category>>>();
             _categoryHierarchyLogger = new Mock<ILogger<Repository<DB.CategoryHierarchy>>>();
@@ -143,15 +111,9 @@ namespace NUnitTests.RestAPI
             _customizableProductLogger = new Mock<ILogger<Repository<DB.CustomizableProduct>>>();
             _fabricTypeLogger = new Mock<ILogger<Repository<DB.FabricType>>>();
             _languageLogger = new Mock<ILogger<Repository<DB.Language>>>();
-            _neckConstructorLogger = new Mock<ILogger<Repository<DB.NeckConstructor>>>();
-            _neckTypeLogger = new Mock<ILogger<Repository<DB.NeckType>>>();
             _orderLogger = new Mock<ILogger<Repository<DB.Order>>>();
             _orderHistoryLogger = new Mock<ILogger<Repository<DB.OrderHistory>>>();
             _orderStatusLogger = new Mock<ILogger<Repository<DB.OrderStatus>>>();
-            _pantsConstructorLogger = new Mock<ILogger<Repository<DB.PantsConstructor>>>();
-            _pantsCuffConstructorLogger = new Mock<ILogger<Repository<DB.PantsCuffConstructor>>>();
-            _pantsCuffTypeLogger = new Mock<ILogger<Repository<DB.PantsCuffType>>>();
-            _pantsTypeLogger = new Mock<ILogger<Repository<DB.PantsType>>>();
             _paymentLogger = new Mock<ILogger<Repository<DB.Payment>>>();
             _paymentMethodLogger = new Mock<ILogger<Repository<DB.PaymentMethod>>>();
             _paymentStatusLogger = new Mock<ILogger<Repository<DB.PaymentStatus>>>();
@@ -162,13 +124,6 @@ namespace NUnitTests.RestAPI
             _reviewLogger = new Mock<ILogger<Repository<DB.Review>>>();
             _shippingAdressLogger = new Mock<ILogger<Repository<DB.ShippingAdress>>>();
             _sizeOptionLogger = new Mock<ILogger<Repository<DB.SizeOption>>>();
-            _sleeveConstructorLogger = new Mock<ILogger<Repository<DB.SleeveConstructor>>>();
-            _sleeveCuffConstructorLogger = new Mock<ILogger<Repository<DB.SleeveCuffConstructor>>>();
-            _sleeveCuffTypeLogger = new Mock<ILogger<Repository<DB.SleeveCuffType>>>();
-            _sleeveTypeLogger = new Mock<ILogger<Repository<DB.SleeveType>>>();
-            _sportSuitConstructorLogger = new Mock<ILogger<Repository<DB.SportSuitConstructor>>>();
-            _sweaterConstructorLogger = new Mock<ILogger<Repository<DB.SweaterConstructor>>>();
-            _sweaterTypeLogger = new Mock<ILogger<Repository<DB.SweaterType>>>();
             _userLogger = new Mock<ILogger<Repository<DB.User>>>();
             _userOrderHistoryLogger = new Mock<ILogger<Repository<DB.UserOrderHistory>>>();
             _userProfileLogger = new Mock<ILogger<Repository<DB.UserProfile>>>();
@@ -178,8 +133,6 @@ namespace NUnitTests.RestAPI
             #region Create fake data
             var abouts = DatabaseDataFake.GetFakeAboutList();
             var accessLevels = DatabaseDataFake.GetFakeAccessLevelList();
-            var beltConstructors = DatabaseDataFake.GetFakeBeltConstructorList();
-            var beltTypes = DatabaseDataFake.GetFakeBeltTypeList();
             var carts = DatabaseDataFake.GetFakeCartsList();
             var categories = DatabaseDataFake.GetFakeCategoryList();
             var categoryHierarchies = DatabaseDataFake.GetFakeCategoryHierarchyList();
@@ -190,15 +143,9 @@ namespace NUnitTests.RestAPI
             var customizableProducts = DatabaseDataFake.GetFakeCustomizableProductList();
             var fabricTypes = DatabaseDataFake.GetFakeFabricTypeList();
             var languages = DatabaseDataFake.GetFakeLanguageList();
-            var neckConstructors = DatabaseDataFake.GetFakeNeckConstructorList();
-            var neckTypes = DatabaseDataFake.GetFakeNeckTypeList();
             var orders = DatabaseDataFake.GetFakeOrderList();
             var orderHistories = DatabaseDataFake.GetFakeOrderHistoryList();
             var orderStatuses = DatabaseDataFake.GetFakeOrderStatusList();
-            var pantsConstructors = DatabaseDataFake.GetFakePantsConstructorList();
-            var pantsCuffConstructors = DatabaseDataFake.GetFakePantsCuffConstructorList();
-            var pantsCuffTypes = DatabaseDataFake.GetFakePantsCuffTypeList();
-            var pantsTypes = DatabaseDataFake.GetFakePantsTypeList();
             var payments = DatabaseDataFake.GetFakePaymentList();
             var paymentMethods = DatabaseDataFake.GetFakePaymentMethodList();
             var paymentStatuses = DatabaseDataFake.GetFakePaymentStatusList();
@@ -209,13 +156,6 @@ namespace NUnitTests.RestAPI
             var reviews = DatabaseDataFake.GetFakeReviewList();
             var shippingAddresses = DatabaseDataFake.GetFakeShippingAddressList();
             var sizeOptions = DatabaseDataFake.GetFakeSizeOptionList();
-            var sleeveConstructors = DatabaseDataFake.GetFakeSleeveConstructorList();
-            var sleeveCuffConstructors = DatabaseDataFake.GetFakeSleeveCuffConstructorList();
-            var sleeveCuffTypes = DatabaseDataFake.GetFakeSleeveCuffTypeList();
-            var sleeveTypes = DatabaseDataFake.GetFakeSleeveTypeList();
-            var sportSuitConstructors = DatabaseDataFake.GetFakeSportSuitConstructorList();
-            var sweaterConstructors = DatabaseDataFake.GetFakeSweaterConstructorList();
-            var sweaterTypes = DatabaseDataFake.GetFakeSweaterTypeList();
             var users = DatabaseDataFake.GetFakeUserList();
             var userOrderHistories = DatabaseDataFake.GetFakeUserOrderHistoryList();
             var userProfiles = DatabaseDataFake.GetFakeUserProfileList();
@@ -225,8 +165,6 @@ namespace NUnitTests.RestAPI
             #region Init base data in fake DbContext
             _context.Abouts.AddRange(abouts);
             _context.AccessLevels.AddRange(accessLevels);
-            _context.BeltConstructors.AddRange(beltConstructors);
-            _context.BeltTypes.AddRange(beltTypes);
             _context.Carts.AddRange(carts);
             _context.Categories.AddRange(categories);
             _context.CategoryHierarchies.AddRange(categoryHierarchies);
@@ -237,15 +175,9 @@ namespace NUnitTests.RestAPI
             _context.CustomizableProducts.AddRange(customizableProducts);
             _context.FabricTypes.AddRange(fabricTypes);
             _context.Languages.AddRange(languages);
-            _context.NeckConstructors.AddRange(neckConstructors);
-            _context.NeckTypes.AddRange(neckTypes);
             _context.Orders.AddRange(orders);
             _context.OrderHistories.AddRange(orderHistories);
             _context.OrderStatuses.AddRange(orderStatuses);
-            _context.PantsConstructors.AddRange(pantsConstructors);
-            _context.PantsCuffConstructors.AddRange(pantsCuffConstructors);
-            _context.PantsCuffTypes.AddRange(pantsCuffTypes);
-            _context.PantsTypes.AddRange(pantsTypes);
             _context.Payments.AddRange(payments);
             _context.PaymentMethods.AddRange(paymentMethods);
             _context.PaymentStatuses.AddRange(paymentStatuses);
@@ -256,13 +188,6 @@ namespace NUnitTests.RestAPI
             _context.Reviews.AddRange(reviews);
             _context.ShippingAdresses.AddRange(shippingAddresses);
             _context.SizeOptions.AddRange(sizeOptions);
-            _context.SleeveConstructors.AddRange(sleeveConstructors);
-            _context.SleeveCuffConstructors.AddRange(sleeveCuffConstructors);
-            _context.SleeveCuffTypes.AddRange(sleeveCuffTypes);
-            _context.SleeveTypes.AddRange(sleeveTypes);
-            _context.SportSuitConstructors.AddRange(sportSuitConstructors);
-            _context.SweaterConstructors.AddRange(sweaterConstructors);
-            _context.SweaterTypes.AddRange(sweaterTypes);
             _context.Users.AddRange(users);
             _context.UserOrderHistories.AddRange(userOrderHistories);
             _context.UserProfiles.AddRange(userProfiles);
@@ -276,8 +201,6 @@ namespace NUnitTests.RestAPI
             #region Create all instances for repositories
             _aboutRepository = new Repository<DB.About>(_context, _aboutLogger.Object);
             _accessLevelRepository = new Repository<DB.AccessLevel>(_context, _accessLevelLogger.Object);
-            _beltConstructorRepository = new Repository<DB.BeltConstructor>(_context, _beltConstructorLogger.Object);
-            _beltTypeRepository = new Repository<DB.BeltType>(_context, _beltTypeLogger.Object);
             _cartRepository = new Repository<DB.Cart>(_context, _cartLogger.Object);
             _categoryRepository = new Repository<DB.Category>(_context, _categoryLogger.Object);
             _categoryHierarchyRepository = new Repository<DB.CategoryHierarchy>(_context, _categoryHierarchyLogger.Object);
@@ -288,15 +211,9 @@ namespace NUnitTests.RestAPI
             _customizableProductRepository = new Repository<DB.CustomizableProduct>(_context, _customizableProductLogger.Object);
             _fabricTypeRepository = new Repository<DB.FabricType>(_context, _fabricTypeLogger.Object);
             _languageRepository = new Repository<DB.Language>(_context, _languageLogger.Object);
-            _neckConstructorRepository = new Repository<DB.NeckConstructor>(_context, _neckConstructorLogger.Object);
-            _neckTypeRepository = new Repository<DB.NeckType>(_context, _neckTypeLogger.Object);
             _orderRepository = new Repository<DB.Order>(_context, _orderLogger.Object);
             _orderHistoryRepository = new Repository<DB.OrderHistory>(_context, _orderHistoryLogger.Object);
             _orderStatusRepository = new Repository<DB.OrderStatus>(_context, _orderStatusLogger.Object);
-            _pantsConstructorRepository = new Repository<DB.PantsConstructor>(_context, _pantsConstructorLogger.Object);
-            _pantsCuffConstructorRepository = new Repository<DB.PantsCuffConstructor>(_context, _pantsCuffConstructorLogger.Object);
-            _pantsCuffTypeRepository = new Repository<DB.PantsCuffType>(_context, _pantsCuffTypeLogger.Object);
-            _pantsTypeRepository = new Repository<DB.PantsType>(_context, _pantsTypeLogger.Object);
             _paymentRepository = new Repository<DB.Payment>(_context, _paymentLogger.Object);
             _paymentMethodRepository = new Repository<DB.PaymentMethod>(_context, _paymentMethodLogger.Object);
             _paymentStatusRepository = new Repository<DB.PaymentStatus>(_context, _paymentStatusLogger.Object);
@@ -307,13 +224,6 @@ namespace NUnitTests.RestAPI
             _reviewRepository = new Repository<DB.Review>(_context, _reviewLogger.Object);
             _shippingAdressRepository = new Repository<DB.ShippingAdress>(_context, _shippingAdressLogger.Object);
             _sizeOptionRepository = new Repository<DB.SizeOption>(_context, _sizeOptionLogger.Object);
-            _sleeveConstructorRepository = new Repository<DB.SleeveConstructor>(_context, _sleeveConstructorLogger.Object);
-            _sleeveCuffConstructorRepository = new Repository<DB.SleeveCuffConstructor>(_context, _sleeveCuffConstructorLogger.Object);
-            _sleeveCuffTypeRepository = new Repository<DB.SleeveCuffType>(_context, _sleeveCuffTypeLogger.Object);
-            _sleeveTypeRepository = new Repository<DB.SleeveType>(_context, _sleeveTypeLogger.Object);
-            _sportSuitConstructorRepository = new Repository<DB.SportSuitConstructor>(_context, _sportSuitConstructorLogger.Object);
-            _sweaterConstructorRepository = new Repository<DB.SweaterConstructor>(_context, _sweaterConstructorLogger.Object);
-            _sweaterTypeRepository = new Repository<DB.SweaterType>(_context, _sweaterTypeLogger.Object);
             _userRepository = new Repository<DB.User>(_context, _userLogger.Object);
             _userOrderHistoryRepository = new Repository<DB.UserOrderHistory>(_context, _userOrderHistoryLogger.Object);
             _userProfileRepository = new Repository<DB.UserProfile>(_context, _userProfileLogger.Object);
@@ -324,8 +234,6 @@ namespace NUnitTests.RestAPI
                 _logger.Object,
                 _aboutRepository,
                 _accessLevelRepository,
-                _beltConstructorRepository,
-                _beltTypeRepository,
                 _cartRepository,
                 _categoryRepository,
                 _categoryHierarchyRepository,
@@ -336,15 +244,9 @@ namespace NUnitTests.RestAPI
                 _customizableProductRepository,
                 _fabricTypeRepository,
                 _languageRepository,
-                _neckConstructorRepository,
-                _neckTypeRepository,
                 _orderRepository,
                 _orderHistoryRepository,
                 _orderStatusRepository,
-                _pantsConstructorRepository,
-                _pantsCuffConstructorRepository,
-                _pantsCuffTypeRepository,
-                _pantsTypeRepository,
                 _paymentRepository,
                 _paymentMethodRepository,
                 _paymentStatusRepository,
@@ -355,13 +257,6 @@ namespace NUnitTests.RestAPI
                 _reviewRepository,
                 _shippingAdressRepository,
                 _sizeOptionRepository,
-                _sleeveConstructorRepository,
-                _sleeveCuffConstructorRepository,
-                _sleeveCuffTypeRepository,
-                _sleeveTypeRepository,
-                _sportSuitConstructorRepository,
-                _sweaterConstructorRepository,
-                _sweaterTypeRepository,
                 _userRepository,
                 _userOrderHistoryRepository,
                 _userProfileRepository,
@@ -1051,7 +946,7 @@ namespace NUnitTests.RestAPI
             var entity = new CustomizableProduct()
             {
                 Id = 3,
-                FkSportSuitConstructor = 1,
+                FkCustomSportSuits = 1,
                 FkFabricTypes = 1,
                 FkSizeOptions = 1,
                 Price = 100,

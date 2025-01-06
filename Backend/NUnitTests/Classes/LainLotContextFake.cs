@@ -15,11 +15,7 @@ namespace NUnitTests.Classes
         public DbSet<About> Abouts => _dbContext.Abouts;
 
         public DbSet<AccessLevel> AccessLevels => _dbContext.AccessLevels;
-
-        public DbSet<BeltConstructor> BeltConstructors => _dbContext.BeltConstructors;
-
-        public DbSet<BeltType> BeltTypes => _dbContext.BeltTypes;
-
+        
         public DbSet<Cart> Carts => _dbContext.Carts;
 
         public DbSet<Category> Categories => _dbContext.Categories;
@@ -40,23 +36,11 @@ namespace NUnitTests.Classes
 
         public DbSet<Language> Languages => _dbContext.Languages;
 
-        public DbSet<NeckConstructor> NeckConstructors => _dbContext.NeckConstructors;
-
-        public DbSet<NeckType> NeckTypes => _dbContext.NeckTypes;
-
         public DbSet<Order> Orders => _dbContext.Orders;
 
         public DbSet<OrderHistory> OrderHistories => _dbContext.OrderHistories;
 
         public DbSet<OrderStatus> OrderStatuses => _dbContext.OrderStatuses;
-
-        public DbSet<PantsConstructor> PantsConstructors => _dbContext.PantsConstructors;
-
-        public DbSet<PantsCuffConstructor> PantsCuffConstructors => _dbContext.PantsCuffConstructors;
-
-        public DbSet<PantsCuffType> PantsCuffTypes => _dbContext.PantsCuffTypes;
-
-        public DbSet<PantsType> PantsTypes => _dbContext.PantsTypes;
 
         public DbSet<Payment> Payments => _dbContext.Payments;
 
@@ -77,20 +61,6 @@ namespace NUnitTests.Classes
         public DbSet<ShippingAdress> ShippingAdresses => _dbContext.ShippingAdresses;
 
         public DbSet<SizeOption> SizeOptions => _dbContext.SizeOptions;
-
-        public DbSet<SleeveConstructor> SleeveConstructors => _dbContext.SleeveConstructors;
-
-        public DbSet<SleeveCuffConstructor> SleeveCuffConstructors => _dbContext.SleeveCuffConstructors;
-
-        public DbSet<SleeveCuffType> SleeveCuffTypes => _dbContext.SleeveCuffTypes;
-
-        public DbSet<SleeveType> SleeveTypes => _dbContext.SleeveTypes;
-
-        public DbSet<SportSuitConstructor> SportSuitConstructors => _dbContext.SportSuitConstructors;
-
-        public DbSet<SweaterConstructor> SweaterConstructors => _dbContext.SweaterConstructors;
-
-        public DbSet<SweaterType> SweaterTypes => _dbContext.SweaterTypes;
 
         public DbSet<User> Users => _dbContext.Users;
 

@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
 
-        public int FkSportSuitConstructor { get; set; }
+        public int FkCustomSportSuits { get; set; }
 
         public int FkFabricTypes { get; set; }
 

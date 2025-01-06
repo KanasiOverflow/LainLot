@@ -23,9 +23,21 @@ public partial class LainLotContext : DbContext
 
     public virtual DbSet<AccessLevel> AccessLevels { get; set; }
 
-    public virtual DbSet<BeltConstructor> BeltConstructors { get; set; }
+    public virtual DbSet<BaseBelt> BaseBelts { get; set; }
 
-    public virtual DbSet<BeltType> BeltTypes { get; set; }
+    public virtual DbSet<BaseNeckline> BaseNecklines { get; set; }
+
+    public virtual DbSet<BasePant> BasePants { get; set; }
+
+    public virtual DbSet<BasePantsCuff> BasePantsCuffs { get; set; }
+
+    public virtual DbSet<BaseSleefe> BaseSleeves { get; set; }
+
+    public virtual DbSet<BaseSleeveCuff> BaseSleeveCuffs { get; set; }
+
+    public virtual DbSet<BaseSportSuit> BaseSportSuits { get; set; }
+
+    public virtual DbSet<BaseSweater> BaseSweaters { get; set; }
 
     public virtual DbSet<Cart> Carts { get; set; }
 
@@ -41,29 +53,33 @@ public partial class LainLotContext : DbContext
 
     public virtual DbSet<Currency> Currencies { get; set; }
 
+    public virtual DbSet<CustomBelt> CustomBelts { get; set; }
+
+    public virtual DbSet<CustomNeckline> CustomNecklines { get; set; }
+
+    public virtual DbSet<CustomPant> CustomPants { get; set; }
+
+    public virtual DbSet<CustomPantsCuff> CustomPantsCuffs { get; set; }
+
+    public virtual DbSet<CustomSleefe> CustomSleeves { get; set; }
+
+    public virtual DbSet<CustomSleeveCuff> CustomSleeveCuffs { get; set; }
+
+    public virtual DbSet<CustomSportSuit> CustomSportSuits { get; set; }
+
+    public virtual DbSet<CustomSweater> CustomSweaters { get; set; }
+
     public virtual DbSet<CustomizableProduct> CustomizableProducts { get; set; }
 
     public virtual DbSet<FabricType> FabricTypes { get; set; }
 
     public virtual DbSet<Language> Languages { get; set; }
 
-    public virtual DbSet<NeckConstructor> NeckConstructors { get; set; }
-
-    public virtual DbSet<NeckType> NeckTypes { get; set; }
-
     public virtual DbSet<Order> Orders { get; set; }
 
     public virtual DbSet<OrderHistory> OrderHistories { get; set; }
 
     public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
-
-    public virtual DbSet<PantsConstructor> PantsConstructors { get; set; }
-
-    public virtual DbSet<PantsCuffConstructor> PantsCuffConstructors { get; set; }
-
-    public virtual DbSet<PantsCuffType> PantsCuffTypes { get; set; }
-
-    public virtual DbSet<PantsType> PantsTypes { get; set; }
 
     public virtual DbSet<Payment> Payments { get; set; }
 
@@ -84,20 +100,6 @@ public partial class LainLotContext : DbContext
     public virtual DbSet<ShippingAdress> ShippingAdresses { get; set; }
 
     public virtual DbSet<SizeOption> SizeOptions { get; set; }
-
-    public virtual DbSet<SleeveConstructor> SleeveConstructors { get; set; }
-
-    public virtual DbSet<SleeveCuffConstructor> SleeveCuffConstructors { get; set; }
-
-    public virtual DbSet<SleeveCuffType> SleeveCuffTypes { get; set; }
-
-    public virtual DbSet<SleeveType> SleeveTypes { get; set; }
-
-    public virtual DbSet<SportSuitConstructor> SportSuitConstructors { get; set; }
-
-    public virtual DbSet<SweaterConstructor> SweaterConstructors { get; set; }
-
-    public virtual DbSet<SweaterType> SweaterTypes { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -135,24 +137,105 @@ public partial class LainLotContext : DbContext
             entity.HasKey(e => e.Id).HasName("AccessLevels_pkey");
         });
 
-        modelBuilder.Entity<BeltConstructor>(entity =>
+        modelBuilder.Entity<BaseBelt>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("BeltConstructor_pkey");
+            entity.HasKey(e => e.Id).HasName("BaseBelts_pkey");
 
-            entity.ToTable("BeltConstructor");
-
-            entity.HasOne(d => d.FkBeltConstructorNavigation).WithMany(p => p.InverseFkBeltConstructorNavigation)
-                .HasForeignKey(d => d.FkBeltConstructor)
-                .HasConstraintName("BeltConstructor_FkBeltConstructor_fkey");
-
-            entity.HasOne(d => d.FkColorsNavigation).WithMany(p => p.BeltConstructors)
-                .HasForeignKey(d => d.FkColors)
-                .HasConstraintName("BeltConstructor_FkColors_fkey");
+            entity.Property(e => e.Settings).HasColumnType("jsonb");
         });
 
-        modelBuilder.Entity<BeltType>(entity =>
+        modelBuilder.Entity<BaseNeckline>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("BeltTypes_pkey");
+            entity.HasKey(e => e.Id).HasName("BaseNecklines_pkey");
+
+            entity.Property(e => e.Settings).HasColumnType("jsonb");
+        });
+
+        modelBuilder.Entity<BasePant>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("BasePants_pkey");
+
+            entity.Property(e => e.Settings).HasColumnType("jsonb");
+        });
+
+        modelBuilder.Entity<BasePantsCuff>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("BasePantsCuffs_pkey");
+
+            entity.Property(e => e.Settings).HasColumnType("jsonb");
+        });
+
+        modelBuilder.Entity<BaseSleefe>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("BaseSleeves_pkey");
+
+            entity.Property(e => e.Settings).HasColumnType("jsonb");
+        });
+
+        modelBuilder.Entity<BaseSleeveCuff>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("BaseSleeveCuffs_pkey");
+
+            entity.Property(e => e.Settings).HasColumnType("jsonb");
+        });
+
+        modelBuilder.Entity<BaseSportSuit>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("BaseSportSuit_pkey");
+
+            entity.ToTable("BaseSportSuit");
+
+            entity.HasOne(d => d.FkBaseBeltsNavigation).WithMany(p => p.BaseSportSuits)
+                .HasForeignKey(d => d.FkBaseBelts)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("BaseSportSuit_FkBaseBelts_fkey");
+
+            entity.HasOne(d => d.FkBaseNecklinesNavigation).WithMany(p => p.BaseSportSuits)
+                .HasForeignKey(d => d.FkBaseNecklines)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("BaseSportSuit_FkBaseNecklines_fkey");
+
+            entity.HasOne(d => d.FkBasePantsNavigation).WithMany(p => p.BaseSportSuits)
+                .HasForeignKey(d => d.FkBasePants)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("BaseSportSuit_FkBasePants_fkey");
+
+            entity.HasOne(d => d.FkBasePantsCuffsLeftNavigation).WithMany(p => p.BaseSportSuitFkBasePantsCuffsLeftNavigations)
+                .HasForeignKey(d => d.FkBasePantsCuffsLeft)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("BaseSportSuit_FkBasePantsCuffsLeft_fkey");
+
+            entity.HasOne(d => d.FkBasePantsCuffsRightNavigation).WithMany(p => p.BaseSportSuitFkBasePantsCuffsRightNavigations)
+                .HasForeignKey(d => d.FkBasePantsCuffsRight)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("BaseSportSuit_FkBasePantsCuffsRight_fkey");
+
+            entity.HasOne(d => d.FkBaseSleeveCuffsLeftNavigation).WithMany(p => p.BaseSportSuitFkBaseSleeveCuffsLeftNavigations)
+                .HasForeignKey(d => d.FkBaseSleeveCuffsLeft)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("BaseSportSuit_FkBaseSleeveCuffsLeft_fkey");
+
+            entity.HasOne(d => d.FkBaseSleeveCuffsRightNavigation).WithMany(p => p.BaseSportSuitFkBaseSleeveCuffsRightNavigations)
+                .HasForeignKey(d => d.FkBaseSleeveCuffsRight)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("BaseSportSuit_FkBaseSleeveCuffsRight_fkey");
+
+            entity.HasOne(d => d.FkBaseSleevesNavigation).WithMany(p => p.BaseSportSuits)
+                .HasForeignKey(d => d.FkBaseSleeves)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("BaseSportSuit_FkBaseSleeves_fkey");
+
+            entity.HasOne(d => d.FkBaseSweatersNavigation).WithMany(p => p.BaseSportSuits)
+                .HasForeignKey(d => d.FkBaseSweaters)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("BaseSportSuit_FkBaseSweaters_fkey");
+        });
+
+        modelBuilder.Entity<BaseSweater>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("BaseSweaters_pkey");
+
+            entity.Property(e => e.Settings).HasColumnType("jsonb");
         });
 
         modelBuilder.Entity<Cart>(entity =>
@@ -236,6 +319,131 @@ public partial class LainLotContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(50);
         });
 
+        modelBuilder.Entity<CustomBelt>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("CustomBelts_pkey");
+
+            entity.Property(e => e.CustomSettings).HasColumnType("jsonb");
+
+            entity.HasOne(d => d.FkBaseBeltsNavigation).WithMany(p => p.CustomBelts)
+                .HasForeignKey(d => d.FkBaseBelts)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("CustomBelts_FkBaseBelts_fkey");
+        });
+
+        modelBuilder.Entity<CustomNeckline>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("CustomNecklines_pkey");
+
+            entity.Property(e => e.CustomSettings).HasColumnType("jsonb");
+
+            entity.HasOne(d => d.FkBaseNecklinesNavigation).WithMany(p => p.CustomNecklines)
+                .HasForeignKey(d => d.FkBaseNecklines)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("CustomNecklines_FkBaseNecklines_fkey");
+        });
+
+        modelBuilder.Entity<CustomPant>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("CustomPants_pkey");
+
+            entity.Property(e => e.CustomSettings).HasColumnType("jsonb");
+
+            entity.HasOne(d => d.FkBasePantsNavigation).WithMany(p => p.CustomPants)
+                .HasForeignKey(d => d.FkBasePants)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("CustomPants_FkBasePants_fkey");
+        });
+
+        modelBuilder.Entity<CustomPantsCuff>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("CustomPantsCuffs_pkey");
+
+            entity.Property(e => e.CustomSettings).HasColumnType("jsonb");
+
+            entity.HasOne(d => d.FkBasePantCuffsNavigation).WithMany(p => p.CustomPantsCuffs)
+                .HasForeignKey(d => d.FkBasePantCuffs)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("CustomPantsCuffs_FkBasePantCuffs_fkey");
+        });
+
+        modelBuilder.Entity<CustomSleefe>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("CustomSleeves_pkey");
+
+            entity.Property(e => e.CustomSettings).HasColumnType("jsonb");
+
+            entity.HasOne(d => d.FkBaseSleevesNavigation).WithMany(p => p.CustomSleeves)
+                .HasForeignKey(d => d.FkBaseSleeves)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("CustomSleeves_FkBaseSleeves_fkey");
+        });
+
+        modelBuilder.Entity<CustomSleeveCuff>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("CustomSleeveCuffs_pkey");
+
+            entity.Property(e => e.CustomSettings).HasColumnType("jsonb");
+
+            entity.HasOne(d => d.FkBaseSleeveCuffsNavigation).WithMany(p => p.CustomSleeveCuffs)
+                .HasForeignKey(d => d.FkBaseSleeveCuffs)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("CustomSleeveCuffs_FkBaseSleeveCuffs_fkey");
+        });
+
+        modelBuilder.Entity<CustomSportSuit>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("CustomSportSuits_pkey");
+
+            entity.HasOne(d => d.FkCustomBeltsNavigation).WithMany(p => p.CustomSportSuits)
+                .HasForeignKey(d => d.FkCustomBelts)
+                .HasConstraintName("CustomSportSuits_FkCustomBelts_fkey");
+
+            entity.HasOne(d => d.FkCustomNecklinesNavigation).WithMany(p => p.CustomSportSuits)
+                .HasForeignKey(d => d.FkCustomNecklines)
+                .HasConstraintName("CustomSportSuits_FkCustomNecklines_fkey");
+
+            entity.HasOne(d => d.FkCustomPantsNavigation).WithMany(p => p.CustomSportSuits)
+                .HasForeignKey(d => d.FkCustomPants)
+                .HasConstraintName("CustomSportSuits_FkCustomPants_fkey");
+
+            entity.HasOne(d => d.FkCustomPantsCuffsLeftNavigation).WithMany(p => p.CustomSportSuitFkCustomPantsCuffsLeftNavigations)
+                .HasForeignKey(d => d.FkCustomPantsCuffsLeft)
+                .HasConstraintName("CustomSportSuits_FkCustomPantsCuffsLeft_fkey");
+
+            entity.HasOne(d => d.FkCustomPantsCuffsRightNavigation).WithMany(p => p.CustomSportSuitFkCustomPantsCuffsRightNavigations)
+                .HasForeignKey(d => d.FkCustomPantsCuffsRight)
+                .HasConstraintName("CustomSportSuits_FkCustomPantsCuffsRight_fkey");
+
+            entity.HasOne(d => d.FkCustomSleeveCuffsLeftNavigation).WithMany(p => p.CustomSportSuitFkCustomSleeveCuffsLeftNavigations)
+                .HasForeignKey(d => d.FkCustomSleeveCuffsLeft)
+                .HasConstraintName("CustomSportSuits_FkCustomSleeveCuffsLeft_fkey");
+
+            entity.HasOne(d => d.FkCustomSleeveCuffsRightNavigation).WithMany(p => p.CustomSportSuitFkCustomSleeveCuffsRightNavigations)
+                .HasForeignKey(d => d.FkCustomSleeveCuffsRight)
+                .HasConstraintName("CustomSportSuits_FkCustomSleeveCuffsRight_fkey");
+
+            entity.HasOne(d => d.FkCustomSleevesNavigation).WithMany(p => p.CustomSportSuits)
+                .HasForeignKey(d => d.FkCustomSleeves)
+                .HasConstraintName("CustomSportSuits_FkCustomSleeves_fkey");
+
+            entity.HasOne(d => d.FkCustomSweatersNavigation).WithMany(p => p.CustomSportSuits)
+                .HasForeignKey(d => d.FkCustomSweaters)
+                .HasConstraintName("CustomSportSuits_FkCustomSweaters_fkey");
+        });
+
+        modelBuilder.Entity<CustomSweater>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("CustomSweaters_pkey");
+
+            entity.Property(e => e.CustomSettings).HasColumnType("jsonb");
+
+            entity.HasOne(d => d.FkBaseSweatersNavigation).WithMany(p => p.CustomSweaters)
+                .HasForeignKey(d => d.FkBaseSweaters)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("CustomSweaters_FkBaseSweaters_fkey");
+        });
+
         modelBuilder.Entity<CustomizableProduct>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("CustomizableProducts_pkey");
@@ -248,6 +456,10 @@ public partial class LainLotContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone");
 
+            entity.HasOne(d => d.FkCustomSportSuitsNavigation).WithMany(p => p.CustomizableProducts)
+                .HasForeignKey(d => d.FkCustomSportSuits)
+                .HasConstraintName("CustomizableProducts_FkCustomSportSuits_fkey");
+
             entity.HasOne(d => d.FkFabricTypesNavigation).WithMany(p => p.CustomizableProducts)
                 .HasForeignKey(d => d.FkFabricTypes)
                 .HasConstraintName("CustomizableProducts_FkFabricTypes_fkey");
@@ -255,10 +467,6 @@ public partial class LainLotContext : DbContext
             entity.HasOne(d => d.FkSizeOptionsNavigation).WithMany(p => p.CustomizableProducts)
                 .HasForeignKey(d => d.FkSizeOptions)
                 .HasConstraintName("CustomizableProducts_FkSizeOptions_fkey");
-
-            entity.HasOne(d => d.FkSportSuitConstructorNavigation).WithMany(p => p.CustomizableProducts)
-                .HasForeignKey(d => d.FkSportSuitConstructor)
-                .HasConstraintName("CustomizableProducts_FkSportSuitConstructor_fkey");
         });
 
         modelBuilder.Entity<FabricType>(entity =>
@@ -281,26 +489,6 @@ public partial class LainLotContext : DbContext
             entity.Property(e => e.DateFormat).HasMaxLength(20);
             entity.Property(e => e.FullName).HasMaxLength(50);
             entity.Property(e => e.TimeFormat).HasMaxLength(20);
-        });
-
-        modelBuilder.Entity<NeckConstructor>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("NeckConstructor_pkey");
-
-            entity.ToTable("NeckConstructor");
-
-            entity.HasOne(d => d.FkColorsNavigation).WithMany(p => p.NeckConstructors)
-                .HasForeignKey(d => d.FkColors)
-                .HasConstraintName("NeckConstructor_FkColors_fkey");
-
-            entity.HasOne(d => d.FkNeckTypesNavigation).WithMany(p => p.NeckConstructors)
-                .HasForeignKey(d => d.FkNeckTypes)
-                .HasConstraintName("NeckConstructor_FkNeckTypes_fkey");
-        });
-
-        modelBuilder.Entity<NeckType>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("NeckTypes_pkey");
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -359,50 +547,6 @@ public partial class LainLotContext : DbContext
             entity.HasKey(e => e.Id).HasName("OrderStatuses_pkey");
 
             entity.Property(e => e.Status).HasMaxLength(50);
-        });
-
-        modelBuilder.Entity<PantsConstructor>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PantsConstructor_pkey");
-
-            entity.ToTable("PantsConstructor");
-
-            entity.HasOne(d => d.FkColorsNavigation).WithMany(p => p.PantsConstructors)
-                .HasForeignKey(d => d.FkColors)
-                .HasConstraintName("PantsConstructor_FkColors_fkey");
-
-            entity.HasOne(d => d.FkPantsTypesNavigation).WithMany(p => p.PantsConstructors)
-                .HasForeignKey(d => d.FkPantsTypes)
-                .HasConstraintName("PantsConstructor_FkPantsTypes_fkey");
-        });
-
-        modelBuilder.Entity<PantsCuffConstructor>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PantsCuffConstructor_pkey");
-
-            entity.ToTable("PantsCuffConstructor");
-
-            entity.HasOne(d => d.FkColorsLeftNavigation).WithMany(p => p.PantsCuffConstructorFkColorsLeftNavigations)
-                .HasForeignKey(d => d.FkColorsLeft)
-                .HasConstraintName("PantsCuffConstructor_FkColorsLeft_fkey");
-
-            entity.HasOne(d => d.FkColorsRightNavigation).WithMany(p => p.PantsCuffConstructorFkColorsRightNavigations)
-                .HasForeignKey(d => d.FkColorsRight)
-                .HasConstraintName("PantsCuffConstructor_FkColorsRight_fkey");
-
-            entity.HasOne(d => d.FkPantsCuffTypesNavigation).WithMany(p => p.PantsCuffConstructors)
-                .HasForeignKey(d => d.FkPantsCuffTypes)
-                .HasConstraintName("PantsCuffConstructor_FkPantsCuffTypes_fkey");
-        });
-
-        modelBuilder.Entity<PantsCuffType>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PantsCuffTypes_pkey");
-        });
-
-        modelBuilder.Entity<PantsType>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PantsTypes_pkey");
         });
 
         modelBuilder.Entity<Payment>(entity =>
@@ -553,101 +697,6 @@ public partial class LainLotContext : DbContext
             entity.HasKey(e => e.Id).HasName("SizeOptions_pkey");
 
             entity.Property(e => e.Size).HasMaxLength(20);
-        });
-
-        modelBuilder.Entity<SleeveConstructor>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("SleeveConstructor_pkey");
-
-            entity.ToTable("SleeveConstructor");
-
-            entity.HasOne(d => d.FkColorsNavigation).WithMany(p => p.SleeveConstructors)
-                .HasForeignKey(d => d.FkColors)
-                .HasConstraintName("SleeveConstructor_FkColors_fkey");
-
-            entity.HasOne(d => d.FkSleeveTypesNavigation).WithMany(p => p.SleeveConstructors)
-                .HasForeignKey(d => d.FkSleeveTypes)
-                .HasConstraintName("SleeveConstructor_FkSleeveTypes_fkey");
-        });
-
-        modelBuilder.Entity<SleeveCuffConstructor>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("SleeveCuffConstructor_pkey");
-
-            entity.ToTable("SleeveCuffConstructor");
-
-            entity.HasOne(d => d.FkColorsLeftNavigation).WithMany(p => p.SleeveCuffConstructorFkColorsLeftNavigations)
-                .HasForeignKey(d => d.FkColorsLeft)
-                .HasConstraintName("SleeveCuffConstructor_FkColorsLeft_fkey");
-
-            entity.HasOne(d => d.FkColorsRightNavigation).WithMany(p => p.SleeveCuffConstructorFkColorsRightNavigations)
-                .HasForeignKey(d => d.FkColorsRight)
-                .HasConstraintName("SleeveCuffConstructor_FkColorsRight_fkey");
-
-            entity.HasOne(d => d.FkSleeveCuffTypesNavigation).WithMany(p => p.SleeveCuffConstructors)
-                .HasForeignKey(d => d.FkSleeveCuffTypes)
-                .HasConstraintName("SleeveCuffConstructor_FkSleeveCuffTypes_fkey");
-        });
-
-        modelBuilder.Entity<SleeveCuffType>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("SleeveCuffTypes_pkey");
-        });
-
-        modelBuilder.Entity<SleeveType>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("SleeveTypes_pkey");
-        });
-
-        modelBuilder.Entity<SportSuitConstructor>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("SportSuitConstructor_pkey");
-
-            entity.ToTable("SportSuitConstructor");
-
-            entity.HasOne(d => d.FkBeltConstructorNavigation).WithMany(p => p.SportSuitConstructors)
-                .HasForeignKey(d => d.FkBeltConstructor)
-                .HasConstraintName("SportSuitConstructor_FkBeltConstructor_fkey");
-
-            entity.HasOne(d => d.FkPantsConstructorNavigation).WithMany(p => p.SportSuitConstructors)
-                .HasForeignKey(d => d.FkPantsConstructor)
-                .HasConstraintName("SportSuitConstructor_FkPantsConstructor_fkey");
-
-            entity.HasOne(d => d.FkPantsCuffConstructorNavigation).WithMany(p => p.SportSuitConstructors)
-                .HasForeignKey(d => d.FkPantsCuffConstructor)
-                .HasConstraintName("SportSuitConstructor_FkPantsCuffConstructor_fkey");
-
-            entity.HasOne(d => d.FkSleeveConstructorNavigation).WithMany(p => p.SportSuitConstructors)
-                .HasForeignKey(d => d.FkSleeveConstructor)
-                .HasConstraintName("SportSuitConstructor_FkSleeveConstructor_fkey");
-
-            entity.HasOne(d => d.FkSleeveCuffConstructorNavigation).WithMany(p => p.SportSuitConstructors)
-                .HasForeignKey(d => d.FkSleeveCuffConstructor)
-                .HasConstraintName("SportSuitConstructor_FkSleeveCuffConstructor_fkey");
-
-            entity.HasOne(d => d.FkSweaterConstructorNavigation).WithMany(p => p.SportSuitConstructors)
-                .HasForeignKey(d => d.FkSweaterConstructor)
-                .HasConstraintName("SportSuitConstructor_FkSweaterConstructor_fkey");
-        });
-
-        modelBuilder.Entity<SweaterConstructor>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("SweaterConstructor_pkey");
-
-            entity.ToTable("SweaterConstructor");
-
-            entity.HasOne(d => d.FkColorsNavigation).WithMany(p => p.SweaterConstructors)
-                .HasForeignKey(d => d.FkColors)
-                .HasConstraintName("SweaterConstructor_FkColors_fkey");
-
-            entity.HasOne(d => d.FkSweaterTypesNavigation).WithMany(p => p.SweaterConstructors)
-                .HasForeignKey(d => d.FkSweaterTypes)
-                .HasConstraintName("SweaterConstructor_FkSweaterTypes_fkey");
-        });
-
-        modelBuilder.Entity<SweaterType>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("SweaterTypes_pkey");
         });
 
         modelBuilder.Entity<User>(entity =>

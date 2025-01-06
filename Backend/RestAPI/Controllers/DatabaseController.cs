@@ -15,8 +15,6 @@ namespace RestAPI.Controllers
         ILogger<DatabaseController> logger,
         IRepository<DB.About> aboutRepository,
         IRepository<DB.AccessLevel> accessLevelRepository,
-        IRepository<DB.BeltConstructor> beltConstructorRepository,
-        IRepository<DB.BeltType> beltTypeRepository,
         IRepository<DB.Cart> cartRepository,
         IRepository<DB.Category> categoryRepository,
         IRepository<DB.CategoryHierarchy> categoryHierarchyRepository,
@@ -27,15 +25,9 @@ namespace RestAPI.Controllers
         IRepository<DB.CustomizableProduct> customizableProductRepository,
         IRepository<DB.FabricType> fabricTypeRepository,
         IRepository<DB.Language> languageRepository,
-        IRepository<DB.NeckConstructor> neckConstructorRepository,
-        IRepository<DB.NeckType> neckTypeRepository,
         IRepository<DB.Order> orderRepository,
         IRepository<DB.OrderHistory> orderHistoryRepository,
         IRepository<DB.OrderStatus> orderStatusRepository,
-        IRepository<DB.PantsConstructor> pantsConstructorRepository,
-        IRepository<DB.PantsCuffConstructor> pantsCuffConstructorRepository,
-        IRepository<DB.PantsCuffType> pantsCuffTypeRepository,
-        IRepository<DB.PantsType> pantsTypeRepository,
         IRepository<DB.Payment> paymentRepository,
         IRepository<DB.PaymentMethod> paymentMethodRepository,
         IRepository<DB.PaymentStatus> paymentStatusRepository,
@@ -46,13 +38,6 @@ namespace RestAPI.Controllers
         IRepository<DB.Review> reviewRepository,
         IRepository<DB.ShippingAdress> shippingAdressRepository,
         IRepository<DB.SizeOption> sizeOptionRepository,
-        IRepository<DB.SleeveConstructor> sleeveConstructorRepository,
-        IRepository<DB.SleeveCuffConstructor> sleeveCuffConstructorRepository,
-        IRepository<DB.SleeveCuffType> sleeveCuffTypeRepository,
-        IRepository<DB.SleeveType> sleeveTypeRepository,
-        IRepository<DB.SportSuitConstructor> sportSuitConstructorRepository,
-        IRepository<DB.SweaterConstructor> sweaterConstructorRepository,
-        IRepository<DB.SweaterType> sweaterTypeRepository,
         IRepository<DB.User> userRepository,
         IRepository<DB.UserOrderHistory> userOrderHistoryRepository,
         IRepository<DB.UserProfile> userProfileRepository,
@@ -64,11 +49,10 @@ namespace RestAPI.Controllers
         /// </summary>
 
         private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+        #region repos init
         private readonly ILogger<DatabaseController> _logger = logger;
         private readonly IRepository<DB.About> _aboutRepository = aboutRepository;
         private readonly IRepository<DB.AccessLevel> _accessLevelRepository = accessLevelRepository;
-        private readonly IRepository<DB.BeltConstructor> _beltConstructorRepository = beltConstructorRepository;
-        private readonly IRepository<DB.BeltType> _beltTypeRepository = beltTypeRepository;
         private readonly IRepository<DB.Cart> _cartRepository = cartRepository;
         private readonly IRepository<DB.Category> _categoryRepository = categoryRepository;
         private readonly IRepository<DB.CategoryHierarchy> _categoryHierarchyRepository = categoryHierarchyRepository;
@@ -79,15 +63,9 @@ namespace RestAPI.Controllers
         private readonly IRepository<DB.CustomizableProduct> _customizableProductRepository = customizableProductRepository;
         private readonly IRepository<DB.FabricType> _fabricTypeRepository = fabricTypeRepository;
         private readonly IRepository<DB.Language> _languageRepository = languageRepository;
-        private readonly IRepository<DB.NeckConstructor> _neckConstructorRepository = neckConstructorRepository;
-        private readonly IRepository<DB.NeckType> _neckTypeRepository = neckTypeRepository;
         private readonly IRepository<DB.Order> _orderRepository = orderRepository;
         private readonly IRepository<DB.OrderHistory> _orderHistoryRepository = orderHistoryRepository;
         private readonly IRepository<DB.OrderStatus> _orderStatusRepository = orderStatusRepository;
-        private readonly IRepository<DB.PantsConstructor> _pantsConstructorRepository = pantsConstructorRepository;
-        private readonly IRepository<DB.PantsCuffConstructor> _pantsCuffConstructorRepository = pantsCuffConstructorRepository;
-        private readonly IRepository<DB.PantsCuffType> _pantsCuffTypeRepository = pantsCuffTypeRepository;
-        private readonly IRepository<DB.PantsType> _pantsTypeRepository = pantsTypeRepository;
         private readonly IRepository<DB.Payment> _paymentRepository = paymentRepository;
         private readonly IRepository<DB.PaymentMethod> _paymentMethodRepository = paymentMethodRepository;
         private readonly IRepository<DB.PaymentStatus> _paymentStatusRepository = paymentStatusRepository;
@@ -98,17 +76,11 @@ namespace RestAPI.Controllers
         private readonly IRepository<DB.Review> _reviewRepository = reviewRepository;
         private readonly IRepository<DB.ShippingAdress> _shippingAdressRepository = shippingAdressRepository;
         private readonly IRepository<DB.SizeOption> _sizeOptionRepository = sizeOptionRepository;
-        private readonly IRepository<DB.SleeveConstructor> _sleeveConstructorRepository = sleeveConstructorRepository;
-        private readonly IRepository<DB.SleeveCuffConstructor> _sleeveCuffConstructorRepository = sleeveCuffConstructorRepository;
-        private readonly IRepository<DB.SleeveCuffType> _sleeveCuffTypeRepository = sleeveCuffTypeRepository;
-        private readonly IRepository<DB.SleeveType> _sleeveTypeRepository = sleeveTypeRepository;
-        private readonly IRepository<DB.SportSuitConstructor> _sportSuitConstructorRepository = sportSuitConstructorRepository;
-        private readonly IRepository<DB.SweaterConstructor> _sweaterConstructorRepository = sweaterConstructorRepository;
-        private readonly IRepository<DB.SweaterType> _sweaterTypeRepository = sweaterTypeRepository;
         private readonly IRepository<DB.User> _userRepository = userRepository;
         private readonly IRepository<DB.UserOrderHistory> _userOrderHistoryRepository = userOrderHistoryRepository;
         private readonly IRepository<DB.UserProfile> _userProfileRepository = userProfileRepository;
         private readonly IRepository<DB.UserRole> _userRoleRepository = userRoleRepository;
+        #endregion
 
         #region About table
 
