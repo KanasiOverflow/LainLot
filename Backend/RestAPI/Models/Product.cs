@@ -4,6 +4,14 @@
     {
         public int Id { get; set; }
 
+        public int FkFabricTypes { get; set; }
+
+        public int FkColors { get; set; }
+
+        public int FkSizeOptions { get; set; }
+
+        public int FkCurrencies { get; set; }
+
         public decimal Price { get; set; }
 
         public int StockQuantity { get; set; }
