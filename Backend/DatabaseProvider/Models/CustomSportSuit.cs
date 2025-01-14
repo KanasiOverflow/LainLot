@@ -41,7 +41,7 @@ public partial class CustomSportSuit
 
     public virtual CustomSleeveCuff? FkCustomSleeveCuffsRightNavigation { get; set; }
 
-    public virtual CustomSleefe? FkCustomSleevesNavigation { get; set; }
+    public virtual CustomSleeve? FkCustomSleevesNavigation { get; set; }
 
     public virtual CustomSweater? FkCustomSweatersNavigation { get; set; }
 }

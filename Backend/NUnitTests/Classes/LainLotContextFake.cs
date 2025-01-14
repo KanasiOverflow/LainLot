@@ -13,7 +13,7 @@ namespace NUnitTests.Classes
         public DbSet<BaseNeckline> BaseNecklines => _dbContext.BaseNecklines;
         public DbSet<BasePant> BasePants => _dbContext.BasePants;
         public DbSet<BasePantsCuff> BasePantsCuffs => _dbContext.BasePantsCuffs;
-        public DbSet<BaseSleefe> BaseSleeves => _dbContext.BaseSleeves;
+        public DbSet<BaseSleeve> BaseSleeves => _dbContext.BaseSleeves;
         public DbSet<BaseSleeveCuff> BaseSleeveCuffs => _dbContext.BaseSleeveCuffs;
         public DbSet<BaseSportSuit> BaseSportSuits => _dbContext.BaseSportSuits;
         public DbSet<BaseSweater> BaseSweaters => _dbContext.BaseSweaters;
@@ -28,7 +28,7 @@ namespace NUnitTests.Classes
         public DbSet<CustomNeckline> CustomNecklines => _dbContext.CustomNecklines;
         public DbSet<CustomPant> CustomPants => _dbContext.CustomPants;
         public DbSet<CustomPantsCuff> CustomPantsCuffs => _dbContext.CustomPantsCuffs;
-        public DbSet<CustomSleefe> CustomSleeves => _dbContext.CustomSleeves;
+        public DbSet<CustomSleeve> CustomSleeves => _dbContext.CustomSleeves;
         public DbSet<CustomSleeveCuff> CustomSleeveCuffs => _dbContext.CustomSleeveCuffs;
         public DbSet<CustomSportSuit> CustomSportSuits => _dbContext.CustomSportSuits;
         public DbSet<CustomSweater> CustomSweaters => _dbContext.CustomSweaters;
@@ -46,7 +46,7 @@ namespace NUnitTests.Classes
         public DbSet<ProductOrder> ProductOrders => _dbContext.ProductOrders;
         public DbSet<ProductTranslation> ProductTranslations => _dbContext.ProductTranslations;
         public DbSet<Review> Reviews => _dbContext.Reviews;
-        public DbSet<ShippingAdress> ShippingAdresses => _dbContext.ShippingAdresses;
+        public DbSet<ShippingAddress> ShippingAddresses => _dbContext.ShippingAddresses;
         public DbSet<SizeOption> SizeOptions => _dbContext.SizeOptions;
         public DbSet<User> Users => _dbContext.Users;
         public DbSet<UserOrderHistory> UserOrderHistories => _dbContext.UserOrderHistories;

@@ -1,6 +1,6 @@
 ﻿namespace RestAPI.Models
 {
-    public class ShippingAdress
+    public class ShippingAddress
     {
         public int Id { get; set; }
 

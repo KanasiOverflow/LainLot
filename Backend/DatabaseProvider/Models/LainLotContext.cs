@@ -31,7 +31,7 @@ public partial class LainLotContext : DbContext
 
     public virtual DbSet<BasePantsCuff> BasePantsCuffs { get; set; }
 
-    public virtual DbSet<BaseSleefe> BaseSleeves { get; set; }
+    public virtual DbSet<BaseSleeve> BaseSleeves { get; set; }
 
     public virtual DbSet<BaseSleeveCuff> BaseSleeveCuffs { get; set; }
 
@@ -61,7 +61,7 @@ public partial class LainLotContext : DbContext
 
     public virtual DbSet<CustomPantsCuff> CustomPantsCuffs { get; set; }
 
-    public virtual DbSet<CustomSleefe> CustomSleeves { get; set; }
+    public virtual DbSet<CustomSleeve> CustomSleeves { get; set; }
 
     public virtual DbSet<CustomSleeveCuff> CustomSleeveCuffs { get; set; }
 
@@ -97,7 +97,7 @@ public partial class LainLotContext : DbContext
 
     public virtual DbSet<Review> Reviews { get; set; }
 
-    public virtual DbSet<ShippingAdress> ShippingAdresses { get; set; }
+    public virtual DbSet<ShippingAddress> ShippingAddresses { get; set; }
 
     public virtual DbSet<SizeOption> SizeOptions { get; set; }
 
@@ -165,7 +165,7 @@ public partial class LainLotContext : DbContext
             entity.Property(e => e.Settings).HasColumnType("jsonb");
         });
 
-        modelBuilder.Entity<BaseSleefe>(entity =>
+        modelBuilder.Entity<BaseSleeve>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("BaseSleeves_pkey");
 
@@ -367,7 +367,7 @@ public partial class LainLotContext : DbContext
                 .HasConstraintName("CustomPantsCuffs_FkBasePantCuffs_fkey");
         });
 
-        modelBuilder.Entity<CustomSleefe>(entity =>
+        modelBuilder.Entity<CustomSleeve>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("CustomSleeves_pkey");
 
@@ -518,9 +518,9 @@ public partial class LainLotContext : DbContext
                 .HasForeignKey(d => d.FkProductOrders)
                 .HasConstraintName("Orders_FkProductOrders_fkey");
 
-            entity.HasOne(d => d.FkShippingAdressesNavigation).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.FkShippingAdresses)
-                .HasConstraintName("Orders_FkShippingAdresses_fkey");
+            entity.HasOne(d => d.FkShippingAddressesNavigation).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.FkShippingAddresses)
+                .HasConstraintName("Orders_FkShippingAddresses_fkey");
         });
 
         modelBuilder.Entity<OrderHistory>(entity =>
@@ -677,19 +677,19 @@ public partial class LainLotContext : DbContext
                 .HasConstraintName("Reviews_FkUsers_fkey");
         });
 
-        modelBuilder.Entity<ShippingAdress>(entity =>
+        modelBuilder.Entity<ShippingAddress>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("ShippingAdresses_pkey");
+            entity.HasKey(e => e.Id).HasName("ShippingAddresses_pkey");
 
             entity.Property(e => e.Address).HasMaxLength(255);
             entity.Property(e => e.City).HasMaxLength(50);
             entity.Property(e => e.StateProvince).HasMaxLength(50);
             entity.Property(e => e.ZipPostCode).HasMaxLength(10);
 
-            entity.HasOne(d => d.FkCountriesNavigation).WithMany(p => p.ShippingAdresses)
+            entity.HasOne(d => d.FkCountriesNavigation).WithMany(p => p.ShippingAddresses)
                 .HasForeignKey(d => d.FkCountries)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("ShippingAdresses_FkCountries_fkey");
+                .HasConstraintName("ShippingAddresses_FkCountries_fkey");
         });
 
         modelBuilder.Entity<SizeOption>(entity =>

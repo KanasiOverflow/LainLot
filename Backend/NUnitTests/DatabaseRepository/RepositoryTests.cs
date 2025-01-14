@@ -6,7 +6,6 @@ using Moq;
 using DatabaseProvider.Models;
 using DatabaseRepository.Classes;
 using DatabaseRepository.Interfaces;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace NUnitTests.DatabaseRepository
 {
@@ -14,14 +13,32 @@ namespace NUnitTests.DatabaseRepository
     {
         private Mock<ILogger<LainLotContext>> _contextLogger;
         private LainLotContext? _context;
-        // Fake loggers
+        #region Fake loggers
         private Mock<ILogger<Repository<About>>> _aboutLogger;
         private Mock<ILogger<Repository<AccessLevel>>> _accessLevelLogger;
+        private Mock<ILogger<Repository<BaseBelt>>> _baseBeltLogger;
+        private Mock<ILogger<Repository<BaseNeckline>>> _baseNecklineLogger;
+        private Mock<ILogger<Repository<BasePant>>> _basePantLogger;
+        private Mock<ILogger<Repository<BasePantsCuff>>> _basePantsCuffLogger;
+        private Mock<ILogger<Repository<BaseSleeve>>> _baseSleeveLogger;
+        private Mock<ILogger<Repository<BaseSleeveCuff>>> _baseSleeveCuffLogger;
+        private Mock<ILogger<Repository<BaseSportSuit>>> _baseSportSuitLogger;
+        private Mock<ILogger<Repository<BaseSweater>>> _baseSweaterLogger;
         private Mock<ILogger<Repository<Cart>>> _cartLogger;
         private Mock<ILogger<Repository<Category>>> _categoryLogger;
         private Mock<ILogger<Repository<CategoryHierarchy>>> _categoryHierarchyLogger;
         private Mock<ILogger<Repository<Color>>> _colorLogger;
         private Mock<ILogger<Repository<Contact>>> _contactLogger;
+        private Mock<ILogger<Repository<Country>>> _countryLogger;
+        private Mock<ILogger<Repository<Currency>>> _currencyLogger;
+        private Mock<ILogger<Repository<CustomBelt>>> _customBeltLogger;
+        private Mock<ILogger<Repository<CustomNeckline>>> _customNecklineLogger;
+        private Mock<ILogger<Repository<CustomPant>>> _customPantLogger;
+        private Mock<ILogger<Repository<CustomPantsCuff>>> _customPantsCuffLogger;
+        private Mock<ILogger<Repository<CustomSleeve>>> _customSleeveLogger;
+        private Mock<ILogger<Repository<CustomSleeveCuff>>> _customSleeveCuffLogger;
+        private Mock<ILogger<Repository<CustomSportSuit>>> _customSportSuitLogger;
+        private Mock<ILogger<Repository<CustomSweater>>> _customSweaterLogger;
         private Mock<ILogger<Repository<CustomizableProduct>>> _customizableProductLogger;
         private Mock<ILogger<Repository<FabricType>>> _fabricTypeLogger;
         private Mock<ILogger<Repository<Language>>> _languageLogger;
@@ -29,21 +46,47 @@ namespace NUnitTests.DatabaseRepository
         private Mock<ILogger<Repository<OrderHistory>>> _orderHistoryLogger;
         private Mock<ILogger<Repository<OrderStatus>>> _orderStatusLogger;
         private Mock<ILogger<Repository<Payment>>> _paymentLogger;
+        private Mock<ILogger<Repository<PaymentMethod>>> _paymentMethodLogger;
+        private Mock<ILogger<Repository<PaymentStatus>>> _paymentStatusLogger;
         private Mock<ILogger<Repository<Product>>> _productLogger;
         private Mock<ILogger<Repository<ProductImage>>> _productImageLogger;
+        private Mock<ILogger<Repository<ProductOrder>>> _productOrderLogger;
         private Mock<ILogger<Repository<ProductTranslation>>> _productTranslationLogger;
         private Mock<ILogger<Repository<Review>>> _reviewLogger;
+        private Mock<ILogger<Repository<ShippingAddress>>> _shippingAddressLogger;
+        private Mock<ILogger<Repository<SizeOption>>> _sizeOptionLogger;
         private Mock<ILogger<Repository<User>>> _userLogger;
+        private Mock<ILogger<Repository<UserOrderHistory>>> _userOrderHistoryLogger;
         private Mock<ILogger<Repository<UserProfile>>> _userProfileLogger;
         private Mock<ILogger<Repository<UserRole>>> _userRoleLogger;
-        // Repositories
+        #endregion
+
+        #region Repositories
         private IRepository<About>? _aboutRepository;
         private IRepository<AccessLevel>? _accessLevelRepository;
+        private IRepository<BaseBelt>? _baseBeltRepository;
+        private IRepository<BaseNeckline>? _baseNecklineRepository;
+        private IRepository<BasePant>? _basePantRepository;
+        private IRepository<BasePantsCuff>? _basePantsCuffRepository;
+        private IRepository<BaseSleeve>? _baseSleeveRepository;
+        private IRepository<BaseSleeveCuff>? _baseSleeveCuffRepository;
+        private IRepository<BaseSportSuit>? _baseSportSuitRepository;
+        private IRepository<BaseSweater>? _baseSweaterRepository;
         private IRepository<Cart>? _cartRepository;
         private IRepository<Category>? _categoryRepository;
         private IRepository<CategoryHierarchy>? _categoryHierarchyRepository;
         private IRepository<Color>? _colorRepository;
         private IRepository<Contact>? _contactRepository;
+        private IRepository<Country>? _countryRepository;
+        private IRepository<Currency>? _currencyRepository;
+        private IRepository<CustomBelt>? _customBeltRepository;
+        private IRepository<CustomNeckline>? _customNecklineRepository;
+        private IRepository<CustomPant>? _customPantRepository;
+        private IRepository<CustomPantsCuff>? _customPantsCuffRepository;
+        private IRepository<CustomSleeve>? _customSleeveRepository;
+        private IRepository<CustomSleeveCuff>? _customSleeveCuffRepository;
+        private IRepository<CustomSportSuit>? _customSportSuitRepository;
+        private IRepository<CustomSweater>? _customSweaterRepository;
         private IRepository<CustomizableProduct>? _customizableProductRepository;
         private IRepository<FabricType>? _fabricTypeRepository;
         private IRepository<Language>? _languageRepository;
@@ -51,14 +94,20 @@ namespace NUnitTests.DatabaseRepository
         private IRepository<OrderHistory>? _orderHistoryRepository;
         private IRepository<OrderStatus>? _orderStatusRepository;
         private IRepository<Payment>? _paymentRepository;
+        private IRepository<PaymentMethod>? _paymentMethodRepository;
+        private IRepository<PaymentStatus>? _paymentStatusRepository;
         private IRepository<Product>? _productRepository;
         private IRepository<ProductImage>? _productImageRepository;
+        private IRepository<ProductOrder>? _productOrderRepository;
         private IRepository<ProductTranslation>? _productTranslationRepository;
         private IRepository<Review>? _reviewRepository;
+        private IRepository<ShippingAddress>? _shippingAddressRepository;
+        private IRepository<SizeOption>? _sizeOptionRepository;
         private IRepository<User>? _userRepository;
+        private IRepository<UserOrderHistory>? _userOrderHistoryRepository;
         private IRepository<UserProfile>? _userProfileRepository;
         private IRepository<UserRole>? _userRoleRepository;
-
+        #endregion
 
         [SetUp]
         public void Setup()
@@ -73,14 +122,32 @@ namespace NUnitTests.DatabaseRepository
             // Create a fake DbContext
             _context = new LainLotContext(options, _contextLogger.Object);
 
-            // Create fake loggers
+            #region Create fake loggers
             _aboutLogger = new Mock<ILogger<Repository<About>>>();
             _accessLevelLogger = new Mock<ILogger<Repository<AccessLevel>>>();
+            _baseBeltLogger = new Mock<ILogger<Repository<BaseBelt>>>();
+            _baseNecklineLogger = new Mock<ILogger<Repository<BaseNeckline>>>();
+            _basePantLogger = new Mock<ILogger<Repository<BasePant>>>();
+            _basePantsCuffLogger = new Mock<ILogger<Repository<BasePantsCuff>>>();
+            _baseSleeveLogger = new Mock<ILogger<Repository<BaseSleeve>>>();
+            _baseSleeveCuffLogger = new Mock<ILogger<Repository<BaseSleeveCuff>>>();
+            _baseSportSuitLogger = new Mock<ILogger<Repository<BaseSportSuit>>>();
+            _baseSweaterLogger = new Mock<ILogger<Repository<BaseSweater>>>();
             _cartLogger = new Mock<ILogger<Repository<Cart>>>();
             _categoryLogger = new Mock<ILogger<Repository<Category>>>();
             _categoryHierarchyLogger = new Mock<ILogger<Repository<CategoryHierarchy>>>();
             _colorLogger = new Mock<ILogger<Repository<Color>>>();
             _contactLogger = new Mock<ILogger<Repository<Contact>>>();
+            _countryLogger = new Mock<ILogger<Repository<Country>>>();
+            _currencyLogger = new Mock<ILogger<Repository<Currency>>>();
+            _customBeltLogger = new Mock<ILogger<Repository<CustomBelt>>>();
+            _customNecklineLogger = new Mock<ILogger<Repository<CustomNeckline>>>();
+            _customPantLogger = new Mock<ILogger<Repository<CustomPant>>>();
+            _customPantsCuffLogger = new Mock<ILogger<Repository<CustomPantsCuff>>>();
+            _customSleeveLogger = new Mock<ILogger<Repository<CustomSleeve>>>();
+            _customSleeveCuffLogger = new Mock<ILogger<Repository<CustomSleeveCuff>>>();
+            _customSportSuitLogger = new Mock<ILogger<Repository<CustomSportSuit>>>();
+            _customSweaterLogger = new Mock<ILogger<Repository<CustomSweater>>>();
             _customizableProductLogger = new Mock<ILogger<Repository<CustomizableProduct>>>();
             _fabricTypeLogger = new Mock<ILogger<Repository<FabricType>>>();
             _languageLogger = new Mock<ILogger<Repository<Language>>>();
@@ -88,22 +155,47 @@ namespace NUnitTests.DatabaseRepository
             _orderHistoryLogger = new Mock<ILogger<Repository<OrderHistory>>>();
             _orderStatusLogger = new Mock<ILogger<Repository<OrderStatus>>>();
             _paymentLogger = new Mock<ILogger<Repository<Payment>>>();
+            _paymentMethodLogger = new Mock<ILogger<Repository<PaymentMethod>>>();
+            _paymentStatusLogger = new Mock<ILogger<Repository<PaymentStatus>>>();
             _productLogger = new Mock<ILogger<Repository<Product>>>();
             _productImageLogger = new Mock<ILogger<Repository<ProductImage>>>();
+            _productOrderLogger = new Mock<ILogger<Repository<ProductOrder>>>();
             _productTranslationLogger = new Mock<ILogger<Repository<ProductTranslation>>>();
             _reviewLogger = new Mock<ILogger<Repository<Review>>>();
+            _shippingAddressLogger = new Mock<ILogger<Repository<ShippingAddress>>>();
+            _sizeOptionLogger = new Mock<ILogger<Repository<SizeOption>>>();
             _userLogger = new Mock<ILogger<Repository<User>>>();
+            _userOrderHistoryLogger = new Mock<ILogger<Repository<UserOrderHistory>>>();
             _userProfileLogger = new Mock<ILogger<Repository<UserProfile>>>();
             _userRoleLogger = new Mock<ILogger<Repository<UserRole>>>();
+            #endregion
 
-            // Create fake data
+            #region Create fake data
             var abouts = DatabaseDataFake.GetFakeAboutList();
             var accessLevels = DatabaseDataFake.GetFakeAccessLevelList();
+            var baseBelts = DatabaseDataFake.GetFakeBaseBeltList();
+            var baseNecklines = DatabaseDataFake.GetFakeBaseNecklineList();
+            var basePants = DatabaseDataFake.GetFakeBasePantList();
+            var basePantsCuffs = DatabaseDataFake.GetFakeBasePantsCuffList();
+            var baseSleefes = DatabaseDataFake.GetFakeBaseSleeveList();
+            var baseSleeveCuffs = DatabaseDataFake.GetFakeBaseSleeveCuffList();
+            var baseSportSuits = DatabaseDataFake.GetFakeBaseSportSuitList();
+            var baseSweaters = DatabaseDataFake.GetFakeBaseSweaterList();
             var carts = DatabaseDataFake.GetFakeCartsList();
             var categories = DatabaseDataFake.GetFakeCategoryList();
             var categoryHierarchies = DatabaseDataFake.GetFakeCategoryHierarchyList();
             var colors = DatabaseDataFake.GetFakeColorList();
             var contacts = DatabaseDataFake.GetFakeContactList();
+            var countries = DatabaseDataFake.GetFakeCountryList();
+            var currencies = DatabaseDataFake.GetFakeCurrencyList();
+            var customBelts = DatabaseDataFake.GetFakeCustomBeltList();
+            var customNecklines = DatabaseDataFake.GetFakeCustomNecklineList();
+            var customPants = DatabaseDataFake.GetFakeCustomPantList();
+            var customPantsCuffs = DatabaseDataFake.GetFakeCustomPantsCuffList();
+            var customSleefes = DatabaseDataFake.GetFakeCustomSleeveList();
+            var customSleeveCuffs = DatabaseDataFake.GetFakeCustomSleeveCuffList();
+            var customSportSuits = DatabaseDataFake.GetFakeCustomSportSuitList();
+            var customSweaters = DatabaseDataFake.GetFakeCustomSweaterList();
             var customizableProducts = DatabaseDataFake.GetFakeCustomizableProductList();
             var fabricTypes = DatabaseDataFake.GetFakeFabricTypeList();
             var languages = DatabaseDataFake.GetFakeLanguageList();
@@ -111,22 +203,46 @@ namespace NUnitTests.DatabaseRepository
             var orderHistories = DatabaseDataFake.GetFakeOrderHistoryList();
             var orderStatuses = DatabaseDataFake.GetFakeOrderStatusList();
             var payments = DatabaseDataFake.GetFakePaymentList();
+            var paymentMethods = DatabaseDataFake.GetFakePaymentMethodList();
+            var paymentStatuses = DatabaseDataFake.GetFakePaymentStatusList();
             var products = DatabaseDataFake.GetFakeProductList();
             var productImages = DatabaseDataFake.GetFakeProductImageList();
+            var productOrders = DatabaseDataFake.GetFakeProductOrderList();
             var productTranslations = DatabaseDataFake.GetFakeProductTranslationList();
             var reviews = DatabaseDataFake.GetFakeReviewList();
+            var shippingAddresses = DatabaseDataFake.GetFakeShippingAddressList();
+            var sizeOptions = DatabaseDataFake.GetFakeSizeOptionList();
             var users = DatabaseDataFake.GetFakeUserList();
             var userProfiles = DatabaseDataFake.GetFakeUserProfileList();
             var userRoles = DatabaseDataFake.GetFakeUserRoleList();
+            #endregion
 
-            // Init base data in fake DbContext
+            #region Init base data in fake DbContext
             _context.Abouts.AddRange(abouts);
             _context.AccessLevels.AddRange(accessLevels);
+            _context.BaseBelts.AddRange(baseBelts);
+            _context.BaseNecklines.AddRange(baseNecklines);
+            _context.BasePants.AddRange(basePants);
+            _context.BasePantsCuffs.AddRange(basePantsCuffs);
+            _context.BaseSleeves.AddRange(baseSleefes);
+            _context.BaseSleeveCuffs.AddRange(baseSleeveCuffs);
+            _context.BaseSportSuits.AddRange(baseSportSuits);
+            _context.BaseSweaters.AddRange(baseSweaters);
             _context.Carts.AddRange(carts);
             _context.Categories.AddRange(categories);
             _context.CategoryHierarchies.AddRange(categoryHierarchies);
             _context.Colors.AddRange(colors);
             _context.Contacts.AddRange(contacts);
+            _context.Countries.AddRange(countries);
+            _context.Currencies.AddRange(currencies);
+            _context.CustomBelts.AddRange(customBelts);
+            _context.CustomNecklines.AddRange(customNecklines);
+            _context.CustomPants.AddRange(customPants);
+            _context.CustomPantsCuffs.AddRange(customPantsCuffs);
+            _context.CustomSleeves.AddRange(customSleefes);
+            _context.CustomSleeveCuffs.AddRange(customSleeveCuffs);
+            _context.CustomSportSuits.AddRange(customSportSuits);
+            _context.CustomSweaters.AddRange(customSweaters);
             _context.CustomizableProducts.AddRange(customizableProducts);
             _context.FabricTypes.AddRange(fabricTypes);
             _context.Languages.AddRange(languages);
@@ -134,25 +250,49 @@ namespace NUnitTests.DatabaseRepository
             _context.OrderHistories.AddRange(orderHistories);
             _context.OrderStatuses.AddRange(orderStatuses);
             _context.Payments.AddRange(payments);
+            _context.PaymentMethods.AddRange(paymentMethods);
+            _context.PaymentStatuses.AddRange(paymentStatuses);
             _context.Products.AddRange(products);
             _context.ProductImages.AddRange(productImages);
+            _context.ProductOrders.AddRange(productOrders);
             _context.ProductTranslations.AddRange(productTranslations);
             _context.Reviews.AddRange(reviews);
+            _context.ShippingAddresses.AddRange(shippingAddresses);
+            _context.SizeOptions.AddRange(sizeOptions);
             _context.Users.AddRange(users);
             _context.UserProfiles.AddRange(userProfiles);
             _context.UserRoles.AddRange(userRoles);
+            #endregion
 
             // Save data in fake DbContext
             _context.SaveChanges();
 
-            // Create all instances for repositories
+            #region Create all instances for repositories
             _aboutRepository = new Repository<About>(_context, _aboutLogger.Object);
             _accessLevelRepository = new Repository<AccessLevel>(_context, _accessLevelLogger.Object);
+            _baseBeltRepository = new Repository<BaseBelt>(_context, _baseBeltLogger.Object);
+            _baseNecklineRepository = new Repository<BaseNeckline>(_context, _baseNecklineLogger.Object);
+            _basePantRepository = new Repository<BasePant>(_context, _basePantLogger.Object);
+            _basePantsCuffRepository = new Repository<BasePantsCuff>(_context, _basePantsCuffLogger.Object);
+            _baseSleeveRepository = new Repository<BaseSleeve>(_context, _baseSleeveLogger.Object);
+            _baseSleeveCuffRepository = new Repository<BaseSleeveCuff>(_context, _baseSleeveCuffLogger.Object);
+            _baseSportSuitRepository = new Repository<BaseSportSuit>(_context, _baseSportSuitLogger.Object);
+            _baseSweaterRepository = new Repository<BaseSweater>(_context, _baseSweaterLogger.Object);
             _cartRepository = new Repository<Cart>(_context, _cartLogger.Object);
             _categoryRepository = new Repository<Category>(_context, _categoryLogger.Object);
             _categoryHierarchyRepository = new Repository<CategoryHierarchy>(_context, _categoryHierarchyLogger.Object);
             _colorRepository = new Repository<Color>(_context, _colorLogger.Object);
             _contactRepository = new Repository<Contact>(_context, _contactLogger.Object);
+            _countryRepository = new Repository<Country>(_context, _countryLogger.Object);
+            _currencyRepository = new Repository<Currency>(_context, _currencyLogger.Object);
+            _customBeltRepository = new Repository<CustomBelt>(_context, _customBeltLogger.Object);
+            _customNecklineRepository = new Repository<CustomNeckline>(_context, _customNecklineLogger.Object);
+            _customPantRepository = new Repository<CustomPant>(_context, _customPantLogger.Object);
+            _customPantsCuffRepository = new Repository<CustomPantsCuff>(_context, _customPantsCuffLogger.Object);
+            _customSleeveRepository = new Repository<CustomSleeve>(_context, _customSleeveLogger.Object);
+            _customSleeveCuffRepository = new Repository<CustomSleeveCuff>(_context, _customSleeveCuffLogger.Object);
+            _customSportSuitRepository = new Repository<CustomSportSuit>(_context, _customSportSuitLogger.Object);
+            _customSweaterRepository = new Repository<CustomSweater>(_context, _customSweaterLogger.Object);
             _customizableProductRepository = new Repository<CustomizableProduct>(_context, _customizableProductLogger.Object);
             _fabricTypeRepository = new Repository<FabricType>(_context, _fabricTypeLogger.Object);
             _languageRepository = new Repository<Language>(_context, _languageLogger.Object);
@@ -160,14 +300,20 @@ namespace NUnitTests.DatabaseRepository
             _orderHistoryRepository = new Repository<OrderHistory>(_context, _orderHistoryLogger.Object);
             _orderStatusRepository = new Repository<OrderStatus>(_context, _orderStatusLogger.Object);
             _paymentRepository = new Repository<Payment>(_context, _paymentLogger.Object);
+            _paymentMethodRepository = new Repository<PaymentMethod>(_context, _paymentMethodLogger.Object);
+            _paymentStatusRepository = new Repository<PaymentStatus>(_context, _paymentStatusLogger.Object);
             _productRepository = new Repository<Product>(_context, _productLogger.Object);
             _productImageRepository = new Repository<ProductImage>(_context, _productImageLogger.Object);
+            _productOrderRepository = new Repository<ProductOrder>(_context, _productOrderLogger.Object);
             _productTranslationRepository = new Repository<ProductTranslation>(_context, _productTranslationLogger.Object);
             _reviewRepository = new Repository<Review>(_context, _reviewLogger.Object);
+            _shippingAddressRepository = new Repository<ShippingAddress>(_context, _shippingAddressLogger.Object);
+            _sizeOptionRepository = new Repository<SizeOption>(_context, _sizeOptionLogger.Object);
             _userRepository = new Repository<User>(_context, _userLogger.Object);
+            _userOrderHistoryRepository = new Repository<UserOrderHistory>(_context, _userOrderHistoryLogger.Object);
             _userProfileRepository = new Repository<UserProfile>(_context, _userProfileLogger.Object);
             _userRoleRepository = new Repository<UserRole>(_context, _userRoleLogger.Object);
-
+            #endregion
         }
 
         [TearDown]
@@ -1102,7 +1248,7 @@ namespace NUnitTests.DatabaseRepository
                 FkProductOrders = 1,
                 FkOrderStatus = 1,
                 FkPayments = 1,
-                FkShippingAdresses = 1,
+                FkShippingAddresses = 1,
                 Price = 411,
                 Amount = 14,
                 OrderDate = DateTime.UtcNow,

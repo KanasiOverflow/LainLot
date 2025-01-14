@@ -9,5 +9,5 @@ public partial class Country
 
     public string? Name { get; set; }
 
-    public virtual ICollection<ShippingAdress> ShippingAdresses { get; set; } = new List<ShippingAdress>();
+    public virtual ICollection<ShippingAddress> ShippingAddresses { get; set; } = new List<ShippingAddress>();
 }

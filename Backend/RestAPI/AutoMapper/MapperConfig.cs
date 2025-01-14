@@ -95,7 +95,7 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.FkProductOrders, opt => opt.MapFrom(s => s.FkProductOrders))
                     .ForMember(d => d.FkOrderStatus, opt => opt.MapFrom(s => s.FkOrderStatus))
                     .ForMember(d => d.FkPayments, opt => opt.MapFrom(s => s.FkPayments))
-                    .ForMember(d => d.FkShippingAdresses, opt => opt.MapFrom(s => s.FkShippingAdresses))
+                    .ForMember(d => d.FkShippingAddresses, opt => opt.MapFrom(s => s.FkShippingAdresses))
                     .ForMember(d => d.Price, opt => opt.MapFrom(s => s.Price))
                     .ForMember(d => d.Amount, opt => opt.MapFrom(s => s.Amount))
                     .ForMember(d => d.OrderDate, opt => opt.MapFrom(s => s.OrderDate))
@@ -163,7 +163,7 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Comment, opt => opt.MapFrom(s => s.Comment))
                     .ForMember(d => d.CreatedAt, opt => opt.MapFrom(s => s.CreatedAt));
 
-                cfg.CreateMap<API.ShippingAdress, DB.ShippingAdress>()
+                cfg.CreateMap<API.ShippingAddress, DB.ShippingAddress>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkCountries, opt => opt.MapFrom(s => s.FkCountries))
                     .ForMember(d => d.Address, opt => opt.MapFrom(s => s.Address))
@@ -289,7 +289,7 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.FkProductOrders, opt => opt.MapFrom(s => s.FkProductOrders))
                     .ForMember(d => d.FkOrderStatus, opt => opt.MapFrom(s => s.FkOrderStatus))
                     .ForMember(d => d.FkPayments, opt => opt.MapFrom(s => s.FkPayments))
-                    .ForMember(d => d.FkShippingAdresses, opt => opt.MapFrom(s => s.FkShippingAdresses))
+                    .ForMember(d => d.FkShippingAdresses, opt => opt.MapFrom(s => s.FkShippingAddresses))
                     .ForMember(d => d.Price, opt => opt.MapFrom(s => s.Price))
                     .ForMember(d => d.Amount, opt => opt.MapFrom(s => s.Amount))
                     .ForMember(d => d.OrderDate, opt => opt.MapFrom(s => s.OrderDate))
@@ -357,7 +357,7 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Comment, opt => opt.MapFrom(s => s.Comment))
                     .ForMember(d => d.CreatedAt, opt => opt.MapFrom(s => s.CreatedAt));
 
-                cfg.CreateMap<DB.ShippingAdress, API.ShippingAdress>()
+                cfg.CreateMap<DB.ShippingAddress, API.ShippingAddress>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkCountries, opt => opt.MapFrom(s => s.FkCountries))
                     .ForMember(d => d.Address, opt => opt.MapFrom(s => s.Address))

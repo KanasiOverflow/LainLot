@@ -23,6 +23,82 @@ namespace NUnitTests.Classes
             ];
         }
 
+        public static List<BaseBelt> GetFakeBaseBeltList()
+        {
+            return
+            [
+                new BaseBelt { Id = 1, Settings = "{ \"material\": \"leather\", \"color\": \"black\" }" },
+                new BaseBelt { Id = 2, Settings = "{ \"material\": \"fabric\", \"color\": \"grey\" }" }
+            ];
+        }
+
+        public static List<BaseNeckline> GetFakeBaseNecklineList()
+        {
+            return
+            [
+                new BaseNeckline { Id = 1, Settings = "{ \"type\": \"round\", \"detail\": \"none\" }" },
+                new BaseNeckline { Id = 2, Settings = "{ \"type\": \"v-neck\", \"detail\": \"lace\" }" }
+            ];
+        }
+
+        public static List<BasePant> GetFakeBasePantList()
+        {
+            return
+            [
+                new BasePant { Id = 1, Settings = "{ \"style\": \"jeans\", \"fit\": \"slim\" }" },
+                new BasePant { Id = 2, Settings = "{ \"style\": \"chinos\", \"fit\": \"regular\" }" }
+            ];
+        }
+
+        public static List<BasePantsCuff> GetFakeBasePantsCuffList()
+        {
+            return
+            [
+                new BasePantsCuff { Id = 1, Settings = "{ \"type\": \"elastic\", \"detail\": \"ribbed\" }" },
+                new BasePantsCuff { Id = 2, Settings = "{ \"type\": \"plain\", \"detail\": \"straight cut\" }" }
+            ];
+        }
+
+        public static List<BaseSleeve> GetFakeBaseSleeveList()
+        {
+            return
+            [
+                new BaseSleeve { Id = 1, Settings = "{ \"length\": \"long\", \"pattern\": \"solid\" }" },
+                new BaseSleeve { Id = 2, Settings = "{ \"length\": \"short\", \"pattern\": \"striped\" }" }
+            ];
+        }
+
+        public static List<BaseSleeveCuff> GetFakeBaseSleeveCuffList()
+        {
+            return
+            [
+                new BaseSleeveCuff { Id = 1, Settings = "{ \"style\": \"ribbed\", \"feature\": \"elastic\" }" },
+                new BaseSleeveCuff { Id = 2, Settings = "{ \"style\": \"buttoned\", \"feature\": \"adjustable\" }" }
+            ];
+        }
+
+        public static List<BaseSportSuit> GetFakeBaseSportSuitList()
+        {
+            return
+            [
+                new BaseSportSuit
+                {            
+                    Id = 1, FkBaseNecklines = 1, FkBaseSweaters = 1, FkBaseSleeves = 1, FkBaseSleeveCuffsLeft = 1, FkBaseSleeveCuffsRight = 1, FkBaseBelts = 1, FkBasePants = 1, FkBasePantsCuffsLeft = 1, FkBasePantsCuffsRight = 1 },
+                new BaseSportSuit
+                {
+                    Id = 2, FkBaseNecklines = 2, FkBaseSweaters = 2, FkBaseSleeves = 2, FkBaseSleeveCuffsLeft = 2, FkBaseSleeveCuffsRight = 2, FkBaseBelts = 2, FkBasePants = 2, FkBasePantsCuffsLeft = 2, FkBasePantsCuffsRight = 2 }
+            ];
+        }
+
+        public static List<BaseSweater> GetFakeBaseSweaterList()
+        {
+            return
+            [
+                new BaseSweater { Id = 1, Settings = "{ \"material\": \"wool\", \"style\": \"pullover\" }" },
+                new BaseSweater { Id = 2, Settings = "{ \"material\": \"cotton\", \"style\": \"cardigan\" }" }
+            ];
+        }
+
         public static List<Cart> GetFakeCartsList()
         {
             return
@@ -86,6 +162,90 @@ namespace NUnitTests.Classes
             ];
         }
 
+        public static List<CustomBelt> GetFakeCustomBeltList()
+        {
+            return
+            [
+                new CustomBelt
+                {
+                    Id = 1, FkBaseBelts = 1, CustomSettings = "{ \"material\": \"leather\", \"color\": \"navy\", \"buckle\": \"silver\" }" },
+                new CustomBelt
+                {
+                    Id = 2, FkBaseBelts = 2, CustomSettings = "{ \"material\": \"fabric\", \"color\": \"brown\", \"buckle\": \"gold\" }" }
+            ];
+        }
+
+        public static List<CustomNeckline> GetFakeCustomNecklineList()
+        {
+            return
+            [
+                new CustomNeckline
+                {
+                    Id = 1, FkBaseNecklines = 1, CustomSettings = "{ \"type\": \"round\", \"detail\": \"button-down\", \"decoration\": \"none\" }" },
+                new CustomNeckline
+                {
+                    Id = 2, FkBaseNecklines = 2, CustomSettings = "{ \"type\": \"v-neck\", \"detail\": \"zip-up\", \"decoration\": \"beads\" }" }
+            ];
+        }
+
+        public static List<CustomPant> GetFakeCustomPantList()
+        {
+            return
+            [
+                new CustomPant
+                {
+                    Id = 1, FkBasePants = 1, CustomSettings = "{ \"style\": \"jeans\", \"fit\": \"skinny\", \"color\": \"dark blue\" }" },
+                new CustomPant
+                {
+                    Id = 2, FkBasePants = 2, CustomSettings = "{ \"style\": \"chinos\", \"fit\": \"relaxed\", \"color\": \"khaki\" }" }
+            ];
+        }
+
+        public static List<CustomPantsCuff> GetFakeCustomPantsCuffList()
+        {
+            return
+            [
+                new CustomPantsCuff { Id = 1, FkBasePantCuffs = 1, CustomSettings = "{ \"type\": \"elastic\", \"detail\": \"ribbed\", \"color\": \"black\" }" },
+                new CustomPantsCuff { Id = 2, FkBasePantCuffs = 2, CustomSettings = "{ \"type\": \"plain\", \"detail\": \"straight cut\", \"color\": \"navy\" }" }
+            ];
+        }
+
+        public static List<CustomSleeve> GetFakeCustomSleeveList()
+        {
+            return
+            [
+                new CustomSleeve { Id = 1, FkBaseSleeves = 1, CustomSettings = "{ \"length\": \"long\", \"pattern\": \"solid\", \"color\": \"white\" }" },
+                new CustomSleeve { Id = 2, FkBaseSleeves = 2, CustomSettings = "{ \"length\": \"short\", \"pattern\": \"striped\", \"color\": \"blue\" }" }
+            ];
+        }
+
+        public static List<CustomSleeveCuff> GetFakeCustomSleeveCuffList()
+        {
+            return
+            [
+                new CustomSleeveCuff { Id = 1, FkBaseSleeveCuffs = 1, CustomSettings = "{ \"style\": \"ribbed\", \"feature\": \"elastic\", \"color\": \"gray\" }" },
+                new CustomSleeveCuff { Id = 2, FkBaseSleeveCuffs = 2, CustomSettings = "{ \"style\": \"buttoned\", \"feature\": \"adjustable\", \"color\": \"black\" }" }
+            ];
+        }
+
+        public static List<CustomSportSuit> GetFakeCustomSportSuitList()
+        {
+            return
+            [
+                new CustomSportSuit { Id = 1, FkCustomNecklines = 1, FkCustomSweaters = 1, FkCustomSleeves = 1, FkCustomSleeveCuffsLeft = 1, FkCustomSleeveCuffsRight = 1, FkCustomBelts = 1, FkCustomPants = 1, FkCustomPantsCuffsLeft = 1, FkCustomPantsCuffsRight = 1 },
+                new CustomSportSuit { Id = 2, FkCustomNecklines = 2, FkCustomSweaters = 2, FkCustomSleeves = 2, FkCustomSleeveCuffsLeft = 2, FkCustomSleeveCuffsRight = 2, FkCustomBelts = 2, FkCustomPants = 2, FkCustomPantsCuffsLeft = 2, FkCustomPantsCuffsRight = 2 }
+            ];
+        }
+
+        public static List<CustomSweater> GetFakeCustomSweaterList()
+        {
+            return
+            [
+                new CustomSweater { Id = 1, FkBaseSweaters = 1, CustomSettings = "{ \"material\": \"wool\", \"style\": \"pullover\", \"color\": \"black\" }" },
+                new CustomSweater { Id = 2, FkBaseSweaters = 2, CustomSettings = "{ \"material\": \"cotton\", \"style\": \"cardigan\", \"color\": \"white\" }" }
+            ];
+        }
+
         public static List<CustomizableProduct> GetFakeCustomizableProductList()
         {
             return
@@ -117,8 +277,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new Order { Id = 1, FkProductOrders = 1, FkOrderStatus = 1, FkPayments = 1, FkShippingAdresses = 1, Price = 100, Amount = 10, OrderDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now  },
-                new Order { Id = 2, FkProductOrders = 2, FkOrderStatus = 2, FkPayments = 2, FkShippingAdresses = 1, Price = 100, Amount = 10, OrderDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now  }
+                new Order { Id = 1, FkProductOrders = 1, FkOrderStatus = 1, FkPayments = 1, FkShippingAddresses = 1, Price = 100, Amount = 10, OrderDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now  },
+                new Order { Id = 2, FkProductOrders = 2, FkOrderStatus = 2, FkPayments = 2, FkShippingAddresses = 1, Price = 100, Amount = 10, OrderDate = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now  }
             ];
         }
 
@@ -212,12 +372,12 @@ namespace NUnitTests.Classes
             ];
         }
 
-        public static List<ShippingAdress> GetFakeShippingAddressList()
+        public static List<ShippingAddress> GetFakeShippingAddressList()
         {
             return
             [
-                new ShippingAdress { Id = 1, FkCountries = 1, Address = "123 Main St", City = "Metropolis", ZipPostCode = "12345", StateProvince = "State1" },
-                new ShippingAdress { Id = 2, FkCountries = 2, Address = "456 Elm St", City = "Smallville", ZipPostCode = "67890", StateProvince = "State2" }
+                new ShippingAddress { Id = 1, FkCountries = 1, Address = "123 Main St", City = "Metropolis", ZipPostCode = "12345", StateProvince = "State1" },
+                new ShippingAddress { Id = 2, FkCountries = 2, Address = "456 Elm St", City = "Smallville", ZipPostCode = "67890", StateProvince = "State2" }
             ];
         }
 

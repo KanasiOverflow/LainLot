@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DatabaseProvider.Models;
 
-public partial class ShippingAdress
+public partial class ShippingAddress
 {
     public int Id { get; set; }
 

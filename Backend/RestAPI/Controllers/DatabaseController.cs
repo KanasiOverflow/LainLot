@@ -15,6 +15,14 @@ namespace RestAPI.Controllers
         ILogger<DatabaseController> logger,
         IRepository<DB.About> aboutRepository,
         IRepository<DB.AccessLevel> accessLevelRepository,
+        IRepository<DB.BaseBelt> baseBeltRepository,
+        IRepository<DB.BaseNeckline> baseNecklineRepository,
+        IRepository<DB.BasePant> basePantRepository,
+        IRepository<DB.BasePantsCuff> basePantsCuffRepository,
+        IRepository<DB.BaseSleeve> baseSleeveRepository,
+        IRepository<DB.BaseSleeveCuff> baseSleeveCuffRepository,
+        IRepository<DB.BaseSportSuit> baseSportSuitRepository,
+        IRepository<DB.BaseSweater> baseSweaterRepository,
         IRepository<DB.Cart> cartRepository,
         IRepository<DB.Category> categoryRepository,
         IRepository<DB.CategoryHierarchy> categoryHierarchyRepository,
@@ -22,6 +30,14 @@ namespace RestAPI.Controllers
         IRepository<DB.Contact> contactRepository,
         IRepository<DB.Country> countryRepository,
         IRepository<DB.Currency> currencyRepository,
+        IRepository<DB.CustomBelt> customBeltRepository,
+        IRepository<DB.CustomNeckline> customNecklineRepository,
+        IRepository<DB.CustomPant> customPantRepository,
+        IRepository<DB.CustomPantsCuff> customPantsCuffRepository,
+        IRepository<DB.CustomSleeve> customSleeveRepository,
+        IRepository<DB.CustomSleeveCuff> customSleeveCuffRepository,
+        IRepository<DB.CustomSportSuit> customSportSuitRepository,
+        IRepository<DB.CustomSweater> customSweaterRepository,
         IRepository<DB.CustomizableProduct> customizableProductRepository,
         IRepository<DB.FabricType> fabricTypeRepository,
         IRepository<DB.Language> languageRepository,
@@ -36,12 +52,13 @@ namespace RestAPI.Controllers
         IRepository<DB.ProductOrder> productOrderRepository,
         IRepository<DB.ProductTranslation> productTranslationRepository,
         IRepository<DB.Review> reviewRepository,
-        IRepository<DB.ShippingAdress> shippingAdressRepository,
+        IRepository<DB.ShippingAddress> shippingAddressRepository,
         IRepository<DB.SizeOption> sizeOptionRepository,
         IRepository<DB.User> userRepository,
         IRepository<DB.UserOrderHistory> userOrderHistoryRepository,
         IRepository<DB.UserProfile> userProfileRepository,
-        IRepository<DB.UserRole> userRoleRepository) : ControllerBase
+        IRepository<DB.UserRole> userRoleRepository
+        ) : ControllerBase
     {
         /// <summary>
         /// CTRL + M + P - expand all
@@ -53,6 +70,14 @@ namespace RestAPI.Controllers
         private readonly ILogger<DatabaseController> _logger = logger;
         private readonly IRepository<DB.About> _aboutRepository = aboutRepository;
         private readonly IRepository<DB.AccessLevel> _accessLevelRepository = accessLevelRepository;
+        private readonly IRepository<DB.BaseBelt> _baseBeltRepository = baseBeltRepository;
+        private readonly IRepository<DB.BaseNeckline> _baseNecklineRepository = baseNecklineRepository;
+        private readonly IRepository<DB.BasePant> _basePantRepository = basePantRepository;
+        private readonly IRepository<DB.BasePantsCuff> _basePantsCuffRepository = basePantsCuffRepository;
+        private readonly IRepository<DB.BaseSleeve> _baseSleefeRepository = baseSleeveRepository;
+        private readonly IRepository<DB.BaseSleeveCuff> _baseSleeveCuffRepository = baseSleeveCuffRepository;
+        private readonly IRepository<DB.BaseSportSuit> _baseSportSuitRepository = baseSportSuitRepository;
+        private readonly IRepository<DB.BaseSweater> _baseSweaterRepository = baseSweaterRepository;
         private readonly IRepository<DB.Cart> _cartRepository = cartRepository;
         private readonly IRepository<DB.Category> _categoryRepository = categoryRepository;
         private readonly IRepository<DB.CategoryHierarchy> _categoryHierarchyRepository = categoryHierarchyRepository;
@@ -60,6 +85,14 @@ namespace RestAPI.Controllers
         private readonly IRepository<DB.Contact> _contactRepository = contactRepository;
         private readonly IRepository<DB.Country> _countryRepository = countryRepository;
         private readonly IRepository<DB.Currency> _currencyRepository = currencyRepository;
+        private readonly IRepository<DB.CustomBelt> _customBeltRepository = customBeltRepository;
+        private readonly IRepository<DB.CustomNeckline> _customNecklineRepository = customNecklineRepository;
+        private readonly IRepository<DB.CustomPant> _customPantRepository = customPantRepository;
+        private readonly IRepository<DB.CustomPantsCuff> _customPantsCuffRepository = customPantsCuffRepository;
+        private readonly IRepository<DB.CustomSleeve> _customSleefeRepository = customSleeveRepository;
+        private readonly IRepository<DB.CustomSleeveCuff> _customSleeveCuffRepository = customSleeveCuffRepository;
+        private readonly IRepository<DB.CustomSportSuit> _customSportSuitRepository = customSportSuitRepository;
+        private readonly IRepository<DB.CustomSweater> _customSweaterRepository = customSweaterRepository;
         private readonly IRepository<DB.CustomizableProduct> _customizableProductRepository = customizableProductRepository;
         private readonly IRepository<DB.FabricType> _fabricTypeRepository = fabricTypeRepository;
         private readonly IRepository<DB.Language> _languageRepository = languageRepository;
@@ -74,7 +107,7 @@ namespace RestAPI.Controllers
         private readonly IRepository<DB.ProductOrder> _productOrderRepository = productOrderRepository;
         private readonly IRepository<DB.ProductTranslation> _productTranslationRepository = productTranslationRepository;
         private readonly IRepository<DB.Review> _reviewRepository = reviewRepository;
-        private readonly IRepository<DB.ShippingAdress> _shippingAdressRepository = shippingAdressRepository;
+        private readonly IRepository<DB.ShippingAddress> _shippingAddressRepository = shippingAddressRepository;
         private readonly IRepository<DB.SizeOption> _sizeOptionRepository = sizeOptionRepository;
         private readonly IRepository<DB.User> _userRepository = userRepository;
         private readonly IRepository<DB.UserOrderHistory> _userOrderHistoryRepository = userOrderHistoryRepository;

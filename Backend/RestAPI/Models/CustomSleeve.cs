@@ -1,6 +1,6 @@
 ﻿namespace RestAPI.Models;
 
-public partial class CustomSleefe
+public partial class CustomSleeve
 {
     public int Id { get; set; }
 

@@ -13,7 +13,7 @@ public partial class Order
 
     public int FkPayments { get; set; }
 
-    public int FkShippingAdresses { get; set; }
+    public int FkShippingAddresses { get; set; }
 
     public decimal Price { get; set; }
 
@@ -31,7 +31,7 @@ public partial class Order
 
     public virtual ProductOrder FkProductOrdersNavigation { get; set; } = null!;
 
-    public virtual ShippingAdress FkShippingAdressesNavigation { get; set; } = null!;
+    public virtual ShippingAddress FkShippingAddressesNavigation { get; set; } = null!;
 
     public virtual ICollection<OrderHistory> OrderHistories { get; set; } = new List<OrderHistory>();
 

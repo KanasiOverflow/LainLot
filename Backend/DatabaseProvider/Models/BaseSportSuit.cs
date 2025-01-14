@@ -39,7 +39,7 @@ public partial class BaseSportSuit
 
     public virtual BaseSleeveCuff? FkBaseSleeveCuffsRightNavigation { get; set; }
 
-    public virtual BaseSleefe? FkBaseSleevesNavigation { get; set; }
+    public virtual BaseSleeve? FkBaseSleevesNavigation { get; set; }
 
     public virtual BaseSweater? FkBaseSweatersNavigation { get; set; }
 }

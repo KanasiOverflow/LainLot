@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DatabaseProvider.Models;
 
-public partial class CustomSleefe
+public partial class CustomSleeve
 {
     public int Id { get; set; }
 
@@ -13,5 +13,5 @@ public partial class CustomSleefe
 
     public virtual ICollection<CustomSportSuit> CustomSportSuits { get; set; } = new List<CustomSportSuit>();
 
-    public virtual BaseSleefe FkBaseSleevesNavigation { get; set; } = null!;
+    public virtual BaseSleeve FkBaseSleevesNavigation { get; set; } = null!;
 }
