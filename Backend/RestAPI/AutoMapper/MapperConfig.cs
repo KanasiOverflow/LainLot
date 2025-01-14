@@ -28,6 +28,46 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Level, opt => opt.MapFrom(s => s.Level))
                     .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description));
 
+                cfg.CreateMap<API.BaseBelt, DB.BaseBelt>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<API.BaseNeckline, DB.BaseNeckline>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<API.BasePant, DB.BasePant>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<API.BasePantsCuff, DB.BasePantsCuff>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<API.BaseSleeve, DB.BaseSleeve>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<API.BaseSleeveCuff, DB.BaseSleeveCuff>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<API.BaseSportSuit, DB.BaseSportSuit>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseNecklines, opt => opt.MapFrom(s => s.FkBaseNecklines))
+                    .ForMember(d => d.FkBaseSweaters, opt => opt.MapFrom(s => s.FkBaseSweaters))
+                    .ForMember(d => d.FkBaseSleeves, opt => opt.MapFrom(s => s.FkBaseSleeves))
+                    .ForMember(d => d.FkBaseSleeveCuffsLeft, opt => opt.MapFrom(s => s.FkBaseSleeveCuffsLeft))
+                    .ForMember(d => d.FkBaseSleeveCuffsRight, opt => opt.MapFrom(s => s.FkBaseSleeveCuffsRight))
+                    .ForMember(d => d.FkBaseBelts, opt => opt.MapFrom(s => s.FkBaseBelts))
+                    .ForMember(d => d.FkBasePants, opt => opt.MapFrom(s => s.FkBasePants))
+                    .ForMember(d => d.FkBasePantsCuffsLeft, opt => opt.MapFrom(s => s.FkBasePantsCuffsLeft))
+                    .ForMember(d => d.FkBasePantsCuffsRight, opt => opt.MapFrom(s => s.FkBasePantsCuffsRight));
+
+                cfg.CreateMap<API.BaseSweater, DB.BaseSweater>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
                 cfg.CreateMap<API.Cart, DB.Cart>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkProductOrders, opt => opt.MapFrom(s => s.FkProductOrders))
@@ -66,6 +106,53 @@ namespace RestAPI.AutoMapper
                 cfg.CreateMap<API.Currency, DB.Currency>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name));
+
+                cfg.CreateMap<API.CustomBelt, DB.CustomBelt>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseBelts, opt => opt.MapFrom(s => s.FkBaseBelts))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<API.CustomNeckline, DB.CustomNeckline>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseNecklines, opt => opt.MapFrom(s => s.FkBaseNecklines))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<API.CustomPant, DB.CustomPant>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBasePants, opt => opt.MapFrom(s => s.FkBasePants))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<API.CustomPantsCuff, DB.CustomPantsCuff>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBasePantCuffs, opt => opt.MapFrom(s => s.FkBasePantCuffs))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<API.CustomSleeve, DB.CustomSleeve>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseSleeves, opt => opt.MapFrom(s => s.FkBaseSleeves))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<API.CustomSleeveCuff, DB.CustomSleeveCuff>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseSleeveCuffs, opt => opt.MapFrom(s => s.FkBaseSleeveCuffs))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<API.CustomSportSuit, DB.CustomSportSuit>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkCustomNecklines, opt => opt.MapFrom(s => s.FkCustomNecklines))
+                    .ForMember(d => d.FkCustomSweaters, opt => opt.MapFrom(s => s.FkCustomSweaters))
+                    .ForMember(d => d.FkCustomSleeves, opt => opt.MapFrom(s => s.FkCustomSleeves))
+                    .ForMember(d => d.FkCustomSleeveCuffsLeft, opt => opt.MapFrom(s => s.FkCustomSleeveCuffsLeft))
+                    .ForMember(d => d.FkCustomSleeveCuffsRight, opt => opt.MapFrom(s => s.FkCustomSleeveCuffsRight))
+                    .ForMember(d => d.FkCustomBelts, opt => opt.MapFrom(s => s.FkCustomBelts))
+                    .ForMember(d => d.FkCustomPants, opt => opt.MapFrom(s => s.FkCustomPants))
+                    .ForMember(d => d.FkCustomPantsCuffsLeft, opt => opt.MapFrom(s => s.FkCustomPantsCuffsLeft))
+                    .ForMember(d => d.FkCustomPantsCuffsRight, opt => opt.MapFrom(s => s.FkCustomPantsCuffsRight));
+
+                cfg.CreateMap<API.CustomSweater, DB.CustomSweater>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseSweaters, opt => opt.MapFrom(s => s.FkBaseSweaters))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
 
                 cfg.CreateMap<API.CustomizableProduct, DB.CustomizableProduct>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -186,6 +273,10 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.CreatedAt, opt => opt.MapFrom(s => s.CreatedAt))
                     .ForMember(d => d.UpdatedAt, opt => opt.MapFrom(s => s.UpdatedAt));
 
+                cfg.CreateMap<API.UserOrderHistory, DB.UserOrderHistory>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders));
+
                 cfg.CreateMap<API.UserProfile, DB.UserProfile>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers))
@@ -221,6 +312,46 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.Level, opt => opt.MapFrom(s => s.Level))
                     .ForMember(d => d.Description, opt => opt.MapFrom(s => s.Description));
+
+                cfg.CreateMap<DB.BaseBelt, API.BaseBelt>()
+                   .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                   .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<DB.BaseNeckline, API.BaseNeckline>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<DB.BasePant, API.BasePant>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<DB.BasePantsCuff, API.BasePantsCuff>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<DB.BaseSleeve, API.BaseSleeve>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<DB.BaseSleeveCuff, API.BaseSleeveCuff>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
+
+                cfg.CreateMap<DB.BaseSportSuit, API.BaseSportSuit>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseNecklines, opt => opt.MapFrom(s => s.FkBaseNecklines))
+                    .ForMember(d => d.FkBaseSweaters, opt => opt.MapFrom(s => s.FkBaseSweaters))
+                    .ForMember(d => d.FkBaseSleeves, opt => opt.MapFrom(s => s.FkBaseSleeves))
+                    .ForMember(d => d.FkBaseSleeveCuffsLeft, opt => opt.MapFrom(s => s.FkBaseSleeveCuffsLeft))
+                    .ForMember(d => d.FkBaseSleeveCuffsRight, opt => opt.MapFrom(s => s.FkBaseSleeveCuffsRight))
+                    .ForMember(d => d.FkBaseBelts, opt => opt.MapFrom(s => s.FkBaseBelts))
+                    .ForMember(d => d.FkBasePants, opt => opt.MapFrom(s => s.FkBasePants))
+                    .ForMember(d => d.FkBasePantsCuffsLeft, opt => opt.MapFrom(s => s.FkBasePantsCuffsLeft))
+                    .ForMember(d => d.FkBasePantsCuffsRight, opt => opt.MapFrom(s => s.FkBasePantsCuffsRight));
+
+                cfg.CreateMap<DB.BaseSweater, API.BaseSweater>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.Settings, opt => opt.MapFrom(s => s.Settings));
 
                 cfg.CreateMap<DB.Cart, API.Cart>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -260,6 +391,53 @@ namespace RestAPI.AutoMapper
                 cfg.CreateMap<DB.Currency, API.Currency>()
                   .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                   .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name));
+
+                cfg.CreateMap<DB.CustomBelt, API.CustomBelt>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseBelts, opt => opt.MapFrom(s => s.FkBaseBelts))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<DB.CustomNeckline, API.CustomNeckline>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseNecklines, opt => opt.MapFrom(s => s.FkBaseNecklines))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<DB.CustomPant, API.CustomPant>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBasePants, opt => opt.MapFrom(s => s.FkBasePants))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<DB.CustomPantsCuff, API.CustomPantsCuff>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBasePantCuffs, opt => opt.MapFrom(s => s.FkBasePantCuffs))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<DB.CustomSleeve, API.CustomSleeve>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseSleeves, opt => opt.MapFrom(s => s.FkBaseSleeves))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<DB.CustomSleeveCuff, API.CustomSleeveCuff>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseSleeveCuffs, opt => opt.MapFrom(s => s.FkBaseSleeveCuffs))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
+
+                cfg.CreateMap<DB.CustomSportSuit, API.CustomSportSuit>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkCustomNecklines, opt => opt.MapFrom(s => s.FkCustomNecklines))
+                    .ForMember(d => d.FkCustomSweaters, opt => opt.MapFrom(s => s.FkCustomSweaters))
+                    .ForMember(d => d.FkCustomSleeves, opt => opt.MapFrom(s => s.FkCustomSleeves))
+                    .ForMember(d => d.FkCustomSleeveCuffsLeft, opt => opt.MapFrom(s => s.FkCustomSleeveCuffsLeft))
+                    .ForMember(d => d.FkCustomSleeveCuffsRight, opt => opt.MapFrom(s => s.FkCustomSleeveCuffsRight))
+                    .ForMember(d => d.FkCustomBelts, opt => opt.MapFrom(s => s.FkCustomBelts))
+                    .ForMember(d => d.FkCustomPants, opt => opt.MapFrom(s => s.FkCustomPants))
+                    .ForMember(d => d.FkCustomPantsCuffsLeft, opt => opt.MapFrom(s => s.FkCustomPantsCuffsLeft))
+                    .ForMember(d => d.FkCustomPantsCuffsRight, opt => opt.MapFrom(s => s.FkCustomPantsCuffsRight));
+
+                cfg.CreateMap<DB.CustomSweater, API.CustomSweater>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkBaseSweaters, opt => opt.MapFrom(s => s.FkBaseSweaters))
+                    .ForMember(d => d.CustomSettings, opt => opt.MapFrom(s => s.CustomSettings));
 
                 cfg.CreateMap<DB.CustomizableProduct, API.CustomizableProduct>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -379,6 +557,10 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Hash, opt => opt.MapFrom(s => s.Hash))
                     .ForMember(d => d.CreatedAt, opt => opt.MapFrom(s => s.CreatedAt))
                     .ForMember(d => d.UpdatedAt, opt => opt.MapFrom(s => s.UpdatedAt));
+
+                cfg.CreateMap<DB.UserOrderHistory, API.UserOrderHistory>()
+                    .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
+                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders));
 
                 cfg.CreateMap<DB.UserProfile, API.UserProfile>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
