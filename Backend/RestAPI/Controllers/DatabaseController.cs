@@ -4915,7 +4915,7 @@ namespace RestAPI.Controllers
             }
         }
 
-        [HttpGet("GetFkUserRoles")]
+        [HttpGet("GetFkUserRolesData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkUserRoles(int id)
@@ -4964,6 +4964,543 @@ namespace RestAPI.Controllers
                 return dbEntity == null
                     ? string.Empty
                     : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | ImageData: {dbEntity?.ImageData}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCurrenciesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCurrenciesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _currencyRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkSizeOptionsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkSizeOptionsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _sizeOptionRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Size: {dbEntity?.Size}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseNecklinesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseNecklinesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseNecklineRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseSweatersData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseSweatersData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseSweaterRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseSleevesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseSleevesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseSleeveRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseSleeveCuffsLeftData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseSleeveCuffsLeftData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseSleeveCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseSleeveCuffsRightData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseSleeveCuffsRightData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseSleeveCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseBeltsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseBeltsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseBeltRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBasePantsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBasePantsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _basePantRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBasePantsCuffsLeftData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBasePantsCuffsLeftData(int id)
+        {
+            try
+            {
+                var dbEntity = await _basePantsCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBasePantsCuffsRightData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBasePantsCuffsRightData(int id)
+        {
+            try
+            {
+                var dbEntity = await _basePantsCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomNecklinesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomNecklinesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customNecklineRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomSweatersData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomSweatersData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customSweaterRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomSleevesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomSleevesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customSleeveRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomSleeveCuffsLeftData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomSleeveCuffsLeftData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customSleeveCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomSleeveCuffsRightData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomSleeveCuffsRightData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customSleeveCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomBeltsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomBeltsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customBeltRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomPantsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomPantsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customPantRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomPantsCuffsLeftData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomPantsCuffsLeftData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customPantsCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomPantsCuffsRightData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomPantsCuffsRightData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customPantsCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomSportSuitsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomSportSuitsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customSportSuitRepository.GetById(id);
+
+                var customSettingsNecklines = await GetFkCustomNecklinesData(dbEntity.FkCustomNecklines.Value);
+                var customSweaters = await GetFkCustomSweatersData(dbEntity.FkCustomSweaters.Value);
+                var customSleeves = await GetFkCustomSleevesData(dbEntity.FkCustomSleeves.Value);
+                var customSleeveCuffsLeft = await GetFkCustomSleeveCuffsLeftData(dbEntity.FkCustomSleeveCuffsLeft.Value);
+                var customSleeveCuffsRight = await GetFkCustomNecklinesData(dbEntity.FkCustomNecklines.Value);
+                var customBelts = await GetFkCustomSleeveCuffsRightData(dbEntity.FkCustomSleeveCuffsRight.Value);
+                var customPants = await GetFkCustomPantsData(dbEntity.FkCustomPants.Value);
+                var customPantsCuffsLeft = await GetFkCustomPantsCuffsLeftData(dbEntity.FkCustomPantsCuffsLeft.Value);
+                var customPantsCuffsRight = await GetFkCustomPantsCuffsRightData(dbEntity.FkCustomPantsCuffsRight.Value);
+
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | " +
+                        $"CustomNecklines: {customSettingsNecklines} | " +
+                        $"CustomSweaters: {customSweaters} | " +
+                        $"CustomSleeves: {customSleeves} | " +
+                        $"CustomSleeveCuffsLeft: {customSleeveCuffsLeft} | " +
+                        $"CustomSleeveCuffsRight: {customSleeveCuffsRight} | " +
+                        $"CustomBelts: {customBelts} | " +
+                        $"CustomPants: {customPants} | " +
+                        $"CustomPantsCuffsLeft: {customPantsCuffsLeft} | " +
+                        $"CustomPantsCuffsRight: {customPantsCuffsRight} | ";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomizableProductsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomizableProductsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customizableProductRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Price: {dbEntity?.Price}| CustomizationDetails: {dbEntity?.CustomizationDetails}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkProductOrdersData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkProductOrdersData(int id)
+        {
+            try
+            {
+                var dbEntity = await _productOrderRepository.GetById(id);
+
+                var products = await GetFkProductsData(dbEntity.FkProducts.Value);
+                var customizableProducts = await GetFkCustomizableProductsData(dbEntity.FkCustomizableProducts.Value);
+
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | products: {products} | customizableProducts: {customizableProducts}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCountriesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCountriesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _countryRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} ";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkPaymentMethodsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkPaymentMethodsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _paymentMethodRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Method: {dbEntity?.Method} ";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkPaymentStatusesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkPaymentStatusesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _paymentStatusRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Status: {dbEntity?.Status} ";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkShippingAddressesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkShippingAddressesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _shippingAddressRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | City: {dbEntity?.City} | Address: {dbEntity?.Address}";
             }
             catch (Exception ex)
             {
