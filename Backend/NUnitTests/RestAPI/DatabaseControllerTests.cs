@@ -439,7 +439,7 @@ namespace NUnitTests.RestAPI
                 Text = "Text 3"
             };
 
-            var result = await _restApiController.CreateAboutAsync(entity);
+            var result = await _restApiController.CreateAbout(entity);
 
             var list = _restApiController.GetAbout(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetAboutById(3);
@@ -462,7 +462,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Text = "Text 3";
 
-            await _restApiController.UpdateAboutAsync(entity.Value);
+            await _restApiController.UpdateAbout(entity.Value);
 
             var updateEntity = await _restApiController.GetAboutById(id);
 
@@ -527,7 +527,7 @@ namespace NUnitTests.RestAPI
                 Level = 3
             };
 
-            var result = await _restApiController.CreateAccessLevelsAsync(entity);
+            var result = await _restApiController.CreateAccessLevels(entity);
 
             var list = _restApiController.GetAccessLevels(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetAccessLevelsById(3);
@@ -550,7 +550,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Description = "Text 3";
 
-            await _restApiController.UpdateAccessLevelsAsync(entity.Value);
+            await _restApiController.UpdateAccessLevels(entity.Value);
 
             var updateEntity = await _restApiController.GetAccessLevelsById(id);
 
@@ -565,49 +565,705 @@ namespace NUnitTests.RestAPI
 
         #region Basebelts table
 
+        [Test]
+        public void GetBaseBelts_Return_2_Items()
+        {
+            var result = _restApiController.GetBaseBelts(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<BaseBelt>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseBeltsById_Return_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetBaseBeltsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseBelts_Entity(int id)
+        {
+            var result = await _restApiController.DeleteBaseBelts(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_BaseBelts_Entity()
+        {
+            var entity = new BaseBelt()
+            {
+                Id = 3,
+                Settings = "Settings 3"
+            };
+
+            var result = await _restApiController.CreateBaseBelts(entity);
+
+            var list = _restApiController.GetBaseBelts(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetBaseBeltsById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<BaseBelt>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Settings, Is.EqualTo(entity.Settings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseBelts_Entity(int id)
+        {
+            var entity = await _restApiController.GetBaseBeltsById(id);
+
+            entity.Value.Settings = "Updated Settings";
+
+            await _restApiController.UpdateBaseBelts(entity.Value);
+
+            var updatedEntity = await _restApiController.GetBaseBeltsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Settings, Is.EqualTo(entity.Value.Settings));
+                Assert.That(entity?.Value?.Settings, Is.EqualTo(updatedEntity?.Value?.Settings));
+            });
+        }
 
         #endregion
 
         #region BaseNecklines table
 
+        [Test]
+        public void GetBaseNecklines_Return_2_Items()
+        {
+            var result = _restApiController.GetBaseNecklines(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<BaseNeckline>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseNecklinesById_Return_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetBaseNecklinesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseNecklines_Entity(int id)
+        {
+            var result = await _restApiController.DeleteBaseNecklines(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_BaseNecklines_Entity()
+        {
+            var entity = new BaseNeckline()
+            {
+                Id = 3,
+                Settings = "Settings for 3"
+            };
+
+            var result = await _restApiController.CreateBaseNecklines(entity);
+
+            var list = _restApiController.GetBaseNecklines(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetBaseNecklinesById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<BaseNeckline>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Settings, Is.EqualTo(entity.Settings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseNecklines_Entity(int id)
+        {
+            var entity = await _restApiController.GetBaseNecklinesById(id);
+
+            entity.Value.Settings = "Updated Settings";
+
+            await _restApiController.UpdateBaseNecklines(entity.Value);
+
+            var updatedEntity = await _restApiController.GetBaseNecklinesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Settings, Is.EqualTo(entity.Value.Settings));
+                Assert.That(entity?.Value?.Settings, Is.EqualTo(updatedEntity?.Value?.Settings));
+            });
+        }
 
         #endregion
 
         #region BasePants table
 
+        [Test]
+        public void GetBasePants_Return_2_Items()
+        {
+            var result = _restApiController.GetBasePants(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<BasePant>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBasePantsById_Return_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetBasePantsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BasePants_Entity(int id)
+        {
+            var result = await _restApiController.DeleteBasePants(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_BasePants_Entity()
+        {
+            var entity = new BasePant()
+            {
+                Id = 3,
+                Settings = "Settings 3"
+            };
+
+            var result = await _restApiController.CreateBasePants(entity);
+
+            var list = _restApiController.GetBasePants(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetBasePantsById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<BasePant>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Settings, Is.EqualTo(entity.Settings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BasePants_Entity(int id)
+        {
+            var entity = await _restApiController.GetBasePantsById(id);
+
+            entity.Value.Settings = "Updated Settings";
+
+            await _restApiController.UpdateBasePants(entity.Value);
+
+            var updatedEntity = await _restApiController.GetBasePantsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Settings, Is.EqualTo(entity.Value.Settings));
+                Assert.That(entity?.Value?.Settings, Is.EqualTo(updatedEntity?.Value?.Settings));
+            });
+        }
 
         #endregion
 
         #region BasePantsCuffs table
 
+        [Test]
+        public void GetBasePantsCuffs_Return_2_Items()
+        {
+            var result = _restApiController.GetBasePantsCuffs(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<BasePantsCuff>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBasePantsCuffsById_Return_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetBasePantsCuffsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BasePantsCuffs_Entity(int id)
+        {
+            var result = await _restApiController.DeleteBasePantsCuffs(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_BasePantsCuffs_Entity()
+        {
+            var entity = new BasePantsCuff()
+            {
+                Id = 3,
+                Settings = "Settings 3"
+            };
+
+            var result = await _restApiController.CreateBasePantsCuffs(entity);
+
+            var list = _restApiController.GetBasePantsCuffs(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetBasePantsCuffsById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<BasePantsCuff>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Settings, Is.EqualTo(entity.Settings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BasePantsCuffs_Entity(int id)
+        {
+            var entity = await _restApiController.GetBasePantsCuffsById(id);
+
+            entity.Value.Settings = "Updated Settings";
+
+            await _restApiController.UpdateBasePantsCuffs(entity.Value);
+
+            var updatedEntity = await _restApiController.GetBasePantsCuffsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Settings, Is.EqualTo("Updated Settings"));
+                Assert.That(entity?.Value?.Settings, Is.EqualTo("Updated Settings"));
+            });
+        }
 
         #endregion
 
         #region BaseSleeves table
 
+        [Test]
+        public void GetBaseSleeves_Return_2_Items()
+        {
+            var result = _restApiController.GetBaseSleeves(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<BaseSleeve>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseSleevesById_Return_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetBaseSleevesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseSleeves_Entity(int id)
+        {
+            var result = await _restApiController.DeleteBaseSleeves(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_BaseSleeves_Entity()
+        {
+            var entity = new BaseSleeve()
+            {
+                Id = 3,
+                Settings = "Settings 3"
+            };
+
+            var result = await _restApiController.CreateBaseSleeves(entity);
+
+            var list = _restApiController.GetBaseSleeves(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetBaseSleevesById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<BaseSleeve>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Settings, Is.EqualTo(entity.Settings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseSleeves_Entity(int id)
+        {
+            var entity = await _restApiController.GetBaseSleevesById(id);
+
+            entity.Value.Settings = "Updated Settings";
+
+            await _restApiController.UpdateBaseSleeves(entity.Value);
+
+            var updatedEntity = await _restApiController.GetBaseSleevesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Settings, Is.EqualTo("Updated Settings"));
+                Assert.That(entity?.Value?.Settings, Is.EqualTo("Updated Settings"));
+            });
+        }
 
         #endregion
 
         #region BaseSleeveCuffs table
 
+        [Test]
+        public void GetBaseSleeveCuffs_Return_2_Items()
+        {
+            var result = _restApiController.GetBaseSleeveCuffs(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<BaseSleeveCuff>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseSleeveCuffsById_Return_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetBaseSleeveCuffsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseSleeveCuffs_Entity(int id)
+        {
+            var result = await _restApiController.DeleteBaseSleeveCuffs(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_BaseSleeveCuffs_Entity()
+        {
+            var entity = new BaseSleeveCuff()
+            {
+                Id = 3,
+                Settings = "Settings 3"
+            };
+
+            var result = await _restApiController.CreateBaseSleeveCuffs(entity);
+
+            var list = _restApiController.GetBaseSleeveCuffs(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetBaseSleeveCuffsById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<BaseSleeveCuff>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Settings, Is.EqualTo(entity.Settings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseSleeveCuffs_Entity(int id)
+        {
+            var entity = await _restApiController.GetBaseSleeveCuffsById(id);
+
+            entity.Value.Settings = "Updated Settings";
+
+            await _restApiController.UpdateBaseSleeveCuffs(entity.Value);
+
+            var updatedEntity = await _restApiController.GetBaseSleeveCuffsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Settings, Is.EqualTo("Updated Settings"));
+                Assert.That(entity?.Value?.Settings, Is.EqualTo("Updated Settings"));
+            });
+        }
 
         #endregion
 
         #region BaseSportSuits table
 
+        [Test]
+        public void GetBaseSportSuits_Return_2_Items()
+        {
+            var result = _restApiController.GetBaseSportSuit(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<BaseSportSuit>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseSportSuitById_Return_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetBaseSportSuitById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseSportSuit_Entity(int id)
+        {
+            var result = await _restApiController.DeleteBaseSportSuit(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_BaseSportSuit_Entity()
+        {
+            var entity = new BaseSportSuit()
+            {
+                Id = 3,
+                FkBaseNecklines = 1,
+                FkBaseSweaters = 1,
+                FkBaseSleeves = 1,
+                FkBaseSleeveCuffsLeft = 1,
+                FkBaseSleeveCuffsRight = 2,
+                FkBaseBelts = 1,
+                FkBasePants = 1,
+                FkBasePantsCuffsLeft = 1,
+                FkBasePantsCuffsRight = 2
+            };
+
+            var result = await _restApiController.CreateBaseSportSuit(entity);
+
+            var list = _restApiController.GetBaseSportSuit(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetBaseSportSuitById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<BaseSportSuit>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Id, Is.EqualTo(entity.Id));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseSportSuit_Entity(int id)
+        {
+            var entity = await _restApiController.GetBaseSportSuitById(id);
+
+            entity.Value.FkBaseSweaters = 2;
+
+            await _restApiController.UpdateBaseSportSuit(entity.Value);
+
+            var updatedEntity = await _restApiController.GetBaseSportSuitById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity, Is.Not.Null);
+                Assert.That(updatedEntity.Value.FkBaseSweaters, Is.EqualTo(entity.Value.FkBaseSweaters));
+            });
+        }
 
         #endregion
 
         #region BaseSweaters table
 
+        [Test]
+        public void GetBaseSweaters_Return_2_Items()
+        {
+            var result = _restApiController.GetBaseSweaters(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<BaseSweater>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseSweatersById_Return_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetBaseSweatersById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseSweaters_Entity(int id)
+        {
+            var result = await _restApiController.DeleteBaseSweaters(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_BaseSweaters_Entity()
+        {
+            var entity = new BaseSweater()
+            {
+                Id = 3,
+                Settings = "Settings 3"
+            };
+
+            var result = await _restApiController.CreateBaseSweaters(entity);
+
+            var list = _restApiController.GetBaseSweaters(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetBaseSweatersById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<BaseSweater>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Settings, Is.EqualTo(entity.Settings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseSweaters_Entity(int id)
+        {
+            var entity = await _restApiController.GetBaseSweatersById(id);
+
+            entity.Value.Settings = "Updated Settings";
+
+            await _restApiController.UpdateBaseSweaters(entity.Value);
+
+            var updatedEntity = await _restApiController.GetBaseSweatersById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Settings, Is.EqualTo("Updated Settings"));
+                Assert.That(entity?.Value?.Settings, Is.EqualTo("Updated Settings"));
+            });
+        }
 
         #endregion
 
@@ -666,7 +1322,7 @@ namespace NUnitTests.RestAPI
                 CreatedAt = DateTime.UtcNow
             };
 
-            var result = await _restApiController.CreateCartAsync(entity);
+            var result = await _restApiController.CreateCart(entity);
 
             var list = _restApiController.GetCart(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetCartById(3);
@@ -689,7 +1345,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Amount = 5;
 
-            await _restApiController.UpdateCartAsync(entity.Value);
+            await _restApiController.UpdateCart(entity.Value);
 
             var updateEntity = await _restApiController.GetCartById(id);
 
@@ -755,7 +1411,7 @@ namespace NUnitTests.RestAPI
                 Description = "Category Description"
             };
 
-            var result = await _restApiController.CreateCategoriesAsync(entity);
+            var result = await _restApiController.CreateCategories(entity);
 
             var list = _restApiController.GetCategories(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetCategoriesById(3);
@@ -778,7 +1434,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Name = "Updated Name";
 
-            await _restApiController.UpdateCategoriesAsync(entity.Value);
+            await _restApiController.UpdateCategories(entity.Value);
 
             var updateEntity = await _restApiController.GetCategoriesById(id);
 
@@ -843,7 +1499,7 @@ namespace NUnitTests.RestAPI
                 FkCategories = 2
             };
 
-            var result = await _restApiController.CreateCategoryHierarchyAsync(entity);
+            var result = await _restApiController.CreateCategoryHierarchy(entity);
 
             var list = _restApiController.GetCategoryHierarchy(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetCategoryHierarchyById(3);
@@ -866,7 +1522,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.ParentId = 2;
 
-            await _restApiController.UpdateCategoryHierarchyAsync(entity.Value);
+            await _restApiController.UpdateCategoryHierarchy(entity.Value);
 
             var updateEntity = await _restApiController.GetCategoryHierarchyById(id);
 
@@ -931,7 +1587,7 @@ namespace NUnitTests.RestAPI
                 ImageData = Encoding.ASCII.GetBytes("https://example.com/image1.jpg")
             };
 
-            var result = await _restApiController.CreateColorsAsync(entity);
+            var result = await _restApiController.CreateColors(entity);
 
             var list = _restApiController.GetColors(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetColorsById(3);
@@ -954,7 +1610,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Name = "Updated Name";
 
-            await _restApiController.UpdateColorsAsync(entity.Value);
+            await _restApiController.UpdateColors(entity.Value);
 
             var updateEntity = await _restApiController.GetColorsById(id);
 
@@ -1021,7 +1677,7 @@ namespace NUnitTests.RestAPI
                 Phone = "000-000-000"
             };
 
-            var result = await _restApiController.CreateContactsAsync(entity);
+            var result = await _restApiController.CreateContacts(entity);
 
             var list = _restApiController.GetContacts(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetContactsById(3);
@@ -1044,7 +1700,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Email = "Text 3";
 
-            await _restApiController.UpdateContactsAsync(entity.Value);
+            await _restApiController.UpdateContacts(entity.Value);
 
             var updateEntity = await _restApiController.GetContactsById(id);
 
@@ -1059,60 +1715,915 @@ namespace NUnitTests.RestAPI
 
         #region Countries tables
 
+        [Test]
+        public void GetCountries_Return_2_Items()
+        {
+            var result = _restApiController.GetCountries(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<Country>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCountryById_Return_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetCountriesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_Country_Entity(int id)
+        {
+            var result = await _restApiController.DeleteCountries(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_Country_Entity()
+        {
+            var entity = new Country
+            {
+                Id = 3,
+                Name = "Canada"
+            };
+
+            var result = await _restApiController.CreateCountries(entity);
+
+            var list = _restApiController.GetCountries(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetCountriesById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<Country>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Name, Is.EqualTo(entity.Name));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_Country_Entity(int id)
+        {
+            var entity = await _restApiController.GetCountriesById(id);
+
+            entity.Value.Name = "Updated Name";
+
+            await _restApiController.UpdateCountries(entity.Value);
+
+            var updateEntity = await _restApiController.GetCountriesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateEntity?.Value?.Name, Is.EqualTo("Updated Name"));
+                Assert.That(entity?.Value?.Name, Is.EqualTo(updateEntity?.Value?.Name));
+            });
+        }
 
         #endregion
 
         #region Currencies tables
 
+        [Test]
+        public void GetCurrencies_Returns_2_Items()
+        {
+            var result = _restApiController.GetCurrencies(_limit, _page);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<Currency>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCurrenciesById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetCurrenciesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_Currencies_Entity(int id)
+        {
+            var result = await _restApiController.DeleteCurrencies(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_Currencies_Entity()
+        {
+            var entity = new Currency()
+            {
+                Id = 3,
+                Name = "Euro"
+            };
+
+            var result = await _restApiController.CreateCurrencies(entity);
+
+            var list = _restApiController.GetCurrencies(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetCurrenciesById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<Currency>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value?.Name, Is.EqualTo(entity.Name));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_Currencies_Entity(int id)
+        {
+            var entity = await _restApiController.GetCurrenciesById(id);
+
+            entity.Value.Name = "Updated Currency Name";
+
+            await _restApiController.UpdateCurrencies(entity.Value);
+
+            var updatedEntity = await _restApiController.GetCurrenciesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Name, Is.EqualTo("Updated Currency Name"));
+                Assert.That(entity?.Value?.Name, Is.EqualTo(updatedEntity?.Value?.Name));
+            });
+        }
 
         #endregion
 
+        #region CustomBelts table
 
-        #region Custombelts table
+        [Test]
+        public void GetCustomBelts_Returns_2_Items()
+        {
+            var result = _restApiController.GetCustomBelts(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CustomBelt>, Has.Count.EqualTo(2));
+            });
+        }
 
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomBeltsById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetCustomBeltsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkBaseBelts, Is.GreaterThanOrEqualTo(1));  // Ensure FK is correctly set
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomBelts_Entity(int id)
+        {
+            var result = await _restApiController.DeleteCustomBelts(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_CustomBelts_Entity()
+        {
+            var entity = new CustomBelt()
+            {
+                Id = 3,
+                FkBaseBelts = 1,
+                CustomSettings = "Length: 100cm; Color: Black;"
+            };
+
+            var result = await _restApiController.CreateCustomBelts(entity);
+
+            var list = _restApiController.GetCustomBelts(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetCustomBeltsById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<CustomBelt>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.FkBaseBelts, Is.EqualTo(entity.FkBaseBelts));
+                Assert.That(entityThatWasAdded.Value.CustomSettings, Is.EqualTo(entity.CustomSettings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomBelts_Entity(int id)
+        {
+            var entity = await _restApiController.GetCustomBeltsById(id);
+
+            entity.Value.CustomSettings = "Updated: Length 110cm; Color: Blue;";
+
+            await _restApiController.UpdateCustomBelts(entity.Value);
+
+            var updatedEntity = await _restApiController.GetCustomBeltsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkBaseBelts, Is.EqualTo(entity.Value.FkBaseBelts));
+                Assert.That(updatedEntity?.Value?.CustomSettings, Is.EqualTo(entity.Value.CustomSettings));
+            });
+        }
 
         #endregion
 
         #region CustomNecklines table
 
+        [Test]
+        public void GetCustomNecklines_Returns_2_Items()
+        {
+            var result = _restApiController.GetCustomNecklines(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CustomNeckline>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomNecklinesById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetCustomNecklinesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkBaseNecklines, Is.GreaterThanOrEqualTo(1));  // Ensure FK is correctly set
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomNecklines_Entity(int id)
+        {
+            var result = await _restApiController.DeleteCustomNecklines(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_CustomNecklines_Entity()
+        {
+            var entity = new CustomNeckline()
+            {
+                Id = 3,
+                FkBaseNecklines = 1,
+                CustomSettings = "Design: V-neck; Color: Navy Blue;"
+            };
+
+            var result = await _restApiController.CreateCustomNecklines(entity);
+
+            var list = _restApiController.GetCustomNecklines(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetCustomNecklinesById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<CustomNeckline>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.FkBaseNecklines, Is.EqualTo(entity.FkBaseNecklines));
+                Assert.That(entityThatWasAdded.Value.CustomSettings, Is.EqualTo(entity.CustomSettings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomNecklines_Entity(int id)
+        {
+            var entity = await _restApiController.GetCustomNecklinesById(id);
+
+            entity.Value.CustomSettings = "Updated: Design Round-neck; Color: Red;";
+
+            await _restApiController.UpdateCustomNecklines(entity.Value);
+
+            var updatedEntity = await _restApiController.GetCustomNecklinesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkBaseNecklines, Is.EqualTo(entity.Value.FkBaseNecklines));
+                Assert.That(updatedEntity?.Value?.CustomSettings, Is.EqualTo(entity.Value.CustomSettings));
+            });
+        }
 
         #endregion
 
         #region CustomPants table
 
+        [Test]
+        public void GetCustomPants_Returns_2_Items()
+        {
+            var result = _restApiController.GetCustomPants(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CustomPant>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomPantsById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetCustomPantsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkBasePants, Is.GreaterThanOrEqualTo(1));  // Ensure FK is correctly set
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomPants_Entity(int id)
+        {
+            var result = await _restApiController.DeleteCustomPants(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_CustomPants_Entity()
+        {
+            var entity = new CustomPant()
+            {
+                Id = 3,
+                FkBasePants = 1,
+                CustomSettings = "Size: 32; Color: Black; Fit: Slim;"
+            };
+
+            var result = await _restApiController.CreateCustomPants(entity);
+
+            var list = _restApiController.GetCustomPants(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetCustomPantsById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<CustomPant>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.FkBasePants, Is.EqualTo(entity.FkBasePants));
+                Assert.That(entityThatWasAdded.Value.CustomSettings, Is.EqualTo(entity.CustomSettings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomPants_Entity(int id)
+        {
+            var entity = await _restApiController.GetCustomPantsById(id);
+
+            entity.Value.CustomSettings = "Updated: Size 34; Color: Grey; Fit: Relaxed;";
+
+            await _restApiController.UpdateCustomPants(entity.Value);
+
+            var updatedEntity = await _restApiController.GetCustomPantsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkBasePants, Is.EqualTo(entity.Value.FkBasePants));
+                Assert.That(updatedEntity?.Value?.CustomSettings, Is.EqualTo(entity.Value.CustomSettings));
+            });
+        }
 
         #endregion
 
         #region CustomPantsCuffs table
 
+        [Test]
+        public void GetCustomPantsCuffs_Returns_2_Items()
+        {
+            var result = _restApiController.GetCustomPantsCuffs(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CustomPantsCuff>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomPantsCuffsById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetCustomPantsCuffsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkBasePantCuffs, Is.GreaterThanOrEqualTo(1));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomPantsCuffs_Entity(int id)
+        {
+            var result = await _restApiController.DeleteCustomPantsCuffs(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_CustomPantsCuffs_Entity()
+        {
+            var entity = new CustomPantsCuff()
+            {
+                Id = 3,
+                FkBasePantCuffs = 1,
+                CustomSettings = "Material: Wool; Style: Turned-Up;"
+            };
+
+            var result = await _restApiController.CreateCustomPantsCuffs(entity);
+
+            var list = _restApiController.GetCustomPantsCuffs(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetCustomPantsCuffsById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<CustomPantsCuff>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.FkBasePantCuffs, Is.EqualTo(entity.FkBasePantCuffs));
+                Assert.That(entityThatWasAdded.Value.CustomSettings, Is.EqualTo(entity.CustomSettings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomPantsCuffs_Entity(int id)
+        {
+            var entity = await _restApiController.GetCustomPantsCuffsById(id);
+
+            entity.Value.CustomSettings = "Updated: Material: Cotton; Style: Ribbed Cuffs;";
+
+            await _restApiController.UpdateCustomPantsCuffs(entity.Value);
+
+            var updatedEntity = await _restApiController.GetCustomPantsCuffsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkBasePantCuffs, Is.EqualTo(entity.Value.FkBasePantCuffs));
+                Assert.That(updatedEntity?.Value?.CustomSettings, Is.EqualTo(entity.Value.CustomSettings));
+            });
+        }
 
         #endregion
 
         #region CustomSleeves table
 
+        [Test]
+        public void GetCustomSleeves_Returns_2_Items()
+        {
+            var result = _restApiController.GetCustomSleeves(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CustomSleeve>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomSleevesById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetCustomSleevesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkBaseSleeves, Is.GreaterThanOrEqualTo(1));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomSleeves_Entity(int id)
+        {
+            var result = await _restApiController.DeleteCustomSleeves(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_CustomSleeves_Entity()
+        {
+            var entity = new CustomSleeve()
+            {
+                Id = 3,
+                FkBaseSleeves = 1,
+                CustomSettings = "Length: Long; Material: Silk; Style: Bell;"
+            };
+
+            var result = await _restApiController.CreateCustomSleeves(entity);
+
+            var list = _restApiController.GetCustomSleeves(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetCustomSleevesById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<CustomSleeve>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.FkBaseSleeves, Is.EqualTo(entity.FkBaseSleeves));
+                Assert.That(entityThatWasAdded.Value.CustomSettings, Is.EqualTo(entity.CustomSettings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomSleeves_Entity(int id)
+        {
+            var entity = await _restApiController.GetCustomSleevesById(id);
+
+            entity.Value.CustomSettings = "Updated: Length: Short; Material: Cotton; Style: Puffed;";
+
+            await _restApiController.UpdateCustomSleeves(entity.Value);
+
+            var updatedEntity = await _restApiController.GetCustomSleevesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkBaseSleeves, Is.EqualTo(entity.Value.FkBaseSleeves));
+                Assert.That(updatedEntity?.Value?.CustomSettings, Is.EqualTo(entity.Value.CustomSettings));
+            });
+        }
 
         #endregion
 
         #region CustomSleeveCuffs table
 
+        [Test]
+        public void GetCustomSleeveCuffs_Returns_2_Items()
+        {
+            var result = _restApiController.GetCustomSleeveCuffs(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CustomSleeveCuff>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomSleeveCuffsById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetCustomSleeveCuffsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkBaseSleeveCuffs, Is.GreaterThanOrEqualTo(1));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomSleeveCuffs_Entity(int id)
+        {
+            var result = await _restApiController.DeleteCustomSleeveCuffs(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_CustomSleeveCuffs_Entity()
+        {
+            var entity = new CustomSleeveCuff()
+            {
+                Id = 3,
+                FkBaseSleeveCuffs = 1,
+                CustomSettings = "Material: Velvet; Button: 4 gold buttons;"
+            };
+
+            var result = await _restApiController.CreateCustomSleeveCuffs(entity);
+
+            var list = _restApiController.GetCustomSleeveCuffs(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetCustomSleeveCuffsById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<CustomSleeveCuff>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.FkBaseSleeveCuffs, Is.EqualTo(entity.FkBaseSleeveCuffs));
+                Assert.That(entityThatWasAdded.Value.CustomSettings, Is.EqualTo(entity.CustomSettings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomSleeveCuffs_Entity(int id)
+        {
+            var entity = await _restApiController.GetCustomSleeveCuffsById(id);
+            entity.Value.CustomSettings = "Updated: Material: Leather; Button: 3 silver buttons;";
+
+            await _restApiController.UpdateCustomSleeveCuffs(entity.Value);
+
+            var updatedEntity = await _restApiController.GetCustomSleeveCuffsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkBaseSleeveCuffs, Is.EqualTo(entity.Value.FkBaseSleeveCuffs));
+                Assert.That(updatedEntity?.Value?.CustomSettings, Is.EqualTo(entity.Value.CustomSettings));
+            });
+        }
 
         #endregion
 
         #region CustomSportSuits table
 
+        [Test]
+        public void GetCustomSportSuits_Returns_2_Items()
+        {
+            var result = _restApiController.GetCustomSportSuits(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CustomSportSuit>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomSportSuitsById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetCustomSportSuitById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkCustomNecklines, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomSportSuits_Entity(int id)
+        {
+            var result = await _restApiController.DeleteCustomSportSuit(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_CustomSportSuits_Entity()
+        {
+            var entity = new CustomSportSuit()
+            {
+                Id = 3,
+                FkCustomNecklines = 1,
+                FkCustomSweaters = 1,
+                FkCustomSleeves = 1,
+                FkCustomSleeveCuffsLeft = 1,
+                FkCustomSleeveCuffsRight = 1,
+                FkCustomBelts = 1,
+                FkCustomPants = 1,
+                FkCustomPantsCuffsLeft = 1,
+                FkCustomPantsCuffsRight = 1
+            };
+
+            var result = await _restApiController.CreateCustomSportSuit(entity);
+
+            var list = _restApiController.GetCustomSportSuits(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetCustomSportSuitById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+                Assert.That(list.Value as List<CustomSportSuit>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomSportSuits_Entity(int id)
+        {
+            var entity = await _restApiController.GetCustomSportSuitById(id);
+
+            entity.Value.FkCustomNecklines = 2;
+
+            await _restApiController.UpdateCustomSportSuit(entity.Value);
+
+            var updatedEntity = await _restApiController.GetCustomSportSuitById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkCustomNecklines, Is.EqualTo(entity.Value.FkCustomNecklines));
+            });
+        }
 
         #endregion
 
         #region CustomSweaters table
 
+        [Test]
+        public void GetCustomSweaters_Returns_2_Items()
+        {
+            var result = _restApiController.GetCustomSweaters(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<CustomSweater>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomSweatersById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetCustomSweatersById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkBaseSweaters, Is.EqualTo(1));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomSweaters_Entity(int id)
+        {
+            var result = await _restApiController.DeleteCustomSweaters(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_CustomSweaters_Entity()
+        {
+            var entity = new CustomSweater()
+            {
+                Id = 3,
+                FkBaseSweaters = 1,
+                CustomSettings = "Material: Wool; Color: Navy Blue; Size: M"
+            };
+
+            var result = await _restApiController.CreateCustomSweaters(entity);
+
+            var list = _restApiController.GetCustomSweaters(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetCustomSweatersById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<CustomSweater>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.FkBaseSweaters, Is.EqualTo(entity.FkBaseSweaters));
+                Assert.That(entityThatWasAdded.Value.CustomSettings, Is.EqualTo(entity.CustomSettings));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomSweaters_Entity(int id)
+        {
+            var originalEntity = await _restApiController.GetCustomSweatersById(id);
+
+            var updatedCustomSettings = "Updated: Material: Cashmere; Color: Black; Size: L";
+            originalEntity.Value.CustomSettings = updatedCustomSettings;
+
+            await _restApiController.UpdateCustomSweaters(originalEntity.Value);
+
+            var updatedEntity = await _restApiController.GetCustomSweatersById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkBaseSweaters, Is.EqualTo(originalEntity.Value.FkBaseSweaters));
+                Assert.That(updatedEntity?.Value?.CustomSettings, Is.EqualTo(updatedCustomSettings));
+            });
+        }
 
         #endregion
 
@@ -1173,7 +2684,7 @@ namespace NUnitTests.RestAPI
                 UpdatedAt = DateTime.Now
             };
 
-            var result = await _restApiController.CreateCustomizableProductsAsync(entity);
+            var result = await _restApiController.CreateCustomizableProducts(entity);
 
             var list = _restApiController.GetCustomizableProducts(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetCustomizableProductsById(3);
@@ -1196,7 +2707,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.CustomizationDetails = "Updated Detail";
 
-            await _restApiController.UpdateCustomizableProductsAsync(entity.Value);
+            await _restApiController.UpdateCustomizableProducts(entity.Value);
 
             var updateEntity = await _restApiController.GetCustomizableProductsById(id);
 
@@ -1260,7 +2771,7 @@ namespace NUnitTests.RestAPI
                 Name = "Silk"
             };
 
-            var result = await _restApiController.CreateFabricTypesAsync(entity);
+            var result = await _restApiController.CreateFabricTypes(entity);
 
             var list = _restApiController.GetFabricTypes(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetFabricTypesById(3);
@@ -1283,7 +2794,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Name = "Updated Name";
 
-            await _restApiController.UpdateFabricTypesAsync(entity.Value);
+            await _restApiController.UpdateFabricTypes(entity.Value);
 
             var updateEntity = await _restApiController.GetFabricTypesById(id);
 
@@ -1351,7 +2862,7 @@ namespace NUnitTests.RestAPI
                 TimeFormat = "HH:MM:SS"
             };
 
-            var result = await _restApiController.CreateLanguagesAsync(entity);
+            var result = await _restApiController.CreateLanguages(entity);
 
             var list = _restApiController.GetLanguages(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetLanguagesById(3);
@@ -1374,7 +2885,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.FullName = "Text 3";
 
-            await _restApiController.UpdateLanguagesAsync(entity.Value);
+            await _restApiController.UpdateLanguages(entity.Value);
 
             var updateEntity = await _restApiController.GetLanguagesById(id);
 
@@ -1446,7 +2957,7 @@ namespace NUnitTests.RestAPI
                 UpdatedAt = DateTime.UtcNow
             };
 
-            var result = await _restApiController.CreateOrdersAsync(entity);
+            var result = await _restApiController.CreateOrders(entity);
 
             var list = _restApiController.GetOrders(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetOrdersById(3);
@@ -1468,7 +2979,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Amount = 200;
 
-            await _restApiController.UpdateOrdersAsync(entity.Value);
+            await _restApiController.UpdateOrders(entity.Value);
 
             var updateEntity = await _restApiController.GetOrdersById(id);
 
@@ -1534,7 +3045,7 @@ namespace NUnitTests.RestAPI
                 ChangedAt = DateTime.Now
             };
 
-            var result = await _restApiController.CreateOrderHistoryAsync(entity);
+            var result = await _restApiController.CreateOrderHistory(entity);
 
             var list = _restApiController.GetOrderHistory(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetOrderHistoryById(3);
@@ -1556,7 +3067,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.FkOrderStatuses = 3;
 
-            await _restApiController.UpdateOrderHistoryAsync(entity.Value);
+            await _restApiController.UpdateOrderHistory(entity.Value);
 
             var updateEntity = await _restApiController.GetOrderHistoryById(id);
 
@@ -1620,7 +3131,7 @@ namespace NUnitTests.RestAPI
                 Status = "New Order"
             };
 
-            var result = await _restApiController.CreateOrderStatusesAsync(entity);
+            var result = await _restApiController.CreateOrderStatuses(entity);
 
             var list = _restApiController.GetOrderStatuses(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetOrderStatusesById(3);
@@ -1643,7 +3154,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Status = "Updated Status";
 
-            await _restApiController.UpdateOrderStatusesAsync(entity.Value);
+            await _restApiController.UpdateOrderStatuses(entity.Value);
 
             var updateEntity = await _restApiController.GetOrderStatusesById(id);
 
@@ -1712,7 +3223,7 @@ namespace NUnitTests.RestAPI
                 PaymentNumber = "123"
             };
 
-            var result = await _restApiController.CreatePaymentsAsync(entity);
+            var result = await _restApiController.CreatePayments(entity);
 
             var list = _restApiController.GetPayments(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetPaymentsById(3);
@@ -1735,7 +3246,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.PaymentNumber = "456";
 
-            await _restApiController.UpdatePaymentsAsync(entity.Value);
+            await _restApiController.UpdatePayments(entity.Value);
 
             var updateEntity = await _restApiController.GetPaymentsById(id);
 
@@ -1750,13 +3261,177 @@ namespace NUnitTests.RestAPI
 
         #region PaymentMethods table
 
+        [Test]
+        public void GetPaymentMethods_Returns_2_Items()
+        {
+            var result = _restApiController.GetPaymentMethods(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<PaymentMethod>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetPaymentMethodById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetPaymentMethodsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.Method, Is.Not.Null.And.Not.Empty);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_PaymentMethod_Entity(int id)
+        {
+            var result = await _restApiController.DeletePaymentMethods(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_PaymentMethod_Entity()
+        {
+            var entity = new PaymentMethod()
+            {
+                Id = 3,
+                Method = "Bitcoin"
+            };
+
+            var result = await _restApiController.CreatePaymentMethods(entity);
+
+            var list = _restApiController.GetPaymentMethods(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetPaymentMethodsById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<PaymentMethod>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.Method, Is.EqualTo(entity.Method));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_PaymentMethod_Entity(int id)
+        {
+            var entity = await _restApiController.GetPaymentMethodsById(id);
+            entity.Value.Method = "Apple Pay";
+
+            await _restApiController.UpdatePaymentMethods(entity.Value);
+
+            var updatedEntity = await _restApiController.GetPaymentMethodsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.Method, Is.EqualTo("Apple Pay"));
+            });
+        }
 
         #endregion
 
         #region PaymentStatuses table
 
+        [Test]
+        public void GetPaymentStatuses_Returns_2_Items()
+        {
+            var result = _restApiController.GetPaymentStatuses(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<PaymentStatus>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetPaymentStatusById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetPaymentStatusesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.Status, Is.Not.Null.And.Not.Empty);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_PaymentStatus_Entity(int id)
+        {
+            var result = await _restApiController.DeletePaymentStatuses(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_PaymentStatus_Entity()
+        {
+            var entity = new PaymentStatus()
+            {
+                Id = 3,
+                Status = "Pending"
+            };
+
+            var result = await _restApiController.CreatePaymentStatuses(entity);
+
+            var list = _restApiController.GetPaymentStatuses(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetPaymentStatusesById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<PaymentStatus>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.Status, Is.EqualTo(entity.Status));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_PaymentStatus_Entity(int id)
+        {
+            var entity = await _restApiController.GetPaymentStatusesById(id);
+            entity.Value.Status = "Completed";
+
+            await _restApiController.UpdatePaymentStatuses(entity.Value);
+
+            var updatedEntity = await _restApiController.GetPaymentStatusesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.Status, Is.EqualTo("Completed"));
+            });
+        }
 
         #endregion
 
@@ -1815,7 +3490,7 @@ namespace NUnitTests.RestAPI
                 UpdatedAt = DateTime.Now
             };
 
-            var result = await _restApiController.CreateProductsAsync(entity);
+            var result = await _restApiController.CreateProducts(entity);
 
             var list = _restApiController.GetProducts(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetProductsById(3);
@@ -1838,7 +3513,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Price = 29.99m;
 
-            await _restApiController.UpdateProductsAsync(entity.Value);
+            await _restApiController.UpdateProducts(entity.Value);
 
             var updateEntity = await _restApiController.GetProductsById(id);
 
@@ -1903,7 +3578,7 @@ namespace NUnitTests.RestAPI
                 ImageData = Encoding.ASCII.GetBytes("https://example.com/image3.jpg")
             };
 
-            var result = await _restApiController.CreateProductImagesAsync(entity);
+            var result = await _restApiController.CreateProductImages(entity);
 
             var list = _restApiController.GetProductImages(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetProductImagesById(3);
@@ -1926,7 +3601,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.ImageData = Encoding.ASCII.GetBytes("https://example.com/updated_image.jpg");
 
-            await _restApiController.UpdateProductImagesAsync(entity.Value);
+            await _restApiController.UpdateProductImages(entity.Value);
 
             var updateEntity = await _restApiController.GetProductImagesById(id);
 
@@ -1941,7 +3616,91 @@ namespace NUnitTests.RestAPI
 
         #region ProductOrders table
 
+        [Test]
+        public void GetProductOrders_Returns_2_Items()
+        {
+            var result = _restApiController.GetProductOrders(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<ProductOrder>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetProductOrderById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetProductOrdersById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkProducts, Is.Not.Null.Or.EqualTo(result?.Value?.FkCustomizableProducts));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_ProductOrder_Entity(int id)
+        {
+            var result = await _restApiController.DeleteProductOrders(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_ProductOrder_Entity()
+        {
+            var entity = new ProductOrder()
+            {
+                Id = 3,
+                FkProducts = 1,
+                FkCustomizableProducts = null
+            };
+
+            var result = await _restApiController.CreateProductOrders(entity);
+
+            var list = _restApiController.GetProductOrders(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetProductOrdersById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+                Assert.That(list.Value as List<ProductOrder>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.FkProducts, Is.EqualTo(entity.FkProducts));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_ProductOrder_Entity(int id)
+        {
+            var entity = await _restApiController.GetProductOrdersById(id);
+            entity.Value.FkProducts = 2;
+
+            await _restApiController.UpdateProductOrders(entity.Value);
+
+            var updatedEntity = await _restApiController.GetProductOrdersById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkProducts, Is.EqualTo(2));
+                Assert.That(updatedEntity?.Value?.FkCustomizableProducts, Is.EqualTo(entity.Value.FkCustomizableProducts));
+            });
+        }
 
         #endregion
 
@@ -1999,7 +3758,7 @@ namespace NUnitTests.RestAPI
                 Description = "Description for Product 3"
             };
 
-            var result = await _restApiController.CreateProductTranslationsAsync(entity);
+            var result = await _restApiController.CreateProductTranslations(entity);
 
             var list = _restApiController.GetProductTranslations(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetProductTranslationsById(3);
@@ -2022,7 +3781,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Name = "Updated Product Name";
 
-            await _restApiController.UpdateProductTranslationsAsync(entity.Value);
+            await _restApiController.UpdateProductTranslations(entity.Value);
 
             var updateEntity = await _restApiController.GetProductTranslationsById(id);
 
@@ -2090,7 +3849,7 @@ namespace NUnitTests.RestAPI
                 CreatedAt = DateTime.Now
             };
 
-            var result = await _restApiController.CreateReviewsAsync(entity);
+            var result = await _restApiController.CreateReviews(entity);
 
             var list = _restApiController.GetReviews(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetReviewsById(3);
@@ -2113,7 +3872,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Comment = "Updated comment.";
 
-            await _restApiController.UpdateReviewsAsync(entity.Value);
+            await _restApiController.UpdateReviews(entity.Value);
 
             var updateEntity = await _restApiController.GetReviewsById(id);
 
@@ -2128,13 +3887,196 @@ namespace NUnitTests.RestAPI
 
         #region ShippingAddresses table
 
+        [Test]
+        public void GetShippingAddresses_Returns_2_Items()
+        {
+            var result = _restApiController.GetShippingAddresses(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<ShippingAddress>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetShippingAddressById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetShippingAddressesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkCountries, Is.Not.Null);
+                Assert.That(result?.Value?.Address, Is.Not.Null.And.Not.Empty);
+                Assert.That(result?.Value?.City, Is.Not.Null.And.Not.Empty);
+                Assert.That(result?.Value?.ZipPostCode, Is.Not.Null.And.Not.Empty);
+                Assert.That(result?.Value?.StateProvince, Is.Not.Null.And.Not.Empty);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_ShippingAddress_Entity(int id)
+        {
+            var result = await _restApiController.DeleteShippingAddresses(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_ShippingAddress_Entity()
+        {
+            var entity = new ShippingAddress()
+            {
+                Id = 3,
+                FkCountries = 1,
+                Address = "123 New Avenue",
+                City = "Metropolis",
+                ZipPostCode = "12345",
+                StateProvince = "Gotham"
+            };
+
+            var result = await _restApiController.CreateShippingAddresses(entity);
+
+            var list = _restApiController.GetShippingAddresses(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetShippingAddressesById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list.Value as List<ShippingAddress>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.FkCountries, Is.EqualTo(entity.FkCountries));
+                Assert.That(entityThatWasAdded.Value.Address, Is.EqualTo(entity.Address));
+                Assert.That(entityThatWasAdded.Value.City, Is.EqualTo(entity.City));
+                Assert.That(entityThatWasAdded.Value.ZipPostCode, Is.EqualTo(entity.ZipPostCode));
+                Assert.That(entityThatWasAdded.Value.StateProvince, Is.EqualTo(entity.StateProvince));
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_ShippingAddress_Entity(int id)
+        {
+            var entity = await _restApiController.GetShippingAddressesById(id);
+            entity.Value.Address = "Updated 456 New Avenue";
+            entity.Value.City = "Updated Metropolis";
+            entity.Value.ZipPostCode = "54321";
+            entity.Value.StateProvince = "Updated Gotham";
+
+            await _restApiController.UpdateShippingAddresses(entity.Value);
+
+            var updatedEntity = await _restApiController.GetShippingAddressesById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkCountries, Is.EqualTo(entity.Value.FkCountries));
+                Assert.That(updatedEntity?.Value?.Address, Is.EqualTo("Updated 456 New Avenue"));
+                Assert.That(updatedEntity?.Value?.City, Is.EqualTo("Updated Metropolis"));
+                Assert.That(updatedEntity?.Value?.ZipPostCode, Is.EqualTo("54321"));
+                Assert.That(updatedEntity?.Value?.StateProvince, Is.EqualTo("Updated Gotham"));
+            });
+        }
 
         #endregion
 
         #region SizeOptions table
 
+        [Test]
+        public void GetSizeOptions_Returns_2_Items()
+        {
+            var result = _restApiController.GetSizeOptions(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<SizeOption>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetSizeOptionById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetSizeOptionsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.Size, Is.Not.Null.And.Not.Empty);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_SizeOption_Entity(int id)
+        {
+            var result = await _restApiController.DeleteSizeOptions(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_SizeOption_Entity()
+        {
+            var entity = new SizeOption()
+            {
+                Id = 3,
+                Size = "XL"
+            };
+
+            var result = await _restApiController.CreateSizeOptions(entity);
+
+            var list = _restApiController.GetSizeOptions(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetSizeOptionsById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+                Assert.That(list.Value as List<SizeOption>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.Size, Is.EqualTo(entity.Size));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_SizeOption_Entity(int id)
+        {
+            var entity = await _restApiController.GetSizeOptionsById(id);
+            entity.Value.Size = "XXL";
+
+            await _restApiController.UpdateSizeOptions(entity.Value);
+
+            var updatedEntity = await _restApiController.GetSizeOptionsById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.Size, Is.EqualTo("XXL"));
+            });
+        }
 
         #endregion
 
@@ -2194,7 +4136,7 @@ namespace NUnitTests.RestAPI
                 Hash = "Hash 3"
             };
 
-            var result = await _restApiController.CreateUsersAsync(entity);
+            var result = await _restApiController.CreateUsers(entity);
 
             var list = _restApiController.GetUsers(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetUsersById(3);
@@ -2217,7 +4159,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Email = "Text 3";
 
-            await _restApiController.UpdateUsersAsync(entity.Value);
+            await _restApiController.UpdateUsers(entity.Value);
 
             var updateEntity = await _restApiController.GetUsersById(id);
 
@@ -2232,7 +4174,89 @@ namespace NUnitTests.RestAPI
 
         #region UserOrderHistory table
 
+        [Test]
+        public void GetUserOrderHistory_Returns_2_Items()
+        {
+            var result = _restApiController.GetUserOrderHistory(_limit, _page);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Value as List<UserOrderHistory>, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetUserOrderHistoryById_Returns_Correct_Entity(int id)
+        {
+            var result = await _restApiController.GetUserOrderHistoryById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Value?.Id, Is.EqualTo(id));
+                Assert.That(result?.Value?.FkOrders, Is.GreaterThan(0));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_UserOrderHistory_Entity(int id)
+        {
+            var result = await _restApiController.DeleteUserOrderHistory(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<OkResult>());
+            });
+        }
+
+        [Test]
+        public async Task Add_UserOrderHistory_Entity()
+        {
+            var entity = new UserOrderHistory()
+            {
+                Id = 3,
+                FkOrders = 1
+            };
+
+            var result = await _restApiController.CreateUserOrderHistory(entity);
+
+            var list = _restApiController.GetUserOrderHistory(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetUserOrderHistoryById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
+                Assert.That(list.Value as List<UserOrderHistory>, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
+                Assert.That(entityThatWasAdded.Value.FkOrders, Is.EqualTo(entity.FkOrders));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_UserOrderHistory_Entity(int id)
+        {
+            var entity = await _restApiController.GetUserOrderHistoryById(id);
+            entity.Value.FkOrders = 2;
+
+            await _restApiController.UpdateUserOrderHistory(entity.Value);
+
+            var updatedEntity = await _restApiController.GetUserOrderHistoryById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Value?.Id, Is.EqualTo(id));
+                Assert.That(updatedEntity?.Value?.FkOrders, Is.EqualTo(2));
+            });
+        }
 
         #endregion
 
@@ -2296,7 +4320,7 @@ namespace NUnitTests.RestAPI
                 Avatar = "Avatar 3"
             };
 
-            var result = await _restApiController.CreateUserProfilesAsync(entity);
+            var result = await _restApiController.CreateUserProfiles(entity);
 
             var list = _restApiController.GetUserProfiles(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetUserProfilesById(3);
@@ -2319,7 +4343,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.LastName = "Text 3";
 
-            await _restApiController.UpdateUserProfilesAsync(entity.Value);
+            await _restApiController.UpdateUserProfiles(entity.Value);
 
             var updateEntity = await _restApiController.GetUserProfilesById(id);
 
@@ -2384,7 +4408,7 @@ namespace NUnitTests.RestAPI
                 Name = "Name 3"
             };
 
-            var result = await _restApiController.CreateUserRolesAsync(entity);
+            var result = await _restApiController.CreateUserRoles(entity);
 
             var list = _restApiController.GetUserRoles(_limit, _page);
             var entityThatWasAdded = await _restApiController.GetUserRolesById(3);
@@ -2407,7 +4431,7 @@ namespace NUnitTests.RestAPI
 
             entity.Value.Name = "Text 3";
 
-            await _restApiController.UpdateUserRolesAsync(entity.Value);
+            await _restApiController.UpdateUserRoles(entity.Value);
 
             var updateEntity = await _restApiController.GetUserRolesById(id);
 

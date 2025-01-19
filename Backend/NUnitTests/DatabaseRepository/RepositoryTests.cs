@@ -341,7 +341,7 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public async Task GetAboutById_Return_Correct_EntityAsync(int id)
+        public async Task GetAboutById_Return_Correct_Entity(int id)
         {
             var result = await _aboutRepository?.GetById(id);
 
@@ -1085,7 +1085,7 @@ namespace NUnitTests.DatabaseRepository
         [Test]
         [TestCase(1)]
         [TestCase(2)]
-        public async Task GetBaseSweatersById_Return_Correct_EntityAsync(int id)
+        public async Task GetBaseSweatersById_Return_Correct_Entity(int id)
         {
             var result = await _baseSweaterRepository?.GetById(id);
 
@@ -3382,7 +3382,7 @@ namespace NUnitTests.DatabaseRepository
         }
 
         [Test]
-        public async Task Add_ProductImage_EntityAsync()
+        public async Task Add_ProductImage_Entity()
         {
             var entity = new ProductImage()
             {

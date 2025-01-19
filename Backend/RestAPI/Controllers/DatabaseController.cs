@@ -162,7 +162,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<About>> CreateAboutAsync(About entity)
+        public async Task<ActionResult<About>> CreateAbout(About entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -183,7 +183,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<About>> UpdateAboutAsync(About entity)
+        public async Task<ActionResult<About>> UpdateAbout(About entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -265,7 +265,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<AccessLevel>> CreateAccessLevelsAsync(AccessLevel entity)
+        public async Task<ActionResult<AccessLevel>> CreateAccessLevels(AccessLevel entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -286,7 +286,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<AccessLevel>> UpdateAccessLevelsAsync(AccessLevel entity)
+        public async Task<ActionResult<AccessLevel>> UpdateAccessLevels(AccessLevel entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -366,7 +366,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseBelt>> CreateBaseBeltsAsync(BaseBelt entity)
+        public async Task<ActionResult<BaseBelt>> CreateBaseBelts(BaseBelt entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -387,7 +387,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseBelt>> UpdateBaseBeltsAsync(BaseBelt entity)
+        public async Task<ActionResult<BaseBelt>> UpdateBaseBelts(BaseBelt entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -467,7 +467,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseNeckline>> CreateBaseNecklinesAsync(BaseNeckline entity)
+        public async Task<ActionResult<BaseNeckline>> CreateBaseNecklines(BaseNeckline entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -488,7 +488,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseNeckline>> UpdateBaseNecklinesAsync(BaseNeckline entity)
+        public async Task<ActionResult<BaseNeckline>> UpdateBaseNecklines(BaseNeckline entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -568,7 +568,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BasePant>> CreateBasePantsAsync(BasePant entity)
+        public async Task<ActionResult<BasePant>> CreateBasePants(BasePant entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -589,7 +589,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BasePant>> UpdateBasePantsAsync(BasePant entity)
+        public async Task<ActionResult<BasePant>> UpdateBasePants(BasePant entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -669,7 +669,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BasePantsCuff>> CreateBasePantsCuffsAsync(BasePantsCuff entity)
+        public async Task<ActionResult<BasePantsCuff>> CreateBasePantsCuffs(BasePantsCuff entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -690,7 +690,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BasePantsCuff>> UpdateBasePantsCuffsAsync(BasePantsCuff entity)
+        public async Task<ActionResult<BasePantsCuff>> UpdateBasePantsCuffs(BasePantsCuff entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -770,7 +770,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSleeve>> CreateBaseSleevesAsync(BaseSleeve entity)
+        public async Task<ActionResult<BaseSleeve>> CreateBaseSleeves(BaseSleeve entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -791,7 +791,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSleeve>> UpdateBaseSleevesAsync(BaseSleeve entity)
+        public async Task<ActionResult<BaseSleeve>> UpdateBaseSleeves(BaseSleeve entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -871,7 +871,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSleeveCuff>> CreateBaseSleeveCuffsAsync(BaseSleeveCuff entity)
+        public async Task<ActionResult<BaseSleeveCuff>> CreateBaseSleeveCuffs(BaseSleeveCuff entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -892,7 +892,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSleeveCuff>> UpdateBaseSleeveCuffsAsync(BaseSleeveCuff entity)
+        public async Task<ActionResult<BaseSleeveCuff>> UpdateBaseSleeveCuffs(BaseSleeveCuff entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -972,7 +972,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSportSuit>> CreateBaseSportSuitAsync(BaseSportSuit entity)
+        public async Task<ActionResult<BaseSportSuit>> CreateBaseSportSuit(BaseSportSuit entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -993,7 +993,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSportSuit>> UpdateBaseSportSuitAsync(BaseSportSuit entity)
+        public async Task<ActionResult<BaseSportSuit>> UpdateBaseSportSuit(BaseSportSuit entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1073,7 +1073,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSweater>> CreateBaseSweatersAsync(BaseSweater entity)
+        public async Task<ActionResult<BaseSweater>> CreateBaseSweaters(BaseSweater entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1094,7 +1094,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSweater>> UpdateBaseSweatersAsync(BaseSweater entity)
+        public async Task<ActionResult<BaseSweater>> UpdateBaseSweaters(BaseSweater entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1176,7 +1176,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Cart>> CreateCartAsync(Cart entity)
+        public async Task<ActionResult<Cart>> CreateCart(Cart entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1197,7 +1197,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Cart>> UpdateCartAsync(Cart entity)
+        public async Task<ActionResult<Cart>> UpdateCart(Cart entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1279,7 +1279,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Category>> CreateCategoriesAsync(Category entity)
+        public async Task<ActionResult<Category>> CreateCategories(Category entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1300,7 +1300,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Category>> UpdateCategoriesAsync(Category entity)
+        public async Task<ActionResult<Category>> UpdateCategories(Category entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1382,7 +1382,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CategoryHierarchy>> CreateCategoryHierarchyAsync(CategoryHierarchy entity)
+        public async Task<ActionResult<CategoryHierarchy>> CreateCategoryHierarchy(CategoryHierarchy entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1403,7 +1403,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CategoryHierarchy>> UpdateCategoryHierarchyAsync(CategoryHierarchy entity)
+        public async Task<ActionResult<CategoryHierarchy>> UpdateCategoryHierarchy(CategoryHierarchy entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1485,7 +1485,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Color>> CreateColorsAsync(Color entity)
+        public async Task<ActionResult<Color>> CreateColors(Color entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1506,7 +1506,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Color>> UpdateColorsAsync(Color entity)
+        public async Task<ActionResult<Color>> UpdateColors(Color entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1588,7 +1588,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Contact>> CreateContactsAsync(Contact entity)
+        public async Task<ActionResult<Contact>> CreateContacts(Contact entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1609,7 +1609,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Contact>> UpdateContactsAsync(Contact entity)
+        public async Task<ActionResult<Contact>> UpdateContacts(Contact entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1689,7 +1689,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Country>> CreateCountriesAsync(Country entity)
+        public async Task<ActionResult<Country>> CreateCountries(Country entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1710,7 +1710,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Country>> UpdateCountriesAsync(Country entity)
+        public async Task<ActionResult<Country>> UpdateCountries(Country entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1790,7 +1790,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Currency>> CreateCurrenciesAsync(Currency entity)
+        public async Task<ActionResult<Currency>> CreateCurrencies(Currency entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1811,7 +1811,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Currency>> UpdateCurrenciesAsync(Currency entity)
+        public async Task<ActionResult<Currency>> UpdateCurrencies(Currency entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1891,7 +1891,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomBelt>> CreateCustomBeltsAsync(CustomBelt customBelt)
+        public async Task<ActionResult<CustomBelt>> CreateCustomBelts(CustomBelt customBelt)
         {
             if (customBelt == null)
                 return BadRequest();
@@ -1912,7 +1912,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomBelt>> UpdateCustomBeltsAsync(CustomBelt customBelt)
+        public async Task<ActionResult<CustomBelt>> UpdateCustomBelts(CustomBelt customBelt)
         {
             if (customBelt == null)
                 return BadRequest();
@@ -2750,7 +2750,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomizableProduct>> CreateCustomizableProductsAsync(CustomizableProduct entity)
+        public async Task<ActionResult<CustomizableProduct>> CreateCustomizableProducts(CustomizableProduct entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2771,7 +2771,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomizableProduct>> UpdateCustomizableProductsAsync(CustomizableProduct entity)
+        public async Task<ActionResult<CustomizableProduct>> UpdateCustomizableProducts(CustomizableProduct entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2853,7 +2853,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<FabricType>> CreateFabricTypesAsync(FabricType entity)
+        public async Task<ActionResult<FabricType>> CreateFabricTypes(FabricType entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2874,7 +2874,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<FabricType>> UpdateFabricTypesAsync(FabricType entity)
+        public async Task<ActionResult<FabricType>> UpdateFabricTypes(FabricType entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2956,7 +2956,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Language>> CreateLanguagesAsync(Language entity)
+        public async Task<ActionResult<Language>> CreateLanguages(Language entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2977,7 +2977,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Language>> UpdateLanguagesAsync(Language entity)
+        public async Task<ActionResult<Language>> UpdateLanguages(Language entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3059,7 +3059,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Order>> CreateOrdersAsync(Order entity)
+        public async Task<ActionResult<Order>> CreateOrders(Order entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3080,7 +3080,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Order>> UpdateOrdersAsync(Order entity)
+        public async Task<ActionResult<Order>> UpdateOrders(Order entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3162,7 +3162,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<OrderHistory>> CreateOrderHistoryAsync(OrderHistory entity)
+        public async Task<ActionResult<OrderHistory>> CreateOrderHistory(OrderHistory entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3183,7 +3183,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<OrderHistory>> UpdateOrderHistoryAsync(OrderHistory entity)
+        public async Task<ActionResult<OrderHistory>> UpdateOrderHistory(OrderHistory entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3265,7 +3265,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<OrderStatus>> CreateOrderStatusesAsync(OrderStatus entity)
+        public async Task<ActionResult<OrderStatus>> CreateOrderStatuses(OrderStatus entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3286,7 +3286,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<OrderStatus>> UpdateOrderStatusesAsync(OrderStatus entity)
+        public async Task<ActionResult<OrderStatus>> UpdateOrderStatuses(OrderStatus entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3368,7 +3368,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Payment>> CreatePaymentsAsync(Payment entity)
+        public async Task<ActionResult<Payment>> CreatePayments(Payment entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3389,7 +3389,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Payment>> UpdatePaymentsAsync(Payment entity)
+        public async Task<ActionResult<Payment>> UpdatePayments(Payment entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3687,7 +3687,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Product>> CreateProductsAsync(Product entity)
+        public async Task<ActionResult<Product>> CreateProducts(Product entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3708,7 +3708,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Product>> UpdateProductsAsync(Product entity)
+        public async Task<ActionResult<Product>> UpdateProducts(Product entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3790,7 +3790,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ProductImage>> CreateProductImagesAsync(ProductImage entity)
+        public async Task<ActionResult<ProductImage>> CreateProductImages(ProductImage entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3811,7 +3811,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ProductImage>> UpdateProductImagesAsync(ProductImage entity)
+        public async Task<ActionResult<ProductImage>> UpdateProductImages(ProductImage entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3838,6 +3838,109 @@ namespace RestAPI.Controllers
             if (entity != null)
             {
                 await _productImageRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region ProductOrders
+
+        [HttpGet("GetProductOrdersCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetProductOrdersCount()
+        {
+            return _productOrderRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetProductOrdersFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IEnumerable<string> GetProductOrdersFields()
+        {
+            return new ProductImage().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetProductOrders")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<ProductOrder>> GetProductOrders(int limit, int page)
+        {
+            var dbList = _productOrderRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.ProductOrder>, List<ProductOrder>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetProductOrdersById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ProductOrder?>> GetProductOrdersById(int id)
+        {
+            var dbEntity = await _productOrderRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.ProductOrder, ProductOrder>(dbEntity);
+        }
+
+        [HttpPost("CreateProductOrders")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ProductOrder>> CreateProductOrders(ProductOrder entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _productOrderRepository.Add(_mapper.Map<ProductOrder, DB.ProductOrder>(entity));
+                return CreatedAtAction(nameof(GetProductOrdersById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateProductOrders")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ProductOrder>> UpdateProductOrders(ProductOrder entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _productOrderRepository.Update(_mapper.Map<ProductOrder, DB.ProductOrder>(entity));
+                return CreatedAtAction(nameof(GetProductOrdersById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteProductOrders")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteProductOrders(int id)
+        {
+            var entity = await _productOrderRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _productOrderRepository.Delete(entity);
                 return Ok();
             }
 
@@ -3893,7 +3996,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ProductTranslation>> CreateProductTranslationsAsync(ProductTranslation entity)
+        public async Task<ActionResult<ProductTranslation>> CreateProductTranslations(ProductTranslation entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3914,7 +4017,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ProductTranslation>> UpdateProductTranslationsAsync(ProductTranslation entity)
+        public async Task<ActionResult<ProductTranslation>> UpdateProductTranslations(ProductTranslation entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -3996,7 +4099,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Review>> CreateReviewsAsync(Review entity)
+        public async Task<ActionResult<Review>> CreateReviews(Review entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -4017,7 +4120,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Review>> UpdateReviewsAsync(Review entity)
+        public async Task<ActionResult<Review>> UpdateReviews(Review entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -4315,7 +4418,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<User>> CreateUsersAsync(User entity)
+        public async Task<ActionResult<User>> CreateUsers(User entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -4336,7 +4439,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<User>> UpdateUsersAsync(User entity)
+        public async Task<ActionResult<User>> UpdateUsers(User entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -4387,10 +4490,10 @@ namespace RestAPI.Controllers
             return typeof(DB.UserOrderHistory).GetProperties().Select(prop => prop.Name);
         }
 
-        [HttpGet("GetUserOrderHistories")]
+        [HttpGet("GetUserOrderHistory")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<UserOrderHistory>> GetUserOrderHistories(int limit, int page)
+        public ActionResult<IEnumerable<UserOrderHistory>> GetUserOrderHistory(int limit, int page)
         {
             var dbList = _userOrderHistoryRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.UserOrderHistory>, List<UserOrderHistory>>(dbList);
@@ -4526,7 +4629,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserProfile>> CreateUserProfilesAsync(UserProfile entity)
+        public async Task<ActionResult<UserProfile>> CreateUserProfiles(UserProfile entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -4547,7 +4650,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserProfile>> UpdateUserProfilesAsync(UserProfile entity)
+        public async Task<ActionResult<UserProfile>> UpdateUserProfiles(UserProfile entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -4629,7 +4732,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserRole>> CreateUserRolesAsync(UserRole entity)
+        public async Task<ActionResult<UserRole>> CreateUserRoles(UserRole entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -4650,7 +4753,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserRole>> UpdateUserRolesAsync(UserRole entity)
+        public async Task<ActionResult<UserRole>> UpdateUserRoles(UserRole entity)
         {
             if (entity == null)
                 return BadRequest();
