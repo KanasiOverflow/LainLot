@@ -563,6 +563,54 @@ namespace NUnitTests.RestAPI
 
         #endregion
 
+        #region Basebelts table
+
+
+
+        #endregion
+
+        #region BaseNecklines table
+
+
+
+        #endregion
+
+        #region BasePants table
+
+
+
+        #endregion
+
+        #region BasePantsCuffs table
+
+
+
+        #endregion
+
+        #region BaseSleeves table
+
+
+
+        #endregion
+
+        #region BaseSleeveCuffs table
+
+
+
+        #endregion
+
+        #region BaseSportSuits table
+
+
+
+        #endregion
+
+        #region BaseSweaters table
+
+
+
+        #endregion
+
         #region Cart table
 
         [Test]
@@ -1006,6 +1054,65 @@ namespace NUnitTests.RestAPI
                 Assert.That(entity?.Value?.Email, Is.EqualTo(updateEntity?.Value?.Email));
             });
         }
+
+        #endregion
+
+        #region Countries tables
+
+
+        #endregion
+
+        #region Currencies tables
+
+
+        #endregion
+
+
+        #region Custombelts table
+
+
+
+        #endregion
+
+        #region CustomNecklines table
+
+
+
+        #endregion
+
+        #region CustomPants table
+
+
+
+        #endregion
+
+        #region CustomPantsCuffs table
+
+
+
+        #endregion
+
+        #region CustomSleeves table
+
+
+
+        #endregion
+
+        #region CustomSleeveCuffs table
+
+
+
+        #endregion
+
+        #region CustomSportSuits table
+
+
+
+        #endregion
+
+        #region CustomSweaters table
+
+
 
         #endregion
 
@@ -1641,6 +1748,18 @@ namespace NUnitTests.RestAPI
 
         #endregion
 
+        #region PaymentMethods table
+
+
+
+        #endregion
+
+        #region PaymentStatuses table
+
+
+
+        #endregion
+
         #region Products table
 
         [Test]
@@ -1817,6 +1936,12 @@ namespace NUnitTests.RestAPI
                 Assert.That(entity?.Value?.ImageData, Is.EqualTo(updateEntity?.Value?.ImageData));
             });
         }
+
+        #endregion
+
+        #region ProductOrders table
+
+
 
         #endregion
 
@@ -2001,6 +2126,18 @@ namespace NUnitTests.RestAPI
 
         #endregion
 
+        #region ShippingAddresses table
+
+
+
+        #endregion
+
+        #region SizeOptions table
+
+
+
+        #endregion
+
         #region Users table
 
         [Test]
@@ -2090,6 +2227,12 @@ namespace NUnitTests.RestAPI
                 Assert.That(entity?.Value?.Email, Is.EqualTo(updateEntity?.Value?.Email));
             });
         }
+
+        #endregion
+
+        #region UserOrderHistory table
+
+
 
         #endregion
 

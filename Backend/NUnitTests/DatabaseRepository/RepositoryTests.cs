@@ -492,6 +492,665 @@ namespace NUnitTests.DatabaseRepository
 
         #endregion
 
+        #region Basebelts table
+
+        [Test]
+        public void GetBaseBelts_Return_2_Items()
+        {
+            var result = _baseBeltRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseBeltsById_Return_Correct_Entity(int id)
+        {
+            var result = await _baseBeltRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseBelts_Entity(int id)
+        {
+            var result = await _baseBeltRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _baseBeltRepository?.Delete(result);
+            var count = _baseBeltRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_BaseBelts_Entity()
+        {
+            var entity = new BaseBelt()
+            {
+                Id = 3,
+                Settings = "{ \"length\": \"100cm\" }"
+            };
+
+            await _baseBeltRepository?.Add(entity);
+
+            var list = _baseBeltRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _baseBeltRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Settings, Is.EqualTo(entity?.Settings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseBelts_Entity(int id)
+        {
+            var entity = await _baseBeltRepository?.GetById(id);
+
+            entity.Settings = "{ \"length\": \"150cm\" }";
+
+            await _baseBeltRepository?.Update(entity);
+
+            var updatedEntity = await _baseBeltRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.Settings, Is.EqualTo(entity?.Settings));
+        }
+
+        #endregion
+
+        #region BaseNecklines table
+
+        [Test]
+        public void GetBaseNecklines_Returns_2_Items()
+        {
+            var result = _baseNecklineRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseNecklinesById_Returns_Correct_Entity(int id)
+        {
+            var result = await _baseNecklineRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseNecklines_Entity(int id)
+        {
+            var result = await _baseNecklineRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _baseNecklineRepository?.Delete(result);
+            var count = _baseNecklineRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_BaseNecklines_Entity()
+        {
+            var entity = new BaseNeckline
+            {
+                Id = 3,
+                Settings = "{ \"style\": \"V-neck\" }"
+            };
+
+            await _baseNecklineRepository?.Add(entity);
+
+            var list = _baseNecklineRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _baseNecklineRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Settings, Is.EqualTo(entity?.Settings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseNecklines_Entity(int id)
+        {
+            var entity = await _baseNecklineRepository?.GetById(id);
+
+            entity.Settings = "{ \"style\": \"Crew-neck\" }";
+
+            await _baseNecklineRepository?.Update(entity);
+
+            var updatedEntity = await _baseNecklineRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.Settings, Is.EqualTo(entity?.Settings));
+        }
+
+        #endregion
+
+        #region BasePants table
+
+        [Test]
+        public void GetBasePants_Returns_2_Items()
+        {
+            var result = _basePantRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBasePantsById_Returns_Correct_Entity(int id)
+        {
+            var result = await _basePantRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BasePants_Entity(int id)
+        {
+            var result = await _basePantRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _basePantRepository?.Delete(result);
+            var count = _basePantRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_BasePants_Entity()
+        {
+            var entity = new BasePant
+            {
+                Id = 3,
+                Settings = "{ \"length\": \"long\" }"
+            };
+
+            await _basePantRepository?.Add(entity);
+
+            var list = _basePantRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _basePantRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Settings, Is.EqualTo(entity?.Settings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BasePants_Entity(int id)
+        {
+            var entity = await _basePantRepository?.GetById(id);
+
+            entity.Settings = "{ \"length\": \"short\" }";
+
+            await _basePantRepository?.Update(entity);
+
+            var updatedEntity = await _basePantRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.Settings, Is.EqualTo(entity?.Settings));
+        }
+
+        #endregion
+
+        #region BasePantsCuffs table
+
+        [Test]
+        public void GetBasePantsCuffs_Returns_2_Items()
+        {
+            var result = _basePantsCuffRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBasePantsCuffsById_Returns_Correct_Entity(int id)
+        {
+            var result = await _basePantsCuffRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BasePantsCuffs_Entity(int id)
+        {
+            var result = await _basePantsCuffRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _basePantsCuffRepository?.Delete(result);
+            var count = _basePantsCuffRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_BasePantsCuffs_Entity()
+        {
+            var entity = new BasePantsCuff
+            {
+                Id = 3,
+                Settings = "{ \"style\": \"ribbed\" }"
+            };
+
+            await _basePantsCuffRepository?.Add(entity);
+
+            var list = _basePantsCuffRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _basePantsCuffRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Settings, Is.EqualTo(entity?.Settings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BasePantsCuffs_Entity(int id)
+        {
+            var entity = await _basePantsCuffRepository?.GetById(id);
+
+            entity.Settings = "{ \"style\": \"elastic\" }";
+
+            await _basePantsCuffRepository?.Update(entity);
+
+            var updatedEntity = await _basePantsCuffRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.Settings, Is.EqualTo(entity?.Settings));
+        }
+
+        #endregion
+
+        #region BaseSleeves table
+
+        [Test]
+        public void GetBaseSleeves_Returns_2_Items()
+        {
+            var result = _baseSleeveRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseSleevesById_Returns_Correct_Entity(int id)
+        {
+            var result = await _baseSleeveRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseSleeves_Entity(int id)
+        {
+            var result = await _baseSleeveRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _baseSleeveRepository?.Delete(result);
+            var count = _baseSleeveRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_BaseSleeves_Entity()
+        {
+            var entity = new BaseSleeve
+            {
+                Id = 3,
+                Settings = "{ \"length\": \"long\" }"
+            };
+
+            await _baseSleeveRepository?.Add(entity);
+
+            var list = _baseSleeveRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _baseSleeveRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Settings, Is.EqualTo(entity?.Settings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseSleeves_Entity(int id)
+        {
+            var entity = await _baseSleeveRepository?.GetById(id);
+
+            entity.Settings = "{ \"length\": \"short\" }";
+
+            await _baseSleeveRepository?.Update(entity);
+
+            var updatedEntity = await _baseSleeveRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.Settings, Is.EqualTo(entity?.Settings));
+        }
+
+        #endregion
+
+        #region BaseSleeveCuffs table
+
+        [Test]
+        public void GetBaseSleeveCuffs_Returns_2_Items()
+        {
+            var result = _baseSleeveCuffRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseSleeveCuffsById_Returns_Correct_Entity(int id)
+        {
+            var result = await _baseSleeveCuffRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseSleeveCuffs_Entity(int id)
+        {
+            var result = await _baseSleeveCuffRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _baseSleeveCuffRepository?.Delete(result);
+            var count = _baseSleeveCuffRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_BaseSleeveCuffs_Entity()
+        {
+            var newCuff = new BaseSleeveCuff
+            {
+                Id = 3,
+                Settings = "{ \"type\": \"ribbed\" }"
+            };
+
+            await _baseSleeveCuffRepository?.Add(newCuff);
+
+            var list = _baseSleeveCuffRepository?.GetAll().ToList();
+            var addedEntity = await _baseSleeveCuffRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(addedEntity, Is.Not.Null);
+                Assert.That(addedEntity?.Settings, Is.EqualTo(newCuff.Settings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseSleeveCuffs_Entity(int id)
+        {
+            var entity = await _baseSleeveCuffRepository?.GetById(id);
+
+            // Update the setting value.
+            entity.Settings = "{ \"type\": \"buttoned\" }";
+
+            await _baseSleeveCuffRepository?.Update(entity);
+
+            var updatedEntity = await _baseSleeveCuffRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.Settings, Is.EqualTo(entity.Settings));
+        }
+
+        #endregion
+
+        #region BaseSportSuits table
+
+        [Test]
+        public void GetBaseSportSuits_Returns_2_Items()
+        {
+            var result = _baseSportSuitRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        public async Task GetBaseSportSuitsById_Returns_Correct_Entity(int id)
+        {
+            var result = await _baseSportSuitRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result?.Id, Is.EqualTo(id));
+            Assert.That(result?.FkBaseNecklines, Is.Not.Null);
+        }
+
+        [Test]
+        [TestCase(1)]
+        public async Task Delete_BaseSportSuits_Entity(int id)
+        {
+            var result = await _baseSportSuitRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _baseSportSuitRepository?.Delete(result);
+            var count = _baseSportSuitRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_BaseSportSuits_Entity()
+        {
+            var newSuit = new BaseSportSuit
+            {
+                Id = 3,
+                FkBaseNecklines = 2,
+                FkBaseSleeves = 4
+            };
+
+            await _baseSportSuitRepository?.Add(newSuit);
+
+            var addedEntity = await _baseSportSuitRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(addedEntity, Is.Not.Null);
+                Assert.That(addedEntity?.FkBaseNecklines, Is.EqualTo(newSuit.FkBaseNecklines));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        public async Task Update_BaseSportSuits_Entity(int id)
+        {
+            var entity = await _baseSportSuitRepository?.GetById(id);
+
+            entity.FkBasePants = 1;
+
+            await _baseSportSuitRepository?.Update(entity);
+
+            var updatedEntity = await _baseSportSuitRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.FkBasePants, Is.EqualTo(entity.FkBasePants));
+        }
+
+        #endregion
+
+        #region BaseSweaters table
+
+        [Test]
+        public void GetBaseSweaters_Return_2_Items()
+        {
+            var result = _baseSweaterRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetBaseSweatersById_Return_Correct_EntityAsync(int id)
+        {
+            var result = await _baseSweaterRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_BaseSweaters_Entity(int id)
+        {
+            var result = await _baseSweaterRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _baseSweaterRepository?.Delete(result);
+            var count = _baseSweaterRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_BaseSweaters_Entity()
+        {
+            var newSweater = new BaseSweater
+            {
+                Id = 3,
+                Settings = "{ \"style\": \"pullover\", \"color\": \"blue\"}"
+            };
+
+            await _baseSweaterRepository?.Add(newSweater);
+
+            var list = _baseSweaterRepository?.GetAll().ToList();
+            var sweaterThatWasAdded = await _baseSweaterRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(sweaterThatWasAdded, Is.Not.Null);
+                Assert.That(sweaterThatWasAdded?.Settings, Is.EqualTo(newSweater.Settings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_BaseSweaters_Entity(int id)
+        {
+            var sweaterToUpdate = await _baseSweaterRepository?.GetById(id);
+
+            sweaterToUpdate.Settings = "{ \"style\": \"cardigan\", \"color\": \"red\" }";
+
+            await _baseSweaterRepository?.Update(sweaterToUpdate);
+
+            var updatedSweater = await _baseSweaterRepository?.GetById(id);
+
+            Assert.That(updatedSweater?.Settings, Is.EqualTo(sweaterToUpdate.Settings));
+        }
+
+        #endregion
+
         #region Carts table
 
         [Test]
@@ -926,6 +1585,886 @@ namespace NUnitTests.DatabaseRepository
             {
                 Assert.That(updatedEntity?.Email, Is.EqualTo(entity?.Email));
                 Assert.That(updatedEntity?.Phone, Is.EqualTo(entity?.Phone));
+            });
+        }
+
+        #endregion
+
+        #region Countries tables
+
+        [Test]
+        public void GetCountries_Return_2_Items()
+        {
+            var result = _countryRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCountriesById_Return_Correct_Entity(int id)
+        {
+            var result = await _countryRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_Countries_Entity(int id)
+        {
+            var result = await _countryRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _countryRepository?.Delete(result);
+            var count = _countryRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_Countries_Entity()
+        {
+            var entity = new Country
+            {
+                Id = 3,
+                Name = "New Country"
+            };
+
+            await _countryRepository?.Add(entity);
+
+            var list = _countryRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _countryRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Name, Is.EqualTo(entity.Name));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_Countries_Entity(int id)
+        {
+            var entity = await _countryRepository?.GetById(id);
+
+            entity.Name = "Updated Country";
+
+            await _countryRepository?.Update(entity);
+
+            var updatedEntity = await _countryRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Name, Is.EqualTo(entity.Name));
+            });
+        }
+
+        #endregion
+
+        #region Currencies tables
+
+        [Test]
+        public void GetCurrencies_Return_2_Items()
+        {
+            var result = _currencyRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCurrenciesById_Return_Correct_Entity(int id)
+        {
+            var result = await _currencyRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+                Assert.That(result?.Name, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_Currencies_Entity(int id)
+        {
+            var result = await _currencyRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _currencyRepository?.Delete(result);
+            var count = _currencyRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_Currencies_Entity()
+        {
+            var entity = new Currency
+            {
+                Id = 3,
+                Name = "New Currency"
+            };
+
+            await _currencyRepository?.Add(entity);
+
+            var list = _currencyRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _currencyRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Name, Is.EqualTo(entity.Name));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_Currencies_Entity(int id)
+        {
+            var entity = await _currencyRepository?.GetById(id);
+
+            entity.Name = "Updated Currency";
+
+            await _currencyRepository?.Update(entity);
+
+            var updatedEntity = await _currencyRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.Name, Is.EqualTo(entity.Name));
+            });
+        }
+
+        #endregion
+
+        #region CustomBelts table
+
+        [Test]
+        public void GetCustomBelts_Return_2_Items()
+        {
+            var result = _customBeltRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomBeltsById_Return_Correct_Entity(int id)
+        {
+            var result = await _customBeltRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+                Assert.That(result?.FkBaseBelts, Is.GreaterThan(0)); // Ensure FkBaseBelts is set properly
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomBelts_Entity(int id)
+        {
+            var result = await _customBeltRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _customBeltRepository?.Delete(result);
+            var count = _customBeltRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_CustomBelts_Entity()
+        {
+            var entity = new CustomBelt
+            {
+                Id = 3,
+                FkBaseBelts = 1,
+                CustomSettings = "{\"color\": \"black\"}"
+            };
+
+            await _customBeltRepository?.Add(entity);
+
+            var list = _customBeltRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _customBeltRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.FkBaseBelts, Is.EqualTo(entity.FkBaseBelts));
+                Assert.That(entityThatWasAdded?.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomBelts_Entity(int id)
+        {
+            var entity = await _customBeltRepository?.GetById(id);
+
+            entity.CustomSettings = "{\"color\": \"blue\"}";
+
+            await _customBeltRepository?.Update(entity);
+
+            var updatedEntity = await _customBeltRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        #endregion
+
+        #region CustomNecklines table
+
+        [Test]
+        public void GetCustomNeckliness_Return_2_Items()
+        {
+            var result = _customNecklineRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomNecklinesById_Return_Correct_Entity(int id)
+        {
+            var result = await _customNecklineRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+                Assert.That(result?.FkBaseNecklines, Is.GreaterThan(0)); // Ensure FkBaseNecklines is valid
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomNecklines_Entity(int id)
+        {
+            var result = await _customNecklineRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _customNecklineRepository?.Delete(result);
+            var count = _customNecklineRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_CustomNecklines_Entity()
+        {
+            var entity = new CustomNeckline
+            {
+                Id = 3,
+                FkBaseNecklines = 1,
+                CustomSettings = "{\"color\": \"black\"}"
+            };
+
+            await _customNecklineRepository?.Add(entity);
+
+            var list = _customNecklineRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _customNecklineRepository?.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.FkBaseNecklines, Is.EqualTo(entity.FkBaseNecklines));
+                Assert.That(entityThatWasAdded?.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomNecklines_Entity(int id)
+        {
+            var entity = await _customNecklineRepository?.GetById(id);
+
+            entity.CustomSettings = "{\"color\": \"blue\"}";
+
+            await _customNecklineRepository?.Update(entity);
+
+            var updatedEntity = await _customNecklineRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity?.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        #endregion
+
+        #region CustomPants table
+
+        [Test]
+        public void GetCustomPants_Return_2_Items()
+        {
+            var result = _customPantRepository.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomPantsById_Return_Correct_Entity(int id)
+        {
+            var result = await _customPantRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(id));
+                Assert.That(result.FkBasePants, Is.GreaterThan(0));
+                Assert.That(result.CustomSettings, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomPants_Entity(int id)
+        {
+            var result = await _customPantRepository.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _customPantRepository.Delete(result);
+            var count = _customPantRepository.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_CustomPants_Entity()
+        {
+            var entity = new CustomPant
+            {
+                Id = 3,
+                FkBasePants = 1,
+                CustomSettings = "{\"length\": \"long\", \"color\": \"gray\"}"
+            };
+
+            await _customPantRepository.Add(entity);
+
+            var list = _customPantRepository.GetAll().ToList();
+            var entityThatWasAdded = await _customPantRepository.GetById(3);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.FkBasePants, Is.EqualTo(entity.FkBasePants));
+                Assert.That(entityThatWasAdded.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomPants_Entity(int id)
+        {
+            var entity = await _customPantRepository.GetById(id);
+
+            entity.CustomSettings = "{\"length\": \"short\", \"color\": \"blue\"}";
+
+            await _customPantRepository.Update(entity);
+
+            var updatedEntity = await _customPantRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        #endregion
+
+        #region CustomPantsCuffs table
+
+        [Test]
+        public void GetCustomPantsCuffs_Return_2_Items()
+        {
+            var result = _customPantsCuffRepository.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomPantsCuffsById_Return_Correct_Entity(int id)
+        {
+            var result = await _customPantsCuffRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(id));
+                Assert.That(result.FkBasePantCuffs, Is.GreaterThan(0));
+                Assert.That(result.CustomSettings, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomPantsCuffs_Entity(int id)
+        {
+            var result = await _customPantsCuffRepository.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _customPantsCuffRepository.Delete(result);
+            var count = _customPantsCuffRepository.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_CustomPantsCuffs_Entity()
+        {
+            var entity = new CustomPantsCuff
+            {
+                FkBasePantCuffs = 1,
+                CustomSettings = "{\"style\": \"elastic\"}"
+            };
+
+            await _customPantsCuffRepository.Add(entity);
+
+            var list = _customPantsCuffRepository.GetAll().ToList();
+            var entityThatWasAdded = await _customPantsCuffRepository.GetById(entity.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.FkBasePantCuffs, Is.EqualTo(entity.FkBasePantCuffs));
+                Assert.That(entityThatWasAdded.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomPantsCuffs_Entity(int id)
+        {
+            var entity = await _customPantsCuffRepository.GetById(id);
+
+            entity.CustomSettings = "{\"style\": \"zippered\"}";
+
+            await _customPantsCuffRepository.Update(entity);
+
+            var updatedEntity = await _customPantsCuffRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        #endregion
+
+        #region CustomSleeves table
+
+        [Test]
+        public void GetCustomSleeves_Return_2_Items()
+        {
+            var result = _customSleeveRepository.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomSleevesById_Return_Correct_Entity(int id)
+        {
+            var result = await _customSleeveRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(id));
+                Assert.That(result.FkBaseSleeves, Is.GreaterThan(0));
+                Assert.That(result.CustomSettings, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomSleeves_Entity(int id)
+        {
+            var result = await _customSleeveRepository.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _customSleeveRepository.Delete(result);
+            var count = _customSleeveRepository.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_CustomSleeves_Entity()
+        {
+            var entity = new CustomSleeve
+            {
+                FkBaseSleeves = 3,
+                CustomSettings = "{\"length\": \"long\", \"button\": \"two\"}"
+            };
+
+            await _customSleeveRepository.Add(entity);
+
+            var list = _customSleeveRepository.GetAll().ToList();
+            var entityThatWasAdded = await _customSleeveRepository.GetById(entity.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.FkBaseSleeves, Is.EqualTo(entity.FkBaseSleeves));
+                Assert.That(entityThatWasAdded.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomSleeves_Entity(int id)
+        {
+            var entity = await _customSleeveRepository.GetById(id);
+            entity.CustomSettings = "{\"length\": \"short\", \"button\": \"one\"}";
+
+            await _customSleeveRepository.Update(entity);
+
+            var updatedEntity = await _customSleeveRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        #endregion
+
+        #region CustomSleeveCuffs table
+
+        [Test]
+        public void GetCustomSleeveCuffs_Return_2_Items()
+        {
+            var result = _customSleeveCuffRepository.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomSleeveCuffsById_Return_Correct_Entity(int id)
+        {
+            var result = await _customSleeveCuffRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(id));
+                Assert.That(result.FkBaseSleeveCuffs, Is.GreaterThan(0));
+                Assert.That(result.CustomSettings, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomSleeveCuffs_Entity(int id)
+        {
+            var result = await _customSleeveCuffRepository.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _customSleeveCuffRepository.Delete(result);
+            var count = _customSleeveCuffRepository.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_CustomSleeveCuffs_Entity()
+        {
+            var entity = new CustomSleeveCuff
+            {
+                FkBaseSleeveCuffs = 1,
+                CustomSettings = "{\"style\": \"buttoned\"}"
+            };
+
+            await _customSleeveCuffRepository.Add(entity);
+
+            var list = _customSleeveCuffRepository.GetAll().ToList();
+            var entityThatWasAdded = await _customSleeveCuffRepository.GetById(entity.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.FkBaseSleeveCuffs, Is.EqualTo(entity.FkBaseSleeveCuffs));
+                Assert.That(entityThatWasAdded.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomSleeveCuffs_Entity(int id)
+        {
+            var entity = await _customSleeveCuffRepository.GetById(id);
+            entity.CustomSettings = "{\"style\": \"zipped\"}";
+
+            await _customSleeveCuffRepository.Update(entity);
+
+            var updatedEntity = await _customSleeveCuffRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity.CustomSettings, Is.EqualTo(entity.CustomSettings));
+            });
+        }
+
+        #endregion
+
+        #region CustomSportSuits table
+
+        [Test]
+        public void GetCustomSportSuits_Return_2_Items()
+        {
+            var result = _customSportSuitRepository.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomSportSuitsById_Return_Correct_Entity(int id)
+        {
+            var result = await _customSportSuitRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(id));
+                // Check only the existence due to the nullable foreign keys
+                Assert.That(result.FkCustomNecklines, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomSportSuits_Entity(int id)
+        {
+            var sportSuit = await _customSportSuitRepository.GetById(id);
+
+            Assert.That(sportSuit, Is.Not.Null);
+
+            await _customSportSuitRepository.Delete(sportSuit);
+            var count = _customSportSuitRepository.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_CustomSportSuits_Entity()
+        {
+            var newSportSuit = new CustomSportSuit
+            {
+                FkCustomNecklines = 1
+            };
+
+            await _customSportSuitRepository.Add(newSportSuit);
+
+            var list = _customSportSuitRepository.GetAll().ToList();
+            var entityThatWasAdded = await _customSportSuitRepository.GetById(newSportSuit.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.FkCustomNecklines, Is.EqualTo(newSportSuit.FkCustomNecklines));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomSportSuits_Entity(int id)
+        {
+            var entity = await _customSportSuitRepository.GetById(id);
+            entity.FkCustomNecklines = 2; // Пример обновления одного из полей
+
+            await _customSportSuitRepository.Update(entity);
+
+            var updatedEntity = await _customSportSuitRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity.FkCustomNecklines, Is.EqualTo(2));
+            });
+        }
+
+        #endregion
+
+        #region CustomSweaters table
+
+        [Test]
+        public void GetCustomSweaters_Return_2_Items()
+        {
+            var result = _customSweaterRepository.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetCustomSweatersById_Return_Correct_Entity(int id)
+        {
+            var result = await _customSweaterRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(id));
+                Assert.That(result.FkBaseSweaters, Is.EqualTo(id));
+                Assert.That(result.CustomSettings, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_CustomSweaters_Entity(int id)
+        {
+            var sweater = await _customSweaterRepository.GetById(id);
+
+            Assert.That(sweater, Is.Not.Null);
+
+            await _customSweaterRepository.Delete(sweater);
+            var count = _customSweaterRepository.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_CustomSweaters_Entity()
+        {
+            var newSweater = new CustomSweater
+            {
+                FkBaseSweaters = 1,
+                CustomSettings = "{\"color\": \"blue\", \"size\": \"M\"}"
+            };
+
+            await _customSweaterRepository.Add(newSweater);
+
+            var list = _customSweaterRepository.GetAll().ToList();
+            var entityThatWasAdded = await _customSweaterRepository.GetById(newSweater.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded.FkBaseSweaters, Is.EqualTo(newSweater.FkBaseSweaters));
+                Assert.That(entityThatWasAdded.CustomSettings, Is.EqualTo(newSweater.CustomSettings));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_CustomSweaters_Entity(int id)
+        {
+            var entity = await _customSweaterRepository.GetById(id);
+            entity.CustomSettings = "{\"color\": \"red\", \"size\": \"L\"}";
+
+            await _customSweaterRepository.Update(entity);
+
+            var updatedEntity = await _customSweaterRepository.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updatedEntity.CustomSettings, Is.EqualTo(entity.CustomSettings));
             });
         }
 
@@ -1545,6 +3084,169 @@ namespace NUnitTests.DatabaseRepository
 
         #endregion
 
+        #region PaymentMethods table
+
+        [Test]
+        public void GetPaymentMethods_Return_2_Items()
+        {
+            var result = _paymentMethodRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetPaymentMethodsById_Return_Correct_Entity(int id)
+        {
+            var result = await _paymentMethodRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_PaymentMethods_Entity(int id)
+        {
+            var result = await _paymentMethodRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _paymentMethodRepository?.Delete(result);
+            var count = _paymentMethodRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_PaymentMethods_Entity()
+        {
+            var entity = new PaymentMethod
+            {
+                Method = "New Method"
+            };
+
+            await _paymentMethodRepository?.Add(entity);
+
+            var list = _paymentMethodRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _paymentMethodRepository?.GetById(entity.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Method, Is.EqualTo(entity?.Method));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_PaymentMethods_Entity(int id)
+        {
+            var entity = await _paymentMethodRepository?.GetById(id);
+            entity.Method = "Updated Method";
+
+            await _paymentMethodRepository?.Update(entity);
+
+            var updatedEntity = await _paymentMethodRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.Method, Is.EqualTo(entity?.Method));
+        }
+
+        #endregion
+
+        #region PaymentStatuses table
+
+        [Test]
+        public void GetPaymentStatuses_Return_2_Items()
+        {
+            var result = _paymentStatusRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));  // Предварительно в базе должно быть 2 статуса
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetPaymentStatusesById_Return_Correct_Entity(int id)
+        {
+            var result = await _paymentStatusRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+                Assert.That(result?.Status, Is.Not.Null.Or.Empty);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_PaymentStatuses_Entity(int id)
+        {
+            var result = await _paymentStatusRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _paymentStatusRepository?.Delete(result);
+            var count = _paymentStatusRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));  // Предположим, что исходно было 2 статуса
+        }
+
+        [Test]
+        public async Task Add_PaymentStatuses_Entity()
+        {
+            var entity = new PaymentStatus
+            {
+                Status = "Processing"
+            };
+
+            await _paymentStatusRepository?.Add(entity);
+
+            var list = _paymentStatusRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _paymentStatusRepository?.GetById(entity.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3)); // Проверка увеличения количества статусов
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Status, Is.EqualTo(entity?.Status));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_PaymentStatuses_Entity(int id)
+        {
+            var entity = await _paymentStatusRepository?.GetById(id);
+            entity.Status = "Completed";
+
+            await _paymentStatusRepository?.Update(entity);
+
+            var updatedEntity = await _paymentStatusRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.Status, Is.EqualTo(entity?.Status));
+        }
+
+        #endregion
+
         #region Product table
 
         [Test]
@@ -1718,6 +3420,90 @@ namespace NUnitTests.DatabaseRepository
             {
                 Assert.That(updatedEntity?.ImageData, Is.EqualTo(entity?.ImageData));
             });
+        }
+
+        #endregion
+
+        #region ProductOrders table
+
+        [Test]
+        public void GetProductOrders_Return_2_Items()
+        {
+            var result = _productOrderRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));  // Предполагается, что в базе два заказа
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetProductOrdersById_Return_Correct_Entity(int id)
+        {
+            var result = await _productOrderRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+                Assert.That(result?.FkProducts, Is.Not.Null.Or.Empty);  // Проверка на наличие привязки к продукту
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_ProductOrders_Entity(int id)
+        {
+            var result = await _productOrderRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _productOrderRepository?.Delete(result);
+            var count = _productOrderRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));  // Предполагается, что исходно было два заказа
+        }
+
+        [Test]
+        public async Task Add_ProductOrders_Entity()
+        {
+            var entity = new ProductOrder
+            {
+                FkProducts = 5,
+                FkCustomizableProducts = 2
+            };
+
+            await _productOrderRepository?.Add(entity);
+
+            var list = _productOrderRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _productOrderRepository?.GetById(entity.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3)); // Проверка на увеличение количества заказов
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.FkProducts, Is.EqualTo(entity?.FkProducts));
+                Assert.That(entityThatWasAdded?.FkCustomizableProducts, Is.EqualTo(entity?.FkCustomizableProducts));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_ProductOrders_Entity(int id)
+        {
+            var entity = await _productOrderRepository?.GetById(id);
+            entity.FkProducts = 3;  // Пример изменения привязанного продукта
+
+            await _productOrderRepository?.Update(entity);
+
+            var updatedEntity = await _productOrderRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.FkProducts, Is.EqualTo(entity?.FkProducts));
         }
 
         #endregion
@@ -1900,6 +3686,174 @@ namespace NUnitTests.DatabaseRepository
 
         #endregion
 
+        #region ShippingAddresses table
+
+        [Test]
+        public void GetShippingAddresses_Return_2_Items()
+        {
+            var result = _shippingAddressRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));  // Предполагается, что в базе два адреса
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetShippingAddressesById_Return_Correct_Entity(int id)
+        {
+            var result = await _shippingAddressRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+                Assert.That(result?.Address, Is.Not.Null.Or.Empty);  // Проверка наличия адреса
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_ShippingAddresses_Entity(int id)
+        {
+            var result = await _shippingAddressRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _shippingAddressRepository?.Delete(result);
+            var count = _shippingAddressRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_ShippingAddresses_Entity()
+        {
+            var entity = new ShippingAddress
+            {
+                FkCountries = 1,
+                Address = "123 Main St",
+                City = "Metropolis",
+                ZipPostCode = "12345",
+                StateProvince = "State"
+            };
+
+            await _shippingAddressRepository?.Add(entity);
+
+            var list = _shippingAddressRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _shippingAddressRepository?.GetById(entity.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Address, Is.EqualTo(entity?.Address));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_ShippingAddresses_Entity(int id)
+        {
+            var entity = await _shippingAddressRepository?.GetById(id);
+            entity.Address = "456 Main St";
+
+            await _shippingAddressRepository?.Update(entity);
+
+            var updatedEntity = await _shippingAddressRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.Address, Is.EqualTo(entity?.Address));
+        }
+
+        #endregion
+
+        #region SizeOptions table
+
+        [Test]
+        public void GetSizeOptions_Return_2_Items()
+        {
+            var result = _sizeOptionRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));  // Предполагается, что в базе два размера
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetSizeOptionsById_Return_Correct_Entity(int id)
+        {
+            var result = await _sizeOptionRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+                Assert.That(result?.Size, Is.Not.Null.Or.Empty);  // Проверка полученного значения размера
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_SizeOptions_Entity(int id)
+        {
+            var result = await _sizeOptionRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _sizeOptionRepository?.Delete(result);
+            var count = _sizeOptionRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));  // Предполагается, что исходно было два размера
+        }
+
+        [Test]
+        public async Task Add_SizeOptions_Entity()
+        {
+            var entity = new SizeOption
+            {
+                Size = "M"
+            };
+
+            await _sizeOptionRepository?.Add(entity);
+
+            var list = _sizeOptionRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _sizeOptionRepository?.GetById(entity.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3)); // Проверка на увеличение количества размеров
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.Size, Is.EqualTo(entity?.Size));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_SizeOptions_Entity(int id)
+        {
+            var entity = await _sizeOptionRepository?.GetById(id);
+            entity.Size = "XL";
+
+            await _sizeOptionRepository?.Update(entity);
+
+            var updatedEntity = await _sizeOptionRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.Size, Is.EqualTo(entity?.Size));
+        }
+
+        #endregion
+
         #region User table
 
         [Test]
@@ -1989,6 +3943,88 @@ namespace NUnitTests.DatabaseRepository
             {
                 Assert.That(updatedEntity?.Email, Is.EqualTo(entity?.Email));
             });
+        }
+
+        #endregion
+
+        #region UserOrderHistory table
+
+        [Test]
+        public void GetUserOrderHistories_Return_2_Items()
+        {
+            var result = _userOrderHistoryRepository?.GetAll().ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Has.Count.EqualTo(2));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task GetUserOrdersHistoryById_Return_Correct_Entity(int id)
+        {
+            var result = await _userOrderHistoryRepository?.GetById(id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(id));
+                Assert.That(result?.FkOrders, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Delete_UserOrdersHistory_Entity(int id)
+        {
+            var result = await _userOrderHistoryRepository?.GetById(id);
+
+            Assert.That(result, Is.Not.Null);
+
+            await _userOrderHistoryRepository?.Delete(result);
+            var count = _userOrderHistoryRepository?.GetAll().Count();
+
+            Assert.That(count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public async Task Add_UserOrdersHistory_Entity()
+        {
+            var entity = new UserOrderHistory
+            {
+                FkOrders = 101
+            };
+
+            await _userOrderHistoryRepository?.Add(entity);
+
+            var list = _userOrderHistoryRepository?.GetAll().ToList();
+            var entityThatWasAdded = await _userOrderHistoryRepository?.GetById(entity.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(list, Has.Count.EqualTo(3));
+                Assert.That(entityThatWasAdded, Is.Not.Null);
+                Assert.That(entityThatWasAdded?.FkOrders, Is.EqualTo(entity?.FkOrders));
+            });
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task Update_UserOrdersHistory_Entity(int id)
+        {
+            var entity = await _userOrderHistoryRepository?.GetById(id);
+            entity.FkOrders = 102;
+
+            await _userOrderHistoryRepository?.Update(entity);
+
+            var updatedEntity = await _userOrderHistoryRepository?.GetById(id);
+
+            Assert.That(updatedEntity?.FkOrders, Is.EqualTo(entity?.FkOrders));
         }
 
         #endregion
