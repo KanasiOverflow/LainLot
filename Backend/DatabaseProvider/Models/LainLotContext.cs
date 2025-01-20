@@ -327,7 +327,6 @@ public partial class LainLotContext : DbContext
 
             entity.HasOne(d => d.FkBaseBeltsNavigation).WithMany(p => p.CustomBelts)
                 .HasForeignKey(d => d.FkBaseBelts)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("CustomBelts_FkBaseBelts_fkey");
         });
 
@@ -339,7 +338,6 @@ public partial class LainLotContext : DbContext
 
             entity.HasOne(d => d.FkBaseNecklinesNavigation).WithMany(p => p.CustomNecklines)
                 .HasForeignKey(d => d.FkBaseNecklines)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("CustomNecklines_FkBaseNecklines_fkey");
         });
 
@@ -351,7 +349,6 @@ public partial class LainLotContext : DbContext
 
             entity.HasOne(d => d.FkBasePantsNavigation).WithMany(p => p.CustomPants)
                 .HasForeignKey(d => d.FkBasePants)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("CustomPants_FkBasePants_fkey");
         });
 
@@ -363,7 +360,6 @@ public partial class LainLotContext : DbContext
 
             entity.HasOne(d => d.FkBasePantCuffsNavigation).WithMany(p => p.CustomPantsCuffs)
                 .HasForeignKey(d => d.FkBasePantCuffs)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("CustomPantsCuffs_FkBasePantCuffs_fkey");
         });
 
@@ -375,7 +371,6 @@ public partial class LainLotContext : DbContext
 
             entity.HasOne(d => d.FkBaseSleevesNavigation).WithMany(p => p.CustomSleeves)
                 .HasForeignKey(d => d.FkBaseSleeves)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("CustomSleeves_FkBaseSleeves_fkey");
         });
 
@@ -387,7 +382,6 @@ public partial class LainLotContext : DbContext
 
             entity.HasOne(d => d.FkBaseSleeveCuffsNavigation).WithMany(p => p.CustomSleeveCuffs)
                 .HasForeignKey(d => d.FkBaseSleeveCuffs)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("CustomSleeveCuffs_FkBaseSleeveCuffs_fkey");
         });
 
@@ -440,7 +434,6 @@ public partial class LainLotContext : DbContext
 
             entity.HasOne(d => d.FkBaseSweatersNavigation).WithMany(p => p.CustomSweaters)
                 .HasForeignKey(d => d.FkBaseSweaters)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("CustomSweaters_FkBaseSweaters_fkey");
         });
 

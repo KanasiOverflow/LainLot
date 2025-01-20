@@ -213,6 +213,7 @@ namespace NUnitTests.DatabaseRepository
             var shippingAddresses = DatabaseDataFake.GetFakeShippingAddressList();
             var sizeOptions = DatabaseDataFake.GetFakeSizeOptionList();
             var users = DatabaseDataFake.GetFakeUserList();
+            var userOrderHistory = DatabaseDataFake.GetFakeUserOrderHistoryList();
             var userProfiles = DatabaseDataFake.GetFakeUserProfileList();
             var userRoles = DatabaseDataFake.GetFakeUserRoleList();
             #endregion
@@ -260,6 +261,7 @@ namespace NUnitTests.DatabaseRepository
             _context.ShippingAddresses.AddRange(shippingAddresses);
             _context.SizeOptions.AddRange(sizeOptions);
             _context.Users.AddRange(users);
+            _context.UserOrderHistories.AddRange(userOrderHistory);
             _context.UserProfiles.AddRange(userProfiles);
             _context.UserRoles.AddRange(userRoles);
             #endregion
@@ -3950,7 +3952,7 @@ namespace NUnitTests.DatabaseRepository
         #region UserOrderHistory table
 
         [Test]
-        public void GetUserOrderHistories_Return_2_Items()
+        public void GetUserOrderHistory_Return_2_Items()
         {
             var result = _userOrderHistoryRepository?.GetAll().ToList();
 
