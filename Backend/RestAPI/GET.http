@@ -352,3 +352,7 @@ Authorization: {{Credentials}}
 ### GetUserRolesById
 GET {{RestAPI_HostAddress}}GetUserRolesById?id=1
 Authorization: {{Credentials}}
+
+### GetCustomNecklines
+GET {{RestAPI_HostAddress}}GetCustomNecklines?limit=10&page=1
+Authorization: {{Credentials}}

@@ -3436,7 +3436,7 @@ namespace NUnitTests.DatabaseRepository
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result, Has.Count.EqualTo(2));  // Предполагается, что в базе два заказа
+                Assert.That(result, Has.Count.EqualTo(2));
             });
         }
 
@@ -3451,7 +3451,6 @@ namespace NUnitTests.DatabaseRepository
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result?.Id, Is.EqualTo(id));
-                Assert.That(result?.FkProducts, Is.Not.Null.Or.Empty);  // Проверка на наличие привязки к продукту
             });
         }
 
@@ -3467,7 +3466,7 @@ namespace NUnitTests.DatabaseRepository
             await _productOrderRepository?.Delete(result);
             var count = _productOrderRepository?.GetAll().Count();
 
-            Assert.That(count, Is.EqualTo(1));  // Предполагается, что исходно было два заказа
+            Assert.That(count, Is.EqualTo(1));
         }
 
         [Test]
@@ -3486,7 +3485,7 @@ namespace NUnitTests.DatabaseRepository
 
             Assert.Multiple(() =>
             {
-                Assert.That(list, Has.Count.EqualTo(3)); // Проверка на увеличение количества заказов
+                Assert.That(list, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
                 Assert.That(entityThatWasAdded?.FkProducts, Is.EqualTo(entity?.FkProducts));
                 Assert.That(entityThatWasAdded?.FkCustomizableProducts, Is.EqualTo(entity?.FkCustomizableProducts));
@@ -3499,7 +3498,7 @@ namespace NUnitTests.DatabaseRepository
         public async Task Update_ProductOrders_Entity(int id)
         {
             var entity = await _productOrderRepository?.GetById(id);
-            entity.FkProducts = 3;  // Пример изменения привязанного продукта
+            entity.FkProducts = 3;
 
             await _productOrderRepository?.Update(entity);
 

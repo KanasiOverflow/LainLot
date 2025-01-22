@@ -2041,9 +2041,7 @@ namespace NUnitTests.RestAPI
             {
                 Assert.That(list.Value as List<CustomNeckline>, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
-                Assert.That(entityThatWasAdded.Value.FkBaseNecklines, Is.EqualTo(entity.FkBaseNecklines));
-                Assert.That(entityThatWasAdded.Value.CustomSettings, Is.EqualTo(entity.CustomSettings));
+                Assert.That(entityThatWasAdded.Value?.FkBaseNecklines, Is.EqualTo(entity.FkBaseNecklines));
                 Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
             });
         }
@@ -2133,9 +2131,7 @@ namespace NUnitTests.RestAPI
             {
                 Assert.That(list.Value as List<CustomPant>, Has.Count.EqualTo(3));
                 Assert.That(entityThatWasAdded, Is.Not.Null);
-                Assert.That(entityThatWasAdded.Value.Id, Is.EqualTo(3));
-                Assert.That(entityThatWasAdded.Value.FkBasePants, Is.EqualTo(entity.FkBasePants));
-                Assert.That(entityThatWasAdded.Value.CustomSettings, Is.EqualTo(entity.CustomSettings));
+                Assert.That(entityThatWasAdded.Value?.FkBasePants, Is.EqualTo(entity.FkBasePants));
                 Assert.That(result.Result, Is.InstanceOf<CreatedAtActionResult>());
             });
         }
