@@ -1971,7 +1971,7 @@ namespace RestAPI.Controllers
             var dbList = _customNecklineRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.CustomNeckline>, List<CustomNeckline>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetCustomNecklinesById")]
@@ -1985,7 +1985,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.CustomNeckline, CustomNeckline>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomNeckline, CustomNeckline>(dbEntity);
         }
 
         [HttpPost("CreateCustomNecklines")]
@@ -2079,7 +2079,7 @@ namespace RestAPI.Controllers
             var dbList = _customPantRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.CustomPant>, List<CustomPant>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetCustomPantsById")]
@@ -2093,7 +2093,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.CustomPant, CustomPant>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomPant, CustomPant>(dbEntity);
         }
 
         [HttpPost("CreateCustomPants")]
@@ -2187,7 +2187,7 @@ namespace RestAPI.Controllers
             var dbList = _customPantsCuffRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.CustomPantsCuff>, List<CustomPantsCuff>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetCustomPantsCuffsById")]
@@ -2201,7 +2201,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.CustomPantsCuff, CustomPantsCuff>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomPantsCuff, CustomPantsCuff>(dbEntity);
         }
 
         [HttpPost("CreateCustomPantsCuffs")]
@@ -2295,7 +2295,7 @@ namespace RestAPI.Controllers
             var dbList = _customSleeveRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.CustomSleeve>, List<CustomSleeve>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetCustomSleevesById")]
@@ -2309,7 +2309,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.CustomSleeve, CustomSleeve>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomSleeve, CustomSleeve>(dbEntity);
         }
 
         [HttpPost("CreateCustomSleeves")]
@@ -2403,7 +2403,7 @@ namespace RestAPI.Controllers
             var dbList = _customSleeveCuffRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.CustomSleeveCuff>, List<CustomSleeveCuff>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetCustomSleeveCuffsById")]
@@ -2417,7 +2417,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.CustomSleeveCuff, CustomSleeveCuff>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomSleeveCuff, CustomSleeveCuff>(dbEntity);
         }
 
         [HttpPost("CreateCustomSleeveCuffs")]
@@ -2511,7 +2511,7 @@ namespace RestAPI.Controllers
             var dbList = _customSportSuitRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.CustomSportSuit>, List<CustomSportSuit>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetCustomSportSuitById")]
@@ -2525,7 +2525,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.CustomSportSuit, CustomSportSuit>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomSportSuit, CustomSportSuit>(dbEntity);
         }
 
         [HttpPost("CreateCustomSportSuit")]
@@ -2619,7 +2619,7 @@ namespace RestAPI.Controllers
             var dbList = _customSweaterRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.CustomSweater>, List<CustomSweater>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetCustomSweatersById")]
@@ -2633,7 +2633,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.CustomSweater, CustomSweater>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomSweater, CustomSweater>(dbEntity);
         }
 
         [HttpPost("CreateCustomSweaters")]
@@ -3448,7 +3448,7 @@ namespace RestAPI.Controllers
             var dbList = _paymentMethodRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.PaymentMethod>, List<PaymentMethod>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetPaymentMethodsById")]
@@ -3462,7 +3462,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.PaymentMethod, PaymentMethod>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.PaymentMethod, PaymentMethod>(dbEntity);
         }
 
         [HttpPost("CreatePaymentMethods")]
@@ -3556,7 +3556,7 @@ namespace RestAPI.Controllers
             var dbList = _paymentStatusRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.PaymentStatus>, List<PaymentStatus>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetPaymentStatusesById")]
@@ -3570,7 +3570,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.PaymentStatus, PaymentStatus>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.PaymentStatus, PaymentStatus>(dbEntity);
         }
 
         [HttpPost("CreatePaymentStatuses")]
@@ -4179,7 +4179,7 @@ namespace RestAPI.Controllers
             var dbList = _shippingAddressRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.ShippingAddress>, List<ShippingAddress>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetShippingAddressesById")]
@@ -4193,7 +4193,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.ShippingAddress, ShippingAddress>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.ShippingAddress, ShippingAddress>(dbEntity);
         }
 
         [HttpPost("CreateShippingAddresses")]
@@ -4287,7 +4287,7 @@ namespace RestAPI.Controllers
             var dbList = _sizeOptionRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.SizeOption>, List<SizeOption>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetSizeOptionsById")]
@@ -4301,7 +4301,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.SizeOption, SizeOption>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.SizeOption, SizeOption>(dbEntity);
         }
 
         [HttpPost("CreateSizeOptions")]
@@ -4498,7 +4498,7 @@ namespace RestAPI.Controllers
             var dbList = _userOrderHistoryRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.UserOrderHistory>, List<UserOrderHistory>>(dbList);
 
-            return apiList == null ? NotFound() : Ok(apiList);
+            return apiList == null ? NotFound() : apiList;
         }
 
         [HttpGet("GetUserOrderHistoryById")]
@@ -4512,7 +4512,7 @@ namespace RestAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DB.UserOrderHistory, UserOrderHistory>(dbEntity));
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.UserOrderHistory, UserOrderHistory>(dbEntity);
         }
 
         [HttpPost("CreateUserOrderHistory")]

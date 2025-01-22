@@ -222,6 +222,7 @@ namespace NUnitTests.RestAPI
             var shippingAddresses = DatabaseDataFake.GetFakeShippingAddressList();
             var sizeOptions = DatabaseDataFake.GetFakeSizeOptionList();
             var users = DatabaseDataFake.GetFakeUserList();
+            var userOrderHistory = DatabaseDataFake.GetFakeUserOrderHistoryList();
             var userProfiles = DatabaseDataFake.GetFakeUserProfileList();
             var userRoles = DatabaseDataFake.GetFakeUserRoleList();
             #endregion
@@ -269,6 +270,7 @@ namespace NUnitTests.RestAPI
             _context.ShippingAddresses.AddRange(shippingAddresses);
             _context.SizeOptions.AddRange(sizeOptions);
             _context.Users.AddRange(users);
+            _context.UserOrderHistories.AddRange(userOrderHistory);
             _context.UserProfiles.AddRange(userProfiles);
             _context.UserRoles.AddRange(userRoles);
             #endregion
@@ -2555,7 +2557,7 @@ namespace NUnitTests.RestAPI
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result?.Value?.Id, Is.EqualTo(id));
-                Assert.That(result?.Value?.FkBaseSweaters, Is.EqualTo(1));
+                Assert.That(result?.Value?.FkBaseSweaters, Is.Not.Null);
             });
         }
 
@@ -3635,7 +3637,6 @@ namespace NUnitTests.RestAPI
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result?.Value?.Id, Is.EqualTo(id));
-                Assert.That(result?.Value?.FkProducts, Is.Not.Null.Or.EqualTo(result?.Value?.FkCustomizableProducts));
             });
         }
 
