@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace DatabaseProvider.Models;
@@ -676,12 +678,12 @@ public partial class LainLotContext : DbContext
 
             entity.Property(e => e.Address).HasMaxLength(255);
             entity.Property(e => e.City).HasMaxLength(50);
+            entity.Property(e => e.Email).HasMaxLength(255);
             entity.Property(e => e.StateProvince).HasMaxLength(50);
             entity.Property(e => e.ZipPostCode).HasMaxLength(10);
 
             entity.HasOne(d => d.FkCountriesNavigation).WithMany(p => p.ShippingAddresses)
                 .HasForeignKey(d => d.FkCountries)
-                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("ShippingAddresses_FkCountries_fkey");
         });
 
@@ -724,6 +726,10 @@ public partial class LainLotContext : DbContext
             entity.HasOne(d => d.FkOrdersNavigation).WithMany(p => p.UserOrderHistories)
                 .HasForeignKey(d => d.FkOrders)
                 .HasConstraintName("UserOrderHistory_FkOrders_fkey");
+
+            entity.HasOne(d => d.FkUsersNavigation).WithMany(p => p.UserOrderHistories)
+                .HasForeignKey(d => d.FkUsers)
+                .HasConstraintName("UserOrderHistory_FkUsers_fkey");
         });
 
         modelBuilder.Entity<UserProfile>(entity =>

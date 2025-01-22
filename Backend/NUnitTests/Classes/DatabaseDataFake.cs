@@ -376,8 +376,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new ShippingAddress { Id = 1, FkCountries = 1, Address = "123 Main St", City = "Metropolis", ZipPostCode = "12345", StateProvince = "State1" },
-                new ShippingAddress { Id = 2, FkCountries = 2, Address = "456 Elm St", City = "Smallville", ZipPostCode = "67890", StateProvince = "State2" }
+                new ShippingAddress { Id = 1, FkCountries = 1, Address = "123 Main St", City = "Metropolis", ZipPostCode = "12345", StateProvince = "State1", Email = "test@gmail.com" },
+                new ShippingAddress { Id = 2, FkCountries = 2, Address = "456 Elm St", City = "Smallville", ZipPostCode = "67890", StateProvince = "State2", Email = "test@gmail.com" }
             ];
         }
 
@@ -403,8 +403,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new UserOrderHistory { Id = 1, FkOrders = 1 },
-                new UserOrderHistory { Id = 2, FkOrders = 2 }
+                new UserOrderHistory { Id = 1, FkOrders = 1, FkUsers = 1 },
+                new UserOrderHistory { Id = 2, FkOrders = 2, FkUsers = 2 }
             ];
         }
 

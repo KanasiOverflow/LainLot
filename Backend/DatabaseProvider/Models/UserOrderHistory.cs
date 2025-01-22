@@ -9,5 +9,9 @@ public partial class UserOrderHistory
 
     public int FkOrders { get; set; }
 
+    public int FkUsers { get; set; }
+
     public virtual Order FkOrdersNavigation { get; set; } = null!;
+
+    public virtual User FkUsersNavigation { get; set; } = null!;
 }

@@ -3740,7 +3740,8 @@ namespace NUnitTests.DatabaseRepository
                 Address = "123 Main St",
                 City = "Metropolis",
                 ZipPostCode = "12345",
-                StateProvince = "State"
+                StateProvince = "State",
+                Email = "test@gmail.com"
             };
 
             await _shippingAddressRepository?.Add(entity);

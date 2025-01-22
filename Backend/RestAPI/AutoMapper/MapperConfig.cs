@@ -256,7 +256,8 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Address, opt => opt.MapFrom(s => s.Address))
                     .ForMember(d => d.City, opt => opt.MapFrom(s => s.City))
                     .ForMember(d => d.ZipPostCode, opt => opt.MapFrom(s => s.ZipPostCode))
-                    .ForMember(d => d.StateProvince, opt => opt.MapFrom(s => s.StateProvince));
+                    .ForMember(d => d.StateProvince, opt => opt.MapFrom(s => s.StateProvince))
+                    .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email));
 
                 cfg.CreateMap<API.SizeOption, DB.SizeOption>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -275,7 +276,8 @@ namespace RestAPI.AutoMapper
 
                 cfg.CreateMap<API.UserOrderHistory, DB.UserOrderHistory>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
-                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders));
+                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders))
+                    .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers));
 
                 cfg.CreateMap<API.UserProfile, DB.UserProfile>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -541,7 +543,8 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Address, opt => opt.MapFrom(s => s.Address))
                     .ForMember(d => d.City, opt => opt.MapFrom(s => s.City))
                     .ForMember(d => d.ZipPostCode, opt => opt.MapFrom(s => s.ZipPostCode))
-                    .ForMember(d => d.StateProvince, opt => opt.MapFrom(s => s.StateProvince));
+                    .ForMember(d => d.StateProvince, opt => opt.MapFrom(s => s.StateProvince))
+                    .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email));
 
                 cfg.CreateMap<DB.SizeOption, API.SizeOption>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
@@ -560,7 +563,8 @@ namespace RestAPI.AutoMapper
 
                 cfg.CreateMap<DB.UserOrderHistory, API.UserOrderHistory>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
-                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders));
+                    .ForMember(d => d.FkOrders, opt => opt.MapFrom(s => s.FkOrders))
+                    .ForMember(d => d.FkUsers, opt => opt.MapFrom(s => s.FkUsers));
 
                 cfg.CreateMap<DB.UserProfile, API.UserProfile>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))

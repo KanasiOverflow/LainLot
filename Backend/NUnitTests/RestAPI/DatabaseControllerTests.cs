@@ -3939,7 +3939,8 @@ namespace NUnitTests.RestAPI
                 Address = "123 New Avenue",
                 City = "Metropolis",
                 ZipPostCode = "12345",
-                StateProvince = "Gotham"
+                StateProvince = "Gotham",
+                Email = "batman@gmail.com"
             };
 
             var result = await _restApiController.CreateShippingAddresses(entity);

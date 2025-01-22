@@ -6,5 +6,7 @@
 
         public int FkOrders { get; set; }
 
+        public int FkUsers { get; set; }
+
     }
 }
