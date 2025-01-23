@@ -6,6 +6,38 @@ Authorization: {{Credentials}}
 DELETE {{RestAPI_HostAddress}}DeleteAccessLevels?id=1
 Authorization: {{Credentials}}
 
+### DeleteBaseBelts
+DELETE {{RestAPI_HostAddress}}DeleteBaseBelts?id=1
+Authorization: {{Credentials}}
+
+### DeleteBaseNecklines
+DELETE {{RestAPI_HostAddress}}DeleteBaseNecklines?id=1
+Authorization: {{Credentials}}
+
+### DeleteBasePants
+DELETE {{RestAPI_HostAddress}}DeleteBasePants?id=1
+Authorization: {{Credentials}}
+
+### DeleteBasePantsCuffs
+DELETE {{RestAPI_HostAddress}}DeleteBasePantsCuffs?id=1
+Authorization: {{Credentials}}
+
+### DeleteBaseSleeves
+DELETE {{RestAPI_HostAddress}}DeleteBaseSleeves?id=1
+Authorization: {{Credentials}}
+
+### DeleteBaseSleeveCuffs
+DELETE {{RestAPI_HostAddress}}DeleteBaseSleeveCuffs?id=1
+Authorization: {{Credentials}}
+
+### DeleteBaseSportSuit
+DELETE {{RestAPI_HostAddress}}DeleteBaseSportSuit?id=1
+Authorization: {{Credentials}}
+
+### DeleteBaseSweaters
+DELETE {{RestAPI_HostAddress}}DeleteBaseSweaters?id=1
+Authorization: {{Credentials}}
+
 ### DeleteCart
 DELETE {{RestAPI_HostAddress}}DeleteCart?id=1
 Authorization: {{Credentials}}
@@ -22,12 +54,48 @@ Authorization: {{Credentials}}
 DELETE {{RestAPI_HostAddress}}DeleteContacts?id=1
 Authorization: {{Credentials}}
 
-### DeleteCustomizableProducts
-DELETE {{RestAPI_HostAddress}}DeleteCustomizableProducts?id=1
+### DeleteCountries
+DELETE {{RestAPI_HostAddress}}DeleteCountries?id=1
 Authorization: {{Credentials}}
 
-### DeleteCustomizationOrders
-DELETE {{RestAPI_HostAddress}}DeleteCustomizationOrders?id=1
+### DeleteCurrencies
+DELETE {{RestAPI_HostAddress}}DeleteCurrencies?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomBelts
+DELETE {{RestAPI_HostAddress}}DeleteCustomBelts?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomNecklines
+DELETE {{RestAPI_HostAddress}}DeleteCustomNecklines?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomPants
+DELETE {{RestAPI_HostAddress}}DeleteCustomPants?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomPantsCuffs
+DELETE {{RestAPI_HostAddress}}DeleteCustomPantsCuffs?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomSleeves
+DELETE {{RestAPI_HostAddress}}DeleteCustomSleeves?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomSleeveCuffs
+DELETE {{RestAPI_HostAddress}}DeleteCustomSleeveCuffs?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomSportSuit
+DELETE {{RestAPI_HostAddress}}DeleteCustomSportSuit?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomSweaters
+DELETE {{RestAPI_HostAddress}}DeleteCustomSweaters?id=1
+Authorization: {{Credentials}}
+
+### DeleteCustomizableProducts
+DELETE {{RestAPI_HostAddress}}DeleteCustomizableProducts?id=1
 Authorization: {{Credentials}}
 
 ### DeleteFabricTypes
@@ -46,16 +114,20 @@ Authorization: {{Credentials}}
 DELETE {{RestAPI_HostAddress}}DeleteOrderHistory?id=1
 Authorization: {{Credentials}}
 
-### DeleteOrderHistory
-DELETE {{RestAPI_HostAddress}}DeleteOrderHistory?id=1
-Authorization: {{Credentials}}
-
 ### DeleteOrderStatuses
 DELETE {{RestAPI_HostAddress}}DeleteOrderStatuses?id=1
 Authorization: {{Credentials}}
 
 ### DeletePayments
 DELETE {{RestAPI_HostAddress}}DeletePayments?id=1
+Authorization: {{Credentials}}
+
+### DeletePaymentMethods
+DELETE {{RestAPI_HostAddress}}DeletePaymentMethods?id=1
+Authorization: {{Credentials}}
+
+### DeletePaymentStatuses
+DELETE {{RestAPI_HostAddress}}DeletePaymentStatuses?id=1
 Authorization: {{Credentials}}
 
 ### DeleteProducts
@@ -66,6 +138,10 @@ Authorization: {{Credentials}}
 DELETE {{RestAPI_HostAddress}}DeleteProductImages?id=1
 Authorization: {{Credentials}}
 
+### DeleteProductOrders
+DELETE {{RestAPI_HostAddress}}DeleteProductOrders?id=1
+Authorization: {{Credentials}}
+
 ### DeleteProductTranslations
 DELETE {{RestAPI_HostAddress}}DeleteProductTranslations?id=1
 Authorization: {{Credentials}}
@@ -74,8 +150,20 @@ Authorization: {{Credentials}}
 DELETE {{RestAPI_HostAddress}}DeleteReviews?id=1
 Authorization: {{Credentials}}
 
+### DeleteShippingAddresses
+DELETE {{RestAPI_HostAddress}}DeleteShippingAddresses?id=1
+Authorization: {{Credentials}}
+
+### DeleteSizeOptions
+DELETE {{RestAPI_HostAddress}}DeleteSizeOptions?id=1
+Authorization: {{Credentials}}
+
 ### DeleteUsers
 DELETE {{RestAPI_HostAddress}}DeleteUsers?id=1
+Authorization: {{Credentials}}
+
+### DeleteUserOrderHistory
+DELETE {{RestAPI_HostAddress}}DeleteUserOrderHistory?id=1
 Authorization: {{Credentials}}
 
 ### DeleteUserProfiles

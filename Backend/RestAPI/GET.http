@@ -33,6 +33,134 @@ Authorization: {{Credentials}}
 GET {{RestAPI_HostAddress}}GetAccessLevelsById?id=1
 Authorization: {{Credentials}}
 
+### GetBaseBelts
+GET {{RestAPI_HostAddress}}GetBaseBelts?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetBaseBeltsCount
+GET {{RestAPI_HostAddress}}GetBaseBeltsCount
+Authorization: {{Credentials}}
+
+### GetBaseBeltsFields
+GET {{RestAPI_HostAddress}}GetBaseBeltsFields
+Authorization: {{Credentials}}
+
+### GetBaseBeltsById
+GET {{RestAPI_HostAddress}}GetBaseBeltsById?id=1
+Authorization: {{Credentials}}
+
+### GetBaseNecklines
+GET {{RestAPI_HostAddress}}GetBaseNecklines?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetBaseNecklinesCount
+GET {{RestAPI_HostAddress}}GetBaseNecklinesCount
+Authorization: {{Credentials}}
+
+### GetBaseNecklinesFields
+GET {{RestAPI_HostAddress}}GetBaseNecklinesFields
+Authorization: {{Credentials}}
+
+### GetBaseNecklinesById
+GET {{RestAPI_HostAddress}}GetBaseNecklinesById?id=1
+Authorization: {{Credentials}}
+
+### GetBasePants
+GET {{RestAPI_HostAddress}}GetBasePants?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetBasePantsCount
+GET {{RestAPI_HostAddress}}GetBasePantsCount
+Authorization: {{Credentials}}
+
+### GetBasePantsFields
+GET {{RestAPI_HostAddress}}GetBasePantsFields
+Authorization: {{Credentials}}
+
+### GetBasePantsById
+GET {{RestAPI_HostAddress}}GetBasePantsById?id=1
+Authorization: {{Credentials}}
+
+### GetBasePantsCuffs
+GET {{RestAPI_HostAddress}}GetBasePantsCuffs?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetBasePantsCuffsCount
+GET {{RestAPI_HostAddress}}GetBasePantsCuffsCount
+Authorization: {{Credentials}}
+
+### GetBasePantsCuffsFields
+GET {{RestAPI_HostAddress}}GetBasePantsCuffsFields
+Authorization: {{Credentials}}
+
+### GetBasePantsCuffsById
+GET {{RestAPI_HostAddress}}GetBasePantsCuffsById?id=1
+Authorization: {{Credentials}}
+
+### GetBaseSleeves
+GET {{RestAPI_HostAddress}}GetBaseSleeves?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetBaseSleevesCount
+GET {{RestAPI_HostAddress}}GetBaseSleevesCount
+Authorization: {{Credentials}}
+
+### GetBaseSleevesFields
+GET {{RestAPI_HostAddress}}GetBaseSleevesFields
+Authorization: {{Credentials}}
+
+### GetBaseSleevesById
+GET {{RestAPI_HostAddress}}GetBaseSleevesById?id=1
+Authorization: {{Credentials}}
+
+### GetBaseSleeveCuffs
+GET {{RestAPI_HostAddress}}GetBaseSleeveCuffs?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetBaseSleeveCuffsCount
+GET {{RestAPI_HostAddress}}GetBaseSleeveCuffsCount
+Authorization: {{Credentials}}
+
+### GetBaseSleeveCuffsFields
+GET {{RestAPI_HostAddress}}GetBaseSleeveCuffsFields
+Authorization: {{Credentials}}
+
+### GetBaseSleeveCuffsById
+GET {{RestAPI_HostAddress}}GetBaseSleeveCuffsById?id=1
+Authorization: {{Credentials}}
+
+### GetBaseSportSuit
+GET {{RestAPI_HostAddress}}GetBaseSportSuit?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetBaseSportSuitCount
+GET {{RestAPI_HostAddress}}GetBaseSportSuitCount
+Authorization: {{Credentials}}
+
+### GetBaseSportSuitFields
+GET {{RestAPI_HostAddress}}GetBaseSportSuitFields
+Authorization: {{Credentials}}
+
+### GetBaseSportSuitById
+GET {{RestAPI_HostAddress}}GetBaseSportSuitById?id=1
+Authorization: {{Credentials}}
+
+### GetBaseSweaters
+GET {{RestAPI_HostAddress}}GetBaseSweaters?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetBaseSweatersCount
+GET {{RestAPI_HostAddress}}GetBaseSweatersCount
+Authorization: {{Credentials}}
+
+### GetBaseSweatersFields
+GET {{RestAPI_HostAddress}}GetBaseSweatersFields
+Authorization: {{Credentials}}
+
+### GetBaseSweatersById
+GET {{RestAPI_HostAddress}}GetBaseSweatersById?id=1
+Authorization: {{Credentials}}
+
 ### GetCart
 GET {{RestAPI_HostAddress}}GetCart?limit=10&page=1
 Authorization: {{Credentials}}
@@ -113,6 +241,166 @@ Authorization: {{Credentials}}
 GET {{RestAPI_HostAddress}}GetContactsById?id=1
 Authorization: {{Credentials}}
 
+### GetCountries
+GET {{RestAPI_HostAddress}}GetCountries?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCountriesCount
+GET {{RestAPI_HostAddress}}GetCountriesCount
+Authorization: {{Credentials}}
+
+### GetCountriesFields
+GET {{RestAPI_HostAddress}}GetCountriesFields
+Authorization: {{Credentials}}
+
+### GetCountriesById
+GET {{RestAPI_HostAddress}}GetCountriesById?id=1
+Authorization: {{Credentials}}
+
+### GetCurrencies
+GET {{RestAPI_HostAddress}}GetCurrencies?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCurrenciesCount
+GET {{RestAPI_HostAddress}}GetCurrenciesCount
+Authorization: {{Credentials}}
+
+### GetCurrenciesFields
+GET {{RestAPI_HostAddress}}GetCurrenciesFields
+Authorization: {{Credentials}}
+
+### GetCurrenciesById
+GET {{RestAPI_HostAddress}}GetCurrenciesById?id=1
+Authorization: {{Credentials}}
+
+### GetCustomBelts
+GET {{RestAPI_HostAddress}}GetCustomBelts?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCustomBeltsCount
+GET {{RestAPI_HostAddress}}GetCustomBeltsCount
+Authorization: {{Credentials}}
+
+### GetCustomBeltsFields
+GET {{RestAPI_HostAddress}}GetCustomBeltsFields
+Authorization: {{Credentials}}
+
+### GetCustomBeltsById
+GET {{RestAPI_HostAddress}}GetCustomBeltsById?id=1
+Authorization: {{Credentials}}
+
+### GetCustomNecklines
+GET {{RestAPI_HostAddress}}GetCustomNecklines?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCustomNecklinesCount
+GET {{RestAPI_HostAddress}}GetCustomNecklinesCount
+Authorization: {{Credentials}}
+
+### GetCustomNecklinesFields
+GET {{RestAPI_HostAddress}}GetCustomNecklinesFields
+Authorization: {{Credentials}}
+
+### GetCustomNecklinesById
+GET {{RestAPI_HostAddress}}GetCustomNecklinesById?id=1
+Authorization: {{Credentials}}
+
+### GetCustomPants
+GET {{RestAPI_HostAddress}}GetCustomPants?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCustomPantsCount
+GET {{RestAPI_HostAddress}}GetCustomPantsCount
+Authorization: {{Credentials}}
+
+### GetCustomPantsFields
+GET {{RestAPI_HostAddress}}GetCustomPantsFields
+Authorization: {{Credentials}}
+
+### GetCustomPantsById
+GET {{RestAPI_HostAddress}}GetCustomPantsById?id=1
+Authorization: {{Credentials}}
+
+### GetCustomPantsCuffs
+GET {{RestAPI_HostAddress}}GetCustomPantsCuffs?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCustomPantsCuffsCount
+GET {{RestAPI_HostAddress}}GetCustomPantsCuffsCount
+Authorization: {{Credentials}}
+
+### GetCustomPantsCuffsFields
+GET {{RestAPI_HostAddress}}GetCustomPantsCuffsFields
+Authorization: {{Credentials}}
+
+### GetCustomPantsCuffsById
+GET {{RestAPI_HostAddress}}GetCustomPantsCuffsById?id=1
+Authorization: {{Credentials}}
+
+### GetCustomSleeves
+GET {{RestAPI_HostAddress}}GetCustomSleeves?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCustomSleevesCount
+GET {{RestAPI_HostAddress}}GetCustomSleevesCount
+Authorization: {{Credentials}}
+
+### GetCustomSleevesFields
+GET {{RestAPI_HostAddress}}GetCustomSleevesFields
+Authorization: {{Credentials}}
+
+### GetCustomSleevesById
+GET {{RestAPI_HostAddress}}GetCustomSleevesById?id=1
+Authorization: {{Credentials}}
+
+### GetCustomSleeveCuffs
+GET {{RestAPI_HostAddress}}GetCustomSleeveCuffs?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCustomSleeveCuffsCount
+GET {{RestAPI_HostAddress}}GetCustomSleeveCuffsCount
+Authorization: {{Credentials}}
+
+### GetCustomSleeveCuffsFields
+GET {{RestAPI_HostAddress}}GetCustomSleeveCuffsFields
+Authorization: {{Credentials}}
+
+### GetCustomSleeveCuffsById
+GET {{RestAPI_HostAddress}}GetCustomSleeveCuffsById?id=1
+Authorization: {{Credentials}}
+
+### GetCustomSportSuits
+GET {{RestAPI_HostAddress}}GetCustomSportSuits?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCustomSportSuitCount
+GET {{RestAPI_HostAddress}}GetCustomSportSuitCount
+Authorization: {{Credentials}}
+
+### GetCustomSportSuitFields
+GET {{RestAPI_HostAddress}}GetCustomSportSuitFields
+Authorization: {{Credentials}}
+
+### GetCustomSportSuitById
+GET {{RestAPI_HostAddress}}GetCustomSportSuitById?id=1
+Authorization: {{Credentials}}
+
+### GetCustomSweaters
+GET {{RestAPI_HostAddress}}GetCustomSweaters?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetCustomSweatersCount
+GET {{RestAPI_HostAddress}}GetCustomSweatersCount
+Authorization: {{Credentials}}
+
+### GetCustomSweatersFields
+GET {{RestAPI_HostAddress}}GetCustomSweatersFields
+Authorization: {{Credentials}}
+
+### GetCustomSweatersById
+GET {{RestAPI_HostAddress}}GetCustomSweatersById?id=1
+Authorization: {{Credentials}}
+
 ### GetCustomizableProducts
 GET {{RestAPI_HostAddress}}GetCustomizableProducts?limit=10&page=1
 Authorization: {{Credentials}}
@@ -127,22 +415,6 @@ Authorization: {{Credentials}}
 
 ### GetCustomizableProductsById
 GET {{RestAPI_HostAddress}}GetCustomizableProductsById?id=1
-Authorization: {{Credentials}}
-
-### GetCustomizationOrders
-GET {{RestAPI_HostAddress}}GetCustomizationOrders?limit=10&page=1
-Authorization: {{Credentials}}
-
-### GetCustomizationOrdersCount
-GET {{RestAPI_HostAddress}}GetCustomizationOrdersCount
-Authorization: {{Credentials}}
-
-### GetCustomizationOrdersFields
-GET {{RestAPI_HostAddress}}GetCustomizationOrdersFields
-Authorization: {{Credentials}}
-
-### GetCustomizationOrdersById
-GET {{RestAPI_HostAddress}}GetCustomizationOrdersById?id=1
 Authorization: {{Credentials}}
 
 ### GetFabricTypes
@@ -241,6 +513,38 @@ Authorization: {{Credentials}}
 GET {{RestAPI_HostAddress}}GetPaymentsById?id=1
 Authorization: {{Credentials}}
 
+### GetPaymentMethods
+GET {{RestAPI_HostAddress}}GetPaymentMethods?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetPaymentMethodsCount
+GET {{RestAPI_HostAddress}}GetPaymentMethodsCount
+Authorization: {{Credentials}}
+
+### GetPaymentMethodsFields
+GET {{RestAPI_HostAddress}}GetPaymentMethodsFields
+Authorization: {{Credentials}}
+
+### GetPaymentMethodsById
+GET {{RestAPI_HostAddress}}GetPaymentMethodsById?id=1
+Authorization: {{Credentials}}
+
+### GetPaymentStatuses
+GET {{RestAPI_HostAddress}}GetPaymentStatuses?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetPaymentStatusesCount
+GET {{RestAPI_HostAddress}}GetPaymentStatusesCount
+Authorization: {{Credentials}}
+
+### GetPaymentStatusesFields
+GET {{RestAPI_HostAddress}}GetPaymentStatusesFields
+Authorization: {{Credentials}}
+
+### GetPaymentStatusesById
+GET {{RestAPI_HostAddress}}GetPaymentStatusesById?id=1
+Authorization: {{Credentials}}
+
 ### GetProducts
 GET {{RestAPI_HostAddress}}GetProducts?limit=10&page=1
 Authorization: {{Credentials}}
@@ -271,6 +575,22 @@ Authorization: {{Credentials}}
 
 ### GetProductImagesById
 GET {{RestAPI_HostAddress}}GetProductImagesById?id=1
+Authorization: {{Credentials}}
+
+### GetProductOrders
+GET {{RestAPI_HostAddress}}GetProductOrders?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetProductOrdersCount
+GET {{RestAPI_HostAddress}}GetProductOrdersCount
+Authorization: {{Credentials}}
+
+### GetProductOrdersFields
+GET {{RestAPI_HostAddress}}GetProductOrdersFields
+Authorization: {{Credentials}}
+
+### GetProductOrdersById
+GET {{RestAPI_HostAddress}}GetProductOrdersById?id=1
 Authorization: {{Credentials}}
 
 ### GetProductTranslations
@@ -305,6 +625,38 @@ Authorization: {{Credentials}}
 GET {{RestAPI_HostAddress}}GetReviewsById?id=1
 Authorization: {{Credentials}}
 
+### GetShippingAddresses
+GET {{RestAPI_HostAddress}}GetShippingAddresses?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetShippingAddressesCount
+GET {{RestAPI_HostAddress}}GetShippingAddressesCount
+Authorization: {{Credentials}}
+
+### GetShippingAddressesFields
+GET {{RestAPI_HostAddress}}GetShippingAddressesFields
+Authorization: {{Credentials}}
+
+### GetShippingAddressesById
+GET {{RestAPI_HostAddress}}GetShippingAddressesById?id=1
+Authorization: {{Credentials}}
+
+### GetSizeOptions
+GET {{RestAPI_HostAddress}}GetSizeOptions?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetSizeOptionsCount
+GET {{RestAPI_HostAddress}}GetSizeOptionsCount
+Authorization: {{Credentials}}
+
+### GetSizeOptionsFields
+GET {{RestAPI_HostAddress}}GetSizeOptionsFields
+Authorization: {{Credentials}}
+
+### GetSizeOptionsById
+GET {{RestAPI_HostAddress}}GetSizeOptionsById?id=1
+Authorization: {{Credentials}}
+
 ### GetUsers
 GET {{RestAPI_HostAddress}}GetUsers?limit=10&page=1
 Authorization: {{Credentials}}
@@ -319,6 +671,22 @@ Authorization: {{Credentials}}
 
 ### GetUsersById
 GET {{RestAPI_HostAddress}}GetUsersById?id=1
+Authorization: {{Credentials}}
+
+### GetUserOrderHistory
+GET {{RestAPI_HostAddress}}GetUserOrderHistory?limit=10&page=1
+Authorization: {{Credentials}}
+
+### GetUserOrderHistoryCount
+GET {{RestAPI_HostAddress}}GetUserOrderHistoryCount
+Authorization: {{Credentials}}
+
+### GetUserOrderHistoryFields
+GET {{RestAPI_HostAddress}}GetUserOrderHistoryFields
+Authorization: {{Credentials}}
+
+### GetUserOrderHistoryById
+GET {{RestAPI_HostAddress}}GetUserOrderHistoryById?id=1
 Authorization: {{Credentials}}
 
 ### GetUserProfiles

@@ -7,6 +7,14 @@ public partial class Product
 {
     public int Id { get; set; }
 
+    public int FkFabricTypes { get; set; }
+
+    public int FkColors { get; set; }
+
+    public int FkSizeOptions { get; set; }
+
+    public int FkCurrencies { get; set; }
+
     public decimal Price { get; set; }
 
     public int StockQuantity { get; set; }
@@ -19,13 +27,17 @@ public partial class Product
 
     public DateTime UpdatedAt { get; set; }
 
-    public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
+    public virtual Color FkColorsNavigation { get; set; } = null!;
 
-    public virtual ICollection<CustomizableProduct> CustomizableProducts { get; set; } = new List<CustomizableProduct>();
+    public virtual Currency FkCurrenciesNavigation { get; set; } = null!;
 
-    public virtual ICollection<CustomizationOrder> CustomizationOrders { get; set; } = new List<CustomizationOrder>();
+    public virtual FabricType FkFabricTypesNavigation { get; set; } = null!;
+
+    public virtual SizeOption FkSizeOptionsNavigation { get; set; } = null!;
 
     public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+
+    public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
 
     public virtual ICollection<ProductTranslation> ProductTranslations { get; set; } = new List<ProductTranslation>();
 

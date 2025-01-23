@@ -6,6 +6,6 @@
 
         public string Name { get; set; } = null!;
 
-        public string HexCode { get; set; } = null!;
+        public byte[] ImageData { get; set; } = null!;
     }
 }

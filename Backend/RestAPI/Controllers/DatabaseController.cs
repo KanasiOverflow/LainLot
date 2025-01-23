@@ -11,89 +11,109 @@ namespace RestAPI.Controllers
     [ApiController]
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class DatabaseController : ControllerBase
+    public class DatabaseController(
+        ILogger<DatabaseController> logger,
+        IRepository<DB.About> aboutRepository,
+        IRepository<DB.AccessLevel> accessLevelRepository,
+        IRepository<DB.BaseBelt> baseBeltRepository,
+        IRepository<DB.BaseNeckline> baseNecklineRepository,
+        IRepository<DB.BasePant> basePantRepository,
+        IRepository<DB.BasePantsCuff> basePantsCuffRepository,
+        IRepository<DB.BaseSleeve> baseSleeveRepository,
+        IRepository<DB.BaseSleeveCuff> baseSleeveCuffRepository,
+        IRepository<DB.BaseSportSuit> baseSportSuitRepository,
+        IRepository<DB.BaseSweater> baseSweaterRepository,
+        IRepository<DB.Cart> cartRepository,
+        IRepository<DB.Category> categoryRepository,
+        IRepository<DB.CategoryHierarchy> categoryHierarchyRepository,
+        IRepository<DB.Color> colorRepository,
+        IRepository<DB.Contact> contactRepository,
+        IRepository<DB.Country> countryRepository,
+        IRepository<DB.Currency> currencyRepository,
+        IRepository<DB.CustomBelt> customBeltRepository,
+        IRepository<DB.CustomNeckline> customNecklineRepository,
+        IRepository<DB.CustomPant> customPantRepository,
+        IRepository<DB.CustomPantsCuff> customPantsCuffRepository,
+        IRepository<DB.CustomSleeve> customSleeveRepository,
+        IRepository<DB.CustomSleeveCuff> customSleeveCuffRepository,
+        IRepository<DB.CustomSportSuit> customSportSuitRepository,
+        IRepository<DB.CustomSweater> customSweaterRepository,
+        IRepository<DB.CustomizableProduct> customizableProductRepository,
+        IRepository<DB.FabricType> fabricTypeRepository,
+        IRepository<DB.Language> languageRepository,
+        IRepository<DB.Order> orderRepository,
+        IRepository<DB.OrderHistory> orderHistoryRepository,
+        IRepository<DB.OrderStatus> orderStatusRepository,
+        IRepository<DB.Payment> paymentRepository,
+        IRepository<DB.PaymentMethod> paymentMethodRepository,
+        IRepository<DB.PaymentStatus> paymentStatusRepository,
+        IRepository<DB.Product> productRepository,
+        IRepository<DB.ProductImage> productImageRepository,
+        IRepository<DB.ProductOrder> productOrderRepository,
+        IRepository<DB.ProductTranslation> productTranslationRepository,
+        IRepository<DB.Review> reviewRepository,
+        IRepository<DB.ShippingAddress> shippingAddressRepository,
+        IRepository<DB.SizeOption> sizeOptionRepository,
+        IRepository<DB.User> userRepository,
+        IRepository<DB.UserOrderHistory> userOrderHistoryRepository,
+        IRepository<DB.UserProfile> userProfileRepository,
+        IRepository<DB.UserRole> userRoleRepository
+        ) : ControllerBase
     {
         /// <summary>
         /// CTRL + M + P - expand all
         /// CTRL + M + O - collapse all
         /// </summary>
 
-        private readonly Mapper _mapper;
-        private readonly ILogger<DatabaseController> _logger;
-        private readonly IRepository<DB.About> _aboutRepository;
-        private readonly IRepository<DB.AccessLevel> _accessLevelRepository;
-        private readonly IRepository<DB.Cart> _cartRepository;
-        private readonly IRepository<DB.Category> _categoryRepository;
-        private readonly IRepository<DB.CategoryHierarchy> _categoryHierarchyRepository;
-        private readonly IRepository<DB.Color> _colorRepository;
-        private readonly IRepository<DB.Contact> _contactRepository;
-        private readonly IRepository<DB.CustomizableProduct> _customizableProductRepository;
-        private readonly IRepository<DB.CustomizationOrder> _customizationOrderRepository;
-        private readonly IRepository<DB.FabricType> _fabricTypeRepository;
-        private readonly IRepository<DB.Language> _languageRepository;
-        private readonly IRepository<DB.Order> _orderRepository;
-        private readonly IRepository<DB.OrderHistory> _orderHistoryRepository;
-        private readonly IRepository<DB.OrderStatus> _orderStatusRepository;
-        private readonly IRepository<DB.Payment> _paymentRepository;
-        private readonly IRepository<DB.Product> _productRepository;
-        private readonly IRepository<DB.ProductImage> _productImageRepository;
-        private readonly IRepository<DB.ProductTranslation> _productTranslationRepository;
-        private readonly IRepository<DB.Review> _reviewRepository;
-        private readonly IRepository<DB.User> _userRepository;
-        private readonly IRepository<DB.UserProfile> _userProfileRepository;
-        private readonly IRepository<DB.UserRole> _userRoleRepository;
-
-        public DatabaseController(
-            ILogger<DatabaseController> logger,
-            IRepository<DB.About> aboutRepository,
-            IRepository<DB.AccessLevel> accessLevelRepository,
-            IRepository<DB.Cart> cartRepository,
-            IRepository<DB.Category> categoryRepository,
-            IRepository<DB.CategoryHierarchy> categoryHierarchyRepository,
-            IRepository<DB.Color> colorRepository,
-            IRepository<DB.Contact> contactRepository,
-            IRepository<DB.CustomizableProduct> customizableProductRepository,
-            IRepository<DB.CustomizationOrder> customizationOrderRepository,
-            IRepository<DB.FabricType> fabricTypeRepository,
-            IRepository<DB.Language> languageRepository,
-            IRepository<DB.Order> orderRepository,
-            IRepository<DB.OrderHistory> orderHistoryRepository,
-            IRepository<DB.OrderStatus> orderStatusRepository,
-            IRepository<DB.Payment> paymentRepository,
-            IRepository<DB.Product> productRepository,
-            IRepository<DB.ProductImage> productImageRepository,
-            IRepository<DB.ProductTranslation> productTranslationRepository,
-            IRepository<DB.Review> reviewRepository,
-            IRepository<DB.User> userRepository,
-            IRepository<DB.UserProfile> userProfileRepository,
-            IRepository<DB.UserRole> userRoleRepository)
-        {
-            _mapper = MapperConfig.InitializeAutomapper();
-            _logger = logger;
-
-            _aboutRepository = aboutRepository;
-            _accessLevelRepository = accessLevelRepository;
-            _cartRepository = cartRepository;
-            _categoryRepository = categoryRepository;
-            _categoryHierarchyRepository = categoryHierarchyRepository;
-            _colorRepository = colorRepository;
-            _contactRepository = contactRepository;
-            _customizableProductRepository = customizableProductRepository;
-            _customizationOrderRepository = customizationOrderRepository;
-            _fabricTypeRepository = fabricTypeRepository;
-            _languageRepository = languageRepository;
-            _orderRepository = orderRepository;
-            _orderHistoryRepository = orderHistoryRepository;
-            _orderStatusRepository = orderStatusRepository;
-            _paymentRepository = paymentRepository;
-            _productRepository = productRepository;
-            _productImageRepository = productImageRepository;
-            _productTranslationRepository = productTranslationRepository;
-            _reviewRepository = reviewRepository;
-            _userRepository = userRepository;
-            _userProfileRepository = userProfileRepository;
-            _userRoleRepository = userRoleRepository;
-        }
+        private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+        #region repos init
+        private readonly ILogger<DatabaseController> _logger = logger;
+        private readonly IRepository<DB.About> _aboutRepository = aboutRepository;
+        private readonly IRepository<DB.AccessLevel> _accessLevelRepository = accessLevelRepository;
+        private readonly IRepository<DB.BaseBelt> _baseBeltRepository = baseBeltRepository;
+        private readonly IRepository<DB.BaseNeckline> _baseNecklineRepository = baseNecklineRepository;
+        private readonly IRepository<DB.BasePant> _basePantRepository = basePantRepository;
+        private readonly IRepository<DB.BasePantsCuff> _basePantsCuffRepository = basePantsCuffRepository;
+        private readonly IRepository<DB.BaseSleeve> _baseSleeveRepository = baseSleeveRepository;
+        private readonly IRepository<DB.BaseSleeveCuff> _baseSleeveCuffRepository = baseSleeveCuffRepository;
+        private readonly IRepository<DB.BaseSportSuit> _baseSportSuitRepository = baseSportSuitRepository;
+        private readonly IRepository<DB.BaseSweater> _baseSweaterRepository = baseSweaterRepository;
+        private readonly IRepository<DB.Cart> _cartRepository = cartRepository;
+        private readonly IRepository<DB.Category> _categoryRepository = categoryRepository;
+        private readonly IRepository<DB.CategoryHierarchy> _categoryHierarchyRepository = categoryHierarchyRepository;
+        private readonly IRepository<DB.Color> _colorRepository = colorRepository;
+        private readonly IRepository<DB.Contact> _contactRepository = contactRepository;
+        private readonly IRepository<DB.Country> _countryRepository = countryRepository;
+        private readonly IRepository<DB.Currency> _currencyRepository = currencyRepository;
+        private readonly IRepository<DB.CustomBelt> _customBeltRepository = customBeltRepository;
+        private readonly IRepository<DB.CustomNeckline> _customNecklineRepository = customNecklineRepository;
+        private readonly IRepository<DB.CustomPant> _customPantRepository = customPantRepository;
+        private readonly IRepository<DB.CustomPantsCuff> _customPantsCuffRepository = customPantsCuffRepository;
+        private readonly IRepository<DB.CustomSleeve> _customSleeveRepository = customSleeveRepository;
+        private readonly IRepository<DB.CustomSleeveCuff> _customSleeveCuffRepository = customSleeveCuffRepository;
+        private readonly IRepository<DB.CustomSportSuit> _customSportSuitRepository = customSportSuitRepository;
+        private readonly IRepository<DB.CustomSweater> _customSweaterRepository = customSweaterRepository;
+        private readonly IRepository<DB.CustomizableProduct> _customizableProductRepository = customizableProductRepository;
+        private readonly IRepository<DB.FabricType> _fabricTypeRepository = fabricTypeRepository;
+        private readonly IRepository<DB.Language> _languageRepository = languageRepository;
+        private readonly IRepository<DB.Order> _orderRepository = orderRepository;
+        private readonly IRepository<DB.OrderHistory> _orderHistoryRepository = orderHistoryRepository;
+        private readonly IRepository<DB.OrderStatus> _orderStatusRepository = orderStatusRepository;
+        private readonly IRepository<DB.Payment> _paymentRepository = paymentRepository;
+        private readonly IRepository<DB.PaymentMethod> _paymentMethodRepository = paymentMethodRepository;
+        private readonly IRepository<DB.PaymentStatus> _paymentStatusRepository = paymentStatusRepository;
+        private readonly IRepository<DB.Product> _productRepository = productRepository;
+        private readonly IRepository<DB.ProductImage> _productImageRepository = productImageRepository;
+        private readonly IRepository<DB.ProductOrder> _productOrderRepository = productOrderRepository;
+        private readonly IRepository<DB.ProductTranslation> _productTranslationRepository = productTranslationRepository;
+        private readonly IRepository<DB.Review> _reviewRepository = reviewRepository;
+        private readonly IRepository<DB.ShippingAddress> _shippingAddressRepository = shippingAddressRepository;
+        private readonly IRepository<DB.SizeOption> _sizeOptionRepository = sizeOptionRepository;
+        private readonly IRepository<DB.User> _userRepository = userRepository;
+        private readonly IRepository<DB.UserOrderHistory> _userOrderHistoryRepository = userOrderHistoryRepository;
+        private readonly IRepository<DB.UserProfile> _userProfileRepository = userProfileRepository;
+        private readonly IRepository<DB.UserRole> _userRoleRepository = userRoleRepository;
+        #endregion
 
         #region About table
 
@@ -142,7 +162,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<About>> CreateAboutAsync(About entity)
+        public async Task<ActionResult<About>> CreateAbout(About entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -163,7 +183,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<About>> UpdateAboutAsync(About entity)
+        public async Task<ActionResult<About>> UpdateAbout(About entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -245,7 +265,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<AccessLevel>> CreateAccessLevelsAsync(AccessLevel entity)
+        public async Task<ActionResult<AccessLevel>> CreateAccessLevels(AccessLevel entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -266,7 +286,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<AccessLevel>> UpdateAccessLevelsAsync(AccessLevel entity)
+        public async Task<ActionResult<AccessLevel>> UpdateAccessLevels(AccessLevel entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -293,6 +313,814 @@ namespace RestAPI.Controllers
             if (entity != null)
             {
                 await _accessLevelRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region BaseBelts table
+
+        [HttpGet("GetBaseBeltsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetBaseBeltsCount()
+        {
+            return _baseBeltRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetBaseBeltsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetBaseBeltsFields()
+        {
+            return new DB.BaseBelt().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetBaseBelts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<BaseBelt>> GetBaseBelts(int limit, int page)
+        {
+            var dbList = _baseBeltRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.BaseBelt>, List<BaseBelt>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetBaseBeltsById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BaseBelt?>> GetBaseBeltsById(int id)
+        {
+            var dbEntity = await _baseBeltRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.BaseBelt, BaseBelt>(dbEntity);
+        }
+
+        [HttpPost("CreateBaseBelts")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseBelt>> CreateBaseBelts(BaseBelt entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseBeltRepository.Add(_mapper.Map<BaseBelt, DB.BaseBelt>(entity));
+                return CreatedAtAction(nameof(GetBaseBeltsById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateBaseBelts")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseBelt>> UpdateBaseBelts(BaseBelt entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseBeltRepository.Update(_mapper.Map<BaseBelt, DB.BaseBelt>(entity));
+                return CreatedAtAction(nameof(GetBaseBeltsById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteBaseBelts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteBaseBelts(int id)
+        {
+            var entity = await _baseBeltRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _baseBeltRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region BaseNecklines table
+
+        [HttpGet("GetBaseNecklinesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetBaseNecklinesCount()
+        {
+            return _baseNecklineRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetBaseNecklinesFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetBaseNecklinesFields()
+        {
+            return new DB.BaseNeckline().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetBaseNecklines")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<BaseNeckline>> GetBaseNecklines(int limit, int page)
+        {
+            var dbList = _baseNecklineRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.BaseNeckline>, List<BaseNeckline>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetBaseNecklinesById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BaseNeckline?>> GetBaseNecklinesById(int id)
+        {
+            var dbEntity = await _baseNecklineRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.BaseNeckline, BaseNeckline>(dbEntity);
+        }
+
+        [HttpPost("CreateBaseNecklines")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseNeckline>> CreateBaseNecklines(BaseNeckline entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseNecklineRepository.Add(_mapper.Map<BaseNeckline, DB.BaseNeckline>(entity));
+                return CreatedAtAction(nameof(GetBaseNecklinesById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateBaseNecklines")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseNeckline>> UpdateBaseNecklines(BaseNeckline entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseNecklineRepository.Update(_mapper.Map<BaseNeckline, DB.BaseNeckline>(entity));
+                return CreatedAtAction(nameof(GetBaseNecklinesById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteBaseNecklines")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteBaseNecklines(int id)
+        {
+            var entity = await _baseNecklineRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _baseNecklineRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region BasePants table
+
+        [HttpGet("GetBasePantsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetBasePantsCount()
+        {
+            return _basePantRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetBasePantsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetBasePantsFields()
+        {
+            return new DB.BasePant().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetBasePants")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<BasePant>> GetBasePants(int limit, int page)
+        {
+            var dbList = _basePantRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.BasePant>, List<BasePant>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetBasePantsById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BasePant?>> GetBasePantsById(int id)
+        {
+            var dbEntity = await _basePantRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.BasePant, BasePant>(dbEntity);
+        }
+
+        [HttpPost("CreateBasePants")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BasePant>> CreateBasePants(BasePant entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _basePantRepository.Add(_mapper.Map<BasePant, DB.BasePant>(entity));
+                return CreatedAtAction(nameof(GetBasePantsById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateBasePants")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BasePant>> UpdateBasePants(BasePant entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _basePantRepository.Update(_mapper.Map<BasePant, DB.BasePant>(entity));
+                return CreatedAtAction(nameof(GetBasePantsById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteBasePants")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteBasePants(int id)
+        {
+            var entity = await _basePantRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _basePantRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region BasePantsCuffs table
+
+        [HttpGet("GetBasePantsCuffsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetBasePantsCuffsCount()
+        {
+            return _basePantsCuffRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetBasePantsCuffsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetBasePantsCuffsFields()
+        {
+            return new DB.BasePantsCuff().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetBasePantsCuffs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<BasePantsCuff>> GetBasePantsCuffs(int limit, int page)
+        {
+            var dbList = _basePantsCuffRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.BasePantsCuff>, List<BasePantsCuff>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetBasePantsCuffsById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BasePantsCuff?>> GetBasePantsCuffsById(int id)
+        {
+            var dbEntity = await _basePantsCuffRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.BasePantsCuff, BasePantsCuff>(dbEntity);
+        }
+
+        [HttpPost("CreateBasePantsCuffs")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BasePantsCuff>> CreateBasePantsCuffs(BasePantsCuff entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _basePantsCuffRepository.Add(_mapper.Map<BasePantsCuff, DB.BasePantsCuff>(entity));
+                return CreatedAtAction(nameof(GetBasePantsCuffsById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateBasePantsCuffs")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BasePantsCuff>> UpdateBasePantsCuffs(BasePantsCuff entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _basePantsCuffRepository.Update(_mapper.Map<BasePantsCuff, DB.BasePantsCuff>(entity));
+                return CreatedAtAction(nameof(GetBasePantsCuffsById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteBasePantsCuffs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteBasePantsCuffs(int id)
+        {
+            var entity = await _basePantsCuffRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _basePantsCuffRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region BaseSleeves table
+
+        [HttpGet("GetBaseSleevesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetBaseSleevesCount()
+        {
+            return _baseSleeveRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetBaseSleevesFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetBaseSleevesFields()
+        {
+            return new DB.BaseSleeve().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetBaseSleeves")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<BaseSleeve>> GetBaseSleeves(int limit, int page)
+        {
+            var dbList = _baseSleeveRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.BaseSleeve>, List<BaseSleeve>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetBaseSleevesById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BaseSleeve?>> GetBaseSleevesById(int id)
+        {
+            var dbEntity = await _baseSleeveRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.BaseSleeve, BaseSleeve>(dbEntity);
+        }
+
+        [HttpPost("CreateBaseSleeves")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseSleeve>> CreateBaseSleeves(BaseSleeve entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseSleeveRepository.Add(_mapper.Map<BaseSleeve, DB.BaseSleeve>(entity));
+                return CreatedAtAction(nameof(GetBaseSleevesById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateBaseSleeves")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseSleeve>> UpdateBaseSleeves(BaseSleeve entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseSleeveRepository.Update(_mapper.Map<BaseSleeve, DB.BaseSleeve>(entity));
+                return CreatedAtAction(nameof(GetBaseSleevesById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteBaseSleeves")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteBaseSleeves(int id)
+        {
+            var entity = await _baseSleeveRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _baseSleeveRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region BaseSleeveCuffs table
+
+        [HttpGet("GetBaseSleeveCuffsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetBaseSleeveCuffsCount()
+        {
+            return _baseSleeveCuffRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetBaseSleeveCuffsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetBaseSleeveCuffsFields()
+        {
+            return new DB.BaseSleeveCuff().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetBaseSleeveCuffs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<BaseSleeveCuff>> GetBaseSleeveCuffs(int limit, int page)
+        {
+            var dbList = _baseSleeveCuffRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.BaseSleeveCuff>, List<BaseSleeveCuff>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetBaseSleeveCuffsById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BaseSleeveCuff?>> GetBaseSleeveCuffsById(int id)
+        {
+            var dbEntity = await _baseSleeveCuffRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.BaseSleeveCuff, BaseSleeveCuff>(dbEntity);
+        }
+
+        [HttpPost("CreateBaseSleeveCuffs")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseSleeveCuff>> CreateBaseSleeveCuffs(BaseSleeveCuff entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseSleeveCuffRepository.Add(_mapper.Map<BaseSleeveCuff, DB.BaseSleeveCuff>(entity));
+                return CreatedAtAction(nameof(GetBaseSleeveCuffsById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateBaseSleeveCuffs")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseSleeveCuff>> UpdateBaseSleeveCuffs(BaseSleeveCuff entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseSleeveCuffRepository.Update(_mapper.Map<BaseSleeveCuff, DB.BaseSleeveCuff>(entity));
+                return CreatedAtAction(nameof(GetBaseSleeveCuffsById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteBaseSleeveCuffs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteBaseSleeveCuffs(int id)
+        {
+            var entity = await _baseSleeveCuffRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _baseSleeveCuffRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region BaseSportSuit table
+
+        [HttpGet("GetBaseSportSuitCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetBaseSportSuitCount()
+        {
+            return _baseSportSuitRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetBaseSportSuitFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetBaseSportSuitFields()
+        {
+            return new DB.BaseSportSuit().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetBaseSportSuit")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<BaseSportSuit>> GetBaseSportSuit(int limit, int page)
+        {
+            var dbList = _baseSportSuitRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.BaseSportSuit>, List<BaseSportSuit>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetBaseSportSuitById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BaseSportSuit?>> GetBaseSportSuitById(int id)
+        {
+            var dbEntity = await _baseSportSuitRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.BaseSportSuit, BaseSportSuit>(dbEntity);
+        }
+
+        [HttpPost("CreateBaseSportSuit")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseSportSuit>> CreateBaseSportSuit(BaseSportSuit entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseSportSuitRepository.Add(_mapper.Map<BaseSportSuit, DB.BaseSportSuit>(entity));
+                return CreatedAtAction(nameof(GetBaseSportSuitById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateBaseSportSuit")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseSportSuit>> UpdateBaseSportSuit(BaseSportSuit entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseSportSuitRepository.Update(_mapper.Map<BaseSportSuit, DB.BaseSportSuit>(entity));
+                return CreatedAtAction(nameof(GetBaseSportSuitById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteBaseSportSuit")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteBaseSportSuit(int id)
+        {
+            var entity = await _baseSportSuitRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _baseSportSuitRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region BaseSweaters table
+
+        [HttpGet("GetBaseSweatersCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetBaseSweatersCount()
+        {
+            return _baseSweaterRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetBaseSweatersFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetBaseSweatersFields()
+        {
+            return new DB.BaseSweater().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetBaseSweaters")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<BaseSweater>> GetBaseSweaters(int limit, int page)
+        {
+            var dbList = _baseSweaterRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.BaseSweater>, List<BaseSweater>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetBaseSweatersById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BaseSweater?>> GetBaseSweatersById(int id)
+        {
+            var dbEntity = await _baseSweaterRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.BaseSweater, BaseSweater>(dbEntity);
+        }
+
+        [HttpPost("CreateBaseSweaters")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseSweater>> CreateBaseSweaters(BaseSweater entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseSweaterRepository.Add(_mapper.Map<BaseSweater, DB.BaseSweater>(entity));
+                return CreatedAtAction(nameof(GetBaseSweatersById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateBaseSweaters")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BaseSweater>> UpdateBaseSweaters(BaseSweater entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _baseSweaterRepository.Update(_mapper.Map<BaseSweater, DB.BaseSweater>(entity));
+                return CreatedAtAction(nameof(GetBaseSweatersById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteBaseSweaters")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteBaseSweaters(int id)
+        {
+            var entity = await _baseSweaterRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _baseSweaterRepository.Delete(entity);
                 return Ok();
             }
 
@@ -348,7 +1176,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Cart>> CreateCartAsync(Cart entity)
+        public async Task<ActionResult<Cart>> CreateCart(Cart entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -369,7 +1197,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Cart>> UpdateCartAsync(Cart entity)
+        public async Task<ActionResult<Cart>> UpdateCart(Cart entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -451,7 +1279,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Category>> CreateCategoriesAsync(Category entity)
+        public async Task<ActionResult<Category>> CreateCategories(Category entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -472,7 +1300,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Category>> UpdateCategoriesAsync(Category entity)
+        public async Task<ActionResult<Category>> UpdateCategories(Category entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -554,7 +1382,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CategoryHierarchy>> CreateCategoryHierarchyAsync(CategoryHierarchy entity)
+        public async Task<ActionResult<CategoryHierarchy>> CreateCategoryHierarchy(CategoryHierarchy entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -575,7 +1403,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CategoryHierarchy>> UpdateCategoryHierarchyAsync(CategoryHierarchy entity)
+        public async Task<ActionResult<CategoryHierarchy>> UpdateCategoryHierarchy(CategoryHierarchy entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -657,7 +1485,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Color>> CreateColorsAsync(Color entity)
+        public async Task<ActionResult<Color>> CreateColors(Color entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -678,7 +1506,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Color>> UpdateColorsAsync(Color entity)
+        public async Task<ActionResult<Color>> UpdateColors(Color entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -760,7 +1588,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Contact>> CreateContactsAsync(Contact entity)
+        public async Task<ActionResult<Contact>> CreateContacts(Contact entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -781,7 +1609,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Contact>> UpdateContactsAsync(Contact entity)
+        public async Task<ActionResult<Contact>> UpdateContacts(Contact entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -812,6 +1640,1065 @@ namespace RestAPI.Controllers
             }
 
             return BadRequest();
+        }
+
+        #endregion
+
+        #region Countries table
+
+        [HttpGet("GetCountriesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetCountriesCount()
+        {
+            return _countryRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetCountriesFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetCountriesFields()
+        {
+            return new DB.Country().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetCountries")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<Country>> GetCountries(int limit, int page)
+        {
+            var dbList = _countryRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.Country>, List<Country>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetCountriesById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Country?>> GetCountriesById(int id)
+        {
+            var dbEntity = await _countryRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.Country, Country>(dbEntity);
+        }
+
+        [HttpPost("CreateCountries")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<Country>> CreateCountries(Country entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _countryRepository.Add(_mapper.Map<Country, DB.Country>(entity));
+                return CreatedAtAction(nameof(GetCountriesById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateCountries")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<Country>> UpdateCountries(Country entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _countryRepository.Update(_mapper.Map<Country, DB.Country>(entity));
+                return CreatedAtAction(nameof(GetCountriesById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteCountries")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteCountries(int id)
+        {
+            var entity = await _countryRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _countryRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region Currencies table
+
+        [HttpGet("GetCurrenciesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetCurrenciesCount()
+        {
+            return _currencyRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetCurrenciesFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetCurrenciesFields()
+        {
+            return new DB.Currency().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetCurrencies")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<Currency>> GetCurrencies(int limit, int page)
+        {
+            var dbList = _currencyRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.Currency>, List<Currency>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetCurrenciesById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Currency?>> GetCurrenciesById(int id)
+        {
+            var dbEntity = await _currencyRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.Currency, Currency>(dbEntity);
+        }
+
+        [HttpPost("CreateCurrencies")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<Currency>> CreateCurrencies(Currency entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _currencyRepository.Add(_mapper.Map<Currency, DB.Currency>(entity));
+                return CreatedAtAction(nameof(GetCurrenciesById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateCurrencies")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<Currency>> UpdateCurrencies(Currency entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _currencyRepository.Update(_mapper.Map<Currency, DB.Currency>(entity));
+                return CreatedAtAction(nameof(GetCurrenciesById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteCurrencies")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteCurrencies(int id)
+        {
+            var entity = await _currencyRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _currencyRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region CustomBelts table
+
+        [HttpGet("GetCustomBeltsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetCustomBeltsCount()
+        {
+            return _customBeltRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetCustomBeltsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetCustomBeltsFields()
+        {
+            return new DB.CustomBelt().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetCustomBelts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<CustomBelt>> GetCustomBelts(int limit, int page)
+        {
+            var dbList = _customBeltRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.CustomBelt>, List<CustomBelt>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetCustomBeltsById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomBelt?>> GetCustomBeltsById(int id)
+        {
+            var dbEntity = await _customBeltRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return _mapper.Map<DB.CustomBelt, CustomBelt>(dbEntity);
+        }
+
+        [HttpPost("CreateCustomBelts")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<CustomBelt>> CreateCustomBelts(CustomBelt customBelt)
+        {
+            if (customBelt == null)
+                return BadRequest();
+
+            try
+            {
+                await _customBeltRepository.Add(_mapper.Map<CustomBelt, DB.CustomBelt>(customBelt));
+                return CreatedAtAction(nameof(GetCustomBeltsById), new { id = customBelt.Id }, customBelt);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateCustomBelts")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<CustomBelt>> UpdateCustomBelts(CustomBelt customBelt)
+        {
+            if (customBelt == null)
+                return BadRequest();
+
+            try
+            {
+                await _customBeltRepository.Update(_mapper.Map<CustomBelt, DB.CustomBelt>(customBelt));
+                return CreatedAtAction(nameof(GetCustomBeltsById), new { id = customBelt.Id }, customBelt);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteCustomBelts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteCustomBelts(int id)
+        {
+            var entity = await _customBeltRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _customBeltRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region CustomNecklines table
+
+        [HttpGet("GetCustomNecklinesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetCustomNecklinesCount()
+        {
+            return _customNecklineRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetCustomNecklinesFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetCustomNecklinesFields()
+        {
+            return typeof(DB.CustomNeckline).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetCustomNecklines")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<CustomNeckline>> GetCustomNecklines(int limit, int page)
+        {
+            var dbList = _customNecklineRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.CustomNeckline>, List<CustomNeckline>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetCustomNecklinesById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomNeckline?>> GetCustomNecklinesById(int id)
+        {
+            var dbEntity = await _customNecklineRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomNeckline, CustomNeckline>(dbEntity);
+        }
+
+        [HttpPost("CreateCustomNecklines")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomNeckline>> CreateCustomNecklines(CustomNeckline customNeckline)
+        {
+            if (customNeckline == null)
+                return BadRequest("CustomNeckline is null");
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomNeckline, DB.CustomNeckline>(customNeckline);
+                await _customNecklineRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetCustomNecklinesById), new { id = mappedEntity.Id }, customNeckline);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateCustomNecklines")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomNeckline>> UpdateCustomNecklines(CustomNeckline customNeckline)
+        {
+            if (customNeckline == null)
+                return BadRequest("CustomNeckline is null");
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomNeckline, DB.CustomNeckline>(customNeckline);
+                await _customNecklineRepository.Update(mappedEntity);
+                return Ok(customNeckline);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteCustomNecklines")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteCustomNecklines(int id)
+        {
+            var entity = await _customNecklineRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest("CustomNeckline not found");
+            }
+
+            try
+            {
+                await _customNecklineRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        #endregion
+
+        #region CustomPants table
+
+        [HttpGet("GetCustomPantsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetCustomPantsCount()
+        {
+            return _customPantRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetCustomPantsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetCustomPantsFields()
+        {
+            return typeof(DB.CustomPant).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetCustomPants")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<CustomPant>> GetCustomPants(int limit, int page)
+        {
+            var dbList = _customPantRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.CustomPant>, List<CustomPant>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetCustomPantsById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomPant?>> GetCustomPantsById(int id)
+        {
+            var dbEntity = await _customPantRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomPant, CustomPant>(dbEntity);
+        }
+
+        [HttpPost("CreateCustomPants")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomPant>> CreateCustomPants(CustomPant customPant)
+        {
+            if (customPant == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomPant, DB.CustomPant>(customPant);
+                await _customPantRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetCustomPantsById), new { id = mappedEntity.Id }, customPant);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateCustomPants")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomPant>> UpdateCustomPants(CustomPant customPant)
+        {
+            if (customPant == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomPant, DB.CustomPant>(customPant);
+                await _customPantRepository.Update(mappedEntity);
+                return Ok(customPant);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteCustomPants")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteCustomPants(int id)
+        {
+            var entity = await _customPantRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _customPantRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        #endregion
+
+        #region CustomPantsCuffs table
+
+        [HttpGet("GetCustomPantsCuffsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetCustomPantsCuffsCount()
+        {
+            return _customPantsCuffRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetCustomPantsCuffsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetCustomPantsCuffsFields()
+        {
+            return typeof(DB.CustomPantsCuff).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetCustomPantsCuffs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<CustomPantsCuff>> GetCustomPantsCuffs(int limit, int page)
+        {
+            var dbList = _customPantsCuffRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.CustomPantsCuff>, List<CustomPantsCuff>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetCustomPantsCuffsById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomPantsCuff?>> GetCustomPantsCuffsById(int id)
+        {
+            var dbEntity = await _customPantsCuffRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomPantsCuff, CustomPantsCuff>(dbEntity);
+        }
+
+        [HttpPost("CreateCustomPantsCuffs")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomPantsCuff>> CreateCustomPantsCuffs(CustomPantsCuff customPantsCuff)
+        {
+            if (customPantsCuff == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomPantsCuff, DB.CustomPantsCuff>(customPantsCuff);
+                await _customPantsCuffRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetCustomPantsCuffsById), new { id = mappedEntity.Id }, customPantsCuff);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateCustomPantsCuffs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomPantsCuff>> UpdateCustomPantsCuffs(CustomPantsCuff customPantsCuff)
+        {
+            if (customPantsCuff == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomPantsCuff, DB.CustomPantsCuff>(customPantsCuff);
+                await _customPantsCuffRepository.Update(mappedEntity);
+                return Ok(customPantsCuff);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteCustomPantsCuffs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteCustomPantsCuffs(int id)
+        {
+            var entity = await _customPantsCuffRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _customPantsCuffRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        #endregion
+
+        #region CustomSleeves table
+
+        [HttpGet("GetCustomSleevesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetCustomSleevesCount()
+        {
+            return _customSleeveRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetCustomSleevesFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetCustomSleevesFields()
+        {
+            return typeof(DB.CustomSleeve).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetCustomSleeves")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<CustomSleeve>> GetCustomSleeves(int limit, int page)
+        {
+            var dbList = _customSleeveRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.CustomSleeve>, List<CustomSleeve>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetCustomSleevesById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomSleeve?>> GetCustomSleevesById(int id)
+        {
+            var dbEntity = await _customSleeveRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomSleeve, CustomSleeve>(dbEntity);
+        }
+
+        [HttpPost("CreateCustomSleeves")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomSleeve>> CreateCustomSleeves(CustomSleeve customSleeve)
+        {
+            if (customSleeve == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomSleeve, DB.CustomSleeve>(customSleeve);
+                await _customSleeveRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetCustomSleevesById), new { id = mappedEntity.Id }, customSleeve);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateCustomSleeves")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomSleeve>> UpdateCustomSleeves(CustomSleeve customSleeve)
+        {
+            if (customSleeve == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomSleeve, DB.CustomSleeve>(customSleeve);
+                await _customSleeveRepository.Update(mappedEntity);
+                return Ok(customSleeve);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteCustomSleeves")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteCustomSleeves(int id)
+        {
+            var entity = await _customSleeveRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _customSleeveRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        #endregion
+
+        #region CustomSleeveCuffs table
+
+        [HttpGet("GetCustomSleeveCuffsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetCustomSleeveCuffsCount()
+        {
+            return _customSleeveCuffRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetCustomSleeveCuffsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetCustomSleeveCuffsFields()
+        {
+            return typeof(DB.CustomSleeveCuff).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetCustomSleeveCuffs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<CustomSleeveCuff>> GetCustomSleeveCuffs(int limit, int page)
+        {
+            var dbList = _customSleeveCuffRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.CustomSleeveCuff>, List<CustomSleeveCuff>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetCustomSleeveCuffsById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomSleeveCuff?>> GetCustomSleeveCuffsById(int id)
+        {
+            var dbEntity = await _customSleeveCuffRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomSleeveCuff, CustomSleeveCuff>(dbEntity);
+        }
+
+        [HttpPost("CreateCustomSleeveCuffs")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomSleeveCuff>> CreateCustomSleeveCuffs(CustomSleeveCuff customSleeveCuff)
+        {
+            if (customSleeveCuff == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomSleeveCuff, DB.CustomSleeveCuff>(customSleeveCuff);
+                await _customSleeveCuffRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetCustomSleeveCuffsById), new { id = mappedEntity.Id }, customSleeveCuff);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateCustomSleeveCuffs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomSleeveCuff>> UpdateCustomSleeveCuffs(CustomSleeveCuff customSleeveCuff)
+        {
+            if (customSleeveCuff == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomSleeveCuff, DB.CustomSleeveCuff>(customSleeveCuff);
+                await _customSleeveCuffRepository.Update(mappedEntity);
+                return Ok(customSleeveCuff);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteCustomSleeveCuffs")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteCustomSleeveCuffs(int id)
+        {
+            var entity = await _customSleeveCuffRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _customSleeveCuffRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        #endregion
+
+        #region CustomSportSuit table
+
+        [HttpGet("GetCustomSportSuitCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetCustomSportSuitCount()
+        {
+            return _customSportSuitRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetCustomSportSuitFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetCustomSportSuitFields()
+        {
+            return typeof(DB.CustomSportSuit).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetCustomSportSuits")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<CustomSportSuit>> GetCustomSportSuits(int limit, int page)
+        {
+            var dbList = _customSportSuitRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.CustomSportSuit>, List<CustomSportSuit>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetCustomSportSuitById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomSportSuit?>> GetCustomSportSuitById(int id)
+        {
+            var dbEntity = await _customSportSuitRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomSportSuit, CustomSportSuit>(dbEntity);
+        }
+
+        [HttpPost("CreateCustomSportSuit")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomSportSuit>> CreateCustomSportSuit(CustomSportSuit customSportSuit)
+        {
+            if (customSportSuit == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomSportSuit, DB.CustomSportSuit>(customSportSuit);
+                await _customSportSuitRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetCustomSportSuitById), new { id = mappedEntity.Id }, customSportSuit);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateCustomSportSuit")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomSportSuit>> UpdateCustomSportSuit(CustomSportSuit customSportSuit)
+        {
+            if (customSportSuit == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomSportSuit, DB.CustomSportSuit>(customSportSuit);
+                await _customSportSuitRepository.Update(mappedEntity);
+                return Ok(customSportSuit);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteCustomSportSuit")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteCustomSportSuit(int id)
+        {
+            var entity = await _customSportSuitRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _customSportSuitRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        #endregion
+
+        #region CustomSweaters table
+
+        [HttpGet("GetCustomSweatersCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetCustomSweatersCount()
+        {
+            return _customSweaterRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetCustomSweatersFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetCustomSweatersFields()
+        {
+            return typeof(DB.CustomSweater).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetCustomSweaters")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<CustomSweater>> GetCustomSweaters(int limit, int page)
+        {
+            var dbList = _customSweaterRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.CustomSweater>, List<CustomSweater>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetCustomSweatersById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CustomSweater?>> GetCustomSweatersById(int id)
+        {
+            var dbEntity = await _customSweaterRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomSweater, CustomSweater>(dbEntity);
+        }
+
+        [HttpPost("CreateCustomSweaters")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomSweater>> CreateCustomSweaters(CustomSweater customSweater)
+        {
+            if (customSweater == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomSweater, DB.CustomSweater>(customSweater);
+                await _customSweaterRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetCustomSweatersById), new { id = mappedEntity.Id }, customSweater);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateCustomSweaters")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CustomSweater>> UpdateCustomSweaters(CustomSweater customSweater)
+        {
+            if (customSweater == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<CustomSweater, DB.CustomSweater>(customSweater);
+                await _customSweaterRepository.Update(mappedEntity);
+                return Ok(customSweater);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteCustomSweaters")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteCustomSweaters(int id)
+        {
+            var entity = await _customSweaterRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _customSweaterRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
         }
 
         #endregion
@@ -863,7 +2750,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomizableProduct>> CreateCustomizableProductsAsync(CustomizableProduct entity)
+        public async Task<ActionResult<CustomizableProduct>> CreateCustomizableProducts(CustomizableProduct entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -884,7 +2771,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomizableProduct>> UpdateCustomizableProductsAsync(CustomizableProduct entity)
+        public async Task<ActionResult<CustomizableProduct>> UpdateCustomizableProducts(CustomizableProduct entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -911,109 +2798,6 @@ namespace RestAPI.Controllers
             if (entity != null)
             {
                 await _customizableProductRepository.Delete(entity);
-                return Ok();
-            }
-
-            return BadRequest();
-        }
-
-        #endregion
-
-        #region CustomizationOrders
-
-        [HttpGet("GetCustomizationOrdersCount")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public int GetCustomizationOrdersCount()
-        {
-            return _customizationOrderRepository.GetAll().Count();
-        }
-
-        [HttpGet("GetCustomizationOrdersFields")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IEnumerable<string> GetCustomizationOrdersFields()
-        {
-            return new CustomizationOrder().GetType().GetProperties().Select(x => x.Name);
-        }
-
-        [HttpGet("GetCustomizationOrders")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<CustomizationOrder>> GetCustomizationOrders(int limit, int page)
-        {
-            var dbList = _customizationOrderRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
-            var apiList = _mapper.Map<List<DB.CustomizationOrder>, List<CustomizationOrder>>(dbList);
-
-            return apiList == null ? NotFound() : apiList;
-        }
-
-        [HttpGet("GetCustomizationOrdersById")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CustomizationOrder?>> GetCustomizationOrdersById(int id)
-        {
-            var dbEntity = await _customizationOrderRepository.GetById(id);
-            if (dbEntity == null)
-            {
-                return NotFound();
-            }
-
-            return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomizationOrder, CustomizationOrder>(dbEntity);
-        }
-
-        [HttpPost("CreateCustomizationOrders")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomizationOrder>> CreateCustomizationOrdersAsync(CustomizationOrder entity)
-        {
-            if (entity == null)
-                return BadRequest();
-
-            try
-            {
-                await _customizationOrderRepository.Add(_mapper.Map<CustomizationOrder, DB.CustomizationOrder>(entity));
-                return CreatedAtAction(nameof(GetCustomizationOrdersById), new { id = entity.Id }, entity);
-            }
-            catch (Exception exc)
-            {
-                _logger.LogError(exc.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
-            }
-        }
-
-        [HttpPut("UpdateCustomizationOrders")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<CustomizationOrder>> UpdateCustomizationOrdersAsync(CustomizationOrder entity)
-        {
-            if (entity == null)
-                return BadRequest();
-
-            try
-            {
-                await _customizationOrderRepository.Update(_mapper.Map<CustomizationOrder, DB.CustomizationOrder>(entity));
-                return CreatedAtAction(nameof(GetCustomizationOrdersById), new { id = entity.Id }, entity);
-            }
-            catch (Exception exc)
-            {
-                _logger.LogError(exc.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
-            }
-        }
-
-        [HttpDelete("DeleteCustomizationOrders")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> DeleteCustomizationOrders(int id)
-        {
-            var entity = await _customizationOrderRepository.GetById(id);
-
-            if (entity != null)
-            {
-                await _customizationOrderRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1069,7 +2853,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<FabricType>> CreateFabricTypesAsync(FabricType entity)
+        public async Task<ActionResult<FabricType>> CreateFabricTypes(FabricType entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1090,7 +2874,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<FabricType>> UpdateFabricTypesAsync(FabricType entity)
+        public async Task<ActionResult<FabricType>> UpdateFabricTypes(FabricType entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1172,7 +2956,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Language>> CreateLanguagesAsync(Language entity)
+        public async Task<ActionResult<Language>> CreateLanguages(Language entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1193,7 +2977,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Language>> UpdateLanguagesAsync(Language entity)
+        public async Task<ActionResult<Language>> UpdateLanguages(Language entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1275,7 +3059,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Order>> CreateOrdersAsync(Order entity)
+        public async Task<ActionResult<Order>> CreateOrders(Order entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1296,7 +3080,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Order>> UpdateOrdersAsync(Order entity)
+        public async Task<ActionResult<Order>> UpdateOrders(Order entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1378,7 +3162,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<OrderHistory>> CreateOrderHistoryAsync(OrderHistory entity)
+        public async Task<ActionResult<OrderHistory>> CreateOrderHistory(OrderHistory entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1399,7 +3183,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<OrderHistory>> UpdateOrderHistoryAsync(OrderHistory entity)
+        public async Task<ActionResult<OrderHistory>> UpdateOrderHistory(OrderHistory entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1481,7 +3265,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<OrderStatus>> CreateOrderStatusesAsync(OrderStatus entity)
+        public async Task<ActionResult<OrderStatus>> CreateOrderStatuses(OrderStatus entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1502,7 +3286,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<OrderStatus>> UpdateOrderStatusesAsync(OrderStatus entity)
+        public async Task<ActionResult<OrderStatus>> UpdateOrderStatuses(OrderStatus entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1584,7 +3368,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Payment>> CreatePaymentsAsync(Payment entity)
+        public async Task<ActionResult<Payment>> CreatePayments(Payment entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1605,7 +3389,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Payment>> UpdatePaymentsAsync(Payment entity)
+        public async Task<ActionResult<Payment>> UpdatePayments(Payment entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1636,6 +3420,222 @@ namespace RestAPI.Controllers
             }
 
             return BadRequest();
+        }
+
+        #endregion
+
+        #region PaymentMethods table
+
+        [HttpGet("GetPaymentMethodsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetPaymentMethodsCount()
+        {
+            return _paymentMethodRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetPaymentMethodsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetPaymentMethodsFields()
+        {
+            return typeof(DB.PaymentMethod).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetPaymentMethods")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<PaymentMethod>> GetPaymentMethods(int limit, int page)
+        {
+            var dbList = _paymentMethodRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.PaymentMethod>, List<PaymentMethod>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetPaymentMethodsById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<PaymentMethod?>> GetPaymentMethodsById(int id)
+        {
+            var dbEntity = await _paymentMethodRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.PaymentMethod, PaymentMethod>(dbEntity);
+        }
+
+        [HttpPost("CreatePaymentMethods")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<PaymentMethod>> CreatePaymentMethods(PaymentMethod paymentMethod)
+        {
+            if (paymentMethod == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<PaymentMethod, DB.PaymentMethod>(paymentMethod);
+                await _paymentMethodRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetPaymentMethodsById), new { id = mappedEntity.Id }, paymentMethod);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdatePaymentMethods")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<PaymentMethod>> UpdatePaymentMethods(PaymentMethod paymentMethod)
+        {
+            if (paymentMethod == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<PaymentMethod, DB.PaymentMethod>(paymentMethod);
+                await _paymentMethodRepository.Update(mappedEntity);
+                return Ok(paymentMethod);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeletePaymentMethods")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeletePaymentMethods(int id)
+        {
+            var entity = await _paymentMethodRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _paymentMethodRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        #endregion
+
+        #region PaymentStatuses table
+
+        [HttpGet("GetPaymentStatusesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetPaymentStatusesCount()
+        {
+            return _paymentStatusRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetPaymentStatusesFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetPaymentStatusesFields()
+        {
+            return typeof(DB.PaymentStatus).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetPaymentStatuses")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<PaymentStatus>> GetPaymentStatuses(int limit, int page)
+        {
+            var dbList = _paymentStatusRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.PaymentStatus>, List<PaymentStatus>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetPaymentStatusesById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<PaymentStatus?>> GetPaymentStatusesById(int id)
+        {
+            var dbEntity = await _paymentStatusRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.PaymentStatus, PaymentStatus>(dbEntity);
+        }
+
+        [HttpPost("CreatePaymentStatuses")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<PaymentStatus>> CreatePaymentStatuses(PaymentStatus paymentStatus)
+        {
+            if (paymentStatus == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<PaymentStatus, DB.PaymentStatus>(paymentStatus);
+                await _paymentStatusRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetPaymentStatusesById), new { id = mappedEntity.Id }, paymentStatus);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdatePaymentStatuses")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<PaymentStatus>> UpdatePaymentStatuses(PaymentStatus paymentStatus)
+        {
+            if (paymentStatus == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<PaymentStatus, DB.PaymentStatus>(paymentStatus);
+                await _paymentStatusRepository.Update(mappedEntity);
+                return Ok(paymentStatus);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeletePaymentStatuses")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeletePaymentStatuses(int id)
+        {
+            var entity = await _paymentStatusRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _paymentStatusRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
         }
 
         #endregion
@@ -1687,7 +3687,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Product>> CreateProductsAsync(Product entity)
+        public async Task<ActionResult<Product>> CreateProducts(Product entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1708,7 +3708,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Product>> UpdateProductsAsync(Product entity)
+        public async Task<ActionResult<Product>> UpdateProducts(Product entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1790,7 +3790,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ProductImage>> CreateProductImagesAsync(ProductImage entity)
+        public async Task<ActionResult<ProductImage>> CreateProductImages(ProductImage entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1811,7 +3811,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ProductImage>> UpdateProductImagesAsync(ProductImage entity)
+        public async Task<ActionResult<ProductImage>> UpdateProductImages(ProductImage entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1838,6 +3838,109 @@ namespace RestAPI.Controllers
             if (entity != null)
             {
                 await _productImageRepository.Delete(entity);
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        #endregion
+
+        #region ProductOrders
+
+        [HttpGet("GetProductOrdersCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public int GetProductOrdersCount()
+        {
+            return _productOrderRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetProductOrdersFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IEnumerable<string> GetProductOrdersFields()
+        {
+            return new ProductImage().GetType().GetProperties().Select(x => x.Name);
+        }
+
+        [HttpGet("GetProductOrders")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<ProductOrder>> GetProductOrders(int limit, int page)
+        {
+            var dbList = _productOrderRepository.GetAll().ToList().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.ProductOrder>, List<ProductOrder>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetProductOrdersById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ProductOrder?>> GetProductOrdersById(int id)
+        {
+            var dbEntity = await _productOrderRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.ProductOrder, ProductOrder>(dbEntity);
+        }
+
+        [HttpPost("CreateProductOrders")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ProductOrder>> CreateProductOrders(ProductOrder entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _productOrderRepository.Add(_mapper.Map<ProductOrder, DB.ProductOrder>(entity));
+                return CreatedAtAction(nameof(GetProductOrdersById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateProductOrders")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ProductOrder>> UpdateProductOrders(ProductOrder entity)
+        {
+            if (entity == null)
+                return BadRequest();
+
+            try
+            {
+                await _productOrderRepository.Update(_mapper.Map<ProductOrder, DB.ProductOrder>(entity));
+                return CreatedAtAction(nameof(GetProductOrdersById), new { id = entity.Id }, entity);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteProductOrders")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteProductOrders(int id)
+        {
+            var entity = await _productOrderRepository.GetById(id);
+
+            if (entity != null)
+            {
+                await _productOrderRepository.Delete(entity);
                 return Ok();
             }
 
@@ -1893,7 +3996,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ProductTranslation>> CreateProductTranslationsAsync(ProductTranslation entity)
+        public async Task<ActionResult<ProductTranslation>> CreateProductTranslations(ProductTranslation entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1914,7 +4017,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ProductTranslation>> UpdateProductTranslationsAsync(ProductTranslation entity)
+        public async Task<ActionResult<ProductTranslation>> UpdateProductTranslations(ProductTranslation entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1996,7 +4099,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Review>> CreateReviewsAsync(Review entity)
+        public async Task<ActionResult<Review>> CreateReviews(Review entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2017,7 +4120,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<Review>> UpdateReviewsAsync(Review entity)
+        public async Task<ActionResult<Review>> UpdateReviews(Review entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2048,6 +4151,222 @@ namespace RestAPI.Controllers
             }
 
             return BadRequest();
+        }
+
+        #endregion
+
+        #region ShippingAddresses table
+
+        [HttpGet("GetShippingAddressesCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetShippingAddressesCount()
+        {
+            return _shippingAddressRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetShippingAddressesFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetShippingAddressFields()
+        {
+            return typeof(DB.ShippingAddress).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetShippingAddresses")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<ShippingAddress>> GetShippingAddresses(int limit, int page)
+        {
+            var dbList = _shippingAddressRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.ShippingAddress>, List<ShippingAddress>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetShippingAddressesById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ShippingAddress?>> GetShippingAddressesById(int id)
+        {
+            var dbEntity = await _shippingAddressRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.ShippingAddress, ShippingAddress>(dbEntity);
+        }
+
+        [HttpPost("CreateShippingAddresses")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ShippingAddress>> CreateShippingAddresses(ShippingAddress shippingAddress)
+        {
+            if (shippingAddress == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<ShippingAddress, DB.ShippingAddress>(shippingAddress);
+                await _shippingAddressRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetShippingAddressesById), new { id = mappedEntity.Id }, shippingAddress);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateShippingAddresses")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ShippingAddress>> UpdateShippingAddresses(ShippingAddress shippingAddress)
+        {
+            if (shippingAddress == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<ShippingAddress, DB.ShippingAddress>(shippingAddress);
+                await _shippingAddressRepository.Update(mappedEntity);
+                return Ok(shippingAddress);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteShippingAddresses")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteShippingAddresses(int id)
+        {
+            var entity = await _shippingAddressRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _shippingAddressRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        #endregion
+
+        #region SizeOptions table
+
+        [HttpGet("GetSizeOptionsCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetSizeOptionCount()
+        {
+            return _sizeOptionRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetSizeOptionsFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetSizeOptionsFields()
+        {
+            return typeof(DB.SizeOption).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetSizeOptions")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<SizeOption>> GetSizeOptions(int limit, int page)
+        {
+            var dbList = _sizeOptionRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.SizeOption>, List<SizeOption>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetSizeOptionsById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<SizeOption?>> GetSizeOptionsById(int id)
+        {
+            var dbEntity = await _sizeOptionRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.SizeOption, SizeOption>(dbEntity);
+        }
+
+        [HttpPost("CreateSizeOptions")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<SizeOption>> CreateSizeOptions(SizeOption sizeOption)
+        {
+            if (sizeOption == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<SizeOption, DB.SizeOption>(sizeOption);
+                await _sizeOptionRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetSizeOptionsById), new { id = mappedEntity.Id }, sizeOption);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateSizeOptions")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<SizeOption>> UpdateSizeOptions(SizeOption sizeOption)
+        {
+            if (sizeOption == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<SizeOption, DB.SizeOption>(sizeOption);
+                await _sizeOptionRepository.Update(mappedEntity);
+                return Ok(sizeOption);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteSizeOptions")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteSizeOptions(int id)
+        {
+            var entity = await _sizeOptionRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _sizeOptionRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
         }
 
         #endregion
@@ -2099,7 +4418,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<User>> CreateUsersAsync(User entity)
+        public async Task<ActionResult<User>> CreateUsers(User entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2120,7 +4439,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<User>> UpdateUsersAsync(User entity)
+        public async Task<ActionResult<User>> UpdateUsers(User entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2151,6 +4470,114 @@ namespace RestAPI.Controllers
             }
 
             return BadRequest();
+        }
+
+        #endregion
+
+        #region UserOrderHistory table
+
+        [HttpGet("GetUserOrderHistoryCount")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public int GetUserOrderHistoryCount()
+        {
+            return _userOrderHistoryRepository.GetAll().Count();
+        }
+
+        [HttpGet("GetUserOrderHistoryFields")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IEnumerable<string> GetUserOrderHistoryFields()
+        {
+            return typeof(DB.UserOrderHistory).GetProperties().Select(prop => prop.Name);
+        }
+
+        [HttpGet("GetUserOrderHistory")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<UserOrderHistory>> GetUserOrderHistory(int limit, int page)
+        {
+            var dbList = _userOrderHistoryRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
+            var apiList = _mapper.Map<List<DB.UserOrderHistory>, List<UserOrderHistory>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        [HttpGet("GetUserOrderHistoryById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<UserOrderHistory?>> GetUserOrderHistoryById(int id)
+        {
+            var dbEntity = await _userOrderHistoryRepository.GetById(id);
+            if (dbEntity == null)
+            {
+                return NotFound();
+            }
+
+            return dbEntity == null ? NotFound() : _mapper.Map<DB.UserOrderHistory, UserOrderHistory>(dbEntity);
+        }
+
+        [HttpPost("CreateUserOrderHistory")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<UserOrderHistory>> CreateUserOrderHistory(UserOrderHistory userOrderHistory)
+        {
+            if (userOrderHistory == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<UserOrderHistory, DB.UserOrderHistory>(userOrderHistory);
+                await _userOrderHistoryRepository.Add(mappedEntity);
+                return CreatedAtAction(nameof(GetUserOrderHistoryById), new { id = mappedEntity.Id }, userOrderHistory);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpPut("UpdateUserOrderHistory")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<UserOrderHistory>> UpdateUserOrderHistory(UserOrderHistory userOrderHistory)
+        {
+            if (userOrderHistory == null)
+                return BadRequest();
+
+            try
+            {
+                var mappedEntity = _mapper.Map<UserOrderHistory, DB.UserOrderHistory>(userOrderHistory);
+                await _userOrderHistoryRepository.Update(mappedEntity);
+                return Ok(userOrderHistory);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
+        }
+
+        [HttpDelete("DeleteUserOrderHistory")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> DeleteUserOrderHistory(int id)
+        {
+            var entity = await _userOrderHistoryRepository.GetById(id);
+            if (entity == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _userOrderHistoryRepository.Delete(entity);
+                return Ok();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+            }
         }
 
         #endregion
@@ -2202,7 +4629,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserProfile>> CreateUserProfilesAsync(UserProfile entity)
+        public async Task<ActionResult<UserProfile>> CreateUserProfiles(UserProfile entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2223,7 +4650,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserProfile>> UpdateUserProfilesAsync(UserProfile entity)
+        public async Task<ActionResult<UserProfile>> UpdateUserProfiles(UserProfile entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2305,7 +4732,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserRole>> CreateUserRolesAsync(UserRole entity)
+        public async Task<ActionResult<UserRole>> CreateUserRoles(UserRole entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2326,7 +4753,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserRole>> UpdateUserRolesAsync(UserRole entity)
+        public async Task<ActionResult<UserRole>> UpdateUserRoles(UserRole entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -2563,7 +4990,7 @@ namespace RestAPI.Controllers
                 var dbEntity = await _paymentRepository.GetById(id);
                 return dbEntity == null
                     ? string.Empty
-                    : $"Id: {dbEntity?.Id} | Amount: {dbEntity?.Amount} | PaymentMethod: {dbEntity?.PaymentMethod}";
+                    : $"Id: {dbEntity?.Id} | Price: {dbEntity?.Price} | PaymentMethod: {dbEntity?.PaymentNumber}";
             }
             catch (Exception ex)
             {
@@ -2591,7 +5018,7 @@ namespace RestAPI.Controllers
             }
         }
 
-        [HttpGet("GetFkUserRoles")]
+        [HttpGet("GetFkUserRolesData")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<string?> GetFkUserRoles(int id)
@@ -2639,7 +5066,544 @@ namespace RestAPI.Controllers
                 var dbEntity = await _colorRepository.GetById(id);
                 return dbEntity == null
                     ? string.Empty
-                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | HexCode: {dbEntity?.HexCode}";
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} | ImageData: {dbEntity?.ImageData}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCurrenciesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCurrenciesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _currencyRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkSizeOptionsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkSizeOptionsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _sizeOptionRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Size: {dbEntity?.Size}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseNecklinesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseNecklinesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseNecklineRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseSweatersData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseSweatersData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseSweaterRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseSleevesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseSleevesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseSleeveRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseSleeveCuffsLeftData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseSleeveCuffsLeftData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseSleeveCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseSleeveCuffsRightData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseSleeveCuffsRightData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseSleeveCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBaseBeltsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBaseBeltsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _baseBeltRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBasePantsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBasePantsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _basePantRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBasePantsCuffsLeftData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBasePantsCuffsLeftData(int id)
+        {
+            try
+            {
+                var dbEntity = await _basePantsCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBasePantsCuffsRightData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBasePantsCuffsRightData(int id)
+        {
+            try
+            {
+                var dbEntity = await _basePantsCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomNecklinesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomNecklinesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customNecklineRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomSweatersData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomSweatersData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customSweaterRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomSleevesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomSleevesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customSleeveRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomSleeveCuffsLeftData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomSleeveCuffsLeftData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customSleeveCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomSleeveCuffsRightData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomSleeveCuffsRightData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customSleeveCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomBeltsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomBeltsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customBeltRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomPantsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomPantsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customPantRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomPantsCuffsLeftData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomPantsCuffsLeftData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customPantsCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomPantsCuffsRightData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomPantsCuffsRightData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customPantsCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomSportSuitsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomSportSuitsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customSportSuitRepository.GetById(id);
+
+                var customSettingsNecklines = await GetFkCustomNecklinesData(dbEntity.FkCustomNecklines.Value);
+                var customSweaters = await GetFkCustomSweatersData(dbEntity.FkCustomSweaters.Value);
+                var customSleeves = await GetFkCustomSleevesData(dbEntity.FkCustomSleeves.Value);
+                var customSleeveCuffsLeft = await GetFkCustomSleeveCuffsLeftData(dbEntity.FkCustomSleeveCuffsLeft.Value);
+                var customSleeveCuffsRight = await GetFkCustomNecklinesData(dbEntity.FkCustomNecklines.Value);
+                var customBelts = await GetFkCustomSleeveCuffsRightData(dbEntity.FkCustomSleeveCuffsRight.Value);
+                var customPants = await GetFkCustomPantsData(dbEntity.FkCustomPants.Value);
+                var customPantsCuffsLeft = await GetFkCustomPantsCuffsLeftData(dbEntity.FkCustomPantsCuffsLeft.Value);
+                var customPantsCuffsRight = await GetFkCustomPantsCuffsRightData(dbEntity.FkCustomPantsCuffsRight.Value);
+
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | " +
+                        $"CustomNecklines: {customSettingsNecklines} | " +
+                        $"CustomSweaters: {customSweaters} | " +
+                        $"CustomSleeves: {customSleeves} | " +
+                        $"CustomSleeveCuffsLeft: {customSleeveCuffsLeft} | " +
+                        $"CustomSleeveCuffsRight: {customSleeveCuffsRight} | " +
+                        $"CustomBelts: {customBelts} | " +
+                        $"CustomPants: {customPants} | " +
+                        $"CustomPantsCuffsLeft: {customPantsCuffsLeft} | " +
+                        $"CustomPantsCuffsRight: {customPantsCuffsRight} | ";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCustomizableProductsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCustomizableProductsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _customizableProductRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Price: {dbEntity?.Price}| CustomizationDetails: {dbEntity?.CustomizationDetails}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkProductOrdersData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkProductOrdersData(int id)
+        {
+            try
+            {
+                var dbEntity = await _productOrderRepository.GetById(id);
+
+                var products = await GetFkProductsData(dbEntity.FkProducts.Value);
+                var customizableProducts = await GetFkCustomizableProductsData(dbEntity.FkCustomizableProducts.Value);
+
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | products: {products} | customizableProducts: {customizableProducts}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkCountriesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkCountriesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _countryRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Name: {dbEntity?.Name} ";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkPaymentMethodsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkPaymentMethodsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _paymentMethodRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Method: {dbEntity?.Method} ";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkPaymentStatusesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkPaymentStatusesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _paymentStatusRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Status: {dbEntity?.Status} ";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkShippingAddressesData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkShippingAddressesData(int id)
+        {
+            try
+            {
+                var dbEntity = await _shippingAddressRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | City: {dbEntity?.City} | Address: {dbEntity?.Address}";
             }
             catch (Exception ex)
             {

@@ -1,80 +1,264 @@
 ﻿### UpdateAbout
-PUT {{RestAPI_HostAddress}}UpdateAbout
+POST {{RestAPI_HostAddress}}UpdateAbout
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 0,
-  "fkLanguages": 0,
-  "header": "string",
-  "text": "string"
+  "id": 1,
+  "fkLanguages": 1,
+  "header": "string 3",
+  "text": "string 3"
 }
 
 ### UpdateAccessLevels
-PUT {{RestAPI_HostAddress}}UpdateAccessLevels
+POST {{RestAPI_HostAddress}}UpdateAccessLevels
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 0,
+  "id": 1,
   "level": 0,
   "description": "string"
 }
 
+### UpdateBaseBelts
+POST {{RestAPI_HostAddress}}UpdateBaseBelts
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "aettings": "[{test settings}]"
+}
+
+### UpdateBaseNecklines
+POST {{RestAPI_HostAddress}}UpdateBaseNecklines
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "settings": "[{test settings}]"
+}
+
+### UpdateBasePants
+POST {{RestAPI_HostAddress}}UpdateBasePants
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "settings": "[{test settings}]"
+}
+
+### UpdateBasePantsCuffs
+POST {{RestAPI_HostAddress}}UpdateBasePantsCuffs
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "settings": "[{test settings}]"
+}
+
+### UpdateBaseSleeves
+POST {{RestAPI_HostAddress}}UpdateBaseSleeves
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "settings": "[{test settings}]"
+}
+
+### UpdateBaseSleeveCuffs
+POST {{RestAPI_HostAddress}}UpdateBaseSleeveCuffs
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "settings": "[{test settings}]"
+}
+
+### UpdateBaseSportSuit
+POST {{RestAPI_HostAddress}}UpdateBaseSportSuit
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkBaseNecklines": 1,
+  "fkBaseSweaters": 1,
+  "fkBaseSleeves": 1,
+  "fkBaseSleeveCuffsLeft": 1,
+  "fkBaseSleeveCuffsRight": 1,
+  "fkBaseBelts": 1,
+  "fkBasePants": 1,
+  "fkBasePantsCuffsLeft": 1,
+  "fkBasePantsCuffsRight": 1
+}
+
+### UpdateBaseSweaters
+POST {{RestAPI_HostAddress}}UpdateBaseSweaters
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "settings": "[{test settings}]"
+}
+
 ### UpdateCart
-PUT {{RestAPI_HostAddress}}UpdateCart
+POST {{RestAPI_HostAddress}}UpdateCart
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
   "fkUsers": 1,
   "fkProducts": 1,
-  "quantity": 2
+  "quantity": 1
 }
 
 ### UpdateCategories
-PUT {{RestAPI_HostAddress}}UpdateCategories
+POST {{RestAPI_HostAddress}}UpdateCategories
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
   "fkLanguages": 1,
-  "name": "Updated Category Name",
-  "description": "Updated description"
+  "name": "Category Name",
+  "description": "Description of the category"
 }
 
 ### UpdateCategoryHierarchy
-PUT {{RestAPI_HostAddress}}UpdateCategoryHierarchy
+POST {{RestAPI_HostAddress}}UpdateCategoryHierarchy
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
-  "parentId": 1,
+  "parentId": null,
   "fkCategories": 1
 }
 
 ### UpdateColors
-PUT {{RestAPI_HostAddress}}UpdateColors
+POST {{RestAPI_HostAddress}}UpdateColors
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
-  "name": "Updated Color Name",
-  "hexCode": "#FFFFFF"
+  "name": "Red",
+  "hexCode": "#FF0000"
 }
 
 ### UpdateContacts
-PUT {{RestAPI_HostAddress}}UpdateContacts
+POST {{RestAPI_HostAddress}}UpdateContacts
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 0,
+  "id": 1,
   "fkLanguages": 0,
   "address": "string",
   "phone": "string",
   "email": "string"
 }
 
+### UpdateCountries
+POST {{RestAPI_HostAddress}}UpdateCountries
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "name": "USA",
+}
+
+### UpdateCurrencies
+POST {{RestAPI_HostAddress}}UpdateCurrencies
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "name": "Dollar",
+}
+
+### UpdateCustomBelts
+POST {{RestAPI_HostAddress}}UpdateCustomBelts
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkBaseBelts": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### UpdateCustomNecklines
+POST {{RestAPI_HostAddress}}UpdateCustomNecklines
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkBaseNecklines": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### UpdateCustomPants
+POST {{RestAPI_HostAddress}}UpdateCustomPants
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkBasePants": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### UpdateCustomPantsCuffs
+POST {{RestAPI_HostAddress}}UpdateCustomPantsCuffs
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkBasePantCuffs": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### UpdateCustomSleeves
+POST {{RestAPI_HostAddress}}UpdateCustomSleeves
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkBaseSleeves": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### UpdateCustomSleeveCuffs
+POST {{RestAPI_HostAddress}}UpdateCustomSleeveCuffs
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkBaseSleeveCuffs": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### UpdateCustomSportSuit
+POST {{RestAPI_HostAddress}}UpdateCustomSportSuit
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkCustomNecklines": 1,
+  "fkCustomSweaters": 1,
+  "fkCustomSleeves": 1,
+  "fkCustomSleeveCuffsLeft": 1,
+  "fkCustomSleeveCuffsRight": 1,
+  "fkCustomBelts": 1,
+  "fkCustomPants": 1,
+  "fkCustomPantsCuffsLeft": 1,
+  "fkCustomPantsCuffsRight": 1
+}
+
+### UpdateCustomSweaters
+POST {{RestAPI_HostAddress}}UpdateCustomSweaters
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkBaseSweaters": 1,
+  "customSettings": "[{test settings}]",
+}
+
 ### UpdateCustomizableProducts
-PUT {{RestAPI_HostAddress}}UpdateCustomizableProducts
+POST {{RestAPI_HostAddress}}UpdateCustomizableProducts
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
@@ -83,132 +267,143 @@ Content-Type: application/json
   "fkFabricTypes": 1,
   "fkColors": 1,
   "sizeOptions": "S, M, L",
-  "customizationDetails": "{\"detail\":\"Custom detail\"}"
-}
-
-### UpdateCustomizationOrders
-PUT {{RestAPI_HostAddress}}UpdateCustomizationOrders
-Authorization: {{Credentials}}
-Content-Type: application/json
-{
-  "id": 1,
-  "fkOrders": 1,
-  "fkProducts": 1,
-  "fkFabricTypes": 1,
-  "fkColors": 1,
-  "size": "M",
-  "additionalNotes": "Updated notes"
+  "customizationDetails": "{\"detail\":\"example\"}"
 }
 
 ### UpdateFabricTypes
-PUT {{RestAPI_HostAddress}}UpdateFabricTypes
+POST {{RestAPI_HostAddress}}UpdateFabricTypes
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
   "name": "Cotton",
-  "description": "Updated description for cotton fabric."
+  "description": "Soft and breathable fabric."
 }
 
 ### UpdateLanguages
-PUT {{RestAPI_HostAddress}}UpdateLanguages
+POST {{RestAPI_HostAddress}}UpdateLanguages
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 4,
-  "fullName": "4",
-  "abbreviation": "4",
-  "description": "4",
-  "dateFormat": "4",
-  "timeFormat": "4"
+  "id": 3,
+  "fullName": "string 3",
+  "abbreviation": "UNKW",
+  "description": "string 3",
+  "dateFormat": "string 3",
+  "timeFormat": "string 3"
 }
 
 ### UpdateOrders
-PUT {{RestAPI_HostAddress}}UpdateOrders
+POST {{RestAPI_HostAddress}}UpdateOrders
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
-  "fkUsers": 1,
-  "fkOrderStatus": 2,
-  "totalAmount": 150.00,
-  "shippingAddress": "Updated Address",
-  "trackingNumber": "TRK123456",
-  "shippingMethod": "Express",
-  "paymentStatus": "Paid"
+  "fkProductOrders": 1,
+  "fkOrderStatus": 1,
+  "fkPayments": 1,
+  "fkShippingAdresses": 1,
+  "price": "100",
+  "amount": "10"
 }
 
 ### UpdateOrderHistory
-PUT {{RestAPI_HostAddress}}UpdateOrderHistory
+POST {{RestAPI_HostAddress}}UpdateOrderHistory
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
   "fkOrders": 1,
-  "fkOrderStatuses": 2,
+  "fkOrderStatuses": 1,
   "changedAt": "2024-10-28T12:00:00"
 }
 
 ### UpdateOrderStatuses
-PUT {{RestAPI_HostAddress}}UpdateOrderStatuses
+POST {{RestAPI_HostAddress}}UpdateOrderStatuses
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
-  "status": "Updated Status"
+  "status": "Pending"
 }
 
 ### UpdatePayments
-PUT {{RestAPI_HostAddress}}UpdatePayments
+POST {{RestAPI_HostAddress}}UpdatePayments
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
   "fkOrders": 1,
-  "paymentDate": "2024-10-28T12:00:00",
   "amount": 100.00,
   "paymentMethod": "Credit Card",
   "status": "Completed"
 }
 
-### UpdateProducts
-PUT {{RestAPI_HostAddress}}UpdateProducts
+### UpdatePaymentMethods
+POST {{RestAPI_HostAddress}}UpdatePaymentMethods
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
-  "name": "Updated Product Name",
-  "description": "Updated product description.",
-  "price": 19.99,
-  "stockQuantity": 100,
-  "categoryId": 1
+  "method": "PayPoll"
+}
+
+### UpdatePaymentStatuses
+POST {{RestAPI_HostAddress}}UpdatePaymentStatuses
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "status": "Completed"
+}
+
+### UpdateProducts
+POST {{RestAPI_HostAddress}}UpdateProducts
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkCategories": 1,
+  "name": "Sample Product",
+  "description": "This is a sample product.",
+  "price": 29.99,
+  "stock": 100
 }
 
 ### UpdateProductImages
-PUT {{RestAPI_HostAddress}}UpdateProductImages
+POST {{RestAPI_HostAddress}}UpdateProductImages
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
   "fkProducts": 1,
-  "imageUrl": "http://example.com/updated-image.jpg",
-  "altText": "Updated image description."
+  "imageData": "BASE64_ENCODED_IMAGE_DATA"
 }
 
-### UpdateProductTranslations
-PUT {{RestAPI_HostAddress}}UpdateProductTranslations
+### UpdateProductOrders
+POST {{RestAPI_HostAddress}}UpdateProductOrders
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
   "id": 1,
   "fkProducts": 1,
+  "fkCustomizableProducts": 1
+}
+
+### UpdateProductTranslation
+POST {{RestAPI_HostAddress}}UpdateProductTranslation
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
   "fkLanguages": 1,
-  "name": "Updated Product Name",
-  "description": "Updated product description."
+  "fkProducts": 1,
+  "name": "Sample Product Name",
+  "description": "Sample Product Description"
 }
 
 ### UpdateReviews
-PUT {{RestAPI_HostAddress}}UpdateReviews
+POST {{RestAPI_HostAddress}}UpdateReviews
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
@@ -216,15 +411,39 @@ Content-Type: application/json
   "fkProducts": 1,
   "fkUsers": 1,
   "rating": 5,
-  "comment": "Updated review comment."
+  "comment": "Great product!"
 }
 
-### UpdateUsers
-PUT {{RestAPI_HostAddress}}UpdateUsers
+### UpdateShippingAddresses
+POST {{RestAPI_HostAddress}}UpdateShippingAddresses
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 0,
+  "id": 1,
+  "fkCountries": 1,
+  "address": "Address 1",
+  "city": "City 1",
+  "zipPostCode": "000-000"
+  "stateProvince": "StateProvince",
+  "email": "Email1"
+}
+
+### UpdateSizeOptions
+POST {{RestAPI_HostAddress}}UpdateSizeOptions
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
+  "fkProducts": 1,
+  "Size": "XL"
+}
+
+### UpdateUsers
+POST {{RestAPI_HostAddress}}UpdateUsers
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
   "fkUserRoles": 0,
   "login": "string",
   "email": "string",
@@ -235,12 +454,22 @@ Content-Type: application/json
   "hash": "string"
 }
 
-### UpdateUserProfiles
-PUT {{RestAPI_HostAddress}}UpdateUserProfiles
+### UpdateUserOrderHistory
+POST {{RestAPI_HostAddress}}UpdateUserOrderHistory
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 0,
+  "id": 1,
+  "fkOrders": 1,
+  "fkUsers": 1
+}
+
+### UpdateUserProfiles
+POST {{RestAPI_HostAddress}}UpdateUserProfiles
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "id": 1,
   "fkUsers": 0,
   "createDate": "string",
   "createTime": "string",
@@ -257,11 +486,11 @@ Content-Type: application/json
 }
 
 ### UpdateUserRoles
-PUT {{RestAPI_HostAddress}}UpdateUserRoles
+POST {{RestAPI_HostAddress}}UpdateUserRoles
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 0,
+  "id": 1,
   "fkAccessLevels": 0,
   "name": "string"
 }

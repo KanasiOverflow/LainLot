@@ -17,7 +17,7 @@ namespace DatabaseProvider.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -71,6 +71,191 @@ namespace DatabaseProvider.Migrations
                     b.ToTable("AccessLevels");
                 });
 
+            modelBuilder.Entity("DatabaseProvider.Models.BaseBelt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Settings")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("Id")
+                        .HasName("BaseBelts_pkey");
+
+                    b.ToTable("BaseBelts");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BaseNeckline", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Settings")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("Id")
+                        .HasName("BaseNecklines_pkey");
+
+                    b.ToTable("BaseNecklines");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BasePant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Settings")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("Id")
+                        .HasName("BasePants_pkey");
+
+                    b.ToTable("BasePants");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BasePantsCuff", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Settings")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("Id")
+                        .HasName("BasePantsCuffs_pkey");
+
+                    b.ToTable("BasePantsCuffs");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BaseSleeve", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Settings")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("Id")
+                        .HasName("BaseSleeves_pkey");
+
+                    b.ToTable("BaseSleeves");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BaseSleeveCuff", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Settings")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("Id")
+                        .HasName("BaseSleeveCuffs_pkey");
+
+                    b.ToTable("BaseSleeveCuffs");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BaseSportSuit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("FkBaseBelts")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkBaseNecklines")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkBasePants")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkBasePantsCuffsLeft")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkBasePantsCuffsRight")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkBaseSleeveCuffsLeft")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkBaseSleeveCuffsRight")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkBaseSleeves")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkBaseSweaters")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("BaseSportSuit_pkey");
+
+                    b.HasIndex("FkBaseBelts");
+
+                    b.HasIndex("FkBaseNecklines");
+
+                    b.HasIndex("FkBasePants");
+
+                    b.HasIndex("FkBasePantsCuffsLeft");
+
+                    b.HasIndex("FkBasePantsCuffsRight");
+
+                    b.HasIndex("FkBaseSleeveCuffsLeft");
+
+                    b.HasIndex("FkBaseSleeveCuffsRight");
+
+                    b.HasIndex("FkBaseSleeves");
+
+                    b.HasIndex("FkBaseSweaters");
+
+                    b.ToTable("BaseSportSuit", (string)null);
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BaseSweater", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Settings")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("Id")
+                        .HasName("BaseSweaters_pkey");
+
+                    b.ToTable("BaseSweaters");
+                });
+
             modelBuilder.Entity("DatabaseProvider.Models.Cart", b =>
                 {
                     b.Property<int>("Id")
@@ -79,26 +264,30 @@ namespace DatabaseProvider.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<int>("FkProducts")
+                    b.Property<int>("FkCurrencies")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FkUsers")
+                    b.Property<int>("FkProductOrders")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
+                    b.Property<decimal>("Price")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
 
                     b.HasKey("Id")
                         .HasName("Cart_pkey");
 
-                    b.HasIndex("FkProducts");
+                    b.HasIndex("FkCurrencies");
 
-                    b.HasIndex("FkUsers");
+                    b.HasIndex("FkProductOrders");
 
                     b.ToTable("Cart", (string)null);
                 });
@@ -163,10 +352,9 @@ namespace DatabaseProvider.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("HexCode")
+                    b.Property<byte[]>("ImageData")
                         .IsRequired()
-                        .HasMaxLength(7)
-                        .HasColumnType("character varying(7)");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -213,6 +401,256 @@ namespace DatabaseProvider.Migrations
                     b.ToTable("Contacts");
                 });
 
+            modelBuilder.Entity("DatabaseProvider.Models.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id")
+                        .HasName("Countries_pkey");
+
+                    b.ToTable("Countries");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.Currency", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id")
+                        .HasName("Currencies_pkey");
+
+                    b.ToTable("Currencies");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomBelt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CustomSettings")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("FkBaseBelts")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("CustomBelts_pkey");
+
+                    b.HasIndex("FkBaseBelts");
+
+                    b.ToTable("CustomBelts");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomNeckline", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CustomSettings")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("FkBaseNecklines")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("CustomNecklines_pkey");
+
+                    b.HasIndex("FkBaseNecklines");
+
+                    b.ToTable("CustomNecklines");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomPant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CustomSettings")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("FkBasePants")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("CustomPants_pkey");
+
+                    b.HasIndex("FkBasePants");
+
+                    b.ToTable("CustomPants");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomPantsCuff", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CustomSettings")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("FkBasePantCuffs")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("CustomPantsCuffs_pkey");
+
+                    b.HasIndex("FkBasePantCuffs");
+
+                    b.ToTable("CustomPantsCuffs");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSleeve", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CustomSettings")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("FkBaseSleeves")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("CustomSleeves_pkey");
+
+                    b.HasIndex("FkBaseSleeves");
+
+                    b.ToTable("CustomSleeves");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSleeveCuff", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CustomSettings")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("FkBaseSleeveCuffs")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("CustomSleeveCuffs_pkey");
+
+                    b.HasIndex("FkBaseSleeveCuffs");
+
+                    b.ToTable("CustomSleeveCuffs");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSportSuit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("FkCustomBelts")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkCustomNecklines")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkCustomPants")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkCustomPantsCuffsLeft")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkCustomPantsCuffsRight")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkCustomSleeveCuffsLeft")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkCustomSleeveCuffsRight")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkCustomSleeves")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkCustomSweaters")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("CustomSportSuits_pkey");
+
+                    b.HasIndex("FkCustomBelts");
+
+                    b.HasIndex("FkCustomNecklines");
+
+                    b.HasIndex("FkCustomPants");
+
+                    b.HasIndex("FkCustomPantsCuffsLeft");
+
+                    b.HasIndex("FkCustomPantsCuffsRight");
+
+                    b.HasIndex("FkCustomSleeveCuffsLeft");
+
+                    b.HasIndex("FkCustomSleeveCuffsRight");
+
+                    b.HasIndex("FkCustomSleeves");
+
+                    b.HasIndex("FkCustomSweaters");
+
+                    b.ToTable("CustomSportSuits");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSweater", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CustomSettings")
+                        .HasColumnType("jsonb");
+
+                    b.Property<int>("FkBaseSweaters")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("CustomSweaters_pkey");
+
+                    b.HasIndex("FkBaseSweaters");
+
+                    b.ToTable("CustomSweaters");
+                });
+
             modelBuilder.Entity("DatabaseProvider.Models.CustomizableProduct", b =>
                 {
                     b.Property<int>("Id")
@@ -221,72 +659,42 @@ namespace DatabaseProvider.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
                     b.Property<string>("CustomizationDetails")
                         .HasColumnType("text");
 
-                    b.Property<int?>("FkColors")
+                    b.Property<int>("FkCustomSportSuits")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("FkFabricTypes")
+                    b.Property<int>("FkFabricTypes")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FkProducts")
+                    b.Property<int>("FkSizeOptions")
                         .HasColumnType("integer");
 
-                    b.Property<string>("SizeOptions")
-                        .HasColumnType("text");
+                    b.Property<decimal>("Price")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.HasKey("Id")
                         .HasName("CustomizableProducts_pkey");
 
-                    b.HasIndex("FkColors");
+                    b.HasIndex("FkCustomSportSuits");
 
                     b.HasIndex("FkFabricTypes");
 
-                    b.HasIndex("FkProducts");
+                    b.HasIndex("FkSizeOptions");
 
                     b.ToTable("CustomizableProducts");
-                });
-
-            modelBuilder.Entity("DatabaseProvider.Models.CustomizationOrder", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AdditionalNotes")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("FkColors")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("FkFabricTypes")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("FkOrders")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("FkProducts")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Size")
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
-
-                    b.HasKey("Id")
-                        .HasName("CustomizationOrders_pkey");
-
-                    b.HasIndex("FkColors");
-
-                    b.HasIndex("FkFabricTypes");
-
-                    b.HasIndex("FkOrders");
-
-                    b.HasIndex("FkProducts");
-
-                    b.ToTable("CustomizationOrders");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.FabricType", b =>
@@ -300,13 +708,22 @@ namespace DatabaseProvider.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<int>("FkCurrencies")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<decimal>("Price")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
                     b.HasKey("Id")
                         .HasName("FabricTypes_pkey");
+
+                    b.HasIndex("FkCurrencies");
 
                     b.ToTable("FabricTypes");
                 });
@@ -357,6 +774,9 @@ namespace DatabaseProvider.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Amount")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
@@ -365,7 +785,13 @@ namespace DatabaseProvider.Migrations
                     b.Property<int>("FkOrderStatus")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FkUsers")
+                    b.Property<int>("FkPayments")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FkProductOrders")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FkShippingAddresses")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("OrderDate")
@@ -373,26 +799,9 @@ namespace DatabaseProvider.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("PaymentStatus")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("ShippingAddress")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("ShippingMethod")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<decimal>("TotalAmount")
+                    b.Property<decimal>("Price")
                         .HasPrecision(10, 2)
                         .HasColumnType("numeric(10,2)");
-
-                    b.Property<string>("TrackingNumber")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
@@ -404,7 +813,11 @@ namespace DatabaseProvider.Migrations
 
                     b.HasIndex("FkOrderStatus");
 
-                    b.HasIndex("FkUsers");
+                    b.HasIndex("FkPayments");
+
+                    b.HasIndex("FkProductOrders");
+
+                    b.HasIndex("FkShippingAddresses");
 
                     b.ToTable("Orders");
                 });
@@ -422,18 +835,18 @@ namespace DatabaseProvider.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<int>("FkOrders")
+                    b.Property<int>("FkOrderStatuses")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("FkOrders")
                         .HasColumnType("integer");
 
                     b.HasKey("Id")
                         .HasName("OrderHistory_pkey");
 
-                    b.HasIndex("FkOrders");
+                    b.HasIndex("FkOrderStatuses");
 
-                    b.HasIndex("Status");
+                    b.HasIndex("FkOrders");
 
                     b.ToTable("OrderHistory", (string)null);
                 });
@@ -465,11 +878,13 @@ namespace DatabaseProvider.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)");
+                    b.Property<int>("FkCurrencies")
+                        .HasColumnType("integer");
 
-                    b.Property<int>("FkOrders")
+                    b.Property<int>("FkPaymentMethods")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FkPaymentStatuses")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("PaymentDate")
@@ -477,10 +892,51 @@ namespace DatabaseProvider.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("PaymentMethod")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<string>("PaymentNumber")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)");
+
+                    b.HasKey("Id")
+                        .HasName("Payments_pkey");
+
+                    b.HasIndex("FkCurrencies");
+
+                    b.HasIndex("FkPaymentMethods");
+
+                    b.HasIndex("FkPaymentStatuses");
+
+                    b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.PaymentMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Method")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id")
+                        .HasName("PaymentMethods_pkey");
+
+                    b.ToTable("PaymentMethods");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.PaymentStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -488,11 +944,9 @@ namespace DatabaseProvider.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id")
-                        .HasName("Payments_pkey");
+                        .HasName("PaymentStatuses_pkey");
 
-                    b.HasIndex("FkOrders");
-
-                    b.ToTable("Payments");
+                    b.ToTable("PaymentStatuses");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.Product", b =>
@@ -507,6 +961,18 @@ namespace DatabaseProvider.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("FkColors")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FkCurrencies")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FkFabricTypes")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FkSizeOptions")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -532,6 +998,14 @@ namespace DatabaseProvider.Migrations
 
                     b.HasKey("Id")
                         .HasName("Products_pkey");
+
+                    b.HasIndex("FkColors");
+
+                    b.HasIndex("FkCurrencies");
+
+                    b.HasIndex("FkFabricTypes");
+
+                    b.HasIndex("FkSizeOptions");
 
                     b.ToTable("Products");
                 });
@@ -559,6 +1033,30 @@ namespace DatabaseProvider.Migrations
                     b.ToTable("ProductImages");
                 });
 
+            modelBuilder.Entity("DatabaseProvider.Models.ProductOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("FkCustomizableProducts")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FkProducts")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("ProductOrders_pkey");
+
+                    b.HasIndex("FkCustomizableProducts");
+
+                    b.HasIndex("FkProducts");
+
+                    b.ToTable("ProductOrders");
+                });
+
             modelBuilder.Entity("DatabaseProvider.Models.ProductTranslation", b =>
                 {
                     b.Property<int>("Id")
@@ -570,6 +1068,9 @@ namespace DatabaseProvider.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("FkCategories")
+                        .HasColumnType("integer");
 
                     b.Property<int>("FkLanguages")
                         .HasColumnType("integer");
@@ -584,6 +1085,8 @@ namespace DatabaseProvider.Migrations
 
                     b.HasKey("Id")
                         .HasName("ProductTranslations_pkey");
+
+                    b.HasIndex("FkCategories");
 
                     b.HasIndex("FkLanguages");
 
@@ -625,6 +1128,69 @@ namespace DatabaseProvider.Migrations
                     b.HasIndex("FkUsers");
 
                     b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.ShippingAddress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("FkCountries")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StateProvince")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("ZipPostCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.HasKey("Id")
+                        .HasName("ShippingAddresses_pkey");
+
+                    b.HasIndex("FkCountries");
+
+                    b.ToTable("ShippingAddresses");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.SizeOption", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id")
+                        .HasName("SizeOptions_pkey");
+
+                    b.ToTable("SizeOptions");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.User", b =>
@@ -682,6 +1248,30 @@ namespace DatabaseProvider.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.UserOrderHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FkOrders")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("FkUsers")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("UserOrderHistory_pkey");
+
+                    b.HasIndex("FkOrders");
+
+                    b.HasIndex("FkUsers");
+
+                    b.ToTable("UserOrderHistory", (string)null);
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.UserProfile", b =>
@@ -789,25 +1379,100 @@ namespace DatabaseProvider.Migrations
                     b.Navigation("FkLanguagesNavigation");
                 });
 
+            modelBuilder.Entity("DatabaseProvider.Models.BaseSportSuit", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.BaseBelt", "FkBaseBeltsNavigation")
+                        .WithMany("BaseSportSuits")
+                        .HasForeignKey("FkBaseBelts")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("BaseSportSuit_FkBaseBelts_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.BaseNeckline", "FkBaseNecklinesNavigation")
+                        .WithMany("BaseSportSuits")
+                        .HasForeignKey("FkBaseNecklines")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("BaseSportSuit_FkBaseNecklines_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.BasePant", "FkBasePantsNavigation")
+                        .WithMany("BaseSportSuits")
+                        .HasForeignKey("FkBasePants")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("BaseSportSuit_FkBasePants_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.BasePantsCuff", "FkBasePantsCuffsLeftNavigation")
+                        .WithMany("BaseSportSuitFkBasePantsCuffsLeftNavigations")
+                        .HasForeignKey("FkBasePantsCuffsLeft")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("BaseSportSuit_FkBasePantsCuffsLeft_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.BasePantsCuff", "FkBasePantsCuffsRightNavigation")
+                        .WithMany("BaseSportSuitFkBasePantsCuffsRightNavigations")
+                        .HasForeignKey("FkBasePantsCuffsRight")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("BaseSportSuit_FkBasePantsCuffsRight_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.BaseSleeveCuff", "FkBaseSleeveCuffsLeftNavigation")
+                        .WithMany("BaseSportSuitFkBaseSleeveCuffsLeftNavigations")
+                        .HasForeignKey("FkBaseSleeveCuffsLeft")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("BaseSportSuit_FkBaseSleeveCuffsLeft_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.BaseSleeveCuff", "FkBaseSleeveCuffsRightNavigation")
+                        .WithMany("BaseSportSuitFkBaseSleeveCuffsRightNavigations")
+                        .HasForeignKey("FkBaseSleeveCuffsRight")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("BaseSportSuit_FkBaseSleeveCuffsRight_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.BaseSleeve", "FkBaseSleevesNavigation")
+                        .WithMany("BaseSportSuits")
+                        .HasForeignKey("FkBaseSleeves")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("BaseSportSuit_FkBaseSleeves_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.BaseSweater", "FkBaseSweatersNavigation")
+                        .WithMany("BaseSportSuits")
+                        .HasForeignKey("FkBaseSweaters")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("BaseSportSuit_FkBaseSweaters_fkey");
+
+                    b.Navigation("FkBaseBeltsNavigation");
+
+                    b.Navigation("FkBaseNecklinesNavigation");
+
+                    b.Navigation("FkBasePantsCuffsLeftNavigation");
+
+                    b.Navigation("FkBasePantsCuffsRightNavigation");
+
+                    b.Navigation("FkBasePantsNavigation");
+
+                    b.Navigation("FkBaseSleeveCuffsLeftNavigation");
+
+                    b.Navigation("FkBaseSleeveCuffsRightNavigation");
+
+                    b.Navigation("FkBaseSleevesNavigation");
+
+                    b.Navigation("FkBaseSweatersNavigation");
+                });
+
             modelBuilder.Entity("DatabaseProvider.Models.Cart", b =>
                 {
-                    b.HasOne("DatabaseProvider.Models.Product", "FkProductsNavigation")
+                    b.HasOne("DatabaseProvider.Models.Currency", "FkCurrenciesNavigation")
                         .WithMany("Carts")
-                        .HasForeignKey("FkProducts")
+                        .HasForeignKey("FkCurrencies")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("Cart_FkProducts_fkey");
+                        .HasConstraintName("Cart_FkCurrencies_fkey");
 
-                    b.HasOne("DatabaseProvider.Models.User", "FkUsersNavigation")
+                    b.HasOne("DatabaseProvider.Models.ProductOrder", "FkProductOrdersNavigation")
                         .WithMany("Carts")
-                        .HasForeignKey("FkUsers")
+                        .HasForeignKey("FkProductOrders")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("Cart_FkUsers_fkey");
+                        .HasConstraintName("Cart_FkProductOrders_fkey");
 
-                    b.Navigation("FkProductsNavigation");
+                    b.Navigation("FkCurrenciesNavigation");
 
-                    b.Navigation("FkUsersNavigation");
+                    b.Navigation("FkProductOrdersNavigation");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.Category", b =>
@@ -854,69 +1519,196 @@ namespace DatabaseProvider.Migrations
                     b.Navigation("FkLanguagesNavigation");
                 });
 
-            modelBuilder.Entity("DatabaseProvider.Models.CustomizableProduct", b =>
+            modelBuilder.Entity("DatabaseProvider.Models.CustomBelt", b =>
                 {
-                    b.HasOne("DatabaseProvider.Models.Color", "FkColorsNavigation")
-                        .WithMany("CustomizableProducts")
-                        .HasForeignKey("FkColors")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("CustomizableProducts_FkColors_fkey");
-
-                    b.HasOne("DatabaseProvider.Models.FabricType", "FkFabricTypesNavigation")
-                        .WithMany("CustomizableProducts")
-                        .HasForeignKey("FkFabricTypes")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("CustomizableProducts_FkFabricTypes_fkey");
-
-                    b.HasOne("DatabaseProvider.Models.Product", "FkProductsNavigation")
-                        .WithMany("CustomizableProducts")
-                        .HasForeignKey("FkProducts")
+                    b.HasOne("DatabaseProvider.Models.BaseBelt", "FkBaseBeltsNavigation")
+                        .WithMany("CustomBelts")
+                        .HasForeignKey("FkBaseBelts")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("CustomizableProducts_FkProducts_fkey");
+                        .HasConstraintName("CustomBelts_FkBaseBelts_fkey");
 
-                    b.Navigation("FkColorsNavigation");
-
-                    b.Navigation("FkFabricTypesNavigation");
-
-                    b.Navigation("FkProductsNavigation");
+                    b.Navigation("FkBaseBeltsNavigation");
                 });
 
-            modelBuilder.Entity("DatabaseProvider.Models.CustomizationOrder", b =>
+            modelBuilder.Entity("DatabaseProvider.Models.CustomNeckline", b =>
                 {
-                    b.HasOne("DatabaseProvider.Models.Color", "FkColorsNavigation")
-                        .WithMany("CustomizationOrders")
-                        .HasForeignKey("FkColors")
+                    b.HasOne("DatabaseProvider.Models.BaseNeckline", "FkBaseNecklinesNavigation")
+                        .WithMany("CustomNecklines")
+                        .HasForeignKey("FkBaseNecklines")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("CustomizationOrders_FkColors_fkey");
+                        .IsRequired()
+                        .HasConstraintName("CustomNecklines_FkBaseNecklines_fkey");
+
+                    b.Navigation("FkBaseNecklinesNavigation");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomPant", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.BasePant", "FkBasePantsNavigation")
+                        .WithMany("CustomPants")
+                        .HasForeignKey("FkBasePants")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("CustomPants_FkBasePants_fkey");
+
+                    b.Navigation("FkBasePantsNavigation");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomPantsCuff", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.BasePantsCuff", "FkBasePantCuffsNavigation")
+                        .WithMany("CustomPantsCuffs")
+                        .HasForeignKey("FkBasePantCuffs")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("CustomPantsCuffs_FkBasePantCuffs_fkey");
+
+                    b.Navigation("FkBasePantCuffsNavigation");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSleeve", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.BaseSleeve", "FkBaseSleevesNavigation")
+                        .WithMany("CustomSleeves")
+                        .HasForeignKey("FkBaseSleeves")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("CustomSleeves_FkBaseSleeves_fkey");
+
+                    b.Navigation("FkBaseSleevesNavigation");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSleeveCuff", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.BaseSleeveCuff", "FkBaseSleeveCuffsNavigation")
+                        .WithMany("CustomSleeveCuffs")
+                        .HasForeignKey("FkBaseSleeveCuffs")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("CustomSleeveCuffs_FkBaseSleeveCuffs_fkey");
+
+                    b.Navigation("FkBaseSleeveCuffsNavigation");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSportSuit", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.CustomBelt", "FkCustomBeltsNavigation")
+                        .WithMany("CustomSportSuits")
+                        .HasForeignKey("FkCustomBelts")
+                        .HasConstraintName("CustomSportSuits_FkCustomBelts_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.CustomNeckline", "FkCustomNecklinesNavigation")
+                        .WithMany("CustomSportSuits")
+                        .HasForeignKey("FkCustomNecklines")
+                        .HasConstraintName("CustomSportSuits_FkCustomNecklines_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.CustomPant", "FkCustomPantsNavigation")
+                        .WithMany("CustomSportSuits")
+                        .HasForeignKey("FkCustomPants")
+                        .HasConstraintName("CustomSportSuits_FkCustomPants_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.CustomPantsCuff", "FkCustomPantsCuffsLeftNavigation")
+                        .WithMany("CustomSportSuitFkCustomPantsCuffsLeftNavigations")
+                        .HasForeignKey("FkCustomPantsCuffsLeft")
+                        .HasConstraintName("CustomSportSuits_FkCustomPantsCuffsLeft_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.CustomPantsCuff", "FkCustomPantsCuffsRightNavigation")
+                        .WithMany("CustomSportSuitFkCustomPantsCuffsRightNavigations")
+                        .HasForeignKey("FkCustomPantsCuffsRight")
+                        .HasConstraintName("CustomSportSuits_FkCustomPantsCuffsRight_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.CustomSleeveCuff", "FkCustomSleeveCuffsLeftNavigation")
+                        .WithMany("CustomSportSuitFkCustomSleeveCuffsLeftNavigations")
+                        .HasForeignKey("FkCustomSleeveCuffsLeft")
+                        .HasConstraintName("CustomSportSuits_FkCustomSleeveCuffsLeft_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.CustomSleeveCuff", "FkCustomSleeveCuffsRightNavigation")
+                        .WithMany("CustomSportSuitFkCustomSleeveCuffsRightNavigations")
+                        .HasForeignKey("FkCustomSleeveCuffsRight")
+                        .HasConstraintName("CustomSportSuits_FkCustomSleeveCuffsRight_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.CustomSleeve", "FkCustomSleevesNavigation")
+                        .WithMany("CustomSportSuits")
+                        .HasForeignKey("FkCustomSleeves")
+                        .HasConstraintName("CustomSportSuits_FkCustomSleeves_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.CustomSweater", "FkCustomSweatersNavigation")
+                        .WithMany("CustomSportSuits")
+                        .HasForeignKey("FkCustomSweaters")
+                        .HasConstraintName("CustomSportSuits_FkCustomSweaters_fkey");
+
+                    b.Navigation("FkCustomBeltsNavigation");
+
+                    b.Navigation("FkCustomNecklinesNavigation");
+
+                    b.Navigation("FkCustomPantsCuffsLeftNavigation");
+
+                    b.Navigation("FkCustomPantsCuffsRightNavigation");
+
+                    b.Navigation("FkCustomPantsNavigation");
+
+                    b.Navigation("FkCustomSleeveCuffsLeftNavigation");
+
+                    b.Navigation("FkCustomSleeveCuffsRightNavigation");
+
+                    b.Navigation("FkCustomSleevesNavigation");
+
+                    b.Navigation("FkCustomSweatersNavigation");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSweater", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.BaseSweater", "FkBaseSweatersNavigation")
+                        .WithMany("CustomSweaters")
+                        .HasForeignKey("FkBaseSweaters")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("CustomSweaters_FkBaseSweaters_fkey");
+
+                    b.Navigation("FkBaseSweatersNavigation");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomizableProduct", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.CustomSportSuit", "FkCustomSportSuitsNavigation")
+                        .WithMany("CustomizableProducts")
+                        .HasForeignKey("FkCustomSportSuits")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("CustomizableProducts_FkCustomSportSuits_fkey");
 
                     b.HasOne("DatabaseProvider.Models.FabricType", "FkFabricTypesNavigation")
-                        .WithMany("CustomizationOrders")
+                        .WithMany("CustomizableProducts")
                         .HasForeignKey("FkFabricTypes")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("CustomizationOrders_FkFabricTypes_fkey");
+                        .IsRequired()
+                        .HasConstraintName("CustomizableProducts_FkFabricTypes_fkey");
 
-                    b.HasOne("DatabaseProvider.Models.Order", "FkOrdersNavigation")
-                        .WithMany("CustomizationOrders")
-                        .HasForeignKey("FkOrders")
+                    b.HasOne("DatabaseProvider.Models.SizeOption", "FkSizeOptionsNavigation")
+                        .WithMany("CustomizableProducts")
+                        .HasForeignKey("FkSizeOptions")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("CustomizationOrders_FkOrders_fkey");
+                        .HasConstraintName("CustomizableProducts_FkSizeOptions_fkey");
 
-                    b.HasOne("DatabaseProvider.Models.Product", "FkProductsNavigation")
-                        .WithMany("CustomizationOrders")
-                        .HasForeignKey("FkProducts")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("CustomizationOrders_FkProducts_fkey");
-
-                    b.Navigation("FkColorsNavigation");
+                    b.Navigation("FkCustomSportSuitsNavigation");
 
                     b.Navigation("FkFabricTypesNavigation");
 
-                    b.Navigation("FkOrdersNavigation");
+                    b.Navigation("FkSizeOptionsNavigation");
+                });
 
-                    b.Navigation("FkProductsNavigation");
+            modelBuilder.Entity("DatabaseProvider.Models.FabricType", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.Currency", "FkCurrenciesNavigation")
+                        .WithMany("FabricTypes")
+                        .HasForeignKey("FkCurrencies")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FabricTypes_FkCurrencies_fkey");
+
+                    b.Navigation("FkCurrenciesNavigation");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.Order", b =>
@@ -928,20 +1720,45 @@ namespace DatabaseProvider.Migrations
                         .IsRequired()
                         .HasConstraintName("Orders_FkOrderStatus_fkey");
 
-                    b.HasOne("DatabaseProvider.Models.User", "FkUsersNavigation")
+                    b.HasOne("DatabaseProvider.Models.Payment", "FkPaymentsNavigation")
                         .WithMany("Orders")
-                        .HasForeignKey("FkUsers")
+                        .HasForeignKey("FkPayments")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("Orders_FkUsers_fkey");
+                        .HasConstraintName("Orders_FkPayments_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.ProductOrder", "FkProductOrdersNavigation")
+                        .WithMany("Orders")
+                        .HasForeignKey("FkProductOrders")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Orders_FkProductOrders_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.ShippingAddress", "FkShippingAddressesNavigation")
+                        .WithMany("Orders")
+                        .HasForeignKey("FkShippingAddresses")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Orders_FkShippingAddresses_fkey");
 
                     b.Navigation("FkOrderStatusNavigation");
 
-                    b.Navigation("FkUsersNavigation");
+                    b.Navigation("FkPaymentsNavigation");
+
+                    b.Navigation("FkProductOrdersNavigation");
+
+                    b.Navigation("FkShippingAddressesNavigation");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.OrderHistory", b =>
                 {
+                    b.HasOne("DatabaseProvider.Models.OrderStatus", "FkOrderStatusesNavigation")
+                        .WithMany("OrderHistories")
+                        .HasForeignKey("FkOrderStatuses")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("OrderHistory_FkOrderStatuses_fkey");
+
                     b.HasOne("DatabaseProvider.Models.Order", "FkOrdersNavigation")
                         .WithMany("OrderHistories")
                         .HasForeignKey("FkOrders")
@@ -949,28 +1766,78 @@ namespace DatabaseProvider.Migrations
                         .IsRequired()
                         .HasConstraintName("OrderHistory_FkOrders_fkey");
 
-                    b.HasOne("DatabaseProvider.Models.OrderStatus", "StatusNavigation")
-                        .WithMany("OrderHistories")
-                        .HasForeignKey("Status")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("OrderHistory_Status_fkey");
+                    b.Navigation("FkOrderStatusesNavigation");
 
                     b.Navigation("FkOrdersNavigation");
-
-                    b.Navigation("StatusNavigation");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.Payment", b =>
                 {
-                    b.HasOne("DatabaseProvider.Models.Order", "FkOrdersNavigation")
+                    b.HasOne("DatabaseProvider.Models.Currency", "FkCurrenciesNavigation")
                         .WithMany("Payments")
-                        .HasForeignKey("FkOrders")
+                        .HasForeignKey("FkCurrencies")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("Payments_FkOrders_fkey");
+                        .HasConstraintName("Payments_FkCurrencies_fkey");
 
-                    b.Navigation("FkOrdersNavigation");
+                    b.HasOne("DatabaseProvider.Models.PaymentMethod", "FkPaymentMethodsNavigation")
+                        .WithMany("Payments")
+                        .HasForeignKey("FkPaymentMethods")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Payments_FkPaymentMethods_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.PaymentStatus", "FkPaymentStatusesNavigation")
+                        .WithMany("Payments")
+                        .HasForeignKey("FkPaymentStatuses")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Payments_FkPaymentStatuses_fkey");
+
+                    b.Navigation("FkCurrenciesNavigation");
+
+                    b.Navigation("FkPaymentMethodsNavigation");
+
+                    b.Navigation("FkPaymentStatusesNavigation");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.Product", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.Color", "FkColorsNavigation")
+                        .WithMany("Products")
+                        .HasForeignKey("FkColors")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Products_FkColors_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.Currency", "FkCurrenciesNavigation")
+                        .WithMany("Products")
+                        .HasForeignKey("FkCurrencies")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Products_FkCurrencies_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.FabricType", "FkFabricTypesNavigation")
+                        .WithMany("Products")
+                        .HasForeignKey("FkFabricTypes")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Products_FkFabricTypes_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.SizeOption", "FkSizeOptionsNavigation")
+                        .WithMany("Products")
+                        .HasForeignKey("FkSizeOptions")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Products_FkSizeOptions_fkey");
+
+                    b.Navigation("FkColorsNavigation");
+
+                    b.Navigation("FkCurrenciesNavigation");
+
+                    b.Navigation("FkFabricTypesNavigation");
+
+                    b.Navigation("FkSizeOptionsNavigation");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.ProductImage", b =>
@@ -985,8 +1852,34 @@ namespace DatabaseProvider.Migrations
                     b.Navigation("FkProductsNavigation");
                 });
 
+            modelBuilder.Entity("DatabaseProvider.Models.ProductOrder", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.CustomizableProduct", "FkCustomizableProductsNavigation")
+                        .WithMany("ProductOrders")
+                        .HasForeignKey("FkCustomizableProducts")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("ProductOrders_FkCustomizableProducts_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.Product", "FkProductsNavigation")
+                        .WithMany("ProductOrders")
+                        .HasForeignKey("FkProducts")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("ProductOrders_FkProducts_fkey");
+
+                    b.Navigation("FkCustomizableProductsNavigation");
+
+                    b.Navigation("FkProductsNavigation");
+                });
+
             modelBuilder.Entity("DatabaseProvider.Models.ProductTranslation", b =>
                 {
+                    b.HasOne("DatabaseProvider.Models.Category", "FkCategoriesNavigation")
+                        .WithMany("ProductTranslations")
+                        .HasForeignKey("FkCategories")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("ProductTranslations_FkCategories_fkey");
+
                     b.HasOne("DatabaseProvider.Models.Language", "FkLanguagesNavigation")
                         .WithMany("ProductTranslations")
                         .HasForeignKey("FkLanguages")
@@ -1000,6 +1893,8 @@ namespace DatabaseProvider.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("ProductTranslations_FkProducts_fkey");
+
+                    b.Navigation("FkCategoriesNavigation");
 
                     b.Navigation("FkLanguagesNavigation");
 
@@ -1027,6 +1922,18 @@ namespace DatabaseProvider.Migrations
                     b.Navigation("FkUsersNavigation");
                 });
 
+            modelBuilder.Entity("DatabaseProvider.Models.ShippingAddress", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.Country", "FkCountriesNavigation")
+                        .WithMany("ShippingAddresses")
+                        .HasForeignKey("FkCountries")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("ShippingAddresses_FkCountries_fkey");
+
+                    b.Navigation("FkCountriesNavigation");
+                });
+
             modelBuilder.Entity("DatabaseProvider.Models.User", b =>
                 {
                     b.HasOne("DatabaseProvider.Models.UserRole", "FkUserRolesNavigation")
@@ -1037,6 +1944,27 @@ namespace DatabaseProvider.Migrations
                         .HasConstraintName("Users_FkUserRoles_fkey");
 
                     b.Navigation("FkUserRolesNavigation");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.UserOrderHistory", b =>
+                {
+                    b.HasOne("DatabaseProvider.Models.Order", "FkOrdersNavigation")
+                        .WithMany("UserOrderHistories")
+                        .HasForeignKey("FkOrders")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("UserOrderHistory_FkOrders_fkey");
+
+                    b.HasOne("DatabaseProvider.Models.User", "FkUsersNavigation")
+                        .WithMany("UserOrderHistories")
+                        .HasForeignKey("FkUsers")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("UserOrderHistory_FkUsers_fkey");
+
+                    b.Navigation("FkOrdersNavigation");
+
+                    b.Navigation("FkUsersNavigation");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.UserProfile", b =>
@@ -1068,9 +1996,64 @@ namespace DatabaseProvider.Migrations
                     b.Navigation("UserRoles");
                 });
 
+            modelBuilder.Entity("DatabaseProvider.Models.BaseBelt", b =>
+                {
+                    b.Navigation("BaseSportSuits");
+
+                    b.Navigation("CustomBelts");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BaseNeckline", b =>
+                {
+                    b.Navigation("BaseSportSuits");
+
+                    b.Navigation("CustomNecklines");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BasePant", b =>
+                {
+                    b.Navigation("BaseSportSuits");
+
+                    b.Navigation("CustomPants");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BasePantsCuff", b =>
+                {
+                    b.Navigation("BaseSportSuitFkBasePantsCuffsLeftNavigations");
+
+                    b.Navigation("BaseSportSuitFkBasePantsCuffsRightNavigations");
+
+                    b.Navigation("CustomPantsCuffs");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BaseSleeve", b =>
+                {
+                    b.Navigation("BaseSportSuits");
+
+                    b.Navigation("CustomSleeves");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BaseSleeveCuff", b =>
+                {
+                    b.Navigation("BaseSportSuitFkBaseSleeveCuffsLeftNavigations");
+
+                    b.Navigation("BaseSportSuitFkBaseSleeveCuffsRightNavigations");
+
+                    b.Navigation("CustomSleeveCuffs");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.BaseSweater", b =>
+                {
+                    b.Navigation("BaseSportSuits");
+
+                    b.Navigation("CustomSweaters");
+                });
+
             modelBuilder.Entity("DatabaseProvider.Models.Category", b =>
                 {
                     b.Navigation("CategoryHierarchies");
+
+                    b.Navigation("ProductTranslations");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.CategoryHierarchy", b =>
@@ -1080,16 +2063,79 @@ namespace DatabaseProvider.Migrations
 
             modelBuilder.Entity("DatabaseProvider.Models.Color", b =>
                 {
-                    b.Navigation("CustomizableProducts");
+                    b.Navigation("Products");
+                });
 
-                    b.Navigation("CustomizationOrders");
+            modelBuilder.Entity("DatabaseProvider.Models.Country", b =>
+                {
+                    b.Navigation("ShippingAddresses");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.Currency", b =>
+                {
+                    b.Navigation("Carts");
+
+                    b.Navigation("FabricTypes");
+
+                    b.Navigation("Payments");
+
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomBelt", b =>
+                {
+                    b.Navigation("CustomSportSuits");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomNeckline", b =>
+                {
+                    b.Navigation("CustomSportSuits");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomPant", b =>
+                {
+                    b.Navigation("CustomSportSuits");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomPantsCuff", b =>
+                {
+                    b.Navigation("CustomSportSuitFkCustomPantsCuffsLeftNavigations");
+
+                    b.Navigation("CustomSportSuitFkCustomPantsCuffsRightNavigations");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSleeve", b =>
+                {
+                    b.Navigation("CustomSportSuits");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSleeveCuff", b =>
+                {
+                    b.Navigation("CustomSportSuitFkCustomSleeveCuffsLeftNavigations");
+
+                    b.Navigation("CustomSportSuitFkCustomSleeveCuffsRightNavigations");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSportSuit", b =>
+                {
+                    b.Navigation("CustomizableProducts");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomSweater", b =>
+                {
+                    b.Navigation("CustomSportSuits");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.CustomizableProduct", b =>
+                {
+                    b.Navigation("ProductOrders");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.FabricType", b =>
                 {
                     b.Navigation("CustomizableProducts");
 
-                    b.Navigation("CustomizationOrders");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.Language", b =>
@@ -1105,11 +2151,9 @@ namespace DatabaseProvider.Migrations
 
             modelBuilder.Entity("DatabaseProvider.Models.Order", b =>
                 {
-                    b.Navigation("CustomizationOrders");
-
                     b.Navigation("OrderHistories");
 
-                    b.Navigation("Payments");
+                    b.Navigation("UserOrderHistories");
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.OrderStatus", b =>
@@ -1119,28 +2163,56 @@ namespace DatabaseProvider.Migrations
                     b.Navigation("Orders");
                 });
 
+            modelBuilder.Entity("DatabaseProvider.Models.Payment", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.PaymentMethod", b =>
+                {
+                    b.Navigation("Payments");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.PaymentStatus", b =>
+                {
+                    b.Navigation("Payments");
+                });
+
             modelBuilder.Entity("DatabaseProvider.Models.Product", b =>
                 {
-                    b.Navigation("Carts");
-
-                    b.Navigation("CustomizableProducts");
-
-                    b.Navigation("CustomizationOrders");
-
                     b.Navigation("ProductImages");
+
+                    b.Navigation("ProductOrders");
 
                     b.Navigation("ProductTranslations");
 
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("DatabaseProvider.Models.User", b =>
+            modelBuilder.Entity("DatabaseProvider.Models.ProductOrder", b =>
                 {
                     b.Navigation("Carts");
 
                     b.Navigation("Orders");
+                });
 
+            modelBuilder.Entity("DatabaseProvider.Models.ShippingAddress", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.SizeOption", b =>
+                {
+                    b.Navigation("CustomizableProducts");
+
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("DatabaseProvider.Models.User", b =>
+                {
                     b.Navigation("Reviews");
+
+                    b.Navigation("UserOrderHistories");
 
                     b.Navigation("UserProfiles");
                 });

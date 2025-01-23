@@ -9,9 +9,7 @@ public partial class Color
 
     public string Name { get; set; } = null!;
 
-    public string HexCode { get; set; } = null!;
+    public byte[] ImageData { get; set; } = null!;
 
-    public virtual ICollection<CustomizableProduct> CustomizableProducts { get; set; } = new List<CustomizableProduct>();
-
-    public virtual ICollection<CustomizationOrder> CustomizationOrders { get; set; } = new List<CustomizationOrder>();
+    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }
