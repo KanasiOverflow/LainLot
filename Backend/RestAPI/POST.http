@@ -3,7 +3,6 @@ POST {{RestAPI_HostAddress}}CreateAbout
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 1,
   "fkLanguages": 1,
   "header": "string 3",
   "text": "string 3"
@@ -14,9 +13,80 @@ POST {{RestAPI_HostAddress}}CreateAccessLevels
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 1,
   "level": 0,
   "description": "string"
+}
+
+### CreateBaseBelts
+POST {{RestAPI_HostAddress}}CreateBaseBelts
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "aettings": "[{test settings}]"
+}
+
+### CreateBaseNecklines
+POST {{RestAPI_HostAddress}}CreateBaseNecklines
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "settings": "[{test settings}]"
+}
+
+### CreateBasePants
+POST {{RestAPI_HostAddress}}CreateBasePants
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "settings": "[{test settings}]"
+}
+
+### CreateBasePantsCuffs
+POST {{RestAPI_HostAddress}}CreateBasePantsCuffs
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "settings": "[{test settings}]"
+}
+
+### CreateBaseSleeves
+POST {{RestAPI_HostAddress}}CreateBaseSleeves
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "settings": "[{test settings}]"
+}
+
+### CreateBaseSleeveCuffs
+POST {{RestAPI_HostAddress}}CreateBaseSleeveCuffs
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "settings": "[{test settings}]"
+}
+
+### CreateBaseSportSuit
+POST {{RestAPI_HostAddress}}CreateBaseSportSuit
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkBaseNecklines": 1,
+  "fkBaseSweaters": 1,
+  "fkBaseSleeves": 1,
+  "fkBaseSleeveCuffsLeft": 1,
+  "fkBaseSleeveCuffsRight": 1,
+  "fkBaseBelts": 1,
+  "fkBasePants": 1,
+  "fkBasePantsCuffsLeft": 1,
+  "fkBasePantsCuffsRight": 1
+}
+
+### CreateBaseSweaters
+POST {{RestAPI_HostAddress}}CreateBaseSweaters
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "settings": "[{test settings}]"
 }
 
 ### CreateCart
@@ -62,11 +132,105 @@ POST {{RestAPI_HostAddress}}CreateContacts
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 0,
   "fkLanguages": 0,
   "address": "string",
   "phone": "string",
   "email": "string"
+}
+
+### CreateCountries
+POST {{RestAPI_HostAddress}}CreateCountries
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "name": "USA",
+}
+
+### CreateCurrencies
+POST {{RestAPI_HostAddress}}CreateCurrencies
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "name": "Dollar",
+}
+
+### CreateCustomBelts
+POST {{RestAPI_HostAddress}}CreateCustomBelts
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkBaseBelts": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### CreateCustomNecklines
+POST {{RestAPI_HostAddress}}CreateCustomNecklines
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkBaseNecklines": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### CreateCustomPants
+POST {{RestAPI_HostAddress}}CreateCustomPants
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkBasePants": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### CreateCustomPantsCuffs
+POST {{RestAPI_HostAddress}}CreateCustomPantsCuffs
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkBasePantCuffs": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### CreateCustomSleeves
+POST {{RestAPI_HostAddress}}CreateCustomSleeves
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkBaseSleeves": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### CreateCustomSleeveCuffs
+POST {{RestAPI_HostAddress}}CreateCustomSleeveCuffs
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkBaseSleeveCuffs": 1,
+  "customSettings": "[{test settings}]",
+}
+
+### CreateCustomSportSuit
+POST {{RestAPI_HostAddress}}CreateCustomSportSuit
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkCustomNecklines": 1,
+  "fkCustomSweaters": 1,
+  "fkCustomSleeves": 1,
+  "fkCustomSleeveCuffsLeft": 1,
+  "fkCustomSleeveCuffsRight": 1,
+  "fkCustomBelts": 1,
+  "fkCustomPants": 1,
+  "fkCustomPantsCuffsLeft": 1,
+  "fkCustomPantsCuffsRight": 1
+}
+
+### CreateCustomSweaters
+POST {{RestAPI_HostAddress}}CreateCustomSweaters
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkBaseSweaters": 1,
+  "customSettings": "[{test settings}]",
 }
 
 ### CreateCustomizableProducts
@@ -79,20 +243,6 @@ Content-Type: application/json
   "fkColors": 1,
   "sizeOptions": "S, M, L",
   "customizationDetails": "{\"detail\":\"example\"}"
-}
-
-
-### CreateCustomizationOrders
-POST {{RestAPI_HostAddress}}CreateCustomizationOrders
-Authorization: {{Credentials}}
-Content-Type: application/json
-{
-  "fkOrders": 1,
-  "fkProducts": 1,
-  "fkFabricTypes": 1,
-  "fkColors": 1,
-  "size": "M",
-  "additionalNotes": "Some notes"
 }
 
 ### CreateFabricTypes
@@ -109,7 +259,6 @@ POST {{RestAPI_HostAddress}}CreateLanguages
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 3,
   "fullName": "string 3",
   "abbreviation": "UNKW",
   "description": "string 3",
@@ -122,13 +271,12 @@ POST {{RestAPI_HostAddress}}CreateOrders
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "fkUsers": 1,
+  "fkProductOrders": 1,
   "fkOrderStatus": 1,
-  "totalAmount": 100.00,
-  "shippingAddress": "123 Main St, Gdańsk",
-  "trackingNumber": "TRACK12345",
-  "shippingMethod": "Standard",
-  "paymentStatus": "Paid"
+  "fkPayments": 1,
+  "fkShippingAdresses": 1,
+  "price": "100",
+  "amount": "10"
 }
 
 ### CreateOrderHistory
@@ -160,6 +308,22 @@ Content-Type: application/json
   "status": "Completed"
 }
 
+### CreatePaymentMethods
+POST {{RestAPI_HostAddress}}CreatePaymentMethods
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "method": "PayPoll"
+}
+
+### CreatePaymentStatuses
+POST {{RestAPI_HostAddress}}CreatePaymentStatuses
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "status": "Completed"
+}
+
 ### CreateProducts
 POST {{RestAPI_HostAddress}}CreateProducts
 Authorization: {{Credentials}}
@@ -171,6 +335,7 @@ Content-Type: application/json
   "price": 29.99,
   "stock": 100
 }
+
 ### CreateProductImages
 POST {{RestAPI_HostAddress}}CreateProductImages
 Authorization: {{Credentials}}
@@ -178,6 +343,15 @@ Content-Type: application/json
 {
   "fkProducts": 1,
   "imageData": "BASE64_ENCODED_IMAGE_DATA"
+}
+
+### CreateProductOrders
+POST {{RestAPI_HostAddress}}CreateProductOrders
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkProducts": 1,
+  "fkCustomizableProducts": 1
 }
 
 ### CreateProductTranslation
@@ -202,12 +376,33 @@ Content-Type: application/json
   "comment": "Great product!"
 }
 
+### CreateShippingAddresses
+POST {{RestAPI_HostAddress}}CreateShippingAddresses
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkCountries": 1,
+  "address": "Address 1",
+  "city": "City 1",
+  "zipPostCode": "000-000"
+  "stateProvince": "StateProvince",
+  "email": "Email1"
+}
+
+### CreateSizeOptions
+POST {{RestAPI_HostAddress}}CreateSizeOptions
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkProducts": 1,
+  "Size": "XL"
+}
+
 ### CreateUsers
 POST {{RestAPI_HostAddress}}CreateUsers
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 0,
   "fkUserRoles": 0,
   "login": "string",
   "email": "string",
@@ -218,12 +413,20 @@ Content-Type: application/json
   "hash": "string"
 }
 
+### CreateUserOrderHistory
+POST {{RestAPI_HostAddress}}CreateUserOrderHistory
+Authorization: {{Credentials}}
+Content-Type: application/json
+{
+  "fkOrders": 1,
+  "fkUsers": 1
+}
+
 ### CreateUserProfiles
 POST {{RestAPI_HostAddress}}CreateUserProfiles
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 0,
   "fkUsers": 0,
   "createDate": "string",
   "createTime": "string",
@@ -244,7 +447,6 @@ POST {{RestAPI_HostAddress}}CreateUserRoles
 Authorization: {{Credentials}}
 Content-Type: application/json
 {
-  "id": 0,
   "fkAccessLevels": 0,
   "name": "string"
 }
