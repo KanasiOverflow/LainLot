@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class CategoriesService {
+export default class ProductImagesService {
 
-    static async GetCategoriesCount() {
+    static async GetProductImagesCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCategoriesCount`,
+            url: `${getRestAPIUrl()}/Database/GetProductImagesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class CategoriesService {
         return null;
     };
 
-    static async GetCategoriesFields() {
+    static async GetProductImagesFields() {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCategoriesFields`,
+            url: `${getRestAPIUrl()}/Database/GetProductImagesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class CategoriesService {
         return null;
     };
 
-    static async GetCategories(limit, page) {
+    static async GetProductImages(limit, page) {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCategories?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetProductImages?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class CategoriesService {
         return null;
     };
 
-    static async GetCategoriesById(id) {
+    static async GetProductImagesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCategoriesById`,
+            url: `${getRestAPIUrl()}/Database/GetProductImagesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class CategoriesService {
         return null;
     };
 
-    static async CreateCategories(newRecord) {
+    static async CreateProductImages(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateCategories`,
+            url: `${getRestAPIUrl()}/Database/CreateProductImages`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class CategoriesService {
         }
     };
 
-    static async UpdateCategories(oldRecord) {
+    static async UpdateProductImages(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateCategories`,
+            url: `${getRestAPIUrl()}/Database/UpdateProductImages`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class CategoriesService {
         }
     };
 
-    static async DeleteCategories(id) {
+    static async DeleteProductImages(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteCategories`,
+            url: `${getRestAPIUrl()}/Database/DeleteProductImages`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

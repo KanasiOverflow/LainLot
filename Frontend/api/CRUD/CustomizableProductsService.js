@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class AccessLevelsService {
+export default class CustomizableProductsService {
 
-    static async GetAccessLevelsCount() {
+    static async GetCustomizableProductsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetAccessLevelsCount`,
+            url: `${getRestAPIUrl()}/Database/GetCustomizableProductsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class AccessLevelsService {
         return null;
     };
 
-    static async GetAccessLevelsFields() {
-
+    static async GetCustomizableProductsFields() {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetAccessLevelsFields`,
+            url: `${getRestAPIUrl()}/Database/GetCustomizableProductsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class AccessLevelsService {
         return null;
     };
 
-    static async GetAccessLevels(limit, page) {
-
+    static async GetCustomizableProducts(limit, page) {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetAccessLevels?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetCustomizableProducts?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,17 +57,18 @@ export default class AccessLevelsService {
         return null;
     };
 
-    static async GetAccessLevelsById(id) {
+    static async GetCustomizableProductsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetAccessLevelsById`,
+            url: `${getRestAPIUrl()}/Database/GetCustomizableProductsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
             }
         };
+        debugger
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;
@@ -75,11 +76,11 @@ export default class AccessLevelsService {
         return null;
     };
 
-    static async CreateAccessLevels(newRecord) {
+    static async CreateCustomizableProducts(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateAccessLevels`,
+            url: `${getRestAPIUrl()}/Database/CreateCustomizableProducts`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +106,11 @@ export default class AccessLevelsService {
         }
     };
 
-    static async UpdateAccessLevels(oldRecord) {
+    static async UpdateCustomizableProducts(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateAccessLevels`,
+            url: `${getRestAPIUrl()}/Database/UpdateCustomizableProducts`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +136,11 @@ export default class AccessLevelsService {
         }
     };
 
-    static async DeleteAccessLevels(id) {
+    static async DeleteCustomizableProducts(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteAccessLevels`,
+            url: `${getRestAPIUrl()}/Database/DeleteCustomizableProducts`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

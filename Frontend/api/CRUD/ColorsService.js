@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class ReviewsService {
+export default class ColorsService {
 
-    static async GetReviewsCount() {
+    static async GetColorsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetReviewsCount`,
+            url: `${getRestAPIUrl()}/Database/GetColorsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class ReviewsService {
         return null;
     };
 
-    static async GetReviewsFields() {
+    static async GetColorsFields() {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetReviewsFields`,
+            url: `${getRestAPIUrl()}/Database/GetColorsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class ReviewsService {
         return null;
     };
 
-    static async GetReviews(limit, page) {
+    static async GetColors(limit, page) {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetReviews?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetColors?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class ReviewsService {
         return null;
     };
 
-    static async GetReviewsById(id) {
+    static async GetColorsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetReviewsById`,
+            url: `${getRestAPIUrl()}/Database/GetColorsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class ReviewsService {
         return null;
     };
 
-    static async CreateReviews(newRecord) {
+    static async CreateColors(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateReviews`,
+            url: `${getRestAPIUrl()}/Database/CreateColors`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class ReviewsService {
         }
     };
 
-    static async UpdateReviews(oldRecord) {
+    static async UpdateColors(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateReviews`,
+            url: `${getRestAPIUrl()}/Database/UpdateColors`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class ReviewsService {
         }
     };
 
-    static async DeleteReviews(id) {
+    static async DeleteColors(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteReviews`,
+            url: `${getRestAPIUrl()}/Database/DeleteColors`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

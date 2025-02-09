@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class ProductTranslationsService {
+export default class CategoriesService {
 
-    static async GetProductTranslationsCount() {
+    static async GetCategoriesCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductTranslationsCount`,
+            url: `${getRestAPIUrl()}/Database/GetCategoriesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class ProductTranslationsService {
         return null;
     };
 
-    static async GetProductTranslationsFields() {
+    static async GetCategoriesFields() {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductTranslationsFields`,
+            url: `${getRestAPIUrl()}/Database/GetCategoriesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class ProductTranslationsService {
         return null;
     };
 
-    static async GetProductTranslations(limit, page) {
+    static async GetCategories(limit, page) {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductTranslations?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetCategories?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class ProductTranslationsService {
         return null;
     };
 
-    static async GetProductTranslationsById(id) {
+    static async GetCategoriesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductTranslationsById`,
+            url: `${getRestAPIUrl()}/Database/GetCategoriesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class ProductTranslationsService {
         return null;
     };
 
-    static async CreateProductTranslations(newRecord) {
+    static async CreateCategories(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateProductTranslations`,
+            url: `${getRestAPIUrl()}/Database/CreateCategories`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class ProductTranslationsService {
         }
     };
 
-    static async UpdateProductTranslations(oldRecord) {
+    static async UpdateCategories(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateProductTranslations`,
+            url: `${getRestAPIUrl()}/Database/UpdateCategories`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class ProductTranslationsService {
         }
     };
 
-    static async DeleteProductTranslations(id) {
+    static async DeleteCategories(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteProductTranslations`,
+            url: `${getRestAPIUrl()}/Database/DeleteCategories`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

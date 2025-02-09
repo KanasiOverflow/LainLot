@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class UserRolesService {
+export default class ProductTranslationsService {
 
-    static async GetUserRolesCount() {
+    static async GetProductTranslationsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserRolesCount`,
+            url: `${getRestAPIUrl()}/Database/GetProductTranslationsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class UserRolesService {
         return null;
     };
 
-    static async GetUserRolesFields() {
-
+    static async GetProductTranslationsFields() {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserRolesFields`,
+            url: `${getRestAPIUrl()}/Database/GetProductTranslationsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class UserRolesService {
         return null;
     };
 
-    static async GetUserRoles(limit, page) {
-
+    static async GetProductTranslations(limit, page) {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserRoles?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetProductTranslations?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class UserRolesService {
         return null;
     };
 
-    static async GetUserRolesById(id) {
+    static async GetProductTranslationsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserRolesById`,
+            url: `${getRestAPIUrl()}/Database/GetProductTranslationsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class UserRolesService {
         return null;
     };
 
-    static async CreateUserRoles(newRecord) {
+    static async CreateProductTranslations(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateUserRoles`,
+            url: `${getRestAPIUrl()}/Database/CreateProductTranslations`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class UserRolesService {
         }
     };
 
-    static async UpdateUserRoles(oldRecord) {
+    static async UpdateProductTranslations(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateUserRoles`,
+            url: `${getRestAPIUrl()}/Database/UpdateProductTranslations`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class UserRolesService {
         }
     };
 
-    static async DeleteUserRoles(id) {
+    static async DeleteProductTranslations(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteUserRoles`,
+            url: `${getRestAPIUrl()}/Database/DeleteProductTranslations`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

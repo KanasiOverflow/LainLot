@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class ContactsService {
+export default class OrderStatusesService {
 
-    static async GetContactsCount() {
+    static async GetOrderStatusesCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetContactsCount`,
+            url: `${getRestAPIUrl()}/Database/GetOrderStatusesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class ContactsService {
         return null;
     };
 
-    static async GetContactsFields() {
-
+    static async GetOrderStatusesFields() {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetContactsFields`,
+            url: `${getRestAPIUrl()}/Database/GetOrderStatusesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class ContactsService {
         return null;
     };
 
-    static async GetContacts(limit, page) {
-
+    static async GetOrderStatuses(limit, page) {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetContacts?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetOrderStatuses?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class ContactsService {
         return null;
     };
 
-    static async GetContactsById(id) {
+    static async GetOrderStatusesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetContactsById`,
+            url: `${getRestAPIUrl()}/Database/GetOrderStatusesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class ContactsService {
         return null;
     };
 
-    static async CreateContacts(newRecord) {
+    static async CreateOrderStatuses(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateContacts`,
+            url: `${getRestAPIUrl()}/Database/CreateOrderStatuses`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class ContactsService {
         }
     };
 
-    static async UpdateContacts(oldRecord) {
+    static async UpdateOrderStatuses(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateContacts`,
+            url: `${getRestAPIUrl()}/Database/UpdateOrderStatuses`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class ContactsService {
         }
     };
 
-    static async DeleteContacts(id) {
+    static async DeleteOrderStatuses(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteContacts`,
+            url: `${getRestAPIUrl()}/Database/DeleteOrderStatuses`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

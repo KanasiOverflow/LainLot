@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class UserProfilesService {
+export default class FabricTypesService {
 
-    static async GetUserProfilesCount() {
+    static async GetFabricTypesCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfilesCount`,
+            url: `${getRestAPIUrl()}/Database/GetFabricTypesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class UserProfilesService {
         return null;
     };
 
-    static async GetUserProfilesFields() {
-
+    static async GetFabricTypesFields() {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfilesFields`,
+            url: `${getRestAPIUrl()}/Database/GetFabricTypesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class UserProfilesService {
         return null;
     };
 
-    static async GetUserProfiles(limit, page) {
-
+    static async GetFabricTypes(limit, page) {
+        
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfiles?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetFabricTypes?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class UserProfilesService {
         return null;
     };
 
-    static async GetUserProfilesById(id) {
+    static async GetFabricTypesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUserProfilesById`,
+            url: `${getRestAPIUrl()}/Database/GetFabricTypesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class UserProfilesService {
         return null;
     };
 
-    static async CreateUserProfiles(newRecord) {
+    static async CreateFabricTypes(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateUserProfiles`,
+            url: `${getRestAPIUrl()}/Database/CreateFabricTypes`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class UserProfilesService {
         }
     };
 
-    static async UpdateUserProfiles(oldRecord) {
+    static async UpdateFabricTypes(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateUserProfiles`,
+            url: `${getRestAPIUrl()}/Database/UpdateFabricTypes`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class UserProfilesService {
         }
     };
 
-    static async DeleteUserProfiles(id) {
+    static async DeleteFabricTypes(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteUserProfiles`,
+            url: `${getRestAPIUrl()}/Database/DeleteFabricTypes`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

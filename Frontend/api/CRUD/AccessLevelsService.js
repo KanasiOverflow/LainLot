@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class ProductImagesService {
+export default class AccessLevelsService {
 
-    static async GetProductImagesCount() {
+    static async GetAccessLevelsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductImagesCount`,
+            url: `${getRestAPIUrl()}/Database/GetAccessLevelsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class ProductImagesService {
         return null;
     };
 
-    static async GetProductImagesFields() {
-        
+    static async GetAccessLevelsFields() {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductImagesFields`,
+            url: `${getRestAPIUrl()}/Database/GetAccessLevelsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class ProductImagesService {
         return null;
     };
 
-    static async GetProductImages(limit, page) {
-        
+    static async GetAccessLevels(limit, page) {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductImages?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetAccessLevels?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class ProductImagesService {
         return null;
     };
 
-    static async GetProductImagesById(id) {
+    static async GetAccessLevelsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetProductImagesById`,
+            url: `${getRestAPIUrl()}/Database/GetAccessLevelsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class ProductImagesService {
         return null;
     };
 
-    static async CreateProductImages(newRecord) {
+    static async CreateAccessLevels(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateProductImages`,
+            url: `${getRestAPIUrl()}/Database/CreateAccessLevels`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class ProductImagesService {
         }
     };
 
-    static async UpdateProductImages(oldRecord) {
+    static async UpdateAccessLevels(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateProductImages`,
+            url: `${getRestAPIUrl()}/Database/UpdateAccessLevels`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class ProductImagesService {
         }
     };
 
-    static async DeleteProductImages(id) {
+    static async DeleteAccessLevels(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteProductImages`,
+            url: `${getRestAPIUrl()}/Database/DeleteAccessLevels`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

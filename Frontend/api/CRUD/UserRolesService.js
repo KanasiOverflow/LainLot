@@ -1,15 +1,15 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { get200, get201 } from '../utils/responseCodes';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class PaymentsService {
+export default class UserRolesService {
 
-    static async GetPaymentsCount() {
+    static async GetUserRolesCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPaymentsCount`,
+            url: `${getRestAPIUrl()}/Database/GetUserRolesCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class PaymentsService {
         return null;
     };
 
-    static async GetPaymentsFields() {
-        
+    static async GetUserRolesFields() {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPaymentsFields`,
+            url: `${getRestAPIUrl()}/Database/GetUserRolesFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class PaymentsService {
         return null;
     };
 
-    static async GetPayments(limit, page) {
-        
+    static async GetUserRoles(limit, page) {
+
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPayments?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetUserRoles?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class PaymentsService {
         return null;
     };
 
-    static async GetPaymentsById(id) {
+    static async GetUserRolesById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPaymentsById`,
+            url: `${getRestAPIUrl()}/Database/GetUserRolesById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class PaymentsService {
         return null;
     };
 
-    static async CreatePayments(newRecord) {
+    static async CreateUserRoles(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreatePayments`,
+            url: `${getRestAPIUrl()}/Database/CreateUserRoles`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class PaymentsService {
         }
     };
 
-    static async UpdatePayments(oldRecord) {
+    static async UpdateUserRoles(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdatePayments`,
+            url: `${getRestAPIUrl()}/Database/UpdateUserRoles`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class PaymentsService {
         }
     };
 
-    static async DeletePayments(id) {
+    static async DeleteUserRoles(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeletePayments`,
+            url: `${getRestAPIUrl()}/Database/DeleteUserRoles`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
