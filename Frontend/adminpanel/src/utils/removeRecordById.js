@@ -22,7 +22,7 @@ import CustomPantsCuffsService from 'api/CRUD/CustomPantsCuffsService';
 import CustomPantsService from 'api/CRUD/CustomPantsService';
 import CustomSleeveCuffsService from 'api/CRUD/CustomSleeveCuffsService';
 import CustomSleevesService from 'api/CRUD/CustomSleevesService';
-import CustomSportSuitService from 'api/CRUD/CustomSportSuitService';
+import CustomSportSuitsService from 'api/CRUD/CustomSportSuitsService';
 import CustomSweatersService from 'api/CRUD/CustomSweatersService';
 import FabricTypesService from 'api/CRUD/FabricTypesService';
 import LanguagesService from 'api/CRUD/LanguagesService';
@@ -122,7 +122,7 @@ export const removeRecordById = async (currentTable, id) => {
             response = await CustomSleevesService.DeleteCustomSleeves(id);
             break;
         case 'CustomSportSuit':
-            response = await CustomSportSuitService.DeleteCustomSportSuit(id);
+            response = await CustomSportSuitsService.DeleteCustomSportSuit(id);
             break;
         case 'CustomSweaters':
             response = await CustomSweatersService.DeleteCustomSweaters(id);
