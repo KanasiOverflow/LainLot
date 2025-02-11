@@ -6,7 +6,7 @@ import BasePantsCuffsService from 'api/CRUD/BasePantsCuffsService';
 import BasePantsService from 'api/CRUD/BasePantsService';
 import BaseSleeveCuffsService from 'api/CRUD/BaseSleeveCuffsService';
 import BaseSleevesService from 'api/CRUD/BaseSleevesService';
-import BaseSportSuitService from 'api/CRUD/BaseSportSuitService';
+import BaseSportSuitsService from 'api/CRUD/BaseSportSuitsService';
 import BaseSweatersService from 'api/CRUD/BaseSweatersService';
 import CartService from 'api/CRUD/CartService';
 import CategoriesService from 'api/CRUD/CategoriesService';
@@ -74,7 +74,7 @@ export const getAllRecords = async (currentTable, limit, page) => {
       response = await BaseSleevesService.GetBaseSleeves(limit, page);
       break;
     case 'BaseSportSuit':
-      response = await BaseSportSuitService.GetBaseSportSuit(limit, page);
+      response = await BaseSportSuitsService.GetBaseSportSuit(limit, page);
       break;
     case 'BaseSweaters':
       response = await BaseSweatersService.GetBaseSweaters(limit, page);

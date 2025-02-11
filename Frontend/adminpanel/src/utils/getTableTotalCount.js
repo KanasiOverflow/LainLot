@@ -6,7 +6,7 @@ import BasePantsCuffsService from 'api/CRUD/BasePantsCuffsService';
 import BasePantsService from 'api/CRUD/BasePantsService';
 import BaseSleeveCuffsService from 'api/CRUD/BaseSleeveCuffsService';
 import BaseSleevesService from 'api/CRUD/BaseSleevesService';
-import BaseSportSuitService from 'api/CRUD/BaseSportSuitService';
+import BaseSportSuitsService from 'api/CRUD/BaseSportSuitsService';
 import BaseSweatersService from 'api/CRUD/BaseSweatersService';
 import CartService from 'api/CRUD/CartService';
 import CategoriesService from 'api/CRUD/CategoriesService';
@@ -74,7 +74,7 @@ export const getTableTotalCount = async (currentTable) => {
       response = await BaseSleevesService.GetBaseSleevesCount();
       break;
     case 'BaseSportSuit':
-      response = await BaseSportSuitService.GetBaseSportSuitCount();
+      response = await BaseSportSuitsService.GetBaseSportSuitCount();
       break;
     case 'BaseSweaters':
       response = await BaseSweatersService.GetBaseSweatersCount();

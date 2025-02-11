@@ -3,13 +3,13 @@ import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from '../utils/responseCodes';
 import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class BaseSportSuitService {
+export default class BaseSportSuitsService {
 
-    static async GetBaseSportSuitCount() {
+    static async GetBaseSportSuitsCount() {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetBaseSportSuitCount`,
+            url: `${getRestAPIUrl()}/Database/GetBaseSportSuitsCount`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -23,11 +23,11 @@ export default class BaseSportSuitService {
         return null;
     };
 
-    static async GetBaseSportSuitFields() {
+    static async GetBaseSportSuitsFields() {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetBaseSportSuitFields`,
+            url: `${getRestAPIUrl()}/Database/GetBaseSportSuitsFields`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -40,11 +40,11 @@ export default class BaseSportSuitService {
         return null;
     };
 
-    static async GetBaseSportSuit(limit, page) {
+    static async GetBaseSportSuits(limit, page) {
         
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetBaseSportSuit?limit=${limit}&page=${page}`,
+            url: `${getRestAPIUrl()}/Database/GetBaseSportSuits?limit=${limit}&page=${page}`,
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
@@ -57,11 +57,11 @@ export default class BaseSportSuitService {
         return null;
     };
 
-    static async GetBaseSportSuitById(id) {
+    static async GetBaseSportSuitsById(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetBaseSportSuitById`,
+            url: `${getRestAPIUrl()}/Database/GetBaseSportSuitsById`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
@@ -75,11 +75,11 @@ export default class BaseSportSuitService {
         return null;
     };
 
-    static async CreateBaseSportSuit(newRecord) {
+    static async CreateBaseSportSuits(newRecord) {
 
         const options = {
             method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateBaseSportSuit`,
+            url: `${getRestAPIUrl()}/Database/CreateBaseSportSuits`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(newRecord),
             auth: {
@@ -105,11 +105,11 @@ export default class BaseSportSuitService {
         }
     };
 
-    static async UpdateBaseSportSuit(oldRecord) {
+    static async UpdateBaseSportSuits(oldRecord) {
 
         const options = {
             method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateBaseSportSuit`,
+            url: `${getRestAPIUrl()}/Database/UpdateBaseSportSuits`,
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(oldRecord),
             auth: {
@@ -135,11 +135,11 @@ export default class BaseSportSuitService {
         }
     };
 
-    static async DeleteBaseSportSuit(id) {
+    static async DeleteBaseSportSuits(id) {
 
         const options = {
             method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteBaseSportSuit`,
+            url: `${getRestAPIUrl()}/Database/DeleteBaseSportSuits`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),
