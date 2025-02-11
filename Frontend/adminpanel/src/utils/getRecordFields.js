@@ -33,7 +33,7 @@ import PaymentMethodsService from 'api/CRUD/PaymentMethodsService';
 import PaymentsService from 'api/CRUD/PaymentsService';
 import PaymentStatusesService from 'api/CRUD/PaymentStatusesService';
 import ProductImagesService from 'api/CRUD/ProductImagesService';
-import ProductrdersService from 'api/CRUD/ProductOrdersService';
+import ProductOrdersService from 'api/CRUD/ProductOrdersService';
 import ProductsService from 'api/CRUD/ProductsService';
 import ProductTranslationsService from 'api/CRUD/ProductTranslationsService';
 import ReviewsService from 'api/CRUD/ReviewsService';
@@ -55,6 +55,30 @@ export const getRecordFields = async (currentTable) => {
     case 'AccessLevels':
       response = await AccessLevelsService.GetAccessLevelsFields();
       break;
+    case 'BaseBelts':
+      response = await BaseBeltsService.GetBaseBeltsFields();
+      break;
+    case 'BaseNecklines':
+      response = await BaseNecklinesService.GetBaseNecklinesFields();
+      break;
+    case 'BasePantsCuffs':
+      response = await BasePantsCuffsService.GetBasePantsCuffsFields();
+      break;
+    case 'BasePants':
+      response = await BasePantsService.GetBasePantsFields();
+      break;
+    case 'BaseSleeveCuffs':
+      response = await BaseSleeveCuffsService.GetBaseSleeveCuffsFields();
+      break;
+    case 'BaseSleeves':
+      response = await BaseSleevesService.GetBaseSleevesFields();
+      break;
+    case 'BaseSportSuit':
+      response = await BaseSportSuitService.GetBaseSportSuitFields();
+      break;
+    case 'BaseSweaters':
+      response = await BaseSweatersService.GetBaseSweatersFields();
+      break;
     case 'Cart':
       response = await CartService.GetCartFields();
       break;
@@ -70,8 +94,38 @@ export const getRecordFields = async (currentTable) => {
     case 'Contacts':
       response = await ContactsService.GetContactsFields();
       break;
+    case 'Countries':
+      response = await CountriesService.GetCountriesFields();
+      break;
+    case 'Currencies':
+      response = await CurrenciesService.GetCurrenciesFields();
+      break;
+    case 'CustomBelts':
+      response = await CustomBeltsService.GetCustomBeltsFields();
+      break;
     case 'CustomizableProducts':
       response = await CustomizableProductsService.GetCustomizableProductsFields();
+      break;
+    case 'CustomNecklines':
+      response = await CustomNecklinesService.GetCustomNecklinesFields();
+      break;
+    case 'CustomPantsCuffs':
+      response = await CustomPantsCuffsService.GetCustomPantsCuffsFields();
+      break;
+    case 'CustomPants':
+      response = await CustomPantsService.GetCustomPantsFields();
+      break;
+    case 'CustomSleeveCuffs':
+      response = await CustomSleeveCuffsService.GetCustomSleeveCuffsFields();
+      break;
+    case 'CustomSleeves':
+      response = await CustomSleevesService.GetCustomSleevesFields();
+      break;
+    case 'CustomSportSuit':
+      response = await CustomSportSuitService.GetCustomSportSuitFields();
+      break;
+    case 'CustomSweaters':
+      response = await CustomSweatersService.GetCustomSweatersFields();
       break;
     case 'FabricTypes':
       response = await FabricTypesService.GetFabricTypesFields();
@@ -88,14 +142,23 @@ export const getRecordFields = async (currentTable) => {
     case 'OrderStatuses':
       response = await OrderStatusesService.GetOrderStatusesFields();
       break;
+    case 'PaymentMethods':
+      response = await PaymentMethodsService.GetPaymentMethodsFields();
+      break;
     case 'Payments':
       response = await PaymentsService.GetPaymentsFields();
       break;
-    case 'Products':
-      response = await ProductsService.GetProductsFields();
+    case 'PaymentStatuses':
+      response = await PaymentStatusesService.GetPaymentStatusesFields();
       break;
     case 'ProductImages':
       response = await ProductImagesService.GetProductImagesFields();
+      break;
+    case 'ProductOrders':
+      response = await ProductOrdersService.GetProductOrdersFields();
+      break;
+    case 'Products':
+      response = await ProductsService.GetProductsFields();
       break;
     case 'ProductTranslations':
       response = await ProductTranslationsService.GetProductTranslationsFields();
@@ -103,14 +166,23 @@ export const getRecordFields = async (currentTable) => {
     case 'Reviews':
       response = await ReviewsService.GetReviewsFields();
       break;
-    case 'Users':
-      response = await UsersService.GetUsersFields();
+    case 'ShippingAddresses':
+      response = await ShippingAddressesService.GetShippingAddressesFields();
+      break;
+    case 'SizeOptions':
+      response = await SizeOptionsService.GetSizeOptionsFields();
+      break;
+    case 'UserOrderHistory':
+      response = await UserOrderHistoryService.GetUserOrderHistoryFields();
       break;
     case 'UserProfiles':
       response = await UserProfilesService.GetUserProfilesFields();
       break;
     case 'UserRoles':
       response = await UserRolesService.GetUserRolesFields();
+      break;
+    case 'Users':
+      response = await UsersService.GetUsersFields();
       break;
     default:
       break;

@@ -33,7 +33,7 @@ import PaymentMethodsService from 'api/CRUD/PaymentMethodsService';
 import PaymentsService from 'api/CRUD/PaymentsService';
 import PaymentStatusesService from 'api/CRUD/PaymentStatusesService';
 import ProductImagesService from 'api/CRUD/ProductImagesService';
-import ProductrdersService from 'api/CRUD/ProductOrdersService';
+import ProductOrdersService from 'api/CRUD/ProductOrdersService';
 import ProductsService from 'api/CRUD/ProductsService';
 import ProductTranslationsService from 'api/CRUD/ProductTranslationsService';
 import ReviewsService from 'api/CRUD/ReviewsService';
@@ -55,6 +55,30 @@ export const removeRecordById = async (currentTable, id) => {
         case 'AccessLevels':
             response = await AccessLevelsService.DeleteAccessLevels(id);
             break;
+        case 'BaseBelts':
+            response = await BaseBeltsService.DeleteBaseBelts(id);
+            break;
+        case 'BaseNecklines':
+            response = await BaseNecklinesService.DeleteBaseNecklines(id);
+            break;
+        case 'BasePantsCuffs':
+            response = await BasePantsCuffsService.DeleteBasePantsCuffs(id);
+            break;
+        case 'BasePants':
+            response = await BasePantsService.DeleteBasePants(id);
+            break;
+        case 'BaseSleeveCuffs':
+            response = await BaseSleeveCuffsService.DeleteBaseSleeveCuffs(id);
+            break;
+        case 'BaseSleeves':
+            response = await BaseSleevesService.DeleteBaseSleeves(id);
+            break;
+        case 'BaseSportSuit':
+            response = await BaseSportSuitService.DeleteBaseSportSuit(id);
+            break;
+        case 'BaseSweaters':
+            response = await BaseSweatersService.DeleteBaseSweaters(id);
+            break;
         case 'Cart':
             response = await CartService.DeleteCart(id);
             break;
@@ -70,8 +94,38 @@ export const removeRecordById = async (currentTable, id) => {
         case 'Contacts':
             response = await ContactsService.DeleteContacts(id);
             break;
+        case 'Countries':
+            response = await CountriesService.DeleteCountries(id);
+            break;
+        case 'Currencies':
+            response = await CurrenciesService.DeleteCurrencies(id);
+            break;
+        case 'CustomBelts':
+            response = await CustomBeltsService.DeleteCustomBelts(id);
+            break;
         case 'CustomizableProducts':
             response = await CustomizableProductsService.DeleteCustomizableProducts(id);
+            break;
+        case 'CustomNecklines':
+            response = await CustomNecklinesService.DeleteCustomNecklines(id);
+            break;
+        case 'CustomPantsCuffs':
+            response = await CustomPantsCuffsService.DeleteCustomPantsCuffs(id);
+            break;
+        case 'CustomPants':
+            response = await CustomPantsService.DeleteCustomPants(id);
+            break;
+        case 'CustomSleeveCuffs':
+            response = await CustomSleeveCuffsService.DeleteCustomSleeveCuffs(id);
+            break;
+        case 'CustomSleeves':
+            response = await CustomSleevesService.DeleteCustomSleeves(id);
+            break;
+        case 'CustomSportSuit':
+            response = await CustomSportSuitService.DeleteCustomSportSuit(id);
+            break;
+        case 'CustomSweaters':
+            response = await CustomSweatersService.DeleteCustomSweaters(id);
             break;
         case 'FabricTypes':
             response = await FabricTypesService.DeleteFabricTypes(id);
@@ -88,14 +142,23 @@ export const removeRecordById = async (currentTable, id) => {
         case 'OrderStatuses':
             response = await OrderStatusesService.DeleteOrderStatuses(id);
             break;
+        case 'PaymentMethods':
+            response = await PaymentMethodsService.DeletePaymentMethods(id);
+            break;
         case 'Payments':
             response = await PaymentsService.DeletePayments(id);
             break;
-        case 'Products':
-            response = await ProductsService.DeleteProducts(id);
+        case 'PaymentStatuses':
+            response = await PaymentStatusesService.DeletePaymentStatuses(id);
             break;
         case 'ProductImages':
             response = await ProductImagesService.DeleteProductImages(id);
+            break;
+        case 'ProductOrders':
+            response = await ProductOrdersService.DeleteProductOrders(id);
+            break;
+        case 'Products':
+            response = await ProductsService.DeleteProducts(id);
             break;
         case 'ProductTranslations':
             response = await ProductTranslationsService.DeleteProductTranslations(id);
@@ -103,8 +166,14 @@ export const removeRecordById = async (currentTable, id) => {
         case 'Reviews':
             response = await ReviewsService.DeleteReviews(id);
             break;
-        case 'Users':
-            response = await UsersService.DeleteUsers(id);
+        case 'ShippingAddresses':
+            response = await ShippingAddressesService.DeleteShippingAddresses(id);
+            break;
+        case 'SizeOptions':
+            response = await SizeOptionsService.DeleteSizeOptions(id);
+            break;
+        case 'UserOrderHistory':
+            response = await UserOrderHistoryService.DeleteUserOrderHistory(id);
             break;
         case 'UserProfiles':
             response = await UserProfilesService.DeleteUserProfiles(id);
@@ -112,9 +181,12 @@ export const removeRecordById = async (currentTable, id) => {
         case 'UserRoles':
             response = await UserRolesService.DeleteUserRoles(id);
             break;
+        case 'Users':
+            response = await UsersService.DeleteUsers(id);
+            break;
         default:
             break;
     };
-
+    
     return response;
 };

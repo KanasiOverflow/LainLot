@@ -33,7 +33,7 @@ import PaymentMethodsService from 'api/CRUD/PaymentMethodsService';
 import PaymentsService from 'api/CRUD/PaymentsService';
 import PaymentStatusesService from 'api/CRUD/PaymentStatusesService';
 import ProductImagesService from 'api/CRUD/ProductImagesService';
-import ProductrdersService from 'api/CRUD/ProductOrdersService';
+import ProductOrdersService from 'api/CRUD/ProductOrdersService';
 import ProductsService from 'api/CRUD/ProductsService';
 import ProductTranslationsService from 'api/CRUD/ProductTranslationsService';
 import ReviewsService from 'api/CRUD/ReviewsService';
@@ -55,6 +55,30 @@ export const createRecord = async (currentTable, data) => {
         case 'AccessLevels':
             response = await AccessLevelsService.CreateAccessLevels(data);
             break;
+        case 'BaseBelts':
+            response = await BaseBeltsService.CreateBaseBelts(data);
+            break;
+        case 'BaseNecklines':
+            response = await BaseNecklinesService.CreateBaseNecklines(data);
+            break;
+        case 'BasePantsCuffs':
+            response = await BasePantsCuffsService.CreateBasePantsCuffs(data);
+            break;
+        case 'BasePants':
+            response = await BasePantsService.CreateBasePants(data);
+            break;
+        case 'BaseSleeveCuffs':
+            response = await BaseSleeveCuffsService.CreateBaseSleeveCuffs(data);
+            break;
+        case 'BaseSleeves':
+            response = await BaseSleevesService.CreateBaseSleeves(data);
+            break;
+        case 'BaseSportSuit':
+            response = await BaseSportSuitService.CreateBaseSportSuit(data);
+            break;
+        case 'BaseSweaters':
+            response = await BaseSweatersService.CreateBaseSweaters(data);
+            break;
         case 'Cart':
             response = await CartService.CreateCart(data);
             break;
@@ -70,8 +94,38 @@ export const createRecord = async (currentTable, data) => {
         case 'Contacts':
             response = await ContactsService.CreateContacts(data);
             break;
+        case 'Countries':
+            response = await CountriesService.CreateCountries(data);
+            break;
+        case 'Currencies':
+            response = await CurrenciesService.CreateCurrencies(data);
+            break;
+        case 'CustomBelts':
+            response = await CustomBeltsService.CreateCustomBelts(data);
+            break;
         case 'CustomizableProducts':
             response = await CustomizableProductsService.CreateCustomizableProducts(data);
+            break;
+        case 'CustomNecklines':
+            response = await CustomNecklinesService.CreateCustomNecklines(data);
+            break;
+        case 'CustomPantsCuffs':
+            response = await CustomPantsCuffsService.CreateCustomPantsCuffs(data);
+            break;
+        case 'CustomPants':
+            response = await CustomPantsService.CreateCustomPants(data);
+            break;
+        case 'CustomSleeveCuffs':
+            response = await CustomSleeveCuffsService.CreateCustomSleeveCuffs(data);
+            break;
+        case 'CustomSleeves':
+            response = await CustomSleevesService.CreateCustomSleeves(data);
+            break;
+        case 'CustomSportSuit':
+            response = await CustomSportSuitService.CreateCustomSportSuit(data);
+            break;
+        case 'CustomSweaters':
+            response = await CustomSweatersService.CreateCustomSweaters(data);
             break;
         case 'FabricTypes':
             response = await FabricTypesService.CreateFabricTypes(data);
@@ -88,14 +142,23 @@ export const createRecord = async (currentTable, data) => {
         case 'OrderStatuses':
             response = await OrderStatusesService.CreateOrderStatuses(data);
             break;
+        case 'PaymentMethods':
+            response = await PaymentMethodsService.CreatePaymentMethods(data);
+            break;
         case 'Payments':
             response = await PaymentsService.CreatePayments(data);
             break;
-        case 'Products':
-            response = await ProductsService.CreateProducts(data);
+        case 'PaymentStatuses':
+            response = await PaymentStatusesService.CreatePaymentStatuses(data);
             break;
         case 'ProductImages':
             response = await ProductImagesService.CreateProductImages(data);
+            break;
+        case 'ProductOrders':
+            response = await ProductOrdersService.CreateProductOrders(data);
+            break;
+        case 'Products':
+            response = await ProductsService.CreateProducts(data);
             break;
         case 'ProductTranslations':
             response = await ProductTranslationsService.CreateProductTranslations(data);
@@ -103,14 +166,23 @@ export const createRecord = async (currentTable, data) => {
         case 'Reviews':
             response = await ReviewsService.CreateReviews(data);
             break;
-        case 'Users':
-            response = await UsersService.CreateUsers(data);
+        case 'ShippingAddresses':
+            response = await ShippingAddressesService.CreateShippingAddresses(data);
+            break;
+        case 'SizeOptions':
+            response = await SizeOptionsService.CreateSizeOptions(data);
+            break;
+        case 'UserOrderHistory':
+            response = await UserOrderHistoryService.CreateUserOrderHistory(data);
             break;
         case 'UserProfiles':
             response = await UserProfilesService.CreateUserProfiles(data);
             break;
         case 'UserRoles':
             response = await UserRolesService.CreateUserRoles(data);
+            break;
+        case 'Users':
+            response = await UsersService.CreateUsers(data);
             break;
         default:
             break;

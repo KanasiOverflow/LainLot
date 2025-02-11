@@ -33,7 +33,7 @@ import PaymentMethodsService from 'api/CRUD/PaymentMethodsService';
 import PaymentsService from 'api/CRUD/PaymentsService';
 import PaymentStatusesService from 'api/CRUD/PaymentStatusesService';
 import ProductImagesService from 'api/CRUD/ProductImagesService';
-import ProductrdersService from 'api/CRUD/ProductOrdersService';
+import ProductOrdersService from 'api/CRUD/ProductOrdersService';
 import ProductsService from 'api/CRUD/ProductsService';
 import ProductTranslationsService from 'api/CRUD/ProductTranslationsService';
 import ReviewsService from 'api/CRUD/ReviewsService';
@@ -50,67 +50,139 @@ export const updateRecord = async (currentTable, data) => {
 
     switch (currentTable) {
         case 'About':
-            response = await AboutService.UpdateAbout(data);
+            response = await AboutService.UpdateAbout(id);
             break;
         case 'AccessLevels':
-            response = await AccessLevelsService.UpdateAccessLevels(data);
+            response = await AccessLevelsService.UpdateAccessLevels(id);
+            break;
+        case 'BaseBelts':
+            response = await BaseBeltsService.UpdateBaseBelts(id);
+            break;
+        case 'BaseNecklines':
+            response = await BaseNecklinesService.UpdateBaseNecklines(id);
+            break;
+        case 'BasePantsCuffs':
+            response = await BasePantsCuffsService.UpdateBasePantsCuffs(id);
+            break;
+        case 'BasePants':
+            response = await BasePantsService.UpdateBasePants(id);
+            break;
+        case 'BaseSleeveCuffs':
+            response = await BaseSleeveCuffsService.UpdateBaseSleeveCuffs(id);
+            break;
+        case 'BaseSleeves':
+            response = await BaseSleevesService.UpdateBaseSleeves(id);
+            break;
+        case 'BaseSportSuit':
+            response = await BaseSportSuitService.UpdateBaseSportSuit(id);
+            break;
+        case 'BaseSweaters':
+            response = await BaseSweatersService.UpdateBaseSweaters(id);
             break;
         case 'Cart':
-            response = await CartService.UpdateCart(data);
+            response = await CartService.UpdateCart(id);
             break;
         case 'Categories':
-            response = await CategoriesService.UpdateCategories(data);
+            response = await CategoriesService.UpdateCategories(id);
             break;
         case 'CategoryHierarchy':
-            response = await CategoryHierarchyService.UpdateCategoryHierarchy(data);
+            response = await CategoryHierarchyService.UpdateCategoryHierarchy(id);
             break;
         case 'Colors':
-            response = await ColorsService.UpdateColors(data);
+            response = await ColorsService.UpdateColors(id);
             break;
         case 'Contacts':
-            response = await ContactsService.UpdateContacts(data);
+            response = await ContactsService.UpdateContacts(id);
+            break;
+        case 'Countries':
+            response = await CountriesService.UpdateCountries(id);
+            break;
+        case 'Currencies':
+            response = await CurrenciesService.UpdateCurrencies(id);
+            break;
+        case 'CustomBelts':
+            response = await CustomBeltsService.UpdateCustomBelts(id);
             break;
         case 'CustomizableProducts':
-            response = await CustomizableProductsService.UpdateCustomizableProducts(data);
+            response = await CustomizableProductsService.UpdateCustomizableProducts(id);
+            break;
+        case 'CustomNecklines':
+            response = await CustomNecklinesService.UpdateCustomNecklines(id);
+            break;
+        case 'CustomPantsCuffs':
+            response = await CustomPantsCuffsService.UpdateCustomPantsCuffs(id);
+            break;
+        case 'CustomPants':
+            response = await CustomPantsService.UpdateCustomPants(id);
+            break;
+        case 'CustomSleeveCuffs':
+            response = await CustomSleeveCuffsService.UpdateCustomSleeveCuffs(id);
+            break;
+        case 'CustomSleeves':
+            response = await CustomSleevesService.UpdateCustomSleeves(id);
+            break;
+        case 'CustomSportSuit':
+            response = await CustomSportSuitService.UpdateCustomSportSuit(id);
+            break;
+        case 'CustomSweaters':
+            response = await CustomSweatersService.UpdateCustomSweaters(id);
             break;
         case 'FabricTypes':
-            response = await FabricTypesService.UpdateFabricTypes(data);
+            response = await FabricTypesService.UpdateFabricTypes(id);
             break;
         case 'Languages':
-            response = await LanguagesService.UpdateLanguages(data);
+            response = await LanguagesService.UpdateLanguages(id);
             break;
         case 'Orders':
-            response = await OrdersService.UpdateOrders(data);
+            response = await OrdersService.UpdateOrders(id);
             break;
         case 'OrderHistory':
-            response = await OrderHistoryService.UpdateOrderHistory(data);
+            response = await OrderHistoryService.UpdateOrderHistory(id);
             break;
         case 'OrderStatuses':
-            response = await OrderStatusesService.UpdateOrderStatuses(data);
+            response = await OrderStatusesService.UpdateOrderStatuses(id);
+            break;
+        case 'PaymentMethods':
+            response = await PaymentMethodsService.UpdatePaymentMethods(id);
             break;
         case 'Payments':
-            response = await PaymentsService.UpdatePayments(data);
+            response = await PaymentsService.UpdatePayments(id);
             break;
-        case 'Products':
-            response = await ProductsService.UpdateProducts(data);
+        case 'PaymentStatuses':
+            response = await PaymentStatusesService.UpdatePaymentStatuses(id);
             break;
         case 'ProductImages':
-            response = await ProductImagesService.UpdateProductImages(data);
+            response = await ProductImagesService.UpdateProductImages(id);
+            break;
+        case 'ProductOrders':
+            response = await ProductOrdersService.UpdateProductOrders(id);
+            break;
+        case 'Products':
+            response = await ProductsService.UpdateProducts(id);
             break;
         case 'ProductTranslations':
-            response = await ProductTranslationsService.UpdateProductTranslations(data);
+            response = await ProductTranslationsService.UpdateProductTranslations(id);
             break;
         case 'Reviews':
-            response = await ReviewsService.UpdateReviews(data);
+            response = await ReviewsService.UpdateReviews(id);
             break;
-        case 'Users':
-            response = await UsersService.UpdateUsers(data);
+        case 'ShippingAddresses':
+            response = await ShippingAddressesService.UpdateShippingAddresses(id);
+            break;
+        case 'SizeOptions':
+            response = await SizeOptionsService.UpdateSizeOptions(id);
+            break;
+        case 'UserOrderHistory':
+            response = await UserOrderHistoryService.UpdateUserOrderHistory(id);
             break;
         case 'UserProfiles':
-            response = await UserProfilesService.UpdateUserProfiles(data);
+            response = await UserProfilesService.UpdateUserProfiles(id);
             break;
         case 'UserRoles':
-            response = await UserRolesService.UpdateUserRoles(data);
+            response = await UserRolesService.UpdateUserRoles(id);
+            break;
+        case 'Users':
+            response = await UsersService.UpdateUsers(id);
             break;
         default:
             break;

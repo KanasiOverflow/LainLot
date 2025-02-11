@@ -33,7 +33,7 @@ import PaymentMethodsService from 'api/CRUD/PaymentMethodsService';
 import PaymentsService from 'api/CRUD/PaymentsService';
 import PaymentStatusesService from 'api/CRUD/PaymentStatusesService';
 import ProductImagesService from 'api/CRUD/ProductImagesService';
-import ProductrdersService from 'api/CRUD/ProductOrdersService';
+import ProductOrdersService from 'api/CRUD/ProductOrdersService';
 import ProductsService from 'api/CRUD/ProductsService';
 import ProductTranslationsService from 'api/CRUD/ProductTranslationsService';
 import ReviewsService from 'api/CRUD/ReviewsService';
@@ -50,67 +50,139 @@ export const getAllRecords = async (currentTable, limit, page) => {
 
   switch (currentTable) {
     case 'About':
-      response = await AboutService.GetAbout(limit, page);
+      response = await AboutService.GetAbout(data);
       break;
     case 'AccessLevels':
-      response = await AccessLevelsService.GetAccessLevels(limit, page);
+      response = await AccessLevelsService.GetAccessLevels(data);
+      break;
+    case 'BaseBelts':
+      response = await BaseBeltsService.GetBaseBelts(data);
+      break;
+    case 'BaseNecklines':
+      response = await BaseNecklinesService.GetBaseNecklines(data);
+      break;
+    case 'BasePantsCuffs':
+      response = await BasePantsCuffsService.GetBasePantsCuffs(data);
+      break;
+    case 'BasePants':
+      response = await BasePantsService.GetBasePants(data);
+      break;
+    case 'BaseSleeveCuffs':
+      response = await BaseSleeveCuffsService.GetBaseSleeveCuffs(data);
+      break;
+    case 'BaseSleeves':
+      response = await BaseSleevesService.GetBaseSleeves(data);
+      break;
+    case 'BaseSportSuit':
+      response = await BaseSportSuitService.GetBaseSportSuit(data);
+      break;
+    case 'BaseSweaters':
+      response = await BaseSweatersService.GetBaseSweaters(data);
       break;
     case 'Cart':
-      response = await CartService.GetCart(limit, page);
+      response = await CartService.GetCart(data);
       break;
     case 'Categories':
-      response = await CategoriesService.GetCategories(limit, page);
+      response = await CategoriesService.GetCategories(data);
       break;
     case 'CategoryHierarchy':
-      response = await CategoryHierarchyService.GetCategoryHierarchy(limit, page);
+      response = await CategoryHierarchyService.GetCategoryHierarchy(data);
       break;
     case 'Colors':
-      response = await ColorsService.GetColors(limit, page);
+      response = await ColorsService.GetColors(data);
       break;
     case 'Contacts':
-      response = await ContactsService.GetContacts(limit, page);
+      response = await ContactsService.GetContacts(data);
+      break;
+    case 'Countries':
+      response = await CountriesService.GetCountries(data);
+      break;
+    case 'Currencies':
+      response = await CurrenciesService.GetCurrencies(data);
+      break;
+    case 'CustomBelts':
+      response = await CustomBeltsService.GetCustomBelts(data);
       break;
     case 'CustomizableProducts':
-      response = await CustomizableProductsService.GetCustomizableProducts(limit, page);
+      response = await CustomizableProductsService.GetCustomizableProducts(data);
+      break;
+    case 'CustomNecklines':
+      response = await CustomNecklinesService.GetCustomNecklines(data);
+      break;
+    case 'CustomPantsCuffs':
+      response = await CustomPantsCuffsService.GetCustomPantsCuffs(data);
+      break;
+    case 'CustomPants':
+      response = await CustomPantsService.GetCustomPants(data);
+      break;
+    case 'CustomSleeveCuffs':
+      response = await CustomSleeveCuffsService.GetCustomSleeveCuffs(data);
+      break;
+    case 'CustomSleeves':
+      response = await CustomSleevesService.GetCustomSleeves(data);
+      break;
+    case 'CustomSportSuit':
+      response = await CustomSportSuitService.GetCustomSportSuit(data);
+      break;
+    case 'CustomSweaters':
+      response = await CustomSweatersService.GetCustomSweaters(data);
       break;
     case 'FabricTypes':
-      response = await FabricTypesService.GetFabricTypes(limit, page);
+      response = await FabricTypesService.GetFabricTypes(data);
       break;
     case 'Languages':
-      response = await LanguagesService.GetLanguages(limit, page);
+      response = await LanguagesService.GetLanguages(data);
       break;
     case 'Orders':
-      response = await OrdersService.GetOrders(limit, page);
+      response = await OrdersService.GetOrders(data);
       break;
     case 'OrderHistory':
-      response = await OrderHistoryService.GetOrderHistory(limit, page);
+      response = await OrderHistoryService.GetOrderHistory(data);
       break;
     case 'OrderStatuses':
-      response = await OrderStatusesService.GetOrderStatuses(limit, page);
+      response = await OrderStatusesService.GetOrderStatuses(data);
+      break;
+    case 'PaymentMethods':
+      response = await PaymentMethodsService.GetPaymentMethods(data);
       break;
     case 'Payments':
-      response = await PaymentsService.GetPayments(limit, page);
+      response = await PaymentsService.GetPayments(data);
       break;
-    case 'Products':
-      response = await ProductsService.GetProducts(limit, page);
+    case 'PaymentStatuses':
+      response = await PaymentStatusesService.GetPaymentStatuses(data);
       break;
     case 'ProductImages':
-      response = await ProductImagesService.GetProductImages(limit, page);
+      response = await ProductImagesService.GetProductImages(data);
+      break;
+    case 'ProductOrders':
+      response = await ProductOrdersService.GetProductOrders(data);
+      break;
+    case 'Products':
+      response = await ProductsService.GetProducts(data);
       break;
     case 'ProductTranslations':
-      response = await ProductTranslationsService.GetProductTranslations(limit, page);
+      response = await ProductTranslationsService.GetProductTranslations(data);
       break;
     case 'Reviews':
-      response = await ReviewsService.GetReviews(limit, page);
+      response = await ReviewsService.GetReviews(data);
       break;
-    case 'Users':
-      response = await UsersService.GetUsers(limit, page);
+    case 'ShippingAddresses':
+      response = await ShippingAddressesService.GetShippingAddresses(data);
+      break;
+    case 'SizeOptions':
+      response = await SizeOptionsService.GetSizeOptions(data);
+      break;
+    case 'UserOrderHistory':
+      response = await UserOrderHistoryService.GetUserOrderHistory(data);
       break;
     case 'UserProfiles':
-      response = await UserProfilesService.GetUserProfiles(limit, page);
+      response = await UserProfilesService.GetUserProfiles(data);
       break;
     case 'UserRoles':
-      response = await UserRolesService.GetUserRoles(limit, page);
+      response = await UserRolesService.GetUserRoles(data);
+      break;
+    case 'Users':
+      response = await UsersService.GetUsers(data);
       break;
     default:
       break;
