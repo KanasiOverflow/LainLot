@@ -73,7 +73,7 @@ export const getRecordById = async (currentTable, id) => {
         case 'BaseSleeves':
             response = await BaseSleevesService.GetBaseSleevesById(id);
             break;
-        case 'BaseSportSuit':
+        case 'BaseSportSuits':
             response = await BaseSportSuitsService.GetBaseSportSuitById(id);
             break;
         case 'BaseSweaters':
@@ -121,7 +121,7 @@ export const getRecordById = async (currentTable, id) => {
         case 'CustomSleeves':
             response = await CustomSleevesService.GetCustomSleevesById(id);
             break;
-        case 'CustomSportSuit':
+        case 'CustomSportSuits':
             response = await CustomSportSuitsService.GetCustomSportSuitById(id);
             break;
         case 'CustomSweaters':

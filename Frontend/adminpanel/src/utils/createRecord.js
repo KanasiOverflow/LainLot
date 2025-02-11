@@ -73,7 +73,7 @@ export const createRecord = async (currentTable, data) => {
         case 'BaseSleeves':
             response = await BaseSleevesService.CreateBaseSleeves(data);
             break;
-        case 'BaseSportSuit':
+        case 'BaseSportSuits':
             response = await BaseSportSuitsService.CreateBaseSportSuit(data);
             break;
         case 'BaseSweaters':
@@ -121,7 +121,7 @@ export const createRecord = async (currentTable, data) => {
         case 'CustomSleeves':
             response = await CustomSleevesService.CreateCustomSleeves(data);
             break;
-        case 'CustomSportSuit':
+        case 'CustomSportSuits':
             response = await CustomSportSuitsService.CreateCustomSportSuit(data);
             break;
         case 'CustomSweaters':

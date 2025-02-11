@@ -73,7 +73,7 @@ export const removeRecordById = async (currentTable, id) => {
         case 'BaseSleeves':
             response = await BaseSleevesService.DeleteBaseSleeves(id);
             break;
-        case 'BaseSportSuit':
+        case 'BaseSportSuits':
             response = await BaseSportSuitsService.DeleteBaseSportSuit(id);
             break;
         case 'BaseSweaters':
@@ -121,7 +121,7 @@ export const removeRecordById = async (currentTable, id) => {
         case 'CustomSleeves':
             response = await CustomSleevesService.DeleteCustomSleeves(id);
             break;
-        case 'CustomSportSuit':
+        case 'CustomSportSuits':
             response = await CustomSportSuitsService.DeleteCustomSportSuit(id);
             break;
         case 'CustomSweaters':

@@ -73,7 +73,7 @@ export const getRecordFields = async (currentTable) => {
     case 'BaseSleeves':
       response = await BaseSleevesService.GetBaseSleevesFields();
       break;
-    case 'BaseSportSuit':
+    case 'BaseSportSuits':
       response = await BaseSportSuitsService.GetBaseSportSuitFields();
       break;
     case 'BaseSweaters':
@@ -121,7 +121,7 @@ export const getRecordFields = async (currentTable) => {
     case 'CustomSleeves':
       response = await CustomSleevesService.GetCustomSleevesFields();
       break;
-    case 'CustomSportSuit':
+    case 'CustomSportSuits':
       response = await CustomSportSuitsService.GetCustomSportSuitFields();
       break;
     case 'CustomSweaters':
