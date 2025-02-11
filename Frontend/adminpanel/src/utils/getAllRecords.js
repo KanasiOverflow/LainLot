@@ -50,139 +50,139 @@ export const getAllRecords = async (currentTable, limit, page) => {
 
   switch (currentTable) {
     case 'About':
-      response = await AboutService.GetAbout(data);
+      response = await AboutService.GetAbout(limit, page);
       break;
     case 'AccessLevels':
-      response = await AccessLevelsService.GetAccessLevels(data);
+      response = await AccessLevelsService.GetAccessLevels(limit, page);
       break;
     case 'BaseBelts':
-      response = await BaseBeltsService.GetBaseBelts(data);
+      response = await BaseBeltsService.GetBaseBelts(limit, page);
       break;
     case 'BaseNecklines':
-      response = await BaseNecklinesService.GetBaseNecklines(data);
+      response = await BaseNecklinesService.GetBaseNecklines(limit, page);
       break;
     case 'BasePantsCuffs':
-      response = await BasePantsCuffsService.GetBasePantsCuffs(data);
+      response = await BasePantsCuffsService.GetBasePantsCuffs(limit, page);
       break;
     case 'BasePants':
-      response = await BasePantsService.GetBasePants(data);
+      response = await BasePantsService.GetBasePants(limit, page);
       break;
     case 'BaseSleeveCuffs':
-      response = await BaseSleeveCuffsService.GetBaseSleeveCuffs(data);
+      response = await BaseSleeveCuffsService.GetBaseSleeveCuffs(limit, page);
       break;
     case 'BaseSleeves':
-      response = await BaseSleevesService.GetBaseSleeves(data);
+      response = await BaseSleevesService.GetBaseSleeves(limit, page);
       break;
     case 'BaseSportSuit':
-      response = await BaseSportSuitService.GetBaseSportSuit(data);
+      response = await BaseSportSuitService.GetBaseSportSuit(limit, page);
       break;
     case 'BaseSweaters':
-      response = await BaseSweatersService.GetBaseSweaters(data);
+      response = await BaseSweatersService.GetBaseSweaters(limit, page);
       break;
     case 'Cart':
-      response = await CartService.GetCart(data);
+      response = await CartService.GetCart(limit, page);
       break;
     case 'Categories':
-      response = await CategoriesService.GetCategories(data);
+      response = await CategoriesService.GetCategories(limit, page);
       break;
     case 'CategoryHierarchy':
-      response = await CategoryHierarchyService.GetCategoryHierarchy(data);
+      response = await CategoryHierarchyService.GetCategoryHierarchy(limit, page);
       break;
     case 'Colors':
-      response = await ColorsService.GetColors(data);
+      response = await ColorsService.GetColors(limit, page);
       break;
     case 'Contacts':
-      response = await ContactsService.GetContacts(data);
+      response = await ContactsService.GetContacts(limit, page);
       break;
     case 'Countries':
-      response = await CountriesService.GetCountries(data);
+      response = await CountriesService.GetCountries(limit, page);
       break;
     case 'Currencies':
-      response = await CurrenciesService.GetCurrencies(data);
+      response = await CurrenciesService.GetCurrencies(limit, page);
       break;
     case 'CustomBelts':
-      response = await CustomBeltsService.GetCustomBelts(data);
+      response = await CustomBeltsService.GetCustomBelts(limit, page);
       break;
     case 'CustomizableProducts':
-      response = await CustomizableProductsService.GetCustomizableProducts(data);
+      response = await CustomizableProductsService.GetCustomizableProducts(limit, page);
       break;
     case 'CustomNecklines':
-      response = await CustomNecklinesService.GetCustomNecklines(data);
+      response = await CustomNecklinesService.GetCustomNecklines(limit, page);
       break;
     case 'CustomPantsCuffs':
-      response = await CustomPantsCuffsService.GetCustomPantsCuffs(data);
+      response = await CustomPantsCuffsService.GetCustomPantsCuffs(limit, page);
       break;
     case 'CustomPants':
-      response = await CustomPantsService.GetCustomPants(data);
+      response = await CustomPantsService.GetCustomPants(limit, page);
       break;
     case 'CustomSleeveCuffs':
-      response = await CustomSleeveCuffsService.GetCustomSleeveCuffs(data);
+      response = await CustomSleeveCuffsService.GetCustomSleeveCuffs(limit, page);
       break;
     case 'CustomSleeves':
-      response = await CustomSleevesService.GetCustomSleeves(data);
+      response = await CustomSleevesService.GetCustomSleeves(limit, page);
       break;
     case 'CustomSportSuit':
-      response = await CustomSportSuitService.GetCustomSportSuit(data);
+      response = await CustomSportSuitService.GetCustomSportSuit(limit, page);
       break;
     case 'CustomSweaters':
-      response = await CustomSweatersService.GetCustomSweaters(data);
+      response = await CustomSweatersService.GetCustomSweaters(limit, page);
       break;
     case 'FabricTypes':
-      response = await FabricTypesService.GetFabricTypes(data);
+      response = await FabricTypesService.GetFabricTypes(limit, page);
       break;
     case 'Languages':
-      response = await LanguagesService.GetLanguages(data);
+      response = await LanguagesService.GetLanguages(limit, page);
       break;
     case 'Orders':
-      response = await OrdersService.GetOrders(data);
+      response = await OrdersService.GetOrders(limit, page);
       break;
     case 'OrderHistory':
-      response = await OrderHistoryService.GetOrderHistory(data);
+      response = await OrderHistoryService.GetOrderHistory(limit, page);
       break;
     case 'OrderStatuses':
-      response = await OrderStatusesService.GetOrderStatuses(data);
+      response = await OrderStatusesService.GetOrderStatuses(limit, page);
       break;
     case 'PaymentMethods':
-      response = await PaymentMethodsService.GetPaymentMethods(data);
+      response = await PaymentMethodsService.GetPaymentMethods(limit, page);
       break;
     case 'Payments':
-      response = await PaymentsService.GetPayments(data);
+      response = await PaymentsService.GetPayments(limit, page);
       break;
     case 'PaymentStatuses':
-      response = await PaymentStatusesService.GetPaymentStatuses(data);
+      response = await PaymentStatusesService.GetPaymentStatuses(limit, page);
       break;
     case 'ProductImages':
-      response = await ProductImagesService.GetProductImages(data);
+      response = await ProductImagesService.GetProductImages(limit, page);
       break;
     case 'ProductOrders':
-      response = await ProductOrdersService.GetProductOrders(data);
+      response = await ProductOrdersService.GetProductOrders(limit, page);
       break;
     case 'Products':
-      response = await ProductsService.GetProducts(data);
+      response = await ProductsService.GetProducts(limit, page);
       break;
     case 'ProductTranslations':
-      response = await ProductTranslationsService.GetProductTranslations(data);
+      response = await ProductTranslationsService.GetProductTranslations(limit, page);
       break;
     case 'Reviews':
-      response = await ReviewsService.GetReviews(data);
+      response = await ReviewsService.GetReviews(limit, page);
       break;
     case 'ShippingAddresses':
-      response = await ShippingAddressesService.GetShippingAddresses(data);
+      response = await ShippingAddressesService.GetShippingAddresses(limit, page);
       break;
     case 'SizeOptions':
-      response = await SizeOptionsService.GetSizeOptions(data);
+      response = await SizeOptionsService.GetSizeOptions(limit, page);
       break;
     case 'UserOrderHistory':
-      response = await UserOrderHistoryService.GetUserOrderHistory(data);
+      response = await UserOrderHistoryService.GetUserOrderHistory(limit, page);
       break;
     case 'UserProfiles':
-      response = await UserProfilesService.GetUserProfiles(data);
+      response = await UserProfilesService.GetUserProfiles(limit, page);
       break;
     case 'UserRoles':
-      response = await UserRolesService.GetUserRoles(data);
+      response = await UserRolesService.GetUserRoles(limit, page);
       break;
     case 'Users':
-      response = await UsersService.GetUsers(data);
+      response = await UsersService.GetUsers(limit, page);
       break;
     default:
       break;
