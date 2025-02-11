@@ -927,26 +927,26 @@ namespace RestAPI.Controllers
 
         #endregion
 
-        #region BaseSportSuit table
+        #region BaseSportSuits table
 
-        [HttpGet("GetBaseSportSuitCount")]
+        [HttpGet("GetBaseSportSuitsCount")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public int GetBaseSportSuitCount()
+        public int GetBaseSportSuitsCount()
         {
             return _baseSportSuitRepository.GetAll().Count();
         }
 
-        [HttpGet("GetBaseSportSuitFields")]
+        [HttpGet("GetBaseSportSuitsFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IEnumerable<string> GetBaseSportSuitFields()
+        public IEnumerable<string> GetBaseSportSuitsFields()
         {
             return new DB.BaseSportSuit().GetType().GetProperties().Select(x => x.Name);
         }
 
-        [HttpGet("GetBaseSportSuit")]
+        [HttpGet("GetBaseSportSuits")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<BaseSportSuit>> GetBaseSportSuit(int limit, int page)
+        public ActionResult<IEnumerable<BaseSportSuit>> GetBaseSportSuits(int limit, int page)
         {
             var dbList = _baseSportSuitRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.BaseSportSuit>, List<BaseSportSuit>>(dbList);
@@ -954,10 +954,10 @@ namespace RestAPI.Controllers
             return apiList == null ? NotFound() : apiList;
         }
 
-        [HttpGet("GetBaseSportSuitById")]
+        [HttpGet("GetBaseSportSuitsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<BaseSportSuit?>> GetBaseSportSuitById(int id)
+        public async Task<ActionResult<BaseSportSuit?>> GetBaseSportSuitsById(int id)
         {
             var dbEntity = await _baseSportSuitRepository.GetById(id);
             if (dbEntity == null)
@@ -968,11 +968,11 @@ namespace RestAPI.Controllers
             return _mapper.Map<DB.BaseSportSuit, BaseSportSuit>(dbEntity);
         }
 
-        [HttpPost("CreateBaseSportSuit")]
+        [HttpPost("CreateBaseSportSuits")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSportSuit>> CreateBaseSportSuit(BaseSportSuit entity)
+        public async Task<ActionResult<BaseSportSuit>> CreateBaseSportSuits(BaseSportSuit entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -980,7 +980,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _baseSportSuitRepository.Add(_mapper.Map<BaseSportSuit, DB.BaseSportSuit>(entity));
-                return CreatedAtAction(nameof(GetBaseSportSuitById), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetBaseSportSuitsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -989,11 +989,11 @@ namespace RestAPI.Controllers
             }
         }
 
-        [HttpPut("UpdateBaseSportSuit")]
+        [HttpPut("UpdateBaseSportSuits")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSportSuit>> UpdateBaseSportSuit(BaseSportSuit entity)
+        public async Task<ActionResult<BaseSportSuit>> UpdateBaseSportSuits(BaseSportSuit entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1001,7 +1001,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _baseSportSuitRepository.Update(_mapper.Map<BaseSportSuit, DB.BaseSportSuit>(entity));
-                return CreatedAtAction(nameof(GetBaseSportSuitById), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetBaseSportSuitsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1010,10 +1010,10 @@ namespace RestAPI.Controllers
             }
         }
 
-        [HttpDelete("DeleteBaseSportSuit")]
+        [HttpDelete("DeleteBaseSportSuits")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> DeleteBaseSportSuit(int id)
+        public async Task<ActionResult> DeleteBaseSportSuits(int id)
         {
             var entity = await _baseSportSuitRepository.GetById(id);
 
@@ -2487,7 +2487,7 @@ namespace RestAPI.Controllers
 
         #endregion
 
-        #region CustomSportSuit table
+        #region CustomSportSuits table
 
         [HttpGet("GetCustomSportSuitsCount")]
         [ProducesResponseType(StatusCodes.Status200OK)]
