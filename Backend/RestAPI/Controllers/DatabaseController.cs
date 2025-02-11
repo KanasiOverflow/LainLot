@@ -2489,16 +2489,16 @@ namespace RestAPI.Controllers
 
         #region CustomSportSuit table
 
-        [HttpGet("GetCustomSportSuitCount")]
+        [HttpGet("GetCustomSportSuitsCount")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public int GetCustomSportSuitCount()
+        public int GetCustomSportSuitsCount()
         {
             return _customSportSuitRepository.GetAll().Count();
         }
 
-        [HttpGet("GetCustomSportSuitFields")]
+        [HttpGet("GetCustomSportSuitsFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IEnumerable<string> GetCustomSportSuitFields()
+        public IEnumerable<string> GetCustomSportSuitsFields()
         {
             return typeof(DB.CustomSportSuit).GetProperties().Select(prop => prop.Name);
         }
@@ -2514,10 +2514,10 @@ namespace RestAPI.Controllers
             return apiList == null ? NotFound() : apiList;
         }
 
-        [HttpGet("GetCustomSportSuitById")]
+        [HttpGet("GetCustomSportSuitsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CustomSportSuit?>> GetCustomSportSuitById(int id)
+        public async Task<ActionResult<CustomSportSuit?>> GetCustomSportSuitsById(int id)
         {
             var dbEntity = await _customSportSuitRepository.GetById(id);
             if (dbEntity == null)
@@ -2528,10 +2528,10 @@ namespace RestAPI.Controllers
             return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomSportSuit, CustomSportSuit>(dbEntity);
         }
 
-        [HttpPost("CreateCustomSportSuit")]
+        [HttpPost("CreateCustomSportSuits")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<CustomSportSuit>> CreateCustomSportSuit(CustomSportSuit customSportSuit)
+        public async Task<ActionResult<CustomSportSuit>> CreateCustomSportSuits(CustomSportSuit customSportSuit)
         {
             if (customSportSuit == null)
                 return BadRequest();
@@ -2540,7 +2540,7 @@ namespace RestAPI.Controllers
             {
                 var mappedEntity = _mapper.Map<CustomSportSuit, DB.CustomSportSuit>(customSportSuit);
                 await _customSportSuitRepository.Add(mappedEntity);
-                return CreatedAtAction(nameof(GetCustomSportSuitById), new { id = mappedEntity.Id }, customSportSuit);
+                return CreatedAtAction(nameof(GetCustomSportSuitsById), new { id = mappedEntity.Id }, customSportSuit);
             }
             catch (Exception exc)
             {
@@ -2549,10 +2549,10 @@ namespace RestAPI.Controllers
             }
         }
 
-        [HttpPut("UpdateCustomSportSuit")]
+        [HttpPut("UpdateCustomSportSuits")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<CustomSportSuit>> UpdateCustomSportSuit(CustomSportSuit customSportSuit)
+        public async Task<ActionResult<CustomSportSuit>> UpdateCustomSportSuits(CustomSportSuit customSportSuit)
         {
             if (customSportSuit == null)
                 return BadRequest();
@@ -2570,10 +2570,10 @@ namespace RestAPI.Controllers
             }
         }
 
-        [HttpDelete("DeleteCustomSportSuit")]
+        [HttpDelete("DeleteCustomSportSuits")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> DeleteCustomSportSuit(int id)
+        public async Task<ActionResult> DeleteCustomSportSuits(int id)
         {
             var entity = await _customSportSuitRepository.GetById(id);
             if (entity == null)
