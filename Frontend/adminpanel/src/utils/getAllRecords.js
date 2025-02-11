@@ -74,7 +74,7 @@ export const getAllRecords = async (currentTable, limit, page) => {
       response = await BaseSleevesService.GetBaseSleeves(limit, page);
       break;
     case 'BaseSportSuits':
-      response = await BaseSportSuitsService.GetBaseSportSuit(limit, page);
+      response = await BaseSportSuitsService.GetBaseSportSuits(limit, page);
       break;
     case 'BaseSweaters':
       response = await BaseSweatersService.GetBaseSweaters(limit, page);

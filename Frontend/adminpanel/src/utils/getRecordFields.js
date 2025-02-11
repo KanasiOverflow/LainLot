@@ -74,7 +74,7 @@ export const getRecordFields = async (currentTable) => {
       response = await BaseSleevesService.GetBaseSleevesFields();
       break;
     case 'BaseSportSuits':
-      response = await BaseSportSuitsService.GetBaseSportSuitFields();
+      response = await BaseSportSuitsService.GetBaseSportSuitsFields();
       break;
     case 'BaseSweaters':
       response = await BaseSweatersService.GetBaseSweatersFields();

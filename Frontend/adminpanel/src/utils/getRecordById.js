@@ -74,7 +74,7 @@ export const getRecordById = async (currentTable, id) => {
             response = await BaseSleevesService.GetBaseSleevesById(id);
             break;
         case 'BaseSportSuits':
-            response = await BaseSportSuitsService.GetBaseSportSuitById(id);
+            response = await BaseSportSuitsService.GetBaseSportSuitsById(id);
             break;
         case 'BaseSweaters':
             response = await BaseSweatersService.GetBaseSweatersById(id);

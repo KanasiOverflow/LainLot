@@ -74,7 +74,7 @@ export const removeRecordById = async (currentTable, id) => {
             response = await BaseSleevesService.DeleteBaseSleeves(id);
             break;
         case 'BaseSportSuits':
-            response = await BaseSportSuitsService.DeleteBaseSportSuit(id);
+            response = await BaseSportSuitsService.DeleteBaseSportSuits(id);
             break;
         case 'BaseSweaters':
             response = await BaseSweatersService.DeleteBaseSweaters(id);

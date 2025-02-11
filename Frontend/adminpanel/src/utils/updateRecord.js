@@ -74,7 +74,7 @@ export const updateRecord = async (currentTable, data) => {
             response = await BaseSleevesService.UpdateBaseSleeves(data);
             break;
         case 'BaseSportSuits':
-            response = await BaseSportSuitsService.UpdateBaseSportSuit(data);
+            response = await BaseSportSuitsService.UpdateBaseSportSuits(data);
             break;
         case 'BaseSweaters':
             response = await BaseSweatersService.UpdateBaseSweaters(data);
