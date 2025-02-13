@@ -334,7 +334,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseBeltsFields()
         {
-            return new DB.BaseBelt().GetType().GetProperties().Select(x => x.Name);
+            return new BaseBelt().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseBelts")]
@@ -435,7 +435,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseNecklinesFields()
         {
-            return new DB.BaseNeckline().GetType().GetProperties().Select(x => x.Name);
+            return new BaseNeckline().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseNecklines")]
@@ -536,7 +536,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBasePantsFields()
         {
-            return new DB.BasePant().GetType().GetProperties().Select(x => x.Name);
+            return new BasePant().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBasePants")]
@@ -637,7 +637,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBasePantsCuffsFields()
         {
-            return new DB.BasePantsCuff().GetType().GetProperties().Select(x => x.Name);
+            return new BasePantsCuff().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBasePantsCuffs")]
@@ -738,7 +738,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseSleevesFields()
         {
-            return new DB.BaseSleeve().GetType().GetProperties().Select(x => x.Name);
+            return new BaseSleeve().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseSleeves")]
@@ -839,7 +839,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseSleeveCuffsFields()
         {
-            return new DB.BaseSleeveCuff().GetType().GetProperties().Select(x => x.Name);
+            return new BaseSleeveCuff().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseSleeveCuffs")]
@@ -940,7 +940,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseSportSuitsFields()
         {
-            return new DB.BaseSportSuit().GetType().GetProperties().Select(x => x.Name);
+            return new BaseSportSuit().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseSportSuits")]
@@ -1041,7 +1041,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseSweatersFields()
         {
-            return new DB.BaseSweater().GetType().GetProperties().Select(x => x.Name);
+            return new BaseSweater().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseSweaters")]
@@ -1657,7 +1657,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCountriesFields()
         {
-            return new DB.Country().GetType().GetProperties().Select(x => x.Name);
+            return new Country().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetCountries")]
@@ -1758,7 +1758,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCurrenciesFields()
         {
-            return new DB.Currency().GetType().GetProperties().Select(x => x.Name);
+            return new Currency().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetCurrencies")]
@@ -1859,7 +1859,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCustomBeltsFields()
         {
-            return new DB.CustomBelt().GetType().GetProperties().Select(x => x.Name);
+            return new CustomBelt().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetCustomBelts")]

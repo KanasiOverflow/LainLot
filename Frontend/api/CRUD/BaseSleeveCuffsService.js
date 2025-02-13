@@ -33,6 +33,7 @@ export default class BaseSleeveCuffsService {
                 password: secureLocalStorage.getItem('password')
             }
         };
+        
         const response = await axios(options);
         if (response.status === get200().Code && response.statusText === get200().Message) {
             return response;

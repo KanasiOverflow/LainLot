@@ -62,7 +62,7 @@ function Records() {
 
       {(isRecordLoading === false && currentTable) &&
         <GeneralButton onClick={openCreateModal}>
-          Create {currentTable}
+          Create {currentTable} record
         </GeneralButton>
       }
 

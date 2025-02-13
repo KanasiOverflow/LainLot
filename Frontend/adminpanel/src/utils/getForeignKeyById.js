@@ -44,91 +44,91 @@ export const getForeignKeyById = async (foreignFieldKey, id) => {
         case 'fkUserRoles':
             response = await ForeignKeysService.GetFkUserRoles(id);
             break;
-        case 'fkOrderStatusData':
+        case 'fkOrderStatus':
             response = await ForeignKeysService.GetFkOrderStatusData(id);
             break;
-        case 'fkColorsData':
+        case 'fkColors':
             response = await ForeignKeysService.GetFkColorsData(id);
             break;
-        case 'fkCurrenciesData':
+        case 'fkCurrencies':
             response = await ForeignKeysService.GetFkCurrenciesData(id);
             break;
-        case 'fkSizeOptionsData':
+        case 'fkSizeOptions':
             response = await ForeignKeysService.GetFkSizeOptionsData(id);
             break;
-        case 'fkBaseNecklinesData':
+        case 'fkBaseNecklines':
             response = await ForeignKeysService.GetFkBaseNecklinesData(id);
             break;
-        case 'fkBaseSweatersData':
+        case 'fkBaseSweaters':
             response = await ForeignKeysService.GetFkBaseSweatersData(id);
             break;
-        case 'fkBaseSleevesData':
+        case 'fkBaseSleeves':
             response = await ForeignKeysService.GetFkBaseSleevesData(id);
             break;
-        case 'fkBaseSleeveCuffsLeftData':
+        case 'fkBaseSleeveCuffsLeft':
             response = await ForeignKeysService.GetFkBaseSleeveCuffsLeftData(id);
             break;
-        case 'fkBaseSleeveCuffsRightData':
+        case 'fkBaseSleeveCuffsRight':
             response = await ForeignKeysService.GetFkBaseSleeveCuffsRightData(id);
             break;
-        case 'fkBaseBeltsData':
+        case 'fkBaseBelts':
             response = await ForeignKeysService.GetFkBaseBeltsData(id);
             break;
-        case 'fkBasePantsData':
+        case 'fkBasePants':
             response = await ForeignKeysService.GetFkBasePantsData(id);
             break;
-        case 'fkBasePantsCuffsLeftData':
+        case 'fkBasePantsCuffsLeft':
             response = await ForeignKeysService.GetFkBasePantsCuffsLeftData(id);
             break;
-        case 'fkBasePantsCuffsRightData':
+        case 'fkBasePantsCuffsRight':
             response = await ForeignKeysService.GetFkBasePantsCuffsRightData(id);
             break;
-        case 'fkCustomNecklinesData':
+        case 'fkCustomNecklines':
             response = await ForeignKeysService.GetFkCustomNecklinesData(id);
             break;
-        case 'fkCustomSweatersData':
+        case 'fkCustomSweaters':
             response = await ForeignKeysService.GetFkCustomSweatersData(id);
             break;
-        case 'fkCustomSleevesData':
+        case 'fkCustomSleeves':
             response = await ForeignKeysService.GetFkCustomSleevesData(id);
             break;
-        case 'fkCustomSleeveCuffsLeftData':
+        case 'fkCustomSleeveCuffsLeft':
             response = await ForeignKeysService.GetFkCustomSleeveCuffsLeftData(id);
             break;
-        case 'fkCustomSleeveCuffsRightData':
+        case 'fkCustomSleeveCuffsRight':
             response = await ForeignKeysService.GetFkCustomSleeveCuffsRightData(id);
             break;
-        case 'fkCustomBeltsData':
+        case 'fkCustomBelts':
             response = await ForeignKeysService.GetFkCustomBeltsData(id);
             break;
-        case 'fkCustomPantsData':
+        case 'fkCustomPants':
             response = await ForeignKeysService.GetFkCustomPantsData(id);
             break;
-        case 'fkCustomPantsCuffsLeftData':
+        case 'fkCustomPantsCuffsLeft':
             response = await ForeignKeysService.GetFkCustomPantsCuffsLeftData(id);
             break;
-        case 'fkCustomPantsCuffsRightData':
+        case 'fkCustomPantsCuffsRight':
             response = await ForeignKeysService.GetFkCustomPantsCuffsRightData(id);
             break;
-        case 'fkCustomSportSuitsData':
+        case 'fkCustomSportSuits':
             response = await ForeignKeysService.GetFkCustomSportSuitsData(id);
             break;
-        case 'fkCustomizableProductsData':
+        case 'fkCustomizableProducts':
             response = await ForeignKeysService.GetFkCustomizableProductsData(id);
             break;
-        case 'fkProductOrdersData':
+        case 'fkProductOrders':
             response = await ForeignKeysService.GetFkProductOrdersData(id);
             break;
-        case 'fkCountriesData':
+        case 'fkCountries':
             response = await ForeignKeysService.GetFkCountriesData(id);
             break;
-        case 'fkPaymentMethodsData':
+        case 'fkPaymentMethods':
             response = await ForeignKeysService.GetFkPaymentMethodsData(id);
             break;
-        case 'fkPaymentStatusesData':
+        case 'fkPaymentStatuses':
             response = await ForeignKeysService.GetFkPaymentStatusesData(id);
             break;
-        case 'fkShippingAddressesData':
+        case 'fkShippingAddresses':
             response = await ForeignKeysService.GetFkShippingAddressesData(id);
             break;
         default:
