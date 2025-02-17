@@ -6,7 +6,7 @@ namespace DatabaseProvider.Models;
 public partial class LainLotContext : DbContext
 {
     /// <summary>
-    /// Scaffold-DbContext "Host=127.0.0.1:5433;Database=LainLot;Username=postgres;Password=123456789" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models -Context LainLotContext -Project DatabaseProvider -f
+    /// Scaffold-DbContext "Host=127.0.0.1:5432;Database=LainLot;Username=postgres;Password=123456789" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models -Context LainLotContext -Project DatabaseProvider -f
     /// Add-Migration InitialCreate -Project DatabaseProvider
     /// Update-Database -Project DatabaseProvider
     /// </summary>
