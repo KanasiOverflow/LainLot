@@ -77,6 +77,9 @@ export const getForeignKeyById = async (foreignFieldKey, id) => {
         case 'fkBasePants':
             response = await ForeignKeysService.GetFkBasePantsData(id);
             break;
+        case 'fkBasePantsCuffs':
+            response = await ForeignKeysService.GetFkBasePantsCuffsData(id);
+            break;
         case 'fkBasePantsCuffsLeft':
             response = await ForeignKeysService.GetFkBasePantsCuffsLeftData(id);
             break;

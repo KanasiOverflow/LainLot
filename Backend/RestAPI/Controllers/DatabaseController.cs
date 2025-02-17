@@ -11,7 +11,7 @@ namespace RestAPI.Controllers
     [ApiController]
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class DatabaseController( 
+    public class DatabaseController(
         ILogger<DatabaseController> logger,
         IRepository<DB.About> aboutRepository,
         IRepository<DB.AccessLevel> accessLevelRepository,
@@ -1960,7 +1960,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCustomNecklinesFields()
         {
-            return typeof(DB.CustomNeckline).GetProperties().Select(prop => prop.Name);
+            return typeof(CustomNeckline).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetCustomNecklines")]
@@ -2068,7 +2068,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCustomPantsFields()
         {
-            return typeof(DB.CustomPant).GetProperties().Select(prop => prop.Name);
+            return typeof(CustomPant).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetCustomPants")]
@@ -2176,7 +2176,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCustomPantsCuffsFields()
         {
-            return typeof(DB.CustomPantsCuff).GetProperties().Select(prop => prop.Name);
+            return typeof(CustomPantsCuff).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetCustomPantsCuffs")]
@@ -2284,7 +2284,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCustomSleevesFields()
         {
-            return typeof(DB.CustomSleeve).GetProperties().Select(prop => prop.Name);
+            return typeof(CustomSleeve).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetCustomSleeves")]
@@ -2392,7 +2392,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCustomSleeveCuffsFields()
         {
-            return typeof(DB.CustomSleeveCuff).GetProperties().Select(prop => prop.Name);
+            return typeof(CustomSleeveCuff).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetCustomSleeveCuffs")]
@@ -2500,7 +2500,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCustomSportSuitsFields()
         {
-            return typeof(DB.CustomSportSuit).GetProperties().Select(prop => prop.Name);
+            return typeof(CustomSportSuit).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetCustomSportSuits")]
@@ -2608,7 +2608,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCustomSweatersFields()
         {
-            return typeof(DB.CustomSweater).GetProperties().Select(prop => prop.Name);
+            return typeof(CustomSweater).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetCustomSweaters")]
@@ -3437,7 +3437,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetPaymentMethodsFields()
         {
-            return typeof(DB.PaymentMethod).GetProperties().Select(prop => prop.Name);
+            return typeof(PaymentMethod).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetPaymentMethods")]
@@ -3545,7 +3545,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetPaymentStatusesFields()
         {
-            return typeof(DB.PaymentStatus).GetProperties().Select(prop => prop.Name);
+            return typeof(PaymentStatus).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetPaymentStatuses")]
@@ -4168,7 +4168,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetShippingAddressFields()
         {
-            return typeof(DB.ShippingAddress).GetProperties().Select(prop => prop.Name);
+            return typeof(ShippingAddress).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetShippingAddresses")]
@@ -4276,7 +4276,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetSizeOptionsFields()
         {
-            return typeof(DB.SizeOption).GetProperties().Select(prop => prop.Name);
+            return typeof(SizeOption).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetSizeOptions")]
@@ -4487,7 +4487,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetUserOrderHistoryFields()
         {
-            return typeof(DB.UserOrderHistory).GetProperties().Select(prop => prop.Name);
+            return typeof(UserOrderHistory).GetProperties().Select(prop => prop.Name);
         }
 
         [HttpGet("GetUserOrderHistory")]
@@ -5295,6 +5295,25 @@ namespace RestAPI.Controllers
                 return dbEntity == null
                     ? string.Empty
                     : $"Id: {dbEntity?.Id} | CustomSettings: {dbEntity?.CustomSettings}";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching data: {ex.Message}");
+                throw;
+            }
+        }
+
+        [HttpGet("GetFkBasePantsCuffsData")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<string?> GetFkBasePantsCuffsData(int id)
+        {
+            try
+            {
+                var dbEntity = await _basePantsCuffRepository.GetById(id);
+                return dbEntity == null
+                    ? string.Empty
+                    : $"Id: {dbEntity?.Id} | Settings: {dbEntity?.Settings}";
             }
             catch (Exception ex)
             {

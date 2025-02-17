@@ -122,7 +122,7 @@ export const updateRecord = async (currentTable, data) => {
             response = await CustomSleevesService.UpdateCustomSleeves(data);
             break;
         case 'CustomSportSuits':
-            response = await CustomSportSuitsService.UpdateCustomSportSuit(data);
+            response = await CustomSportSuitsService.UpdateCustomSportSuits(data);
             break;
         case 'CustomSweaters':
             response = await CustomSweatersService.UpdateCustomSweaters(data);

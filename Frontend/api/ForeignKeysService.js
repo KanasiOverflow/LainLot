@@ -437,6 +437,24 @@ export default class ForeignKeysService {
         return null;
     };
 
+    static async GetFkBasePantsCuffsData(id) {
+
+        const options = {
+            method: 'get',
+            url: `${getRestAPIUrl()}/Database/GetFkBasePantsCuffsData`,
+            params: { id: id },
+            auth: {
+                username: secureLocalStorage.getItem('login'),
+                password: secureLocalStorage.getItem('password')
+            }
+        };
+        const response = await axios(options);
+        if (response.status === get200().Code && response.statusText === get200().Message) {
+            return response;
+        }
+        return null;
+    };
+
     static async GetFkBasePantsCuffsLeftData(id) {
 
         const options = {

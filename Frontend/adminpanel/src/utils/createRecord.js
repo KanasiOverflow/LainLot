@@ -122,7 +122,7 @@ export const createRecord = async (currentTable, data) => {
             response = await CustomSleevesService.CreateCustomSleeves(data);
             break;
         case 'CustomSportSuits':
-            response = await CustomSportSuitsService.CreateCustomSportSuit(data);
+            response = await CustomSportSuitsService.CreateCustomSportSuits(data);
             break;
         case 'CustomSweaters':
             response = await CustomSweatersService.CreateCustomSweaters(data);

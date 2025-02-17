@@ -18,15 +18,16 @@ export const getDBTablesList = () => {
         "Countries",
         "Currencies",        
         "CustomBelts",
-        "CustomizableProducts",
         "CustomNecklines",
         "CustomPantsCuffs",
         "CustomPants",
-        "CustomSleeveCufs",
+        "CustomSleeveCuffs",
         "CustomSleeves",
         "CustomSweaters",
-        "CustomSportSuits",       
+        "CustomSportSuits",    
         "FabricTypes",
+        "SizeOptions",
+        "CustomizableProducts",
         "Languages",
         "Orders",
         "OrderHistory",
@@ -40,10 +41,9 @@ export const getDBTablesList = () => {
         "ProductTranslations",
         "Reviews",
         "ShippingAddresses",
-        "SiseOptions",
+        "Users",
         "UserOrderHistory",
         "UserProfiles",
-        "UserRoles",
-        "Users"
+        "UserRoles"        
     ]
 };

@@ -122,7 +122,7 @@ export const getRecordFields = async (currentTable) => {
       response = await CustomSleevesService.GetCustomSleevesFields();
       break;
     case 'CustomSportSuits':
-      response = await CustomSportSuitsService.GetCustomSportSuitFields();
+      response = await CustomSportSuitsService.GetCustomSportSuitsFields();
       break;
     case 'CustomSweaters':
       response = await CustomSweatersService.GetCustomSweatersFields();

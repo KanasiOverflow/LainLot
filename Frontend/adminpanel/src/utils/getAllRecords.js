@@ -122,7 +122,7 @@ export const getAllRecords = async (currentTable, limit, page) => {
       response = await CustomSleevesService.GetCustomSleeves(limit, page);
       break;
     case 'CustomSportSuits':
-      response = await CustomSportSuitsService.GetCustomSportSuit(limit, page);
+      response = await CustomSportSuitsService.GetCustomSportSuits(limit, page);
       break;
     case 'CustomSweaters':
       response = await CustomSweatersService.GetCustomSweaters(limit, page);

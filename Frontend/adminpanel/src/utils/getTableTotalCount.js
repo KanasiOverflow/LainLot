@@ -122,7 +122,7 @@ export const getTableTotalCount = async (currentTable) => {
       response = await CustomSleevesService.GetCustomSleevesCount();
       break;
     case 'CustomSportSuits':
-      response = await CustomSportSuitsService.GetCustomSportSuitCount();
+      response = await CustomSportSuitsService.GetCustomSportSuitsCount();
       break;
     case 'CustomSweaters':
       response = await CustomSweatersService.GetCustomSweatersCount();

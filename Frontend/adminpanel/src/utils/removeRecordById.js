@@ -122,7 +122,7 @@ export const removeRecordById = async (currentTable, id) => {
             response = await CustomSleevesService.DeleteCustomSleeves(id);
             break;
         case 'CustomSportSuits':
-            response = await CustomSportSuitsService.DeleteCustomSportSuit(id);
+            response = await CustomSportSuitsService.DeleteCustomSportSuits(id);
             break;
         case 'CustomSweaters':
             response = await CustomSweatersService.DeleteCustomSweaters(id);
