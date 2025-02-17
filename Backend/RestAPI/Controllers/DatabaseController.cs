@@ -11,7 +11,7 @@ namespace RestAPI.Controllers
     [ApiController]
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class DatabaseController(
+    public class DatabaseController( 
         ILogger<DatabaseController> logger,
         IRepository<DB.About> aboutRepository,
         IRepository<DB.AccessLevel> accessLevelRepository,
