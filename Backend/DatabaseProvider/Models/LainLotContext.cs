@@ -6,7 +6,7 @@ namespace DatabaseProvider.Models;
 public partial class LainLotContext : DbContext
 {
     /// <summary>
-    /// Scaffold-DbContext "Host=127.0.0.1:5433;Database=LainLot;Username=postgres;Password=123456789" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models -Context LainLotContext -Project DatabaseProvider -f
+    /// Scaffold-DbContext "Host=127.0.0.1:5432;Database=LainLot;Username=postgres;Password=123456789" Npgsql.EntityFrameworkCore.PostgreSQL -OutputDir Models -Context LainLotContext -Project DatabaseProvider -f
     /// Add-Migration InitialCreate -Project DatabaseProvider
     /// Update-Database -Project DatabaseProvider
     /// </summary>
@@ -181,54 +181,54 @@ public partial class LainLotContext : DbContext
 
         modelBuilder.Entity<BaseSportSuit>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("BaseSportSuit_pkey");
+            entity.HasKey(e => e.Id).HasName("BaseSportSuits_pkey");
 
-            entity.ToTable("BaseSportSuit");
+            entity.ToTable("BaseSportSuits");
 
             entity.HasOne(d => d.FkBaseBeltsNavigation).WithMany(p => p.BaseSportSuits)
                 .HasForeignKey(d => d.FkBaseBelts)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("BaseSportSuit_FkBaseBelts_fkey");
+                .HasConstraintName("BaseSportSuits_FkBaseBelts_fkey");
 
             entity.HasOne(d => d.FkBaseNecklinesNavigation).WithMany(p => p.BaseSportSuits)
                 .HasForeignKey(d => d.FkBaseNecklines)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("BaseSportSuit_FkBaseNecklines_fkey");
+                .HasConstraintName("BaseSportSuits_FkBaseNecklines_fkey");
 
             entity.HasOne(d => d.FkBasePantsNavigation).WithMany(p => p.BaseSportSuits)
                 .HasForeignKey(d => d.FkBasePants)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("BaseSportSuit_FkBasePants_fkey");
+                .HasConstraintName("BaseSportSuits_FkBasePants_fkey");
 
             entity.HasOne(d => d.FkBasePantsCuffsLeftNavigation).WithMany(p => p.BaseSportSuitFkBasePantsCuffsLeftNavigations)
                 .HasForeignKey(d => d.FkBasePantsCuffsLeft)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("BaseSportSuit_FkBasePantsCuffsLeft_fkey");
+                .HasConstraintName("BaseSportSuits_FkBasePantsCuffsLeft_fkey");
 
             entity.HasOne(d => d.FkBasePantsCuffsRightNavigation).WithMany(p => p.BaseSportSuitFkBasePantsCuffsRightNavigations)
                 .HasForeignKey(d => d.FkBasePantsCuffsRight)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("BaseSportSuit_FkBasePantsCuffsRight_fkey");
+                .HasConstraintName("BaseSportSuits_FkBasePantsCuffsRight_fkey");
 
             entity.HasOne(d => d.FkBaseSleeveCuffsLeftNavigation).WithMany(p => p.BaseSportSuitFkBaseSleeveCuffsLeftNavigations)
                 .HasForeignKey(d => d.FkBaseSleeveCuffsLeft)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("BaseSportSuit_FkBaseSleeveCuffsLeft_fkey");
+                .HasConstraintName("BaseSportSuits_FkBaseSleeveCuffsLeft_fkey");
 
             entity.HasOne(d => d.FkBaseSleeveCuffsRightNavigation).WithMany(p => p.BaseSportSuitFkBaseSleeveCuffsRightNavigations)
                 .HasForeignKey(d => d.FkBaseSleeveCuffsRight)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("BaseSportSuit_FkBaseSleeveCuffsRight_fkey");
+                .HasConstraintName("BaseSportSuits_FkBaseSleeveCuffsRight_fkey");
 
             entity.HasOne(d => d.FkBaseSleevesNavigation).WithMany(p => p.BaseSportSuits)
                 .HasForeignKey(d => d.FkBaseSleeves)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("BaseSportSuit_FkBaseSleeves_fkey");
+                .HasConstraintName("BaseSportSuits_FkBaseSleeves_fkey");
 
             entity.HasOne(d => d.FkBaseSweatersNavigation).WithMany(p => p.BaseSportSuits)
                 .HasForeignKey(d => d.FkBaseSweaters)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("BaseSportSuit_FkBaseSweaters_fkey");
+                .HasConstraintName("BaseSportSuits_FkBaseSweaters_fkey");
         });
 
         modelBuilder.Entity<BaseSweater>(entity =>

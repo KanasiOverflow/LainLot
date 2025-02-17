@@ -11,7 +11,7 @@ namespace RestAPI.Controllers
     [ApiController]
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class DatabaseController(
+    public class DatabaseController( 
         ILogger<DatabaseController> logger,
         IRepository<DB.About> aboutRepository,
         IRepository<DB.AccessLevel> accessLevelRepository,
@@ -334,7 +334,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseBeltsFields()
         {
-            return new DB.BaseBelt().GetType().GetProperties().Select(x => x.Name);
+            return new BaseBelt().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseBelts")]
@@ -435,7 +435,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseNecklinesFields()
         {
-            return new DB.BaseNeckline().GetType().GetProperties().Select(x => x.Name);
+            return new BaseNeckline().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseNecklines")]
@@ -536,7 +536,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBasePantsFields()
         {
-            return new DB.BasePant().GetType().GetProperties().Select(x => x.Name);
+            return new BasePant().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBasePants")]
@@ -637,7 +637,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBasePantsCuffsFields()
         {
-            return new DB.BasePantsCuff().GetType().GetProperties().Select(x => x.Name);
+            return new BasePantsCuff().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBasePantsCuffs")]
@@ -738,7 +738,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseSleevesFields()
         {
-            return new DB.BaseSleeve().GetType().GetProperties().Select(x => x.Name);
+            return new BaseSleeve().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseSleeves")]
@@ -839,7 +839,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseSleeveCuffsFields()
         {
-            return new DB.BaseSleeveCuff().GetType().GetProperties().Select(x => x.Name);
+            return new BaseSleeveCuff().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseSleeveCuffs")]
@@ -927,26 +927,26 @@ namespace RestAPI.Controllers
 
         #endregion
 
-        #region BaseSportSuit table
+        #region BaseSportSuits table
 
-        [HttpGet("GetBaseSportSuitCount")]
+        [HttpGet("GetBaseSportSuitsCount")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public int GetBaseSportSuitCount()
+        public int GetBaseSportSuitsCount()
         {
             return _baseSportSuitRepository.GetAll().Count();
         }
 
-        [HttpGet("GetBaseSportSuitFields")]
+        [HttpGet("GetBaseSportSuitsFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IEnumerable<string> GetBaseSportSuitFields()
+        public IEnumerable<string> GetBaseSportSuitsFields()
         {
-            return new DB.BaseSportSuit().GetType().GetProperties().Select(x => x.Name);
+            return new BaseSportSuit().GetType().GetProperties().Select(x => x.Name);
         }
 
-        [HttpGet("GetBaseSportSuit")]
+        [HttpGet("GetBaseSportSuits")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<BaseSportSuit>> GetBaseSportSuit(int limit, int page)
+        public ActionResult<IEnumerable<BaseSportSuit>> GetBaseSportSuits(int limit, int page)
         {
             var dbList = _baseSportSuitRepository.GetAll().OrderBy(x => x.Id).Skip((page - 1) * limit).Take(limit).ToList();
             var apiList = _mapper.Map<List<DB.BaseSportSuit>, List<BaseSportSuit>>(dbList);
@@ -954,10 +954,10 @@ namespace RestAPI.Controllers
             return apiList == null ? NotFound() : apiList;
         }
 
-        [HttpGet("GetBaseSportSuitById")]
+        [HttpGet("GetBaseSportSuitsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<BaseSportSuit?>> GetBaseSportSuitById(int id)
+        public async Task<ActionResult<BaseSportSuit?>> GetBaseSportSuitsById(int id)
         {
             var dbEntity = await _baseSportSuitRepository.GetById(id);
             if (dbEntity == null)
@@ -968,11 +968,11 @@ namespace RestAPI.Controllers
             return _mapper.Map<DB.BaseSportSuit, BaseSportSuit>(dbEntity);
         }
 
-        [HttpPost("CreateBaseSportSuit")]
+        [HttpPost("CreateBaseSportSuits")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSportSuit>> CreateBaseSportSuit(BaseSportSuit entity)
+        public async Task<ActionResult<BaseSportSuit>> CreateBaseSportSuits(BaseSportSuit entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -980,7 +980,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _baseSportSuitRepository.Add(_mapper.Map<BaseSportSuit, DB.BaseSportSuit>(entity));
-                return CreatedAtAction(nameof(GetBaseSportSuitById), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetBaseSportSuitsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -989,11 +989,11 @@ namespace RestAPI.Controllers
             }
         }
 
-        [HttpPut("UpdateBaseSportSuit")]
+        [HttpPut("UpdateBaseSportSuits")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BaseSportSuit>> UpdateBaseSportSuit(BaseSportSuit entity)
+        public async Task<ActionResult<BaseSportSuit>> UpdateBaseSportSuits(BaseSportSuit entity)
         {
             if (entity == null)
                 return BadRequest();
@@ -1001,7 +1001,7 @@ namespace RestAPI.Controllers
             try
             {
                 await _baseSportSuitRepository.Update(_mapper.Map<BaseSportSuit, DB.BaseSportSuit>(entity));
-                return CreatedAtAction(nameof(GetBaseSportSuitById), new { id = entity.Id }, entity);
+                return CreatedAtAction(nameof(GetBaseSportSuitsById), new { id = entity.Id }, entity);
             }
             catch (Exception exc)
             {
@@ -1010,10 +1010,10 @@ namespace RestAPI.Controllers
             }
         }
 
-        [HttpDelete("DeleteBaseSportSuit")]
+        [HttpDelete("DeleteBaseSportSuits")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> DeleteBaseSportSuit(int id)
+        public async Task<ActionResult> DeleteBaseSportSuits(int id)
         {
             var entity = await _baseSportSuitRepository.GetById(id);
 
@@ -1041,7 +1041,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetBaseSweatersFields()
         {
-            return new DB.BaseSweater().GetType().GetProperties().Select(x => x.Name);
+            return new BaseSweater().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetBaseSweaters")]
@@ -1657,7 +1657,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCountriesFields()
         {
-            return new DB.Country().GetType().GetProperties().Select(x => x.Name);
+            return new Country().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetCountries")]
@@ -1758,7 +1758,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCurrenciesFields()
         {
-            return new DB.Currency().GetType().GetProperties().Select(x => x.Name);
+            return new Currency().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetCurrencies")]
@@ -1859,7 +1859,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IEnumerable<string> GetCustomBeltsFields()
         {
-            return new DB.CustomBelt().GetType().GetProperties().Select(x => x.Name);
+            return new CustomBelt().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetCustomBelts")]
@@ -2487,18 +2487,18 @@ namespace RestAPI.Controllers
 
         #endregion
 
-        #region CustomSportSuit table
+        #region CustomSportSuits table
 
-        [HttpGet("GetCustomSportSuitCount")]
+        [HttpGet("GetCustomSportSuitsCount")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public int GetCustomSportSuitCount()
+        public int GetCustomSportSuitsCount()
         {
             return _customSportSuitRepository.GetAll().Count();
         }
 
-        [HttpGet("GetCustomSportSuitFields")]
+        [HttpGet("GetCustomSportSuitsFields")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IEnumerable<string> GetCustomSportSuitFields()
+        public IEnumerable<string> GetCustomSportSuitsFields()
         {
             return typeof(DB.CustomSportSuit).GetProperties().Select(prop => prop.Name);
         }
@@ -2514,10 +2514,10 @@ namespace RestAPI.Controllers
             return apiList == null ? NotFound() : apiList;
         }
 
-        [HttpGet("GetCustomSportSuitById")]
+        [HttpGet("GetCustomSportSuitsById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<CustomSportSuit?>> GetCustomSportSuitById(int id)
+        public async Task<ActionResult<CustomSportSuit?>> GetCustomSportSuitsById(int id)
         {
             var dbEntity = await _customSportSuitRepository.GetById(id);
             if (dbEntity == null)
@@ -2528,10 +2528,10 @@ namespace RestAPI.Controllers
             return dbEntity == null ? NotFound() : _mapper.Map<DB.CustomSportSuit, CustomSportSuit>(dbEntity);
         }
 
-        [HttpPost("CreateCustomSportSuit")]
+        [HttpPost("CreateCustomSportSuits")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<CustomSportSuit>> CreateCustomSportSuit(CustomSportSuit customSportSuit)
+        public async Task<ActionResult<CustomSportSuit>> CreateCustomSportSuits(CustomSportSuit customSportSuit)
         {
             if (customSportSuit == null)
                 return BadRequest();
@@ -2540,7 +2540,7 @@ namespace RestAPI.Controllers
             {
                 var mappedEntity = _mapper.Map<CustomSportSuit, DB.CustomSportSuit>(customSportSuit);
                 await _customSportSuitRepository.Add(mappedEntity);
-                return CreatedAtAction(nameof(GetCustomSportSuitById), new { id = mappedEntity.Id }, customSportSuit);
+                return CreatedAtAction(nameof(GetCustomSportSuitsById), new { id = mappedEntity.Id }, customSportSuit);
             }
             catch (Exception exc)
             {
@@ -2549,10 +2549,10 @@ namespace RestAPI.Controllers
             }
         }
 
-        [HttpPut("UpdateCustomSportSuit")]
+        [HttpPut("UpdateCustomSportSuits")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<CustomSportSuit>> UpdateCustomSportSuit(CustomSportSuit customSportSuit)
+        public async Task<ActionResult<CustomSportSuit>> UpdateCustomSportSuits(CustomSportSuit customSportSuit)
         {
             if (customSportSuit == null)
                 return BadRequest();
@@ -2570,10 +2570,10 @@ namespace RestAPI.Controllers
             }
         }
 
-        [HttpDelete("DeleteCustomSportSuit")]
+        [HttpDelete("DeleteCustomSportSuits")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> DeleteCustomSportSuit(int id)
+        public async Task<ActionResult> DeleteCustomSportSuits(int id)
         {
             var entity = await _customSportSuitRepository.GetById(id);
             if (entity == null)

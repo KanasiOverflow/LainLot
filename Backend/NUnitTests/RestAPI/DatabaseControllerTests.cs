@@ -1092,7 +1092,7 @@ namespace NUnitTests.RestAPI
         [Test]
         public void GetBaseSportSuits_Return_2_Items()
         {
-            var result = _restApiController.GetBaseSportSuit(_limit, _page);
+            var result = _restApiController.GetBaseSportSuits(_limit, _page);
 
             Assert.Multiple(() =>
             {
@@ -1106,7 +1106,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public async Task GetBaseSportSuitById_Return_Correct_Entity(int id)
         {
-            var result = await _restApiController.GetBaseSportSuitById(id);
+            var result = await _restApiController.GetBaseSportSuitsById(id);
 
             Assert.Multiple(() =>
             {
@@ -1120,7 +1120,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public async Task Delete_BaseSportSuit_Entity(int id)
         {
-            var result = await _restApiController.DeleteBaseSportSuit(id);
+            var result = await _restApiController.DeleteBaseSportSuits(id);
 
             Assert.Multiple(() =>
             {
@@ -1146,10 +1146,10 @@ namespace NUnitTests.RestAPI
                 FkBasePantsCuffsRight = 2
             };
 
-            var result = await _restApiController.CreateBaseSportSuit(entity);
+            var result = await _restApiController.CreateBaseSportSuits(entity);
 
-            var list = _restApiController.GetBaseSportSuit(_limit, _page);
-            var entityThatWasAdded = await _restApiController.GetBaseSportSuitById(3);
+            var list = _restApiController.GetBaseSportSuits(_limit, _page);
+            var entityThatWasAdded = await _restApiController.GetBaseSportSuitsById(3);
 
             Assert.Multiple(() =>
             {
@@ -1165,13 +1165,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public async Task Update_BaseSportSuit_Entity(int id)
         {
-            var entity = await _restApiController.GetBaseSportSuitById(id);
+            var entity = await _restApiController.GetBaseSportSuitsById(id);
 
             entity.Value.FkBaseSweaters = 2;
 
-            await _restApiController.UpdateBaseSportSuit(entity.Value);
+            await _restApiController.UpdateBaseSportSuits(entity.Value);
 
-            var updatedEntity = await _restApiController.GetBaseSportSuitById(id);
+            var updatedEntity = await _restApiController.GetBaseSportSuitsById(id);
 
             Assert.Multiple(() =>
             {
@@ -2455,7 +2455,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public async Task GetCustomSportSuitsById_Returns_Correct_Entity(int id)
         {
-            var result = await _restApiController.GetCustomSportSuitById(id);
+            var result = await _restApiController.GetCustomSportSuitsById(id);
 
             Assert.Multiple(() =>
             {
@@ -2470,7 +2470,7 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public async Task Delete_CustomSportSuits_Entity(int id)
         {
-            var result = await _restApiController.DeleteCustomSportSuit(id);
+            var result = await _restApiController.DeleteCustomSportSuits(id);
 
             Assert.Multiple(() =>
             {
@@ -2496,10 +2496,10 @@ namespace NUnitTests.RestAPI
                 FkCustomPantsCuffsRight = 1
             };
 
-            var result = await _restApiController.CreateCustomSportSuit(entity);
+            var result = await _restApiController.CreateCustomSportSuits(entity);
 
             var list = _restApiController.GetCustomSportSuits(_limit, _page);
-            var entityThatWasAdded = await _restApiController.GetCustomSportSuitById(3);
+            var entityThatWasAdded = await _restApiController.GetCustomSportSuitsById(3);
 
             Assert.Multiple(() =>
             {
@@ -2515,13 +2515,13 @@ namespace NUnitTests.RestAPI
         [TestCase(2)]
         public async Task Update_CustomSportSuits_Entity(int id)
         {
-            var entity = await _restApiController.GetCustomSportSuitById(id);
+            var entity = await _restApiController.GetCustomSportSuitsById(id);
 
             entity.Value.FkCustomNecklines = 2;
 
-            await _restApiController.UpdateCustomSportSuit(entity.Value);
+            await _restApiController.UpdateCustomSportSuits(entity.Value);
 
-            var updatedEntity = await _restApiController.GetCustomSportSuitById(id);
+            var updatedEntity = await _restApiController.GetCustomSportSuitsById(id);
 
             Assert.Multiple(() =>
             {
