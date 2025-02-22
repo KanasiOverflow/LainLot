@@ -42,7 +42,7 @@ export const getForeignKeyById = async (foreignFieldKey, id) => {
             response = await ForeignKeysService.GetFkUsersData(id);
             break;
         case 'fkUserRoles':
-            response = await ForeignKeysService.GetFkUserRoles(id);
+            response = await ForeignKeysService.GetFkUserRolesData(id);
             break;
         case 'fkOrderStatus':
             response = await ForeignKeysService.GetFkOrderStatusData(id);

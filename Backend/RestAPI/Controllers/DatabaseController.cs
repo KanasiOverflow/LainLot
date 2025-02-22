@@ -3861,7 +3861,7 @@ namespace RestAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IEnumerable<string> GetProductOrdersFields()
         {
-            return new ProductImage().GetType().GetProperties().Select(x => x.Name);
+            return new ProductOrder().GetType().GetProperties().Select(x => x.Name);
         }
 
         [HttpGet("GetProductOrders")]
@@ -5541,8 +5541,26 @@ namespace RestAPI.Controllers
             {
                 var dbEntity = await _productOrderRepository.GetById(id);
 
-                var products = await GetFkProductsData(dbEntity.FkProducts.Value);
-                var customizableProducts = await GetFkCustomizableProductsData(dbEntity.FkCustomizableProducts.Value);
+                string? products = string.Empty;
+                string? customizableProducts = string.Empty;
+
+                if (dbEntity != null)
+                {
+                    if (dbEntity.FkProducts.HasValue)
+                    {
+                        products = await GetFkProductsData(dbEntity.FkProducts.Value);
+                    }
+
+                    if (dbEntity.FkCustomizableProducts.HasValue)
+                    {
+                        var dbCustomEntity = await _customizableProductRepository.GetById(dbEntity.FkCustomizableProducts.Value);
+
+                        if (dbCustomEntity != null)
+                        {
+                            customizableProducts = await GetFkCustomizableProductsData(dbCustomEntity.Id);
+                        }
+                    }
+                }
 
                 return dbEntity == null
                     ? string.Empty

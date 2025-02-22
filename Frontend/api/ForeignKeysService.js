@@ -221,11 +221,11 @@ export default class ForeignKeysService {
         return null;
     };
 
-    static async GetFkUserRoles(id) {
+    static async GetFkUserRolesData(id) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkUserRoles`,
+            url: `${getRestAPIUrl()}/Database/GetFkUserRolesData`,
             params: { id: id },
             auth: {
                 username: secureLocalStorage.getItem('login'),

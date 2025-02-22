@@ -2947,7 +2947,7 @@ namespace NUnitTests.RestAPI
                 FkProductOrders = 1,
                 FkOrderStatus = 1,
                 FkPayments = 1,
-                FkShippingAdresses = 1,
+                FkShippingAddresses = 1,
                 Price = 411,
                 Amount = 14,
                 OrderDate = DateTime.UtcNow,
