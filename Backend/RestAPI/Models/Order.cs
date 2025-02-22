@@ -10,7 +10,7 @@
 
         public int FkPayments { get; set; }
 
-        public int FkShippingAdresses { get; set; }
+        public int FkShippingAddresses { get; set; }
 
         public decimal Price { get; set; }
 

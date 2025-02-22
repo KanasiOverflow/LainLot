@@ -19,7 +19,15 @@ export default function RecordList({ records }) {
     if (!records && !records.length) {
         return (
             <h1 style={{ textAlign: 'center' }}>
-                {currentTable} not found!
+                {currentTable} table values not found!
+            </h1>
+        );
+    }
+
+    if (records.length <= 0) {
+        return (
+            <h1 style={{ textAlign: 'center' }}>
+                {currentTable} table has zero values!
             </h1>
         );
     }

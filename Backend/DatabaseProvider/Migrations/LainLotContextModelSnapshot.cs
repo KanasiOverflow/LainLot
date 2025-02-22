@@ -17,7 +17,7 @@ namespace DatabaseProvider.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -215,7 +215,7 @@ namespace DatabaseProvider.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id")
-                        .HasName("BaseSportSuit_pkey");
+                        .HasName("BaseSportSuits_pkey");
 
                     b.HasIndex("FkBaseBelts");
 
@@ -235,7 +235,7 @@ namespace DatabaseProvider.Migrations
 
                     b.HasIndex("FkBaseSweaters");
 
-                    b.ToTable("BaseSportSuit", (string)null);
+                    b.ToTable("BaseSportSuits", (string)null);
                 });
 
             modelBuilder.Entity("DatabaseProvider.Models.BaseSweater", b =>
@@ -1385,55 +1385,55 @@ namespace DatabaseProvider.Migrations
                         .WithMany("BaseSportSuits")
                         .HasForeignKey("FkBaseBelts")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("BaseSportSuit_FkBaseBelts_fkey");
+                        .HasConstraintName("BaseSportSuits_FkBaseBelts_fkey");
 
                     b.HasOne("DatabaseProvider.Models.BaseNeckline", "FkBaseNecklinesNavigation")
                         .WithMany("BaseSportSuits")
                         .HasForeignKey("FkBaseNecklines")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("BaseSportSuit_FkBaseNecklines_fkey");
+                        .HasConstraintName("BaseSportSuits_FkBaseNecklines_fkey");
 
                     b.HasOne("DatabaseProvider.Models.BasePant", "FkBasePantsNavigation")
                         .WithMany("BaseSportSuits")
                         .HasForeignKey("FkBasePants")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("BaseSportSuit_FkBasePants_fkey");
+                        .HasConstraintName("BaseSportSuits_FkBasePants_fkey");
 
                     b.HasOne("DatabaseProvider.Models.BasePantsCuff", "FkBasePantsCuffsLeftNavigation")
                         .WithMany("BaseSportSuitFkBasePantsCuffsLeftNavigations")
                         .HasForeignKey("FkBasePantsCuffsLeft")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("BaseSportSuit_FkBasePantsCuffsLeft_fkey");
+                        .HasConstraintName("BaseSportSuits_FkBasePantsCuffsLeft_fkey");
 
                     b.HasOne("DatabaseProvider.Models.BasePantsCuff", "FkBasePantsCuffsRightNavigation")
                         .WithMany("BaseSportSuitFkBasePantsCuffsRightNavigations")
                         .HasForeignKey("FkBasePantsCuffsRight")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("BaseSportSuit_FkBasePantsCuffsRight_fkey");
+                        .HasConstraintName("BaseSportSuits_FkBasePantsCuffsRight_fkey");
 
                     b.HasOne("DatabaseProvider.Models.BaseSleeveCuff", "FkBaseSleeveCuffsLeftNavigation")
                         .WithMany("BaseSportSuitFkBaseSleeveCuffsLeftNavigations")
                         .HasForeignKey("FkBaseSleeveCuffsLeft")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("BaseSportSuit_FkBaseSleeveCuffsLeft_fkey");
+                        .HasConstraintName("BaseSportSuits_FkBaseSleeveCuffsLeft_fkey");
 
                     b.HasOne("DatabaseProvider.Models.BaseSleeveCuff", "FkBaseSleeveCuffsRightNavigation")
                         .WithMany("BaseSportSuitFkBaseSleeveCuffsRightNavigations")
                         .HasForeignKey("FkBaseSleeveCuffsRight")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("BaseSportSuit_FkBaseSleeveCuffsRight_fkey");
+                        .HasConstraintName("BaseSportSuits_FkBaseSleeveCuffsRight_fkey");
 
                     b.HasOne("DatabaseProvider.Models.BaseSleeve", "FkBaseSleevesNavigation")
                         .WithMany("BaseSportSuits")
                         .HasForeignKey("FkBaseSleeves")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("BaseSportSuit_FkBaseSleeves_fkey");
+                        .HasConstraintName("BaseSportSuits_FkBaseSleeves_fkey");
 
                     b.HasOne("DatabaseProvider.Models.BaseSweater", "FkBaseSweatersNavigation")
                         .WithMany("BaseSportSuits")
                         .HasForeignKey("FkBaseSweaters")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("BaseSportSuit_FkBaseSweaters_fkey");
+                        .HasConstraintName("BaseSportSuits_FkBaseSweaters_fkey");
 
                     b.Navigation("FkBaseBeltsNavigation");
 
