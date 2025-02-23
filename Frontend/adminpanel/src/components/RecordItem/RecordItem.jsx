@@ -38,29 +38,45 @@ export default function RecordItem({ record, ref }) {
 
     return (
         <div className={mcss.post} ref={ref}>
-            <div className='post__content'>
-                {Object.keys(record).map(key =>
-                    <div key={key}>
-                        {key}: {key.startsWith("fk") ? (
-                            fkError ? fkError : `${foreignKeys[`${key}_${record[key]}`] || "Loading..."} (${record[key]})`
-                        ) : (
-                            key === "imageData"
-                                ? <DisplayImage base64Img={byteArrayToBase64(record[key])} fullSize={false} />
-                                : record[key]
-                        )}
-                    </div>
-                )}
+            <div className={mcss.postContent}>
+                {Object.keys(record).map((key) => {
+                    const foreignKeyData = foreignKeys[`${key}_${record[key]}`];
+
+                    return (
+                        <div key={key} className={mcss.recordRow}>
+                            <span className={mcss.recordKey}>{key}:</span>
+                            {key.startsWith("fk") ? (
+                                <div className={mcss.foreignKeyWrapper}>
+                                    {fkError ? (
+                                        <span className={mcss.errorText}>{fkError}</span>
+                                    ) : (
+                                        <>
+                                            <span className={mcss.foreignKeyId}>ID: {record[key]}</span>
+                                            <div className={mcss.foreignKeyValue}>
+                                                {foreignKeyData ? (
+                                                    <>
+                                                        <pre>{JSON.stringify(foreignKeyData, null, 2)}</pre>
+                                                    </>
+                                                ) : (
+                                                    <span>Loading...</span>
+                                                )}
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            ) : key === "imageData" ? (
+                                <DisplayImage base64Img={byteArrayToBase64(record[key])} fullSize={false} />
+                            ) : (
+                                <span className={mcss.recordValue}>{record[key]}</span>
+                            )}
+                        </div>
+                    );
+                })}
             </div>
             <div className={mcss.postBtns}>
-                <GeneralButton onClick={handleOpenRecordIdPage}>
-                    Open
-                </GeneralButton>
-                <GeneralButton onClick={handleOpenEditModal}>
-                    Edit
-                </GeneralButton>
-                <GeneralButton onClick={handleRemoveRecord}>
-                    Delete
-                </GeneralButton>
+                <GeneralButton onClick={handleOpenRecordIdPage}>Open</GeneralButton>
+                <GeneralButton onClick={handleOpenEditModal}>Edit</GeneralButton>
+                <GeneralButton onClick={handleRemoveRecord}>Delete</GeneralButton>
             </div>
         </div>
     );

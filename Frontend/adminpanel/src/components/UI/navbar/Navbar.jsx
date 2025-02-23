@@ -17,20 +17,28 @@ export default function Navbar() {
 
   return (
     <nav className={mcss.navigation}>
-      <GeneralButton onClick={logout}>Sign out</GeneralButton>
-      <ul className="stroke-animation">
+      <div className={mcss.logo}>
+        <span>Lainlot - Admin Panel</span>
+      </div>
+      <ul className={mcss.navLinks}>
         <li>
           <NavLink
-            className={({ isActive }) => (isActive ? 'active' : '')}
+            className={({ isActive }) => (isActive ? mcss.activeLink : '')}
             to="/about"
           >
-            About site
+            About
           </NavLink>
         </li>
         <li>
-          <NavLink to="/records">Records</NavLink>
+          <NavLink
+            className={({ isActive }) => (isActive ? mcss.activeLink : '')}
+            to="/records"
+          >
+            Records
+          </NavLink>
         </li>
       </ul>
+      <GeneralButton onClick={logout} className={mcss.logoutButton}>Sign out</GeneralButton>
     </nav>
   )
 }
