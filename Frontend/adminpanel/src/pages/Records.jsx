@@ -12,7 +12,7 @@ import GeneralButton from '../components/UI/button/GeneralButton';
 import GeneralModal from '../components/UI/modal/GeneralModal';
 import Loader from '../components/UI/loader/Loader';
 import Pagination from '../components/UI/pagination/Pagination';
-import TablesList from '../components/TablesList/TablesList';
+import TablesSidebar from '../components/TablesSidebar/TablesSidebar';
 
 // rsc - create template component
 
@@ -53,10 +53,14 @@ function Records() {
         <h1>Cannot load list of tables!</h1>
       }
 
-      {isTablesLoading
-        ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}><Loader /></div>
-        : <TablesList title="List of tables" tables={DBTables} setCurrentTable={setCurrentTable} />
-      }
+      {isTablesLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>
+          <Loader />
+        </div>
+      ) : (
+        <TablesSidebar tables={DBTables} setCurrentTable={setCurrentTable} />
+      )}
+
 
       <hr style={{ margin: '15px 0' }} />
 
