@@ -1,10 +1,9 @@
-import { BrowserRouter } from "react-router-dom";
 import Navbar from './components/UI/navbar/Navbar';
-import './styles/App.css';
 import AppRouter from './components/AppRouter';
-
+import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./provider/AppProvider";
 import { Helmet } from 'react-helmet';
+import './styles/App.css';
 // rsc - create template component
 
 function App() {
