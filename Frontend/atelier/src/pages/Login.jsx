@@ -3,7 +3,7 @@ import React from 'react';
 function About() {
   return (
     <h1>
-      This is Lainlot Atelier - LainLot.com ©
+        Login page
     </h1>
   );
 };
