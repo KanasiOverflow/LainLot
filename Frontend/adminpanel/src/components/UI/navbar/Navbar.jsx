@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 import secureLocalStorage from 'react-secure-storage'
 import { NavLink } from 'react-router-dom'
-import GeneralButton from '../button/GeneralButton'
 import { AuthContext } from '../../../provider/context/AuthProvider'
+import GeneralButton from '../button/GeneralButton'
 import mcss from './Navbar.module.css'
 
 export default function Navbar() {
-  const { setIsAuth } = useContext(AuthContext)
+  const { setIsAuth } = useContext(AuthContext);
 
   const logout = () => {
     setIsAuth(false)

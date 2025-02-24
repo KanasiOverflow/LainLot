@@ -8,15 +8,15 @@ import './styles/App.css';
 
 function App() {
   return (
-      <AppProvider>
-        <BrowserRouter>
-          <Helmet>
-            <title>{process.env.REACT_APP_WEBSITE_NAME}</title>
-          </Helmet>
-          <Navbar />
-          <AppRouter />
-        </BrowserRouter>
-      </AppProvider>
+    <AppProvider>
+      <BrowserRouter>
+        <Helmet>
+          <title>{process.env.REACT_APP_WEBSITE_NAME}</title>
+        </Helmet>
+        <Navbar />
+        <AppRouter />
+      </BrowserRouter>
+    </AppProvider>
   );
 };
 
