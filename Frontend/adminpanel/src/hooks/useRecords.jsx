@@ -11,7 +11,8 @@ export const useSortedRecords = (records, sort) => {
             if (sort === "id" || sort.startsWith("fk")) {
                 return (parseInt(aValue) || 0) - (parseInt(bValue) || 0);
             }
-            return String(aValue).localeCompare(String(bValue));
+
+            return String(aValue).localeCompare(String(bValue), undefined, { sensitivity: 'base' });
         });
     }, [sort, records]);
 
@@ -24,14 +25,15 @@ export const useRecords = (records, sort, query) => {
     const sortedAndSearchedRecords = useMemo(() => {
         if (!query) return sortedRecords;
 
-        return sortedRecords.filter(element => {
-            const value = element[sort];
-            if (sort === "id" || sort.startsWith("fk")) {
-                return String(value) === String(query);
-            }
-            return String(value).toLowerCase() === query.toLowerCase();
+        const lowerQuery = query.toLowerCase();
+
+        return sortedRecords.filter(record => {
+            // Search all fields
+            return Object.values(record).some(value =>
+                String(value ?? "").toLowerCase().includes(lowerQuery)
+            );
         });
-    }, [query, sortedRecords, sort]);
+    }, [query, sortedRecords]);
 
     return sortedAndSearchedRecords;
 };
