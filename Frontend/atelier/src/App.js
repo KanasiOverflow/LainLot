@@ -1,4 +1,6 @@
 import Navbar from './components/UI/navbar/Navbar';
+import Footbar from './components/UI/footbar/Footbar';
+import Copyright from './components/UI/copyright/Copyright';
 import AppRouter from './components/AppRouter';
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./provider/AppProvider";
@@ -15,6 +17,8 @@ function App() {
         </Helmet>
         <Navbar />
         <AppRouter />
+        <Footbar />
+        <Copyright />
       </BrowserRouter>
     </AppProvider>
   );
