@@ -216,23 +216,6 @@ button {
 
 /* banner bg main end */
 
-/* logo section start */
-
-.logo_section {
-    width: 100%;
-    float: left;
-}
-
-.logo {
-    width: 100%;
-    float: left;
-    text-align: center;
-    padding: 30px 0px;
-}
-
-
-/* logo section end */
-
 /* opennav bar start */
 
 .header_box {
