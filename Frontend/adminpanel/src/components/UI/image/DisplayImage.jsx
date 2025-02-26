@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import mcss from './DisplayImage.module.css';
 
 export default function DisplayImage({ base64Img, fullSize }) {

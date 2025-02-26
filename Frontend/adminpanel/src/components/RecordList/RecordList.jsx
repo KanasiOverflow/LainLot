@@ -52,5 +52,5 @@ export default function RecordList({ records }) {
                 )}
             </AnimatePresence>
         </div>
-    );
+    )
 };

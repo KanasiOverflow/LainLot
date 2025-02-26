@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { usePagination } from '../../../hooks/usePagination';
 import { DataContext } from '../../../provider/context/DataProvider';
 import { PaginationContext } from '../../../provider/context/PaginationProvider';
-import mcss from './index.module.css'
+import mcss from './Pagination.module.css';
 
 export default function Pagination() {
 
@@ -28,5 +28,5 @@ export default function Pagination() {
                 </span>
             )}
         </div>
-    );
+    )
 };

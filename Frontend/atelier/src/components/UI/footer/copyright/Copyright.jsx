@@ -10,5 +10,5 @@ export default function Copyright() {
                 </p>
             </div>
         </div>
-    );
-}
+    )
+};

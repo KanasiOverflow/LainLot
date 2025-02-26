@@ -6,7 +6,7 @@ const GeneralButton = React.memo(({ children, ...props }) => {
     <button {...props} className={mcss.generalBtn}>
       {children}
     </button>
-  );
+  )
 });
-        
+
 export default GeneralButton;

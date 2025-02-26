@@ -15,5 +15,5 @@ export default function GeneralSelect({ options, defaultValue, value, onChange }
                 </option>
             )}
         </select>
-    );
+    )
 };

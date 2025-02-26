@@ -18,5 +18,5 @@ export default function GeneralModal({ children }) {
         {children}
       </div>
     </div>
-  );
+  )
 };

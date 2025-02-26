@@ -38,5 +38,5 @@ export default function Navbar() {
             </ul>
             <GeneralButton onClick={logout} className={mcss.logoutButton}>Sign out</GeneralButton>
         </nav>
-    );
-}
+    )
+};

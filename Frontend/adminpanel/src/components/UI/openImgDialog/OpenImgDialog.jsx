@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import mcss from './OpenImgDialog.module.css'
+import mcss from './OpenImgDialog.module.css';
 
 export default function OpenImgDialog({ onData, files, setFiles }) {
         

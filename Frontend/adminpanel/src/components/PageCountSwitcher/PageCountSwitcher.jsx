@@ -25,5 +25,5 @@ export default function PageCountSwitcher() {
                     { value: -1, name: 'All' }
                 ]}
             />
-        </div>);
+        </div>)
 };

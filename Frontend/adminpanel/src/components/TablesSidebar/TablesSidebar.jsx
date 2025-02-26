@@ -55,5 +55,5 @@ export default function TablesSidebar({ tables, setCurrentTable }) {
 
             {isOpen && <div className={mcss.overlay} onClick={() => setIsOpen(false)} />}
         </>
-    );
-}
+    )
+};

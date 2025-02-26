@@ -30,5 +30,5 @@ export default function Sidebar() {
                 <a href="/jewellery.html">Jewellery</a>
             </div>
         </>
-    );
-}
+    )
+};

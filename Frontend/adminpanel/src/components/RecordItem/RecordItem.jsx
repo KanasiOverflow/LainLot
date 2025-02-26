@@ -5,7 +5,7 @@ import { ForeignKeysContext } from '../../provider/context/ForeignKeysProvider';
 import { byteArrayToBase64 } from '../../utils/convertByteArrayToBase64';
 import GeneralButton from '../UI/button/GeneralButton';
 import DisplayImage from '../UI/image/DisplayImage';
-import mcss from './RecordItem.module.css'
+import mcss from './RecordItem.module.css';
 
 export default function RecordItem({ record, ref }) {
 
@@ -79,5 +79,5 @@ export default function RecordItem({ record, ref }) {
                 <GeneralButton onClick={handleRemoveRecord}>Delete</GeneralButton>
             </div>
         </div>
-    );
+    )
 };
