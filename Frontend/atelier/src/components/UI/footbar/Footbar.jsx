@@ -4,7 +4,7 @@ import mcss from './Footbar.module.css';
 export default function Footbar() {
     return (
         <div className={mcss.footerSection + ' ' + mcss.layoutPadding}>
-            <div className={mcss.container}>
+            <div className={"container"}>
                 <div className={mcss.footerLogo}>
                     <a href="/">
                         <img src="/images/footer-logo.png" alt="Footer Logo" />

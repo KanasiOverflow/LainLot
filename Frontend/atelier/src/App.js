@@ -1,7 +1,6 @@
-import Navbar from './components/UI/navbar/Navbar';
-import Footbar from './components/UI/footbar/Footbar';
-import Copyright from './components/UI/copyright/Copyright';
+import Header from './components/UI/header/Header';
 import AppRouter from './components/AppRouter';
+import Footer from './components/UI/footer/Footer';
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./provider/AppProvider";
 import { Helmet } from 'react-helmet';
@@ -14,11 +13,10 @@ function App() {
       <BrowserRouter>
         <Helmet>
           <title>{process.env.REACT_APP_WEBSITE_NAME}</title>
-        </Helmet>
-        <Navbar />
+        </Helmet>        
+        <Header />
         <AppRouter />
-        <Footbar />
-        <Copyright />
+        <Footer />
       </BrowserRouter>
     </AppProvider>
   );

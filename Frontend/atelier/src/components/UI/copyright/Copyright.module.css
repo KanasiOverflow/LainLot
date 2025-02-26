@@ -3,6 +3,8 @@
     float: left;
     background-color: #252525;
     height: auto;
+    padding-top: 0px;
+    padding-bottom: 20px;
 }
 
 .copyrightText {
@@ -20,8 +22,4 @@
 
 .copyrightText a:hover {
     color: #f26522;
-}
-
-.marginTop90 {
-    margin-top: 90px;
 }
