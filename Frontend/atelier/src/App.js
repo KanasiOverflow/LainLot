@@ -1,5 +1,6 @@
-import Navbar from './components/UI/navbar/Navbar';
+import Header from './components/UI/header/Header';
 import AppRouter from './components/AppRouter';
+import Footer from './components/UI/footer/Footer';
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./provider/AppProvider";
 import { Helmet } from 'react-helmet';
@@ -13,8 +14,13 @@ function App() {
         <Helmet>
           <title>{process.env.REACT_APP_WEBSITE_NAME}</title>
         </Helmet>
-        <Navbar />
-        <AppRouter />
+        <div className="appWrapper">
+          <Header />
+          <main className="contentWrapper">
+            <AppRouter />
+          </main>
+          <Footer />
+        </div>
       </BrowserRouter>
     </AppProvider>
   );

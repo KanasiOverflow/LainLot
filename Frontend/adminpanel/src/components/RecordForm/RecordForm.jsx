@@ -5,7 +5,7 @@ import GeneralInput from '../UI/input/GeneralInput';
 import OpenImgDialog from '../UI/openImgDialog/OpenImgDialog';
 import { ModalContext } from '../../provider/context/ModalProvider';
 import { checkDateOrTimeField } from '../../utils/checkDateOrTimeField';
-import mcss from './RecordForm.module.css'
+import mcss from './RecordForm.module.css';
 
 export default function RecordForm() {
     const {
@@ -140,5 +140,5 @@ export default function RecordForm() {
                 }
             </div>
         </form>
-    );
+    )
 };

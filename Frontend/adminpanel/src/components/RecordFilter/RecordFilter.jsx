@@ -28,5 +28,5 @@ export default function RecordFilter({ filter, setFilter, fields }) {
                 onChange={e => setFilter({ ...filter, query: e.target.value })}
             />
         </div>
-    );
+    )
 };
