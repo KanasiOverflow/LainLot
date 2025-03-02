@@ -4,6 +4,7 @@ import Footer from './components/UI/footer/Footer';
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./provider/AppProvider";
 import { Helmet } from 'react-helmet';
+import './styles/App.css';
 // rsc - create template component
 
 function App() {
@@ -12,10 +13,14 @@ function App() {
       <BrowserRouter>
         <Helmet>
           <title>{process.env.REACT_APP_WEBSITE_NAME}</title>
-        </Helmet>        
-        <Header />
-        <AppRouter />
-        <Footer />
+        </Helmet>
+        <div className="appWrapper">
+          <Header />
+          <main className="contentWrapper">
+            <AppRouter />
+          </main>
+          <Footer />
+        </div>
       </BrowserRouter>
     </AppProvider>
   );

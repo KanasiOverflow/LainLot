@@ -1,11 +1,11 @@
 import React from 'react';
 
-function About() {
+export default function About() {
   return (
-    <h1>
-      This is Lainlot Atelier - LainLot.com ©
-    </h1>
+    <div>
+      <h1>
+        This is Lainlot Atelier - LainLot.com ©
+      </h1>
+    </div>
   );
 };
-
-export default About;

@@ -16,10 +16,9 @@ export default function Sidebar() {
                 <button className={mcss.closebtn} onClick={closeNav}>
                     &times;
                 </button>
-                <a href="/index.html">Home</a>
-                <a href="/fashion.html">Fashion</a>
-                <a href="/electronic.html">Electronic</a>
-                <a href="/jewellery.html">Jewellery</a>
+                <a href="/Home">Home</a>
+                <a href="/Contacts">Contacts</a>
+                <a href="/About">About</a>
             </div>
 
             {!isSidebarOpen && (

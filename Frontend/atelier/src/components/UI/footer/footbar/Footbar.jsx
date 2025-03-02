@@ -12,11 +12,9 @@ export default function Footbar() {
                 </div>
                 <div className={mcss.footerMenu}>
                     <ul>
-                        <li><a href="/best-sellers">Best Sellers</a></li>
-                        <li><a href="/gift-ideas">Gift Ideas</a></li>
-                        <li><a href="/new-releases">New Releases</a></li>
-                        <li><a href="/todays-deals">Today's Deals</a></li>
-                        <li><a href="/customer-service">Customer Service</a></li>
+                        <li><a href="/Home">Home</a></li>
+                        <li><a href="/Contacts">Contacts</a></li>
+                        <li><a href="/About">About</a></li>
                     </ul>
                 </div>
                 <div className={mcss.locationMain}>
