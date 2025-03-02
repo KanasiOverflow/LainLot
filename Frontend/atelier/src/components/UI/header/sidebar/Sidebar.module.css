@@ -2,7 +2,7 @@
     height: 100%;
     width: 0;
     position: fixed;
-    z-index: 1;
+    z-index: 9999;
     top: 0;
     left: 0;
     background-color: #111;
@@ -20,8 +20,26 @@
     transition: 0.3s;
 }
 
+.sidenav button {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #ffffff;
+    display: block;
+    transition: 0.3s;
+}
+
 .sidenav a:hover {
     color: #f26522;
+}
+
+.sidenav button:hover {
+    color: #f26522;
+}
+
+.closebtn {
+    background-color: transparent !important;
+    border: none;
 }
 
 .sidenav .closebtn {
@@ -32,15 +50,15 @@
     margin-left: 50px;
 }
 
-.sidenavOpen{
+.sidenavOpen {
     width: 250px;
 }
 
-.sidenavClose{
+.sidenavClose {
     width: 0;
 }
 
-.toggle_icon {
+.toggleIcon {
     cursor: pointer;
     color: #ffffff;
     order: 2;
