@@ -4,7 +4,6 @@ import Footer from './components/UI/footer/Footer';
 import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./provider/AppProvider";
 import { Helmet } from 'react-helmet';
-import './styles/App.css';
 // rsc - create template component
 
 function App() {

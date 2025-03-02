@@ -6,6 +6,7 @@ import Dropdown from './dropdown/Dropdown';
 import Search from './search/Search';
 import Language from './language/Language';
 import Login from './login/Login';
+import Slider from './slider/Slider';
 import mcss from './Header.module.css';
 
 export default function Header() {
@@ -26,6 +27,7 @@ export default function Header() {
                     </div>
                 </div>
             </div>
+            <Slider />
         </div>
     )
 };
