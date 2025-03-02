@@ -9,7 +9,7 @@ export default function Slider() {
                         <div className={"carousel-item active"}>
                             <div className={"row"}>
                                 <div className={"col-sm-12"}>
-                                    <h1 className={"banner_taital"}>Get Start <br />Your favorite shopping</h1>
+                                    <h1 className={"banner_taital"}>Get Start <br />Your favorite shopping 1</h1>
                                     <div className={"buynow_bt"}><a href="/">Buy Now</a></div>
                                 </div>
                             </div>
@@ -17,7 +17,7 @@ export default function Slider() {
                         <div className={"carousel-item"}>
                             <div className={"row"}>
                                 <div className={"col-sm-12"}>
-                                    <h1 className={"banner_taital"}>Get Start <br />Your favorite shopping</h1>
+                                    <h1 className={"banner_taital"}>Get Start <br />Your favorite shopping 2</h1>
                                     <div className={"buynow_bt"}><a href="/">Buy Now</a></div>
                                 </div>
                             </div>
@@ -25,7 +25,7 @@ export default function Slider() {
                         <div className={"carousel-item"}>
                             <div className={"row"}>
                                 <div className={"col-sm-12"}>
-                                    <h1 className={"banner_taital"}>Get Start <br />Your favorite shopping</h1>
+                                    <h1 className={"banner_taital"}>Get Start <br />Your favorite shopping 3</h1>
                                     <div className={"buynow_bt"}><a href="/">Buy Now</a></div>
                                 </div>
                             </div>
