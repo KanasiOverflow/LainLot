@@ -99,7 +99,7 @@ h4 a,
 h5 a,
 h6 a {
     color: #212121;
-    text-decoration: none!important;
+    text-decoration: none !important;
     opacity: 1
 }
 
@@ -144,7 +144,7 @@ img {
     height: auto;
 }
 
- :focus {
+:focus {
     outline: 0;
 }
 
@@ -247,23 +247,17 @@ button {
     border-color: #30302e;
 }
 
+.btn-search {
+    background-color: #f26522;
+    border-color: #f26522;
+}
+
 .show>.btn-secondary.dropdown-toggle:focus {
     box-shadow: none;
 }
 
 
 /* opennav bar end */
-
-
-/* Styles for wrapping the search box start */
-
-.main {
-    flex: 1;
-    margin: 0px 30px;
-    display: inline-block;
-    order: 2;
-}
-
 
 /* Bootstrap 4 text input with search icon */
 
@@ -286,48 +280,7 @@ button {
 
 /* Styles for wrapping the search box end */
 
-.login_menu {
-    display: flex;
-    text-align: right;
-    float: right;
-}
-
-.login_menu ul {
-    margin: 0px;
-    padding: 0px;
-}
-
-.login_menu li {
-    float: left;
-    font-size: 16px;
-    color: #ffffff;
-    text-transform: uppercase;
-    padding-left: 10px;
-    padding-top: 4px;
-}
-
-.login_menu li a {
-    color: #ffffff;
-}
-
-.login_menu li a:hover {
-    color: #f26522;
-}
-
-.padding_10 {
-    padding-left: 10px;
-}
-
-
 /* flage css start */
-
-.lang_box {
-    display: flex;
-    float: right;
-    background: #fff;
-    border-radius: 5px;
-    margin-right: 20px;
-}
 
 .nav-link {
     display: block;
@@ -659,6 +612,7 @@ a:hover {
     0% {
         -webkit-transform: rotate(0deg);
     }
+
     100% {
         -webkit-transform: rotate(360deg);
     }
@@ -668,6 +622,7 @@ a:hover {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }

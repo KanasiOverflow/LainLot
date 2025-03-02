@@ -9,14 +9,6 @@ export default function Sidebar() {
 
     return (
         <>
-            {/* Toggle Sidebar Button */}
-            {!isSidebarOpen && (
-                <span className={mcss.toggle_icon} onClick={openNav}>
-                    <img src="/images/toggle-icon.png" alt="Toggle Sidebar" />
-                </span>
-            )}
-
-            {/* Sidebar */}
             <div
                 id="Sidebar"
                 className={`${mcss.sidenav} ${isSidebarOpen ? mcss.sidenavOpen : mcss.sidenavClose}`}
@@ -29,6 +21,12 @@ export default function Sidebar() {
                 <a href="/electronic.html">Electronic</a>
                 <a href="/jewellery.html">Jewellery</a>
             </div>
+
+            {!isSidebarOpen && (
+                <span className={mcss.toggle_icon} onClick={openNav}>
+                    <img src="/images/toggle-icon.png" alt="Toggle Sidebar" />
+                </span>
+            )}
         </>
     )
 };
