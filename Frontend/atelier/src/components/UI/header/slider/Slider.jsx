@@ -1,4 +1,5 @@
 import React from 'react';
+import mcss from './Slider.module.css';
 
 export default function Slider() {
     return (
