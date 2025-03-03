@@ -1,4 +1,5 @@
 import React from 'react';
+import ClothingDesigner from '../components/clothingconstructor/ClothingConstructor';
 
 export default function About() {
   return (
