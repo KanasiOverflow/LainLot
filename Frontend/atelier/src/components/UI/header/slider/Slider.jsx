@@ -15,7 +15,7 @@ export default function Slider() {
                             <div className={"row"}>
                                 <div className={"col-sm-12"}>
                                     <h1 className={"banner_taital"} dangerouslySetInnerHTML={{ __html: t('MakeYourFavoriteSportSuit') }} />
-                                    <div className={"buynow_bt"}><a href="/">Buy Now</a></div>
+                                    <div className={"buynow_bt"}><a href="/">{t("CreateNow")}</a></div>
                                 </div>
                             </div>
                         </div>
@@ -23,7 +23,7 @@ export default function Slider() {
                             <div className={"row"}>
                                 <div className={"col-sm-12"}>
                                     <h1 className={"banner_taital"} dangerouslySetInnerHTML={{ __html: t('MakeYourFavoriteSportSuit') }} />
-                                    <div className={"buynow_bt"}><a href="/">Buy Now</a></div>
+                                    <div className={"buynow_bt"}><a href="/">{t("CreateNow")}</a></div>
                                 </div>
                             </div>
                         </div>
@@ -31,7 +31,7 @@ export default function Slider() {
                             <div className={"row"}>
                                 <div className={"col-sm-12"}>
                                     <h1 className={"banner_taital"} dangerouslySetInnerHTML={{ __html: t('MakeYourFavoriteSportSuit') }} />
-                                    <div className={"buynow_bt"}><a href="/">Buy Now</a></div>
+                                    <div className={"buynow_bt"}><a href="/">{t("CreateNow")}</a></div>
                                 </div>
                             </div>
                         </div>
