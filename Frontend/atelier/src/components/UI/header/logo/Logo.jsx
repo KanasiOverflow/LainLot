@@ -9,7 +9,7 @@ export default function Logo() {
                     <div className={"col-sm-12"}>
                         <div className={mcss.logo}>
                             <a href="/index">
-                                <img src="/images/logo.png" alt="Logo" />
+                                <img src="/images/lainlot_logo.png" alt="Logo" />
                             </a>
                         </div>
                     </div>

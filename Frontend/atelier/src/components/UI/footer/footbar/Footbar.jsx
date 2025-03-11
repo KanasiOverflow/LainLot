@@ -7,7 +7,7 @@ export default function Footbar() {
             <div className={"container"}>
                 <div className={mcss.footerLogo}>
                     <a href="/">
-                        <img src="/images/footer-logo.png" alt="Footer Logo" />
+                        <img src="/images/lainlot_footer_logo.png" alt="Footer Logo" />
                     </a>
                 </div>
                 <div className={mcss.footerMenu}>
