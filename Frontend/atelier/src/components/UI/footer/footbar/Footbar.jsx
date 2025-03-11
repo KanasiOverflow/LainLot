@@ -1,7 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import mcss from './Footbar.module.css';
 
 export default function Footbar() {
+
+    const { t } = useTranslation();
+
     return (
         <div className={mcss.footerSection + ' ' + mcss.layoutPadding}>
             <div className={"container"}>
@@ -12,13 +16,13 @@ export default function Footbar() {
                 </div>
                 <div className={mcss.footerMenu}>
                     <ul>
-                        <li><a href="/Home">Home</a></li>
-                        <li><a href="/Contacts">Contacts</a></li>
-                        <li><a href="/About">About</a></li>
+                        <li><a href="/Home">{t("Home")}</a></li>
+                        <li><a href="/Contacts">{t("Contacts")}</a></li>
+                        <li><a href="/About">{t("About")}</a></li>
                     </ul>
                 </div>
                 <div className={mcss.locationMain}>
-                    Help Line Number: <a href="tel:+1180012001200">+1 1800 1200 1200</a>
+                    {t("HelpLineNumber")}: <a href="tel:+1180012001200">+1 1800 1200 1200</a>
                 </div>
             </div>
         </div>

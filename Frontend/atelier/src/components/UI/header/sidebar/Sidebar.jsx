@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import mcss from './Sidebar.module.css';
 
 export default function Sidebar() {
+
+    const { t } = useTranslation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const openNav = () => setIsSidebarOpen(true);
@@ -16,9 +19,9 @@ export default function Sidebar() {
                 <button className={mcss.closebtn} onClick={closeNav}>
                     &times;
                 </button>
-                <a href="/Home">Home</a>
-                <a href="/Contacts">Contacts</a>
-                <a href="/About">About</a>
+                <a href="/Home">{t("Home")}</a>
+                <a href="/Contacts">{t("Contacts")}</a>
+                <a href="/About">{t("About")}</a>
             </div>
 
             {!isSidebarOpen && (
