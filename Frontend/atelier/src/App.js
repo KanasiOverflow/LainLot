@@ -5,7 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AppProvider } from "./provider/AppProvider";
 import { Helmet } from 'react-helmet';
 import './styles/App.css';
-// rsc - create template component
+// rfc - create template component
 
 function App() {
   return (
