@@ -1,7 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import mcss from './Slider.module.css';
 
 export default function Slider() {
+
+    const { t } = useTranslation();
+
     return (
         <div className={"banner_section layout_padding"}>
             <div className={"container"}>
@@ -10,7 +14,7 @@ export default function Slider() {
                         <div className={"carousel-item active"}>
                             <div className={"row"}>
                                 <div className={"col-sm-12"}>
-                                    <h1 className={"banner_taital"}>Get Start <br />Your favorite shopping 1</h1>
+                                    <h1 className={"banner_taital"} dangerouslySetInnerHTML={{ __html: t('MakeYourFavoriteSportSuit') }} />
                                     <div className={"buynow_bt"}><a href="/">Buy Now</a></div>
                                 </div>
                             </div>
@@ -18,7 +22,7 @@ export default function Slider() {
                         <div className={"carousel-item"}>
                             <div className={"row"}>
                                 <div className={"col-sm-12"}>
-                                    <h1 className={"banner_taital"}>Get Start <br />Your favorite shopping 2</h1>
+                                    <h1 className={"banner_taital"} dangerouslySetInnerHTML={{ __html: t('MakeYourFavoriteSportSuit') }} />
                                     <div className={"buynow_bt"}><a href="/">Buy Now</a></div>
                                 </div>
                             </div>
@@ -26,7 +30,7 @@ export default function Slider() {
                         <div className={"carousel-item"}>
                             <div className={"row"}>
                                 <div className={"col-sm-12"}>
-                                    <h1 className={"banner_taital"}>Get Start <br />Your favorite shopping 3</h1>
+                                    <h1 className={"banner_taital"} dangerouslySetInnerHTML={{ __html: t('MakeYourFavoriteSportSuit') }} />
                                     <div className={"buynow_bt"}><a href="/">Buy Now</a></div>
                                 </div>
                             </div>

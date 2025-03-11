@@ -12,7 +12,7 @@ i18n
         debug: true, // Disable in production
 
         interpolation: {
-            escapeValue: false, // Disabling shielding
+            escapeValue: true, // Disabling shielding
         },
 
         detection: {
