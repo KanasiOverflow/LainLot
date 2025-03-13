@@ -1,5 +1,5 @@
 GET http://localhost:8040/weatherforecast/
 Accept: application/json
 
-### GetLanguageIdByAbbreviation
-GET {{RestAPI_HostAddress}}GetLanguageIdByAbbreviation?abbreviation=ru
+### GetAbout
+GET {{RestAPI_HostAddress}}GetAbout?abbreviation=ru

@@ -29,24 +29,35 @@ namespace RestAPI.Controllers
         private readonly IRepository<DB.Language> _languageRepository = languageRepository;
         #endregion
 
-        #region Languages
+        #region AboutPage
 
         [AllowAnonymous]
-        [HttpGet("GetLanguageIdByAbbreviation")]
+        [HttpGet("GetAbout")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<int> GetLanguageIdByAbbreviation(string abbreviation)
+        public ActionResult<IEnumerable<About>> GetAbout(string lang)
         {
-            var dbEntity = _languageRepository.GetAll()
-                .FirstOrDefault(x => string.Equals(x.Abbreviation.ToLower(), abbreviation.ToLower()));
-            if (dbEntity == null)
-            {
-                return NotFound();
-            }
+            var langId = GetLanguageIdByAbbreviation(lang);
 
-            return dbEntity == null ? NotFound() : dbEntity.Id;
+            var dbList = _aboutRepository
+                .GetAll()
+                .Where(x => x.FkLanguages == langId)
+                .OrderBy(x => x.Id)
+                .ToList();
+
+            var apiList = _mapper.Map<List<DB.About>, List<About>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
         }
 
         #endregion
+
+        private int GetLanguageIdByAbbreviation(string abbreviation)
+        {
+            var dbEntity = _languageRepository.GetAll()
+                .FirstOrDefault(x => string.Equals(x.Abbreviation.ToLower(), abbreviation.ToLower()));
+
+            return dbEntity == null ? 0 : dbEntity.Id;
+        }
     }
 }

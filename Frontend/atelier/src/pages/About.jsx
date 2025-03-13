@@ -1,17 +1,39 @@
-import React, { useContext } from 'react';
-import { LanguageContext  } from '../provider/context/LanguageContext';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import AboutPageService from 'api/Atelier/AboutPageService';
+import { useFetching } from '../hooks/useFetching';
 
 export default function About() {
+  const { i18n } = useTranslation();
+  const [aboutTexts, setAboutTexts] = useState([]);
 
-  const { langId, isLangLoading, langError } = useContext(LanguageContext);
+  const [fetchAbout, isLoading, error] = useFetching(async () => {
+    const response = await AboutPageService.GetAbout(i18n.language);
+    if (response && Array.isArray(response.data)) {
+      setAboutTexts(response.data);
+    }
+  });
 
-  console.log("langId:" + langId);
+  useEffect(() => {
+    fetchAbout();
+    // eslint-disable-next-line
+  }, [i18n.language]); 
 
   return (
     <div>
-      <h1>
-        This is Lainlot Atelier - LainLot.com ©
-      </h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {aboutTexts.map((item) => (
+            <li key={item.id}>
+              <h3>{item.header}</h3>
+              <p>{item.text}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
-  );
+  )
 };
