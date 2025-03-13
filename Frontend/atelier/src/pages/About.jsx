@@ -1,6 +1,10 @@
 import React from 'react';
+import langId from '../utils/getLanguageIdByAbbreviation';
 
 export default function About() {
+
+  console.log(langId);
+
   return (
     <div>
       <h1>

@@ -24,7 +24,7 @@ export default class AboutService {
     };
 
     static async GetAboutFields() {
-        
+
         const options = {
             method: 'get',
             url: `${getRestAPIUrl()}/Database/GetAboutFields`,
@@ -41,7 +41,7 @@ export default class AboutService {
     };
 
     static async GetAbout(limit, page) {
-        
+
         const options = {
             method: 'get',
             url: `${getRestAPIUrl()}/Database/GetAbout?limit=${limit}&page=${page}`,
@@ -63,6 +63,24 @@ export default class AboutService {
             method: 'get',
             url: `${getRestAPIUrl()}/Database/GetAboutById`,
             params: { id: id },
+            auth: {
+                username: secureLocalStorage.getItem('login'),
+                password: secureLocalStorage.getItem('password')
+            }
+        };
+        const response = await axios(options);
+        if (response.status === get200().Code && response.statusText === get200().Message) {
+            return response;
+        }
+        return null;
+    };
+
+    static async GetLanguageIdByAbbreviation(lang) {
+
+        const options = {
+            method: 'get',
+            url: `${getRestAPIUrl()}/Database/GetLanguageIdByAbbreviation`,
+            params: { abbreviation: lang },
             auth: {
                 username: secureLocalStorage.getItem('login'),
                 password: secureLocalStorage.getItem('password')
