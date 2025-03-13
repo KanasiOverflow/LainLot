@@ -17,7 +17,7 @@ export default function RecordIdPage() {
     const { modal, setModal, fetchRecords } = useContext(ModalContext);
     const { page, limit } = useContext(PaginationContext);
     const { openEditModal, removeRecord } = useContext(ModalContext);
-    const { setCurrentTable, currentTable, currentRecords } = useContext(DataContext)
+    const { setCurrentTable, currentTable, currentRecords } = useContext(DataContext);
     const { fetchMultipleFkData, foreignKeys, fkError } = useContext(ForeignKeysContext);
 
     const params = useParams();

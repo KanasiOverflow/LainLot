@@ -76,7 +76,7 @@ export default class AboutService {
     };
 
     static async GetLanguageIdByAbbreviation(lang) {
-
+        
         const options = {
             method: 'get',
             url: `${getRestAPIUrl()}/Database/GetLanguageIdByAbbreviation`,
