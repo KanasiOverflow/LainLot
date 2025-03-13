@@ -5,7 +5,7 @@ export default function About() {
 
   const { langId, isLangLoading, langError } = useContext(LanguageContext);
 
-  console.log(langId);
+  console.log("langId:" + langId);
 
   return (
     <div>

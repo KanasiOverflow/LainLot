@@ -449,10 +449,6 @@ Authorization: {{Credentials}}
 GET {{RestAPI_HostAddress}}GetLanguagesById?id=3
 Authorization: {{Credentials}}
 
-### GetLanguageIdByAbbreviation
-GET {{RestAPI_HostAddress}}GetLanguageIdByAbbreviation?abbreviation=en
-Authorization: {{Credentials}}
-
 ### GetOrders
 GET {{RestAPI_HostAddress}}GetOrders?limit=10&page=1
 Authorization: {{Credentials}}

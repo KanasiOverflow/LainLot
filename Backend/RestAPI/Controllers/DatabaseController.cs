@@ -2952,21 +2952,6 @@ namespace RestAPI.Controllers
             return dbEntity == null ? NotFound() : _mapper.Map<DB.Language, Language>(dbEntity);
         }
 
-        [HttpGet("GetLanguageIdByAbbreviation")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<int> GetLanguageIdByAbbreviation(string abbreviation)
-        {
-            var dbEntity = _languageRepository.GetAll()
-                .FirstOrDefault(x => string.Equals(x.Abbreviation.ToLower(), abbreviation.ToLower()));
-            if (dbEntity == null)
-            {
-                return NotFound();
-            }
-
-            return dbEntity == null ? NotFound() : dbEntity.Id;
-        }
-
         [HttpPost("CreateLanguages")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
