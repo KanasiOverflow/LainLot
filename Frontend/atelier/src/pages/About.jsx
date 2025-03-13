@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from 'react';
-import { LanguageContext } from '../provider/context/LanguageContext';
+import React, { useContext } from 'react';
+import { LanguageContext  } from '../provider/context/LanguageContext';
 
 export default function About() {
 
-  const { langId } = useContext(LanguageContext);
+  const { langId, isLangLoading, langError } = useContext(LanguageContext);
 
   console.log(langId);
 
