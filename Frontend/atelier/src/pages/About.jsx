@@ -17,7 +17,7 @@ export default function About() {
   useEffect(() => {
     fetchAbout();
     // eslint-disable-next-line
-  }, [i18n.language]); 
+  }, [i18n.language]);
 
   return (
     <div>

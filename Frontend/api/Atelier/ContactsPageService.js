@@ -2,14 +2,14 @@ import axios from 'axios';
 import { get200 } from '../utils/responseCodes';
 import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
-export default class AboutPageService {
+export default class ContactsPageService {
 
     // AllowAnonymous
-    static async GetAbout(lang) {
+    static async GetContacts(lang) {
 
         const options = {
             method: 'get',
-            url: `${getRestAPIUrl()}/Atelier/GetAbout`,
+            url: `${getRestAPIUrl()}/Atelier/GetContacts`,
             params: { lang: lang }
         };
         const response = await axios(options);
@@ -18,5 +18,4 @@ export default class AboutPageService {
         }
         return null;
     };
-
 };

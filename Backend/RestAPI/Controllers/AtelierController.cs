@@ -14,7 +14,8 @@ namespace RestAPI.Controllers
     public class AtelierController(
         ILogger<DatabaseController> logger,
         IRepository<DB.About> aboutRepository,
-        IRepository<DB.Language> languageRepository) 
+        IRepository<DB.Contact> contactRepository,
+        IRepository<DB.Language> languageRepository)
         : ControllerBase
     {
         /// <summary>
@@ -26,6 +27,7 @@ namespace RestAPI.Controllers
         #region repos init
         private readonly ILogger<DatabaseController> _logger = logger;
         private readonly IRepository<DB.About> _aboutRepository = aboutRepository;
+        private readonly IRepository<DB.Contact> _contactRepository = contactRepository;
         private readonly IRepository<DB.Language> _languageRepository = languageRepository;
         #endregion
 
@@ -46,6 +48,29 @@ namespace RestAPI.Controllers
                 .ToList();
 
             var apiList = _mapper.Map<List<DB.About>, List<About>>(dbList);
+
+            return apiList == null ? NotFound() : apiList;
+        }
+
+        #endregion
+
+        #region ContactsPage
+
+        [AllowAnonymous]
+        [HttpGet("GetContacts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<IEnumerable<Contact>> GetContacts(string lang)
+        {
+            var langId = GetLanguageIdByAbbreviation(lang);
+
+            var dbList = _contactRepository
+                .GetAll()
+                .Where(x => x.FkLanguages == langId)
+                .OrderBy(x => x.Id)
+                .ToList();
+
+            var apiList = _mapper.Map<List<DB.Contact>, List<Contact>>(dbList);
 
             return apiList == null ? NotFound() : apiList;
         }
