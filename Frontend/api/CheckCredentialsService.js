@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { getRestAPIUrl } from './utils/getRestAPIUrl.js';
 
 export default class CheckCredentialsService {
   static async CheckCredentials(login, password) {

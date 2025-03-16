@@ -1,8 +1,8 @@
 import React, { useContext, forwardRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ModalContext } from '../../provider/context/ModalProvider';
-import { itemVariants } from '../../utils/animationVariants';
-import RecordItem from '../RecordItem/RecordItem';
+import { ModalContext } from '../../provider/context/ModalProvider.jsx';
+import { itemVariants } from '../../utils/animationVariants.js';
+import RecordItem from '../RecordItem/RecordItem.jsx';
 
 const MemoizedRecordItem = React.memo(
   forwardRef((props, ref) => <RecordItem ref={ref} {...props} />),

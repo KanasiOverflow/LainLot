@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { get200 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import { get200 } from '../utils/responseCodes.js';
+import { getRestAPIUrl } from '../utils/getRestAPIUrl.js';
 
 export default class AboutPageService {
   // AllowAnonymous

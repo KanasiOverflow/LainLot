@@ -1,7 +1,7 @@
 import axios from 'axios';
 import secureLocalStorage from 'react-secure-storage';
-import { get200 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import { get200 } from './utils/responseCodes.js';
+import { getRestAPIUrl } from './utils/getRestAPIUrl.js';
 
 export default class ForeignKeysService {
   static async GetFkAccessLevelsData(id) {

@@ -1,6 +1,6 @@
 import React from 'react';
-import GeneralInput from '../UI/input/GeneralInput';
-import GeneralSelect from '../UI/select/GeneralSelect';
+import GeneralInput from '../UI/input/GeneralInput.jsx';
+import GeneralSelect from '../UI/select/GeneralSelect.jsx';
 
 export default function RecordFilter({ filter, setFilter, fields }) {
   const options = [];

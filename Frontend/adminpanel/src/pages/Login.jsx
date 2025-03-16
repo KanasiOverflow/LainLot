@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
-import GeneralInput from '../components/UI/input/GeneralInput';
-import GeneralButton from '../components/UI/button/GeneralButton';
-import Loader from '../components/UI/loader/Loader';
-import CheckCredentialsService from 'api/CheckCredentialsService';
-import { AuthContext } from '../provider/context/AuthProvider';
+import GeneralInput from '../components/UI/input/GeneralInput.jsx';
+import GeneralButton from '../components/UI/button/GeneralButton.jsx';
+import Loader from '../components/UI/loader/Loader.jsx';
+import CheckCredentialsService from 'api/CheckCredentialsService.js';
+import { AuthContext } from '../provider/context/AuthProvider.jsx';
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);

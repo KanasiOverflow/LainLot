@@ -1,10 +1,10 @@
 import { useContext, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ModalContext } from '../../provider/context/ModalProvider';
-import { ForeignKeysContext } from '../../provider/context/ForeignKeysProvider';
-import { byteArrayToBase64 } from '../../utils/convertByteArrayToBase64';
-import GeneralButton from '../UI/button/GeneralButton';
-import DisplayImage from '../UI/image/DisplayImage';
+import { ModalContext } from '../../provider/context/ModalProvider.jsx';
+import { ForeignKeysContext } from '../../provider/context/ForeignKeysProvider.jsx';
+import { byteArrayToBase64 } from '../../utils/convertByteArrayToBase64.js';
+import GeneralButton from '../UI/button/GeneralButton.jsx';
+import DisplayImage from '../UI/image/DisplayImage.jsx';
 import mcss from './RecordItem.module.css';
 
 export default function RecordItem({ record, ref }) {

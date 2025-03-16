@@ -1,7 +1,7 @@
 // TablesSidebar.jsx
 import React, { useState } from 'react';
 import { Menu, X, Search } from 'lucide-react';
-import GeneralButton from '../UI/button/GeneralButton';
+import GeneralButton from '../UI/button/GeneralButton.jsx';
 import mcss from './TablesSidebar.module.css';
 
 export default function TablesSidebar({ tables, setCurrentTable }) {

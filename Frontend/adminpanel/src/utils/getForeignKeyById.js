@@ -1,4 +1,4 @@
-import ForeignKeysService from 'api/ForeignKeysService';
+import ForeignKeysService from 'api/ForeignKeysService.js';
 
 export const getForeignKeyById = async (foreignFieldKey, id) => {
   var response = null;

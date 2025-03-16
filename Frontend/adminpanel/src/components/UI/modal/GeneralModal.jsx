@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ModalContext } from '../../../provider/context/ModalProvider';
+import { ModalContext } from '../../../provider/context/ModalProvider.jsx';
 import mcss from './GeneralModal.module.css';
 
 export default function GeneralModal({ children }) {

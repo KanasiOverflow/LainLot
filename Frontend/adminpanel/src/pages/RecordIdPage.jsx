@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useFetching } from '../hooks/useFetching';
-import { getRecordById } from '../utils/getRecordById';
-import { byteArrayToBase64 } from '../utils/convertByteArrayToBase64';
-import { DataContext } from '../provider/context/DataProvider';
-import { ModalContext } from '../provider/context/ModalProvider';
-import { ForeignKeysContext } from '../provider/context/ForeignKeysProvider';
-import { PaginationContext } from '../provider/context/PaginationProvider';
-import Loader from '../components/UI/loader/Loader';
-import GeneralButton from '../components/UI/button/GeneralButton';
-import GeneralModal from '../components/UI/modal/GeneralModal';
-import RecordForm from '../components/RecordForm/RecordForm';
-import DisplayImage from '../components/UI/image/DisplayImage';
+import { useFetching } from '../hooks/useFetching.jsx';
+import { getRecordById } from '../utils/getRecordById.js';
+import { byteArrayToBase64 } from '../utils/convertByteArrayToBase64.js';
+import { DataContext } from '../provider/context/DataProvider.jsx';
+import { ModalContext } from '../provider/context/ModalProvider.jsx';
+import { ForeignKeysContext } from '../provider/context/ForeignKeysProvider.jsx';
+import { PaginationContext } from '../provider/context/PaginationProvider.jsx';
+import Loader from '../components/UI/loader/Loader.jsx';
+import GeneralButton from '../components/UI/button/GeneralButton.jsx';
+import GeneralModal from '../components/UI/modal/GeneralModal.jsx';
+import RecordForm from '../components/RecordForm/RecordForm.jsx';
+import DisplayImage from '../components/UI/image/DisplayImage.jsx';
 
 export default function RecordIdPage() {
   const { modal, setModal, fetchRecords } = useContext(ModalContext);

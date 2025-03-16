@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
-import { DataContext } from '../context/DataProvider';
+import { DataContext } from '../context/DataProvider.jsx';
 
 export const PaginationContext = createContext(null);
 

@@ -1,18 +1,18 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useRecords } from '../hooks/useRecords';
-import { useFetching } from '../hooks/useFetching';
-import { getDBTablesList } from '../utils/getDBTablesList';
-import { ModalContext } from '../provider/context/ModalProvider';
-import { PaginationContext } from '../provider/context/PaginationProvider';
-import RecordList from '../components/RecordList/RecordList';
-import PageCountSwitcher from '../components/PageCountSwitcher/PageCountSwitcher';
-import RecordForm from '../components/RecordForm/RecordForm';
-import RecordFilter from '../components/RecordFilter/RecordFilter';
-import GeneralButton from '../components/UI/button/GeneralButton';
-import GeneralModal from '../components/UI/modal/GeneralModal';
-import Loader from '../components/UI/loader/Loader';
-import Pagination from '../components/UI/pagination/Pagination';
-import TablesSidebar from '../components/TablesSidebar/TablesSidebar';
+import { useFetching } from '../hooks/useFetching.jsx';
+import { getDBTablesList } from '../utils/getDBTablesList.js';
+import { ModalContext } from '../provider/context/ModalProvider.jsx';
+import { PaginationContext } from '../provider/context/PaginationProvider.jsx';
+import RecordList from '../components/RecordList/RecordList.jsx';
+import PageCountSwitcher from '../components/PageCountSwitcher/PageCountSwitcher.jsx';
+import RecordForm from '../components/RecordForm/RecordForm.jsx';
+import RecordFilter from '../components/RecordFilter/RecordFilter.jsx';
+import GeneralButton from '../components/UI/button/GeneralButton.jsx';
+import GeneralModal from '../components/UI/modal/GeneralModal.jsx';
+import Loader from '../components/UI/loader/Loader.jsx';
+import Pagination from '../components/UI/pagination/Pagination.jsx';
+import TablesSidebar from '../components/TablesSidebar/TablesSidebar.jsx';
 
 // rsc - create template component
 

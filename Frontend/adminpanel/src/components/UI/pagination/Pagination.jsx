@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import { usePagination } from '../../../hooks/usePagination';
-import { DataContext } from '../../../provider/context/DataProvider';
-import { PaginationContext } from '../../../provider/context/PaginationProvider';
+import { usePagination } from '../../../hooks/usePagination.jsx';
+import { DataContext } from '../../../provider/context/DataProvider.jsx';
+import { PaginationContext } from '../../../provider/context/PaginationProvider.jsx';
 import mcss from './Pagination.module.css';
 
 export default function Pagination() {

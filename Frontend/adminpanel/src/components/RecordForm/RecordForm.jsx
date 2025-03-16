@@ -1,10 +1,10 @@
 import { useRef, useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import GeneralButton from '../UI/button/GeneralButton';
-import GeneralInput from '../UI/input/GeneralInput';
-import OpenImgDialog from '../UI/openImgDialog/OpenImgDialog';
-import { ModalContext } from '../../provider/context/ModalProvider';
-import { checkDateOrTimeField } from '../../utils/checkDateOrTimeField';
+import GeneralButton from '../UI/button/GeneralButton.jsx';
+import GeneralInput from '../UI/input/GeneralInput.jsx';
+import OpenImgDialog from '../UI/openImgDialog/OpenImgDialog.jsx';
+import { ModalContext } from '../../provider/context/ModalProvider.jsx';
+import { checkDateOrTimeField } from '../../utils/checkDateOrTimeField.js';
 import mcss from './RecordForm.module.css';
 
 export default function RecordForm() {

@@ -1,6 +1,6 @@
 import { createContext, useState, useCallback } from 'react';
-import { useFetching } from '../../hooks/useFetching';
-import { getForeignKeyById } from '../../utils/getForeignKeyById';
+import { useFetching } from '../../hooks/useFetching.jsx';
+import { getForeignKeyById } from '../../utils/getForeignKeyById.js';
 
 export const ForeignKeysContext = createContext(null);
 

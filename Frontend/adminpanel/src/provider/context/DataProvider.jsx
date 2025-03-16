@@ -1,10 +1,10 @@
 import { createContext, useState } from 'react';
-import { getPageCount } from '../../utils/getPageCount';
-import { getRecordFields } from '../../utils/getRecordFields';
-import { getTableTotalCount } from '../../utils/getTableTotalCount';
-import { getAllRecords } from '../../utils/getAllRecords';
-import { toLowerCase } from '../../utils/toLowerCase';
-import { useFetching } from '../../hooks/useFetching';
+import { getPageCount } from '../../utils/getPageCount.js';
+import { getRecordFields } from '../../utils/getRecordFields.js';
+import { getTableTotalCount } from '../../utils/getTableTotalCount.js';
+import { getAllRecords } from '../../utils/getAllRecords.js';
+import { toLowerCase } from '../../utils/toLowerCase.js';
+import { useFetching } from '../../hooks/useFetching.jsx';
 
 export const DataContext = createContext(null);
 

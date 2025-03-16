@@ -1,8 +1,8 @@
 import { createContext, useState, useContext, useCallback } from 'react';
-import { removeRecordById } from '../../utils/removeRecordById';
-import { createRecord } from '../../utils/createRecord';
-import { updateRecord } from '../../utils/updateRecord';
-import { DataContext } from './DataProvider';
+import { removeRecordById } from '../../utils/removeRecordById.js';
+import { createRecord } from '../../utils/createRecord.js';
+import { updateRecord } from '../../utils/updateRecord.js';
+import { DataContext } from './DataProvider.jsx';
 
 export const ModalContext = createContext(null);
 
