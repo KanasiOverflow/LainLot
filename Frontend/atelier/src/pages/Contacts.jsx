@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ContactsPageService from 'api/Atelier/ContactsPageService';
 import { useFetching } from '../hooks/useFetching';
+import Loader from "../components/UI/loader/Loader";
 
 export default function Contacts() {
     const { i18n } = useTranslation();
@@ -23,7 +24,7 @@ export default function Contacts() {
         <div>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             {isLoading ? (
-                <p>Loading...</p>
+                <Loader />
             ) : (
                 <ul>
                     {aboutContacts.map((item) => (
