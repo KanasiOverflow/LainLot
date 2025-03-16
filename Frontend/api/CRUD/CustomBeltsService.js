@@ -4,153 +4,161 @@ import { get200, get201 } from '../utils/responseCodes';
 import { getRestAPIUrl } from '../utils/getRestAPIUrl';
 
 export default class CustomBeltsService {
-
-    static async GetCustomBeltsCount() {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCustomBeltsCount`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
+  static async GetCustomBeltsCount() {
+    const options = {
+      method: 'get',
+      url: `${getRestAPIUrl()}/Database/GetCustomBeltsCount`,
+      auth: {
+        username: secureLocalStorage.getItem('login'),
+        password: secureLocalStorage.getItem('password'),
+      },
     };
 
-    static async GetCustomBeltsFields() {
-        
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCustomBeltsFields`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
+    const response = await axios(options);
+    if (
+      response.status === get200().Code &&
+      response.statusText === get200().Message
+    ) {
+      return response;
+    }
+    return null;
+  }
+
+  static async GetCustomBeltsFields() {
+    const options = {
+      method: 'get',
+      url: `${getRestAPIUrl()}/Database/GetCustomBeltsFields`,
+      auth: {
+        username: secureLocalStorage.getItem('login'),
+        password: secureLocalStorage.getItem('password'),
+      },
+    };
+    const response = await axios(options);
+    if (
+      response.status === get200().Code &&
+      response.statusText === get200().Message
+    ) {
+      return response;
+    }
+    return null;
+  }
+
+  static async GetCustomBelts(limit, page) {
+    const options = {
+      method: 'get',
+      url: `${getRestAPIUrl()}/Database/GetCustomBelts?limit=${limit}&page=${page}`,
+      auth: {
+        username: secureLocalStorage.getItem('login'),
+        password: secureLocalStorage.getItem('password'),
+      },
+    };
+    const response = await axios(options);
+    if (
+      response.status === get200().Code &&
+      response.statusText === get200().Message
+    ) {
+      return response;
+    }
+    return null;
+  }
+
+  static async GetCustomBeltsById(id) {
+    const options = {
+      method: 'get',
+      url: `${getRestAPIUrl()}/Database/GetCustomBeltsById`,
+      params: { id: id },
+      auth: {
+        username: secureLocalStorage.getItem('login'),
+        password: secureLocalStorage.getItem('password'),
+      },
+    };
+    const response = await axios(options);
+    if (
+      response.status === get200().Code &&
+      response.statusText === get200().Message
+    ) {
+      return response;
+    }
+    return null;
+  }
+
+  static async CreateCustomBelts(newRecord) {
+    const options = {
+      method: 'post',
+      url: `${getRestAPIUrl()}/Database/CreateCustomBelts`,
+      headers: { 'Content-Type': 'application/json' },
+      data: JSON.stringify(newRecord),
+      auth: {
+        username: secureLocalStorage.getItem('login'),
+        password: secureLocalStorage.getItem('password'),
+      },
     };
 
-    static async GetCustomBelts(limit, page) {
-        
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCustomBelts?limit=${limit}&page=${page}`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
+    var responseError = '';
+    const response = await axios(options).catch((error) => {
+      console.log(error.response.data.Message);
+      responseError = error.response.data.Message;
+    });
+
+    if (response) {
+      if (
+        response.status === get201().Code &&
+        response.statusText === get201().Message
+      ) {
+        return response;
+      }
+    } else {
+      return responseError;
+    }
+  }
+
+  static async UpdateCustomBelts(oldRecord) {
+    const options = {
+      method: 'put',
+      url: `${getRestAPIUrl()}/Database/UpdateCustomBelts`,
+      headers: { 'Content-Type': 'application/json' },
+      data: JSON.stringify(oldRecord),
+      auth: {
+        username: secureLocalStorage.getItem('login'),
+        password: secureLocalStorage.getItem('password'),
+      },
     };
 
-    static async GetCustomBeltsById(id) {
+    var responseError = '';
+    const response = await axios(options).catch((error) => {
+      console.log(error.response.data.Message);
+      responseError = error.response.data.Message;
+    });
 
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCustomBeltsById`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
+    if (response) {
+      if (
+        response.status === get201().Code &&
+        response.statusText === get201().Message
+      ) {
+        return response;
+      }
+    } else {
+      return responseError;
+    }
+  }
+
+  static async DeleteCustomBelts(id) {
+    const options = {
+      method: 'delete',
+      url: `${getRestAPIUrl()}/Database/DeleteCustomBelts`,
+      params: { id: id },
+      auth: {
+        username: secureLocalStorage.getItem('login'),
+        password: secureLocalStorage.getItem('password'),
+      },
     };
-
-    static async CreateCustomBelts(newRecord) {
-
-        const options = {
-            method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateCustomBelts`,
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(newRecord),
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        var responseError = "";
-        const response = await axios(options)
-            .catch((error) => {
-                console.log(error.response.data.Message);
-                responseError = error.response.data.Message;
-            });
-
-        if (response) {
-            if (response.status === get201().Code && response.statusText === get201().Message) {
-                return response;
-            }
-        }
-        else {
-            return responseError;
-        }
-    };
-
-    static async UpdateCustomBelts(oldRecord) {
-
-        const options = {
-            method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateCustomBelts`,
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(oldRecord),
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        var responseError = "";
-        const response = await axios(options)
-            .catch((error) => {
-                console.log(error.response.data.Message);
-                responseError = error.response.data.Message;
-            });
-
-        if (response) {
-            if (response.status === get201().Code && response.statusText === get201().Message) {
-                return response;
-            }
-        }
-        else {
-            return responseError;
-        }
-    };
-
-    static async DeleteCustomBelts(id) {
-
-        const options = {
-            method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteCustomBelts`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-};
+    const response = await axios(options);
+    if (
+      response.status === get200().Code &&
+      response.statusText === get200().Message
+    ) {
+      return response;
+    }
+    return null;
+  }
+}
