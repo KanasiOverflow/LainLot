@@ -2,6 +2,7 @@
   "name": "atelier",
   "version": "0.1.0",
   "private": true,
+  "author": "Kanstantsin Asinouski, Kanstantsin.Asinouski@gmail.com",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",

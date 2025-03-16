@@ -45,7 +45,6 @@ import UserRolesService from 'api/CRUD/UserRolesService';
 import UsersService from 'api/CRUD/UsersService';
 
 export const getRecordFields = async (currentTable) => {
-
   var response = null;
 
   switch (currentTable) {
@@ -104,7 +103,8 @@ export const getRecordFields = async (currentTable) => {
       response = await CustomBeltsService.GetCustomBeltsFields();
       break;
     case 'CustomizableProducts':
-      response = await CustomizableProductsService.GetCustomizableProductsFields();
+      response =
+        await CustomizableProductsService.GetCustomizableProductsFields();
       break;
     case 'CustomNecklines':
       response = await CustomNecklinesService.GetCustomNecklinesFields();
@@ -161,7 +161,8 @@ export const getRecordFields = async (currentTable) => {
       response = await ProductsService.GetProductsFields();
       break;
     case 'ProductTranslations':
-      response = await ProductTranslationsService.GetProductTranslationsFields();
+      response =
+        await ProductTranslationsService.GetProductTranslationsFields();
       break;
     case 'Reviews':
       response = await ReviewsService.GetReviewsFields();
@@ -186,7 +187,7 @@ export const getRecordFields = async (currentTable) => {
       break;
     default:
       break;
-  };
+  }
 
   return response;
 };

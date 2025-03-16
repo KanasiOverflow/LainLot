@@ -9,11 +9,11 @@ export default function Navbar() {
   const { setIsAuth } = useContext(AuthContext);
 
   const logout = () => {
-    setIsAuth(false)
-    secureLocalStorage.removeItem('auth')
-    secureLocalStorage.removeItem('login')
-    secureLocalStorage.removeItem('password')
-  }
+    setIsAuth(false);
+    secureLocalStorage.removeItem('auth');
+    secureLocalStorage.removeItem('login');
+    secureLocalStorage.removeItem('password');
+  };
 
   return (
     <nav className={mcss.navigation}>
@@ -38,7 +38,9 @@ export default function Navbar() {
           </NavLink>
         </li>
       </ul>
-      <GeneralButton onClick={logout} className={mcss.logoutButton}>Sign out</GeneralButton>
+      <GeneralButton onClick={logout} className={mcss.logoutButton}>
+        Sign out
+      </GeneralButton>
     </nav>
-  )
-};
+  );
+}

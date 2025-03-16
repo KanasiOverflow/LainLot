@@ -45,7 +45,6 @@ import UserRolesService from 'api/CRUD/UserRolesService';
 import UsersService from 'api/CRUD/UsersService';
 
 export const getTableTotalCount = async (currentTable) => {
-
   var response = null;
 
   switch (currentTable) {
@@ -104,7 +103,8 @@ export const getTableTotalCount = async (currentTable) => {
       response = await CustomBeltsService.GetCustomBeltsCount();
       break;
     case 'CustomizableProducts':
-      response = await CustomizableProductsService.GetCustomizableProductsCount();
+      response =
+        await CustomizableProductsService.GetCustomizableProductsCount();
       break;
     case 'CustomNecklines':
       response = await CustomNecklinesService.GetCustomNecklinesCount();
@@ -186,7 +186,7 @@ export const getTableTotalCount = async (currentTable) => {
       break;
     default:
       break;
-  };
+  }
 
   return response;
 };

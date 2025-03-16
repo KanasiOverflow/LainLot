@@ -45,148 +45,149 @@ import UserRolesService from 'api/CRUD/UserRolesService';
 import UsersService from 'api/CRUD/UsersService';
 
 export const getRecordById = async (currentTable, id) => {
+  var response = null;
 
-    var response = null;
+  switch (currentTable) {
+    case 'About':
+      response = await AboutService.GetAboutById(id);
+      break;
+    case 'AccessLevels':
+      response = await AccessLevelsService.GetAccessLevelsById(id);
+      break;
+    case 'BaseBelts':
+      response = await BaseBeltsService.GetBaseBeltsById(id);
+      break;
+    case 'BaseNecklines':
+      response = await BaseNecklinesService.GetBaseNecklinesById(id);
+      break;
+    case 'BasePantsCuffs':
+      response = await BasePantsCuffsService.GetBasePantsCuffsById(id);
+      break;
+    case 'BasePants':
+      response = await BasePantsService.GetBasePantsById(id);
+      break;
+    case 'BaseSleeveCuffs':
+      response = await BaseSleeveCuffsService.GetBaseSleeveCuffsById(id);
+      break;
+    case 'BaseSleeves':
+      response = await BaseSleevesService.GetBaseSleevesById(id);
+      break;
+    case 'BaseSportSuits':
+      response = await BaseSportSuitsService.GetBaseSportSuitsById(id);
+      break;
+    case 'BaseSweaters':
+      response = await BaseSweatersService.GetBaseSweatersById(id);
+      break;
+    case 'Cart':
+      response = await CartService.GetCartById(id);
+      break;
+    case 'Categories':
+      response = await CategoriesService.GetCategoriesById(id);
+      break;
+    case 'CategoryHierarchy':
+      response = await CategoryHierarchyService.GetCategoryHierarchyById(id);
+      break;
+    case 'Colors':
+      response = await ColorsService.GetColorsById(id);
+      break;
+    case 'Contacts':
+      response = await ContactsService.GetContactsById(id);
+      break;
+    case 'Countries':
+      response = await CountriesService.GetCountriesById(id);
+      break;
+    case 'Currencies':
+      response = await CurrenciesService.GetCurrenciesById(id);
+      break;
+    case 'CustomBelts':
+      response = await CustomBeltsService.GetCustomBeltsById(id);
+      break;
+    case 'CustomizableProducts':
+      response =
+        await CustomizableProductsService.GetCustomizableProductsById(id);
+      break;
+    case 'CustomNecklines':
+      response = await CustomNecklinesService.GetCustomNecklinesById(id);
+      break;
+    case 'CustomPantsCuffs':
+      response = await CustomPantsCuffsService.GetCustomPantsCuffsById(id);
+      break;
+    case 'CustomPants':
+      response = await CustomPantsService.GetCustomPantsById(id);
+      break;
+    case 'CustomSleeveCuffs':
+      response = await CustomSleeveCuffsService.GetCustomSleeveCuffsById(id);
+      break;
+    case 'CustomSleeves':
+      response = await CustomSleevesService.GetCustomSleevesById(id);
+      break;
+    case 'CustomSportSuits':
+      response = await CustomSportSuitsService.GetCustomSportSuitsById(id);
+      break;
+    case 'CustomSweaters':
+      response = await CustomSweatersService.GetCustomSweatersById(id);
+      break;
+    case 'FabricTypes':
+      response = await FabricTypesService.GetFabricTypesById(id);
+      break;
+    case 'Languages':
+      response = await LanguagesService.GetLanguagesById(id);
+      break;
+    case 'Orders':
+      response = await OrdersService.GetOrdersById(id);
+      break;
+    case 'OrderHistory':
+      response = await OrderHistoryService.GetOrderHistoryById(id);
+      break;
+    case 'OrderStatuses':
+      response = await OrderStatusesService.GetOrderStatusesById(id);
+      break;
+    case 'PaymentMethods':
+      response = await PaymentMethodsService.GetPaymentMethodsById(id);
+      break;
+    case 'Payments':
+      response = await PaymentsService.GetPaymentsById(id);
+      break;
+    case 'PaymentStatuses':
+      response = await PaymentStatusesService.GetPaymentStatusesById(id);
+      break;
+    case 'ProductImages':
+      response = await ProductImagesService.GetProductImagesById(id);
+      break;
+    case 'ProductOrders':
+      response = await ProductOrdersService.GetProductOrdersById(id);
+      break;
+    case 'Products':
+      response = await ProductsService.GetProductsById(id);
+      break;
+    case 'ProductTranslations':
+      response =
+        await ProductTranslationsService.GetProductTranslationsById(id);
+      break;
+    case 'Reviews':
+      response = await ReviewsService.GetReviewsById(id);
+      break;
+    case 'ShippingAddresses':
+      response = await ShippingAddressesService.GetShippingAddressesById(id);
+      break;
+    case 'SizeOptions':
+      response = await SizeOptionsService.GetSizeOptionsById(id);
+      break;
+    case 'UserOrderHistory':
+      response = await UserOrderHistoryService.GetUserOrderHistoryById(id);
+      break;
+    case 'UserProfiles':
+      response = await UserProfilesService.GetUserProfilesById(id);
+      break;
+    case 'UserRoles':
+      response = await UserRolesService.GetUserRolesById(id);
+      break;
+    case 'Users':
+      response = await UsersService.GetUsersById(id);
+      break;
+    default:
+      break;
+  }
 
-    switch (currentTable) {
-        case 'About':
-            response = await AboutService.GetAboutById(id);
-            break;
-        case 'AccessLevels':
-            response = await AccessLevelsService.GetAccessLevelsById(id);
-            break;
-        case 'BaseBelts':
-            response = await BaseBeltsService.GetBaseBeltsById(id);
-            break;
-        case 'BaseNecklines':
-            response = await BaseNecklinesService.GetBaseNecklinesById(id);
-            break;
-        case 'BasePantsCuffs':
-            response = await BasePantsCuffsService.GetBasePantsCuffsById(id);
-            break;
-        case 'BasePants':
-            response = await BasePantsService.GetBasePantsById(id);
-            break;
-        case 'BaseSleeveCuffs':
-            response = await BaseSleeveCuffsService.GetBaseSleeveCuffsById(id);
-            break;
-        case 'BaseSleeves':
-            response = await BaseSleevesService.GetBaseSleevesById(id);
-            break;
-        case 'BaseSportSuits':
-            response = await BaseSportSuitsService.GetBaseSportSuitsById(id);
-            break;
-        case 'BaseSweaters':
-            response = await BaseSweatersService.GetBaseSweatersById(id);
-            break;
-        case 'Cart':
-            response = await CartService.GetCartById(id);
-            break;
-        case 'Categories':
-            response = await CategoriesService.GetCategoriesById(id);
-            break;
-        case 'CategoryHierarchy':
-            response = await CategoryHierarchyService.GetCategoryHierarchyById(id);
-            break;
-        case 'Colors':
-            response = await ColorsService.GetColorsById(id);
-            break;
-        case 'Contacts':
-            response = await ContactsService.GetContactsById(id);
-            break;
-        case 'Countries':
-            response = await CountriesService.GetCountriesById(id);
-            break;
-        case 'Currencies':
-            response = await CurrenciesService.GetCurrenciesById(id);
-            break;
-        case 'CustomBelts':
-            response = await CustomBeltsService.GetCustomBeltsById(id);
-            break;
-        case 'CustomizableProducts':
-            response = await CustomizableProductsService.GetCustomizableProductsById(id);
-            break;
-        case 'CustomNecklines':
-            response = await CustomNecklinesService.GetCustomNecklinesById(id);
-            break;
-        case 'CustomPantsCuffs':
-            response = await CustomPantsCuffsService.GetCustomPantsCuffsById(id);
-            break;
-        case 'CustomPants':
-            response = await CustomPantsService.GetCustomPantsById(id);
-            break;
-        case 'CustomSleeveCuffs':
-            response = await CustomSleeveCuffsService.GetCustomSleeveCuffsById(id);
-            break;
-        case 'CustomSleeves':
-            response = await CustomSleevesService.GetCustomSleevesById(id);
-            break;
-        case 'CustomSportSuits':
-            response = await CustomSportSuitsService.GetCustomSportSuitsById(id);
-            break;
-        case 'CustomSweaters':
-            response = await CustomSweatersService.GetCustomSweatersById(id);
-            break;
-        case 'FabricTypes':
-            response = await FabricTypesService.GetFabricTypesById(id);
-            break;
-        case 'Languages':
-            response = await LanguagesService.GetLanguagesById(id);
-            break;
-        case 'Orders':
-            response = await OrdersService.GetOrdersById(id);
-            break;
-        case 'OrderHistory':
-            response = await OrderHistoryService.GetOrderHistoryById(id);
-            break;
-        case 'OrderStatuses':
-            response = await OrderStatusesService.GetOrderStatusesById(id);
-            break;
-        case 'PaymentMethods':
-            response = await PaymentMethodsService.GetPaymentMethodsById(id);
-            break;
-        case 'Payments':
-            response = await PaymentsService.GetPaymentsById(id);
-            break;
-        case 'PaymentStatuses':
-            response = await PaymentStatusesService.GetPaymentStatusesById(id);
-            break;
-        case 'ProductImages':
-            response = await ProductImagesService.GetProductImagesById(id);
-            break;
-        case 'ProductOrders':
-            response = await ProductOrdersService.GetProductOrdersById(id);
-            break;
-        case 'Products':
-            response = await ProductsService.GetProductsById(id);
-            break;
-        case 'ProductTranslations':
-            response = await ProductTranslationsService.GetProductTranslationsById(id);
-            break;
-        case 'Reviews':
-            response = await ReviewsService.GetReviewsById(id);
-            break;
-        case 'ShippingAddresses':
-            response = await ShippingAddressesService.GetShippingAddressesById(id);
-            break;
-        case 'SizeOptions':
-            response = await SizeOptionsService.GetSizeOptionsById(id);
-            break;
-        case 'UserOrderHistory':
-            response = await UserOrderHistoryService.GetUserOrderHistoryById(id);
-            break;
-        case 'UserProfiles':
-            response = await UserProfilesService.GetUserProfilesById(id);
-            break;
-        case 'UserRoles':
-            response = await UserRolesService.GetUserRolesById(id);
-            break;
-        case 'Users':
-            response = await UsersService.GetUsersById(id);
-            break;
-        default:
-            break;
-    };
-
-    return response;
+  return response;
 };

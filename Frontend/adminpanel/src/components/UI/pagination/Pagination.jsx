@@ -5,28 +5,23 @@ import { PaginationContext } from '../../../provider/context/PaginationProvider'
 import mcss from './Pagination.module.css';
 
 export default function Pagination() {
+  const { totalPages } = useContext(DataContext);
 
-    const {
-        totalPages,
-    } = useContext(DataContext);
+  const { page, changePage } = useContext(PaginationContext);
 
-    const {
-        page, changePage
-    } = useContext(PaginationContext);
+  let pagesArray = usePagination(totalPages);
 
-    let pagesArray = usePagination(totalPages);
-
-    return (
-        <div className={mcss.container}>
-            {pagesArray.map(pageNumber =>
-                <span
-                    onClick={() => changePage(pageNumber)}
-                    key={pageNumber}
-                    className={page === pageNumber ? 'page page__current' : 'page'}
-                >
-                    {pageNumber}
-                </span>
-            )}
-        </div>
-    )
-};
+  return (
+    <div className={mcss.container}>
+      {pagesArray.map((pageNumber) => (
+        <span
+          onClick={() => changePage(pageNumber)}
+          key={pageNumber}
+          className={page === pageNumber ? 'page page__current' : 'page'}
+        >
+          {pageNumber}
+        </span>
+      ))}
+    </div>
+  );
+}

@@ -2,10 +2,10 @@ import eslintPluginPrettier from 'eslint-plugin-prettier';
 
 export default [
     {
-        ignores: ['node_modules', 'dist'], // Игнорируем ненужные папки
+        ignores: ['node_modules', 'dist'], // Ignore unnecessary folders
     },
     {
-        files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'], // Файлы для проверки
+        files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'], // Files we check
         languageOptions: {
             sourceType: 'module',
             ecmaVersion: 'latest',

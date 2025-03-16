@@ -18,9 +18,14 @@ import TablesSidebar from '../components/TablesSidebar/TablesSidebar';
 
 function Records() {
   const {
-    openCreateModal, currentTable, setCurrentTable,
-    currentRecords, recordFields,
-    fetchRecords, isRecordLoading, postError
+    openCreateModal,
+    currentTable,
+    setCurrentTable,
+    currentRecords,
+    recordFields,
+    fetchRecords,
+    isRecordLoading,
+    postError,
   } = useContext(ModalContext);
 
   const { page, limit } = useContext(PaginationContext);
@@ -29,7 +34,11 @@ function Records() {
 
   const [DBTables, setDBTables] = useState([]);
 
-  const sortedAndSearchedRecords = useRecords(currentRecords, filter.sort, filter.query);
+  const sortedAndSearchedRecords = useRecords(
+    currentRecords,
+    filter.sort,
+    filter.query,
+  );
 
   const [fetchTables, isTablesLoading, tablesError] = useFetching(() => {
     const response = getDBTablesList();
@@ -48,27 +57,25 @@ function Records() {
 
   return (
     <div className="records page">
-
-      {tablesError &&
-        <h1>Cannot load list of tables!</h1>
-      }
+      {tablesError && <h1>Cannot load list of tables!</h1>}
 
       {isTablesLoading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>
+        <div
+          style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}
+        >
           <Loader />
         </div>
       ) : (
         <TablesSidebar tables={DBTables} setCurrentTable={setCurrentTable} />
       )}
 
-
       <hr style={{ margin: '15px 0' }} />
 
-      {(isRecordLoading === false && currentTable) &&
+      {isRecordLoading === false && currentTable && (
         <GeneralButton onClick={openCreateModal}>
           Create {currentTable} record
         </GeneralButton>
-      }
+      )}
 
       <GeneralModal>
         <RecordForm />
@@ -76,26 +83,33 @@ function Records() {
 
       <hr style={{ margin: '15px 0' }} />
 
-      <RecordFilter filter={filter} setFilter={setFilter} fields={recordFields} />
+      <RecordFilter
+        filter={filter}
+        setFilter={setFilter}
+        fields={recordFields}
+      />
 
       <PageCountSwitcher />
 
       <hr style={{ margin: '15px 0' }} />
 
-      {postError &&
+      {postError && (
         <h3 style={{ textAlign: 'center', color: 'red' }}>{postError}</h3>
-      }
+      )}
 
-      {isRecordLoading
-        ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}><Loader /></div>
-        : <RecordList records={sortedAndSearchedRecords}
-        />
-      }
+      {isRecordLoading ? (
+        <div
+          style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}
+        >
+          <Loader />
+        </div>
+      ) : (
+        <RecordList records={sortedAndSearchedRecords} />
+      )}
 
       <Pagination />
-
     </div>
   );
-};
+}
 
 export default Records;

@@ -45,7 +45,6 @@ import UserRolesService from 'api/CRUD/UserRolesService';
 import UsersService from 'api/CRUD/UsersService';
 
 export const getAllRecords = async (currentTable, limit, page) => {
-
   var response = null;
 
   switch (currentTable) {
@@ -86,7 +85,10 @@ export const getAllRecords = async (currentTable, limit, page) => {
       response = await CategoriesService.GetCategories(limit, page);
       break;
     case 'CategoryHierarchy':
-      response = await CategoryHierarchyService.GetCategoryHierarchy(limit, page);
+      response = await CategoryHierarchyService.GetCategoryHierarchy(
+        limit,
+        page,
+      );
       break;
     case 'Colors':
       response = await ColorsService.GetColors(limit, page);
@@ -104,7 +106,10 @@ export const getAllRecords = async (currentTable, limit, page) => {
       response = await CustomBeltsService.GetCustomBelts(limit, page);
       break;
     case 'CustomizableProducts':
-      response = await CustomizableProductsService.GetCustomizableProducts(limit, page);
+      response = await CustomizableProductsService.GetCustomizableProducts(
+        limit,
+        page,
+      );
       break;
     case 'CustomNecklines':
       response = await CustomNecklinesService.GetCustomNecklines(limit, page);
@@ -116,7 +121,10 @@ export const getAllRecords = async (currentTable, limit, page) => {
       response = await CustomPantsService.GetCustomPants(limit, page);
       break;
     case 'CustomSleeveCuffs':
-      response = await CustomSleeveCuffsService.GetCustomSleeveCuffs(limit, page);
+      response = await CustomSleeveCuffsService.GetCustomSleeveCuffs(
+        limit,
+        page,
+      );
       break;
     case 'CustomSleeves':
       response = await CustomSleevesService.GetCustomSleeves(limit, page);
@@ -161,13 +169,19 @@ export const getAllRecords = async (currentTable, limit, page) => {
       response = await ProductsService.GetProducts(limit, page);
       break;
     case 'ProductTranslations':
-      response = await ProductTranslationsService.GetProductTranslations(limit, page);
+      response = await ProductTranslationsService.GetProductTranslations(
+        limit,
+        page,
+      );
       break;
     case 'Reviews':
       response = await ReviewsService.GetReviews(limit, page);
       break;
     case 'ShippingAddresses':
-      response = await ShippingAddressesService.GetShippingAddresses(limit, page);
+      response = await ShippingAddressesService.GetShippingAddresses(
+        limit,
+        page,
+      );
       break;
     case 'SizeOptions':
       response = await SizeOptionsService.GetSizeOptions(limit, page);
@@ -186,7 +200,7 @@ export const getAllRecords = async (currentTable, limit, page) => {
       break;
     default:
       break;
-  };
+  }
 
   return response;
 };

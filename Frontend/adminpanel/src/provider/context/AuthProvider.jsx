@@ -14,10 +14,14 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false);
   }, []);
   return (
-    <AuthContext.Provider value={{
-      isAuth, setIsAuth, isLoading
-    }}>
+    <AuthContext.Provider
+      value={{
+        isAuth,
+        setIsAuth,
+        isLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
