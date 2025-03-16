@@ -10,24 +10,24 @@ import Slider from './slider/Slider';
 import mcss from './Header.module.css';
 
 export default function Header() {
-    return (
-        <div className={"banner_bg_main"}>
-            <Navbar />
-            <Logo />
-            <div className={mcss.headerSection}>
-                <div className={"container"}>
-                    <div className={mcss.containtMain}>
-                        <Sidebar />
-                        <Dropdown />
-                        <Search />
-                        <div className={"header_box"}>
-                            <Language />
-                            <Login />
-                        </div>
-                    </div>
-                </div>
+  return (
+    <div className={'banner_bg_main'}>
+      <Navbar />
+      <Logo />
+      <div className={mcss.headerSection}>
+        <div className={'container'}>
+          <div className={mcss.containtMain}>
+            <Sidebar />
+            <Dropdown />
+            <Search />
+            <div className={'header_box'}>
+              <Language />
+              <Login />
             </div>
-            <Slider />
+          </div>
         </div>
-    )
-};
+      </div>
+      <Slider />
+    </div>
+  );
+}

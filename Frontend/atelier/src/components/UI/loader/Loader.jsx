@@ -6,5 +6,5 @@ export default function loader() {
     <div className={mcss.loaderMain}>
       <div className={mcss.loader}></div>
     </div>
-  )
-};
+  );
+}

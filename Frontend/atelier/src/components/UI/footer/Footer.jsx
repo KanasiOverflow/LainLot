@@ -4,10 +4,10 @@ import Footbar from './footbar/Footbar';
 import './Footer.module.css';
 
 export default function Footer() {
-    return (
-        <div>
-            <Footbar />
-            <Copyright />
-        </div>
-    )
-};
+  return (
+    <div>
+      <Footbar />
+      <Copyright />
+    </div>
+  );
+}

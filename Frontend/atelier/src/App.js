@@ -1,8 +1,8 @@
 import Header from './components/UI/header/Header';
 import AppRouter from './components/AppRouter';
 import Footer from './components/UI/footer/Footer';
-import { BrowserRouter } from "react-router-dom";
-import { AppProvider } from "./provider/AppProvider";
+import { BrowserRouter } from 'react-router-dom';
+import { AppProvider } from './provider/AppProvider';
 import { Helmet } from 'react-helmet';
 import './styles/App.css';
 // rfc - create template component
@@ -24,6 +24,6 @@ function App() {
       </BrowserRouter>
     </AppProvider>
   );
-};
+}
 
 export default App;
