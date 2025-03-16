@@ -37,14 +37,14 @@ export default function OpenImgDialog({ onData, files, setFiles }) {
     // Make sure to revoke the data uris to avoid memory leaks, will run on unmount
     return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
     // eslint-disable-next-line
-    }, []);
+  }, []);
 
   useEffect(() => {
     if (files.length > 0) {
       onData(files);
     }
     // eslint-disable-next-line
-    }, [files, onData]);
+  }, [files, onData]);
 
   return (
     <section>

@@ -49,12 +49,12 @@ export default function RecordIdPage() {
     fetchRecords(limit, page); // limit = 1, page = 5,
     fetchRecordById(params.table, params.id);
     // eslint-disable-next-line
-    }, [currentTable]);
+  }, [currentTable]);
 
   useEffect(() => {
     fetchRecordById(params.table, params.id);
     // eslint-disable-next-line
-    }, [currentRecords])
+  }, [currentRecords]);
 
   useEffect(() => {
     const fkFields = Object.entries(record)
