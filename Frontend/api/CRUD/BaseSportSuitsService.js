@@ -1,164 +1,31 @@
-import axios from 'axios';
-import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes.js';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl.js';
+import ApiService from './ApiService.js';
 
 export default class BaseSportSuitsService {
-  static async GetBaseSportSuitsCount() {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetBaseSportSuitsCount`,
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetBaseSportSuitsCount(login, password) {
+    return ApiService.sendRequest('get', 'GetBaseSportSuitsCount', login, password);
   }
 
-  static async GetBaseSportSuitsFields() {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetBaseSportSuitsFields`,
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetBaseSportSuitsFields(login, password) {
+    return ApiService.sendRequest('get', 'GetBaseSportSuitsFields', login, password);
   }
 
-  static async GetBaseSportSuits(limit, page) {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetBaseSportSuits?limit=${limit}&page=${page}`,
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetBaseSportSuits(limit, page, login, password) {
+    return ApiService.sendRequest('get', 'GetBaseSportSuits', login, password, null, { limit, page });
   }
 
-  static async GetBaseSportSuitsById(id) {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetBaseSportSuitsById`,
-      params: { id: id },
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetBaseSportSuitsById(id, login, password) {
+    return ApiService.sendRequest('get', 'GetBaseSportSuitsById', login, password, null, { id });
   }
 
-  static async CreateBaseSportSuits(newRecord) {
-    const options = {
-      method: 'post',
-      url: `${getRestAPIUrl()}/Database/CreateBaseSportSuits`,
-      headers: { 'Content-Type': 'application/json' },
-      data: JSON.stringify(newRecord),
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-
-    var responseError = '';
-    const response = await axios(options).catch((error) => {
-      console.log(error.response.data.Message);
-      responseError = error.response.data.Message;
-    });
-
-    if (response) {
-      if (
-        response.status === get201().Code &&
-        response.statusText === get201().Message
-      ) {
-        return response;
-      }
-    } else {
-      return responseError;
-    }
+  static async CreateBaseSportSuits(newRecord, login, password) {
+    return ApiService.sendRequest('post', 'CreateBaseSportSuits', login, password, newRecord);
   }
 
-  static async UpdateBaseSportSuits(oldRecord) {
-    const options = {
-      method: 'put',
-      url: `${getRestAPIUrl()}/Database/UpdateBaseSportSuits`,
-      headers: { 'Content-Type': 'application/json' },
-      data: JSON.stringify(oldRecord),
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-
-    var responseError = '';
-    const response = await axios(options).catch((error) => {
-      console.log(error.response.data.Message);
-      responseError = error.response.data.Message;
-    });
-
-    if (response) {
-      if (
-        response.status === get201().Code &&
-        response.statusText === get201().Message
-      ) {
-        return response;
-      }
-    } else {
-      return responseError;
-    }
+  static async UpdateBaseSportSuits(oldRecord, login, password) {
+    return ApiService.sendRequest('put', 'UpdateBaseSportSuits', login, password, oldRecord);
   }
 
-  static async DeleteBaseSportSuits(id) {
-    const options = {
-      method: 'delete',
-      url: `${getRestAPIUrl()}/Database/DeleteBaseSportSuits`,
-      params: { id: id },
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async DeleteBaseSportSuits(id, login, password) {
+    return ApiService.sendRequest('delete', 'DeleteBaseSportSuits', login, password, null, { id });
   }
 }

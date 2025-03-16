@@ -1,164 +1,31 @@
-import axios from 'axios';
-import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes.js';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl.js';
+import ApiService from './ApiService.js';
 
 export default class UserProfilesService {
-  static async GetUserProfilesCount() {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetUserProfilesCount`,
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetUserProfilesCount(login, password) {
+    return ApiService.sendRequest('get', 'GetUserProfilesCount', login, password);
   }
 
-  static async GetUserProfilesFields() {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetUserProfilesFields`,
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetUserProfilesFields(login, password) {
+    return ApiService.sendRequest('get', 'GetUserProfilesFields', login, password);
   }
 
-  static async GetUserProfiles(limit, page) {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetUserProfiles?limit=${limit}&page=${page}`,
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetUserProfiles(limit, page, login, password) {
+    return ApiService.sendRequest('get', 'GetUserProfiles', login, password, null, { limit, page });
   }
 
-  static async GetUserProfilesById(id) {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetUserProfilesById`,
-      params: { id: id },
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetUserProfilesById(id, login, password) {
+    return ApiService.sendRequest('get', 'GetUserProfilesById', login, password, null, { id });
   }
 
-  static async CreateUserProfiles(newRecord) {
-    const options = {
-      method: 'post',
-      url: `${getRestAPIUrl()}/Database/CreateUserProfiles`,
-      headers: { 'Content-Type': 'application/json' },
-      data: JSON.stringify(newRecord),
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-
-    var responseError = '';
-    const response = await axios(options).catch((error) => {
-      console.log(error.response.data.Message);
-      responseError = error.response.data.Message;
-    });
-
-    if (response) {
-      if (
-        response.status === get201().Code &&
-        response.statusText === get201().Message
-      ) {
-        return response;
-      }
-    } else {
-      return responseError;
-    }
+  static async CreateUserProfiles(newRecord, login, password) {
+    return ApiService.sendRequest('post', 'CreateUserProfiles', login, password, newRecord);
   }
 
-  static async UpdateUserProfiles(oldRecord) {
-    const options = {
-      method: 'put',
-      url: `${getRestAPIUrl()}/Database/UpdateUserProfiles`,
-      headers: { 'Content-Type': 'application/json' },
-      data: JSON.stringify(oldRecord),
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-
-    var responseError = '';
-    const response = await axios(options).catch((error) => {
-      console.log(error.response.data.Message);
-      responseError = error.response.data.Message;
-    });
-
-    if (response) {
-      if (
-        response.status === get201().Code &&
-        response.statusText === get201().Message
-      ) {
-        return response;
-      }
-    } else {
-      return responseError;
-    }
+  static async UpdateUserProfiles(oldRecord, login, password) {
+    return ApiService.sendRequest('put', 'UpdateUserProfiles', login, password, oldRecord);
   }
 
-  static async DeleteUserProfiles(id) {
-    const options = {
-      method: 'delete',
-      url: `${getRestAPIUrl()}/Database/DeleteUserProfiles`,
-      params: { id: id },
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async DeleteUserProfiles(id, login, password) {
+    return ApiService.sendRequest('delete', 'DeleteUserProfiles', login, password, null, { id });
   }
 }

@@ -1,164 +1,31 @@
-import axios from 'axios';
-import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes.js';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl.js';
+import ApiService from './ApiService.js';
 
 export default class BasePantsCuffsService {
-  static async GetBasePantsCuffsCount() {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetBasePantsCuffsCount`,
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetBasePantsCuffsCount(login, password) {
+    return ApiService.sendRequest('get', 'GetBasePantsCuffsCount', login, password);
   }
 
-  static async GetBasePantsCuffsFields() {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetBasePantsCuffsFields`,
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetBasePantsCuffsFields(login, password) {
+    return ApiService.sendRequest('get', 'GetBasePantsCuffsFields', login, password);
   }
 
-  static async GetBasePantsCuffs(limit, page) {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetBasePantsCuffs?limit=${limit}&page=${page}`,
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetBasePantsCuffs(limit, page, login, password) {
+    return ApiService.sendRequest('get', 'GetBasePantsCuffs', login, password, null, { limit, page });
   }
 
-  static async GetBasePantsCuffsById(id) {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Database/GetBasePantsCuffsById`,
-      params: { id: id },
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async GetBasePantsCuffsById(id, login, password) {
+    return ApiService.sendRequest('get', 'GetBasePantsCuffsById', login, password, null, { id });
   }
 
-  static async CreateBasePantsCuffs(newRecord) {
-    const options = {
-      method: 'post',
-      url: `${getRestAPIUrl()}/Database/CreateBasePantsCuffs`,
-      headers: { 'Content-Type': 'application/json' },
-      data: JSON.stringify(newRecord),
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-
-    var responseError = '';
-    const response = await axios(options).catch((error) => {
-      console.log(error.response.data.Message);
-      responseError = error.response.data.Message;
-    });
-
-    if (response) {
-      if (
-        response.status === get201().Code &&
-        response.statusText === get201().Message
-      ) {
-        return response;
-      }
-    } else {
-      return responseError;
-    }
+  static async CreateBasePantsCuffs(newRecord, login, password) {
+    return ApiService.sendRequest('post', 'CreateBasePantsCuffs', login, password, newRecord);
   }
 
-  static async UpdateBasePantsCuffs(oldRecord) {
-    const options = {
-      method: 'put',
-      url: `${getRestAPIUrl()}/Database/UpdateBasePantsCuffs`,
-      headers: { 'Content-Type': 'application/json' },
-      data: JSON.stringify(oldRecord),
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-
-    var responseError = '';
-    const response = await axios(options).catch((error) => {
-      console.log(error.response.data.Message);
-      responseError = error.response.data.Message;
-    });
-
-    if (response) {
-      if (
-        response.status === get201().Code &&
-        response.statusText === get201().Message
-      ) {
-        return response;
-      }
-    } else {
-      return responseError;
-    }
+  static async UpdateBasePantsCuffs(oldRecord, login, password) {
+    return ApiService.sendRequest('put', 'UpdateBasePantsCuffs', login, password, oldRecord);
   }
 
-  static async DeleteBasePantsCuffs(id) {
-    const options = {
-      method: 'delete',
-      url: `${getRestAPIUrl()}/Database/DeleteBasePantsCuffs`,
-      params: { id: id },
-      auth: {
-        username: secureLocalStorage.getItem('login'),
-        password: secureLocalStorage.getItem('password'),
-      },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
-    }
-    return null;
+  static async DeleteBasePantsCuffs(id, login, password) {
+    return ApiService.sendRequest('delete', 'DeleteBasePantsCuffs', login, password, null, { id });
   }
 }
