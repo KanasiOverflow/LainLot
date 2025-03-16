@@ -16,6 +16,8 @@ export default function Navbar() {
                 <li><a href="/Home">{t("Home")}</a></li>
                 <li><a href="/Contacts">{t("Contacts")}</a></li>
                 <li><a href="/About">{t("About")}</a></li>
+                <li><a href="/Cart">{t("Cart")}</a></li>
+                <li><a href="/Profile">{t("Profile")}</a></li>
               </ul>
             </div>
           </div>

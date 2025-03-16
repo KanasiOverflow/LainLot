@@ -22,6 +22,8 @@ export default function Sidebar() {
                 <a href="/Home">{t("Home")}</a>
                 <a href="/Contacts">{t("Contacts")}</a>
                 <a href="/About">{t("About")}</a>
+                <a href="/Cart">{t("Cart")}</a>
+                <a href="/Profile">{t("Profile")}</a>
             </div>
 
             {!isSidebarOpen && (

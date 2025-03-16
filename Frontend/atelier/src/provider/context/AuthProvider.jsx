@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
         }
         setIsLoading(false);
     }, []);
+    
     return (
         <AuthContext.Provider value={{
             isAuth, setIsAuth, isLoading
@@ -20,4 +21,4 @@ export const AuthProvider = ({ children }) => {
             {children}
         </AuthContext.Provider>
     )
-}
+};
