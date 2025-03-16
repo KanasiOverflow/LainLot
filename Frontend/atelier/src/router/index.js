@@ -1,9 +1,9 @@
-import Profile from '../pages/Profile';
-import About from '../pages/About';
-import Home from '../pages/Home';
-import Login from '../pages/Login';
-import Contacts from '../pages/Contacts';
-import Cart from '../pages/Cart';
+import Profile from '../pages/Profile.jsx';
+import About from '../pages/About.jsx';
+import Home from '../pages/Home.jsx';
+import Login from '../pages/Login.jsx';
+import Contacts from '../pages/Contacts.jsx';
+import Cart from '../pages/Cart.jsx';
 
 export const privateRoutes = [{ path: '/profile', component: <Profile /> }];
 

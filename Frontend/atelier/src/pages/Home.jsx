@@ -1,5 +1,5 @@
 import React from 'react';
-import ClothingDesigner from '../components/clothingconstructor/ClothingConstructor';
+import ClothingDesigner from '../components/clothingconstructor/ClothingConstructor.jsx';
 
 export default function About() {
   return (
