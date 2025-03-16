@@ -7,7 +7,7 @@ import { ModalContext } from '../../provider/context/ModalProvider.jsx';
 import { checkDateOrTimeField } from '../../utils/checkDateOrTimeField.js';
 import mcss from './RecordForm.module.css';
 
-export default function RecordForm() {
+export default function RecordForm({ login, password }) {
   const {
     mode,
     currentTable,
@@ -52,9 +52,9 @@ export default function RecordForm() {
 
     if (isValid) {
       if (mode === 'Edit') {
-        editRecord(data);
+        editRecord(data, login, password);
       } else {
-        addRecord(data);
+        addRecord(data, login, password);
       }
     }
 

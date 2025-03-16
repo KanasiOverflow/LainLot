@@ -13,22 +13,22 @@ import GeneralModal from '../components/UI/modal/GeneralModal.jsx';
 import RecordForm from '../components/RecordForm/RecordForm.jsx';
 import DisplayImage from '../components/UI/image/DisplayImage.jsx';
 
-export default function RecordIdPage() {
+export default function RecordIdPage({ login, password }) {
   const { modal, setModal, fetchRecords } = useContext(ModalContext);
   const { page, limit } = useContext(PaginationContext);
   const { openEditModal, removeRecord } = useContext(ModalContext);
-  const { setCurrentTable, currentTable, currentRecords } =
-    useContext(DataContext);
-  const { fetchMultipleFkData, foreignKeys, fkError } =
-    useContext(ForeignKeysContext);
+  const { setCurrentTable, currentTable, currentRecords } = useContext(DataContext);
+  const { fetchMultipleFkData, foreignKeys, fkError } = useContext(ForeignKeysContext);
 
   const params = useParams();
   const navigate = useNavigate();
   const [record, setRecord] = useState({});
 
   const [fetchRecordById, isLoading, error] = useFetching(async (table, id) => {
-    const response = await getRecordById(table, id);
-    setRecord(response.data);
+    const response = await getRecordById(table, id, login, password);
+    if (response?.data) {
+      setRecord(response.data);
+    }
   });
 
   const handleReturnToRecords = useCallback(() => {
@@ -40,13 +40,13 @@ export default function RecordIdPage() {
   }, [openEditModal, record]);
 
   const handleRemoveRecord = useCallback(() => {
-    removeRecord(record);
+    removeRecord(record, login, password);
     navigate('/records');
-  }, [removeRecord, record, navigate]);
+  }, [removeRecord, record, navigate, login, password]);
 
   useEffect(() => {
     setCurrentTable(params.table);
-    fetchRecords(limit, page); // limit = 1, page = 5,
+    fetchRecords(limit, page, login, password);
     fetchRecordById(params.table, params.id);
     // eslint-disable-next-line
   }, [currentTable]);
@@ -89,10 +89,7 @@ export default function RecordIdPage() {
                     `${foreignKeys[`${key}_${value}`] || 'Loading...'} (${value})`
                   )
                 ) : key === 'imageData' ? (
-                  <DisplayImage
-                    base64Img={byteArrayToBase64(value)}
-                    fullSize={false}
-                  />
+                  <DisplayImage base64Img={byteArrayToBase64(value)} fullSize={false} />
                 ) : (
                   value
                 )}

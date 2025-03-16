@@ -8,25 +8,17 @@ const MemoizedRecordItem = React.memo(
   forwardRef((props, ref) => <RecordItem ref={ref} {...props} />),
 );
 
-export default function RecordList({ records }) {
+export default function RecordList({ records, login, password }) {
   let { currentTable } = useContext(ModalContext);
 
   if (currentTable === '') {
     currentTable = 'Database Records';
   }
 
-  if (!records && !records.length) {
+  if (!records || records.length === 0) {
     return (
       <h1 style={{ textAlign: 'center' }}>
-        {currentTable} table values not found!
-      </h1>
-    );
-  }
-
-  if (records.length <= 0) {
-    return (
-      <h1 style={{ textAlign: 'center' }}>
-        {currentTable} table has zero values!
+        {currentTable} table has no records!
       </h1>
     );
   }
@@ -44,7 +36,7 @@ export default function RecordList({ records }) {
             exit="exit"
             layout
           >
-            <MemoizedRecordItem record={record} />
+            <MemoizedRecordItem record={record} login={login} password={password} />
           </motion.div>
         ))}
       </AnimatePresence>

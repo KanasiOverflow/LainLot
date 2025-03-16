@@ -7,11 +7,9 @@ import GeneralButton from '../UI/button/GeneralButton.jsx';
 import DisplayImage from '../UI/image/DisplayImage.jsx';
 import mcss from './RecordItem.module.css';
 
-export default function RecordItem({ record, ref }) {
-  const { openEditModal, removeRecord, currentTable } =
-    useContext(ModalContext);
-  const { fetchMultipleFkData, foreignKeys, fkError } =
-    useContext(ForeignKeysContext);
+export default function RecordItem({ record, ref, login, password }) {
+  const { openEditModal, removeRecord, currentTable } = useContext(ModalContext);
+  const { fetchMultipleFkData, foreignKeys, fkError } = useContext(ForeignKeysContext);
 
   const navigate = useNavigate();
 
@@ -24,8 +22,8 @@ export default function RecordItem({ record, ref }) {
   }, [openEditModal, record]);
 
   const handleRemoveRecord = useCallback(() => {
-    removeRecord(record);
-  }, [removeRecord, record]);
+    removeRecord(record, login, password);
+  }, [removeRecord, record, login, password]);
 
   useEffect(() => {
     const fkFields = Object.entries(record)
@@ -57,9 +55,7 @@ export default function RecordItem({ record, ref }) {
                       </span>
                       <div className={mcss.foreignKeyValue}>
                         {foreignKeyData ? (
-                          <>
-                            <pre>{JSON.stringify(foreignKeyData, null, 2)}</pre>
-                          </>
+                          <pre>{JSON.stringify(foreignKeyData, null, 2)}</pre>
                         ) : (
                           <span>Loading...</span>
                         )}

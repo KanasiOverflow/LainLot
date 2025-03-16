@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import secureLocalStorage from 'react-secure-storage';
 import { useRecords } from '../hooks/useRecords';
 import { useFetching } from '../hooks/useFetching.jsx';
 import { getDBTablesList } from '../utils/getDBTablesList.js';
@@ -13,8 +14,6 @@ import GeneralModal from '../components/UI/modal/GeneralModal.jsx';
 import Loader from '../components/UI/loader/Loader.jsx';
 import Pagination from '../components/UI/pagination/Pagination.jsx';
 import TablesSidebar from '../components/TablesSidebar/TablesSidebar.jsx';
-
-// rsc - create template component
 
 function Records() {
   const {
@@ -31,13 +30,15 @@ function Records() {
   const { page, limit } = useContext(PaginationContext);
 
   const [filter, setFilter] = useState({ sort: '', query: '' });
-
   const [DBTables, setDBTables] = useState([]);
+
+  const login = secureLocalStorage.getItem('login');
+  const password = secureLocalStorage.getItem('password');
 
   const sortedAndSearchedRecords = useRecords(
     currentRecords,
     filter.sort,
-    filter.query,
+    filter.query
   );
 
   const [fetchTables, isTablesLoading, tablesError] = useFetching(() => {
@@ -46,7 +47,9 @@ function Records() {
   });
 
   useEffect(() => {
-    fetchRecords(limit, page);
+    if (login && password) {
+      fetchRecords(limit, page, login, password);
+    }
     // eslint-disable-next-line
   }, [page, limit, currentTable]);
 
@@ -60,9 +63,7 @@ function Records() {
       {tablesError && <h1>Cannot load list of tables!</h1>}
 
       {isTablesLoading ? (
-        <div
-          style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}
-        >
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>
           <Loader />
         </div>
       ) : (
@@ -78,33 +79,25 @@ function Records() {
       )}
 
       <GeneralModal>
-        <RecordForm />
+        <RecordForm login={login} password={password} />
       </GeneralModal>
 
       <hr style={{ margin: '15px 0' }} />
 
-      <RecordFilter
-        filter={filter}
-        setFilter={setFilter}
-        fields={recordFields}
-      />
+      <RecordFilter filter={filter} setFilter={setFilter} fields={recordFields} />
 
       <PageCountSwitcher />
 
       <hr style={{ margin: '15px 0' }} />
 
-      {postError && (
-        <h3 style={{ textAlign: 'center', color: 'red' }}>{postError}</h3>
-      )}
+      {postError && <h3 style={{ textAlign: 'center', color: 'red' }}>{postError}</h3>}
 
       {isRecordLoading ? (
-        <div
-          style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}
-        >
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>
           <Loader />
         </div>
       ) : (
-        <RecordList records={sortedAndSearchedRecords} />
+        <RecordList records={sortedAndSearchedRecords} login={login} password={password} />
       )}
 
       <Pagination />
