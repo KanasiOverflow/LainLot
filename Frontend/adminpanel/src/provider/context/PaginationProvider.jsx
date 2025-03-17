@@ -11,9 +11,9 @@ export const PaginationProvider = ({ children }) => {
   const [limit, setLimit] = useState(5);
 
   const changePage = useCallback(
-    (page) => {
+    (page, login, password) => {
       setPage(page);
-      fetchRecords(limit, page);
+      fetchRecords(limit, page, login, password);
     },
     [fetchRecords, limit],
   );

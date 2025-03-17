@@ -106,7 +106,7 @@ function Records() {
         <RecordList records={sortedAndSearchedRecords} login={login} password={password} />
       )}
 
-      <Pagination />
+      <Pagination login={login} password={password}/>
     </div>
   );
 }

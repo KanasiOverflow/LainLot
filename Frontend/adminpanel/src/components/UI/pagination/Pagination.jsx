@@ -4,7 +4,7 @@ import { DataContext } from '../../../provider/context/DataProvider.jsx';
 import { PaginationContext } from '../../../provider/context/PaginationProvider.jsx';
 import mcss from './Pagination.module.css';
 
-export default function Pagination() {
+export default function Pagination({ login, password }) {
   const { totalPages } = useContext(DataContext);
 
   const { page, changePage } = useContext(PaginationContext);
@@ -15,7 +15,7 @@ export default function Pagination() {
     <div className={mcss.container}>
       {pagesArray.map((pageNumber) => (
         <span
-          onClick={() => changePage(pageNumber)}
+          onClick={() => changePage(pageNumber, login, password)}
           key={pageNumber}
           className={page === pageNumber ? 'page page__current' : 'page'}
         >
