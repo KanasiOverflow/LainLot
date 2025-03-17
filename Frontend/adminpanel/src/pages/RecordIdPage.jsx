@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
+import secureLocalStorage from 'react-secure-storage';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFetching } from '../hooks/useFetching.jsx';
 import { getRecordById } from '../utils/getRecordById.js';
@@ -13,12 +14,15 @@ import GeneralModal from '../components/UI/modal/GeneralModal.jsx';
 import RecordForm from '../components/RecordForm/RecordForm.jsx';
 import DisplayImage from '../components/UI/image/DisplayImage.jsx';
 
-export default function RecordIdPage({ login, password }) {
+export default function RecordIdPage() {
   const { modal, setModal, fetchRecords } = useContext(ModalContext);
   const { page, limit } = useContext(PaginationContext);
   const { openEditModal, removeRecord } = useContext(ModalContext);
   const { setCurrentTable, currentTable, currentRecords } = useContext(DataContext);
   const { fetchMultipleFkData, foreignKeys, fkError } = useContext(ForeignKeysContext);
+
+  const login = secureLocalStorage.getItem('login');
+  const password = secureLocalStorage.getItem('password');
 
   const params = useParams();
   const navigate = useNavigate();
