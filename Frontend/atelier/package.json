@@ -11,7 +11,7 @@
     "@testing-library/user-event": "^13.5.0",
     "api": "file:../api",
     "dompurify": "^3.2.4",
-    "i18next": "^24.2.2",
+    "i18next": "^23.2.3",
     "i18next-browser-languagedetector": "^8.0.4",
     "i18next-http-backend": "^3.0.2",
     "react": "^19.0.0",
@@ -48,9 +48,11 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@eslint/js": "^9.22.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.1",
+    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.2.0",
