@@ -109,6 +109,7 @@ export const ModalProvider = ({ children }) => {
         addRecord,
         editRecord,
         removeRecord,
+        fetchRecords,
         mode,
         oldRecord,
         modifyRecordError,
@@ -120,7 +121,6 @@ export const ModalProvider = ({ children }) => {
         setCurrentRecords,
         recordFields,
         setRecordFields,
-        fetchRecords,
         isRecordLoading,
         postError,
       }}

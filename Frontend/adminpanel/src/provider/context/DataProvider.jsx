@@ -14,7 +14,7 @@ export const DataProvider = ({ children }) => {
   const [recordFields, setRecordFields] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
 
-  const fetchRecords = useFetching(
+  const [fetchRecords] = useFetching(
     async (limit, page, login, password) => {
       try {
         const responseData = await getAllRecords(currentTable, limit, page, login, password);

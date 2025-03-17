@@ -47,11 +47,17 @@ function Records() {
   });
 
   useEffect(() => {
+    if (!fetchRecords) {
+      console.error("fetchRecords is undefined! Check ModalProvider and DataProvider.");
+      return;
+    }
+  
     if (login && password) {
       fetchRecords(limit, page, login, password);
     }
     // eslint-disable-next-line
   }, [page, limit, currentTable]);
+  
 
   useEffect(() => {
     fetchTables();

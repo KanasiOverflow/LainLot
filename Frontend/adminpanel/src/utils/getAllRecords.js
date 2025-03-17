@@ -1,15 +1,15 @@
-import * as Services from 'api/CRUD';
+import * as Services from 'api';
 
-export const getAllRecords = async (currentTable, limit, page, login, password) => {
-  if (!Services[`${currentTable}Service`] || !Services[`${currentTable}Service`].Get) {
-    console.error(`Service or Get method not found for table: ${currentTable}`);
+export const getAllRecords = async (table, limit, page, login, password) => {
+  if (!Services[`${table}Service`] || !Services[`${table}Service`].Get) {
+    console.error(`Service or Get method not found for table:`, table);
     return null;
   }
 
   try {
-    return await Services[`${currentTable}Service`].Get(limit, page, login, password);
+    return await Services[`${table}Service`].Get(limit, page, login, password);
   } catch (error) {
-    console.error(`Error fetching records from ${currentTable}:`, error);
+    console.error(`Error fetching records from ${table}:`, error);
     return null;
   }
 };

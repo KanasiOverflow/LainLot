@@ -1,4 +1,4 @@
-import * as Services from 'api/CRUD';
+import * as Services from 'api';
 
 export const removeRecordById = async (currentTable, id, login, password) => {
   if (!Services[`${currentTable}Service`] || !Services[`${currentTable}Service`].Delete) {
