@@ -1,7 +1,6 @@
-
 import axios from 'axios';
-import { get200, get201 } from '../utils/responseCodes.js';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl.js';
+import { get200, get201 } from './utils/responseCodes.js';
+import { getRestAPIUrl } from './utils/getRestAPIUrl.js';
 
 export default class ApiService {
     static async sendRequest(method, endpoint, login, password, data = null, params = null) {
