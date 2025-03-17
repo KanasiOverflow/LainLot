@@ -1,22 +1,13 @@
-import axios from 'axios';
-import { get200 } from '../utils/responseCodes.js';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl.js';
+import ApiService from '../ApiService.js';
 
 export default class AboutPageService {
   // AllowAnonymous
   static async GetAbout(lang) {
-    const options = {
-      method: 'get',
-      url: `${getRestAPIUrl()}/Atelier/GetAbout`,
-      params: { lang: lang },
-    };
-    const response = await axios(options);
-    if (
-      response.status === get200().Code &&
-      response.statusText === get200().Message
-    ) {
-      return response;
+    try {
+      return await ApiService.sendRequest('get', 'Atelier', 'GetAbout', null, null, null, { lang });
+    } catch (error) {
+      console.error(`Error fetching About page data:`, error);
+      return null;
     }
-    return null;
   }
 }

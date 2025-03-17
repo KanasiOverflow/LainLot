@@ -3,10 +3,10 @@ import { get200, get201 } from './utils/responseCodes.js';
 import { getRestAPIUrl } from './utils/getRestAPIUrl.js';
 
 export default class ApiService {
-    static async sendRequest(method, endpoint, login, password, data = null, params = null) {
+    static async sendRequest(method, controller, endpoint, login, password, data = null, params = null) {
         const options = {
             method,
-            url: `${getRestAPIUrl()}/Database/${endpoint}`,
+            url: `${getRestAPIUrl()}/${controller}/${endpoint}`,
             auth: { username: login, password: password },
             headers: { 'Content-Type': 'application/json' },
             data: data ? JSON.stringify(data) : null,
