@@ -1,4 +1,4 @@
-import * as Services from 'api/CRUD';
+import * as Services from 'api/index.js';
 
 export const getAllRecords = async (table, limit, page, login, password) => {
   if (!Services[`${table}Service`] || !Services[`${table}Service`].Get) {

@@ -46,3 +46,5 @@ export * from './CRUD/UsersService.js';
 
 export * from './Atelier/AboutPageService.js';
 export * from './Atelier/ContactsPageService.js';
+
+export * from './ForeignKeysService.js';

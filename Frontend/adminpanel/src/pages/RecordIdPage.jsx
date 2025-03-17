@@ -64,6 +64,7 @@ export default function RecordIdPage({ login, password }) {
     if (fkFields.length) {
       fetchMultipleFkData(fkFields, login, password);
     }
+    // eslint-disable-next-line
   }, [record, fetchMultipleFkData]);
 
   return (

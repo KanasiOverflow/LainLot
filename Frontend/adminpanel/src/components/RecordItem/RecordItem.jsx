@@ -33,6 +33,7 @@ export default function RecordItem({ record, ref, login, password }) {
     if (fkFields.length) {
       fetchMultipleFkData(fkFields, login, password);
     }
+    // eslint-disable-next-line
   }, [record, fetchMultipleFkData]);
 
   return (

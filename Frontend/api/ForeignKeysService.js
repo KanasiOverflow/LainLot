@@ -1,4 +1,4 @@
-import ApiService from '../ApiService.js';
+import ApiService from './ApiService.js';
 
 export default class ForeignKeysService {
   static async GetFkAccessLevelsData(id, login, password) {

@@ -1,4 +1,4 @@
-import ForeignKeysService from 'api/ForeignKeysService.js';
+import * as ForeignKeysService from 'api';
 
 export const getForeignKeyById = async (foreignFieldKey, id, login, password) => {
   const endpointMapping = {
