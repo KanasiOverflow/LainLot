@@ -1,782 +1,175 @@
-import axios from 'axios';
-import secureLocalStorage from 'react-secure-storage';
-import { get200 } from './utils/responseCodes';
-import { getRestAPIUrl } from './utils/getRestAPIUrl';
+import ApiService from './ApiService.js';
 
 export default class ForeignKeysService {
-
-    static async GetFkAccessLevelsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkAccessLevelsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkLanguagesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkLanguagesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCategoriesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCategoriesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkFabricTypesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkFabricTypesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkProductsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkProductsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkProductImagesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkProductImagesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkProductTranslationsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkProductTranslationsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkReviewsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkReviewsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkOrdersData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkOrdersData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkOrderHistoryData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkOrdersData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkPaymentsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkPaymentsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkUsersData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkUsersData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkUserRolesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkUserRolesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkOrderStatusData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkOrderStatusData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkColorsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkColorsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCurrenciesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCurrenciesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkSizeOptionsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkSizeOptionsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkBaseNecklinesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkBaseNecklinesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkBaseSweatersData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkBaseSweatersData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkBaseSleevesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkBaseSleevesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkBaseSleeveCuffsLeftData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkBaseSleeveCuffsLeftData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkBaseSleeveCuffsRightData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkBaseSleeveCuffsRightData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkBaseBeltsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkBaseBeltsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkBasePantsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkBasePantsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkBasePantsCuffsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkBasePantsCuffsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkBasePantsCuffsLeftData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkBasePantsCuffsLeftData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkBasePantsCuffsRightData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkBasePantsCuffsRightData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomNecklinesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomNecklinesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomSweatersData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomSweatersData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomSleevesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomSleevesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomSleeveCuffsLeftData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomSleeveCuffsLeftData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomSleeveCuffsRightData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomSleeveCuffsRightData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomBeltsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomBeltsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomPantsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomPantsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomPantsCuffsLeftData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomPantsCuffsLeftData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomPantsCuffsRightData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomPantsCuffsRightData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomSportSuitsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomSportSuitsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCustomizableProductsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCustomizableProductsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkProductOrdersData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkProductOrdersData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkCountriesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkCountriesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkPaymentMethodsData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkPaymentMethodsData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkPaymentStatusesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkPaymentStatusesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetFkShippingAddressesData(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetFkShippingAddressesData`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-};
+  static async GetFkAccessLevelsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkAccessLevelsData', login, password, null, { id });
+  }
+
+  static async GetFkLanguagesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkLanguagesData', login, password, null, { id });
+  }
+
+  static async GetFkCategoriesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCategoriesData', login, password, null, { id });
+  }
+
+  static async GetFkFabricTypesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkFabricTypesData', login, password, null, { id });
+  }
+
+  static async GetFkProductsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkProductsData', login, password, null, { id });
+  }
+
+  static async GetFkProductImagesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkProductImagesData', login, password, null, { id });
+  }
+
+  static async GetFkProductTranslationsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkProductTranslationsData', login, password, null, { id });
+  }
+
+  static async GetFkReviewsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkReviewsData', login, password, null, { id });
+  }
+
+  static async GetFkOrdersData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkOrdersData', login, password, null, { id });
+  }
+
+  static async GetFkOrderHistoryData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkOrderHistoryData', login, password, null, { id });
+  }
+
+  static async GetFkPaymentsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkPaymentsData', login, password, null, { id });
+  }
+
+  static async GetFkUsersData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkUsersData', login, password, null, { id });
+  }
+
+  static async GetFkUserRolesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkUserRolesData', login, password, null, { id });
+  }
+
+  static async GetFkOrderStatusData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkOrderStatusData', login, password, null, { id });
+  }
+
+  static async GetFkColorsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkColorsData', login, password, null, { id });
+  }
+
+  static async GetFkCurrenciesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCurrenciesData', login, password, null, { id });
+  }
+
+  static async GetFkSizeOptionsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkSizeOptionsData', login, password, null, { id });
+  }
+
+  static async GetFkBaseNecklinesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkBaseNecklinesData', login, password, null, { id });
+  }
+
+  static async GetFkBaseSweatersData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkBaseSweatersData', login, password, null, { id });
+  }
+
+  static async GetFkBaseSleevesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkBaseSleevesData', login, password, null, { id });
+  }
+
+  static async GetFkBaseSleeveCuffsLeftData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkBaseSleeveCuffsLeftData', login, password, null, { id });
+  }
+
+  static async GetFkBaseSleeveCuffsRightData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkBaseSleeveCuffsRightData', login, password, null, { id });
+  }
+
+  static async GetFkBaseBeltsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkBaseBeltsData', login, password, null, { id });
+  }
+
+  static async GetFkBasePantsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkBasePantsData', login, password, null, { id });
+  }
+
+  static async GetFkBasePantsCuffsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkBasePantsCuffsData', login, password, null, { id });
+  }
+
+  static async GetFkBasePantsCuffsLeftData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkBasePantsCuffsLeftData', login, password, null, { id });
+  }
+
+  static async GetFkBasePantsCuffsRightData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkBasePantsCuffsRightData', login, password, null, { id });
+  }
+
+  static async GetFkCustomNecklinesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomNecklinesData', login, password, null, { id });
+  }
+
+  static async GetFkCustomSweatersData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomSweatersData', login, password, null, { id });
+  }
+
+  static async GetFkCustomSleevesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomSleevesData', login, password, null, { id });
+  }
+
+  static async GetFkCustomSleeveCuffsLeftData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomSleeveCuffsLeftData', login, password, null, { id });
+  }
+
+  static async GetFkCustomSleeveCuffsRightData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomSleeveCuffsRightData', login, password, null, { id });
+  }
+
+  static async GetFkCustomBeltsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomBeltsData', login, password, null, { id });
+  }
+
+  static async GetFkCustomPantsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomPantsData', login, password, null, { id });
+  }
+
+  static async GetFkCustomPantsCuffsLeftData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomPantsCuffsLeftData', login, password, null, { id });
+  }
+
+  static async GetFkCustomPantsCuffsRightData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomPantsCuffsRightData', login, password, null, { id });
+  }
+
+  static async GetFkCustomSportSuitsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomSportSuitsData', login, password, null, { id });
+  }
+
+  static async GetFkCustomizableProductsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCustomizableProductsData', login, password, null, { id });
+  }
+
+  static async GetFkProductOrdersData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkProductOrdersData', login, password, null, { id });
+  }
+
+  static async GetFkCountriesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkCountriesData', login, password, null, { id });
+  }
+
+  static async GetFkPaymentMethodsData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkPaymentMethodsData', login, password, null, { id });
+  }
+
+  static async GetFkPaymentStatusesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkPaymentStatusesData', login, password, null, { id });
+  }
+
+  static async GetFkShippingAddressesData(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetFkShippingAddressesData', login, password, null, { id });
+  }
+}

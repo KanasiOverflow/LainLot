@@ -1,156 +1,31 @@
-import axios from 'axios';
-import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import ApiService from '../ApiService.js';
 
 export default class CartService {
+  static async GetCartCount(login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetCartCount', login, password);
+  }
 
-    static async GetCartCount() {
+  static async GetCartFields(login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetCartFields', login, password);
+  }
 
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCartCount`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
+  static async GetCart(limit, page, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetCart', login, password, null, { limit, page });
+  }
 
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
+  static async GetCartById(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetCartById', login, password, null, { id });
+  }
 
-    static async GetCartFields() {
-        
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCartFields`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
+  static async CreateCart(newRecord, login, password) {
+    return ApiService.sendRequest('post', 'Database', 'CreateCart', login, password, newRecord);
+  }
 
-    static async GetCart(limit, page) {
-        
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCart?limit=${limit}&page=${page}`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
+  static async UpdateCart(oldRecord, login, password) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateCart', login, password, oldRecord);
+  }
 
-    static async GetCartById(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetCartById`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async CreateCart(newRecord) {
-
-        const options = {
-            method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateCart`,
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(newRecord),
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        var responseError = "";
-        const response = await axios(options)
-            .catch((error) => {
-                console.log(error.response.data.Message);
-                responseError = error.response.data.Message;
-            });
-
-        if (response) {
-            if (response.status === get201().Code && response.statusText === get201().Message) {
-                return response;
-            }
-        }
-        else {
-            return responseError;
-        }
-    };
-
-    static async UpdateCart(oldRecord) {
-
-        const options = {
-            method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateCart`,
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(oldRecord),
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        var responseError = "";
-        const response = await axios(options)
-            .catch((error) => {
-                console.log(error.response.data.Message);
-                responseError = error.response.data.Message;
-            });
-
-        if (response) {
-            if (response.status === get201().Code && response.statusText === get201().Message) {
-                return response;
-            }
-        }
-        else {
-            return responseError;
-        }
-    };
-
-    static async DeleteCart(id) {
-
-        const options = {
-            method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteCart`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-};
+  static async DeleteCart(id, login, password) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteCart', login, password, null, { id });
+  }
+}

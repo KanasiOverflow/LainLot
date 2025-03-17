@@ -1,156 +1,31 @@
-import axios from 'axios';
-import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import ApiService from '../ApiService.js';
 
 export default class PaymentStatusesService {
+  static async GetPaymentStatusesCount(login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetPaymentStatusesCount', login, password);
+  }
 
-    static async GetPaymentStatusesCount() {
+  static async GetPaymentStatusesFields(login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetPaymentStatusesFields', login, password);
+  }
 
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPaymentStatusesCount`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
+  static async GetPaymentStatuses(limit, page, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetPaymentStatuses', login, password, null, { limit, page });
+  }
 
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
+  static async GetPaymentStatusesById(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetPaymentStatusesById', login, password, null, { id });
+  }
 
-    static async GetPaymentStatusesFields() {
-        
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPaymentStatusesFields`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
+  static async CreatePaymentStatuses(newRecord, login, password) {
+    return ApiService.sendRequest('post', 'Database', 'CreatePaymentStatuses', login, password, newRecord);
+  }
 
-    static async GetPaymentStatuses(limit, page) {
-        
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPaymentStatuses?limit=${limit}&page=${page}`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
+  static async UpdatePaymentStatuses(oldRecord, login, password) {
+    return ApiService.sendRequest('put', 'Database', 'UpdatePaymentStatuses', login, password, oldRecord);
+  }
 
-    static async GetPaymentStatusesById(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetPaymentStatusesById`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async CreatePaymentStatuses(newRecord) {
-
-        const options = {
-            method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreatePaymentStatuses`,
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(newRecord),
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        var responseError = "";
-        const response = await axios(options)
-            .catch((error) => {
-                console.log(error.response.data.Message);
-                responseError = error.response.data.Message;
-            });
-
-        if (response) {
-            if (response.status === get201().Code && response.statusText === get201().Message) {
-                return response;
-            }
-        }
-        else {
-            return responseError;
-        }
-    };
-
-    static async UpdatePaymentStatuses(oldRecord) {
-
-        const options = {
-            method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdatePaymentStatuses`,
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(oldRecord),
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        var responseError = "";
-        const response = await axios(options)
-            .catch((error) => {
-                console.log(error.response.data.Message);
-                responseError = error.response.data.Message;
-            });
-
-        if (response) {
-            if (response.status === get201().Code && response.statusText === get201().Message) {
-                return response;
-            }
-        }
-        else {
-            return responseError;
-        }
-    };
-
-    static async DeletePaymentStatuses(id) {
-
-        const options = {
-            method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeletePaymentStatuses`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-};
+  static async DeletePaymentStatuses(id, login, password) {
+    return ApiService.sendRequest('delete', 'Database', 'DeletePaymentStatuses', login, password, null, { id });
+  }
+}

@@ -1,29 +1,33 @@
-import React, { createContext, useCallback, useContext, useState } from 'react'
-import { DataContext } from '../context/DataProvider';
+import React, { createContext, useCallback, useContext, useState } from 'react';
+import { DataContext } from '../context/DataProvider.jsx';
 
 export const PaginationContext = createContext(null);
 
 // Create a provider component
 export const PaginationProvider = ({ children }) => {
+  const { fetchRecords } = useContext(DataContext);
 
-    const {
-        fetchRecords
-    } = useContext(DataContext);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
 
-    const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(5);
+  const changePage = useCallback(
+    (page, login, password) => {
+      setPage(page);
+      fetchRecords(limit, page, login, password);
+    },
+    [fetchRecords, limit],
+  );
 
-    const changePage = useCallback((page) => {
-        setPage(page);
-        fetchRecords(limit, page);
-    }, [fetchRecords, limit]);
-
-    return (
-        <PaginationContext.Provider value={{
-            page, changePage,
-            limit, setLimit
-        }}>
-            {children}
-        </PaginationContext.Provider>
-    )
+  return (
+    <PaginationContext.Provider
+      value={{
+        page,
+        changePage,
+        limit,
+        setLimit,
+      }}
+    >
+      {children}
+    </PaginationContext.Provider>
+  );
 };

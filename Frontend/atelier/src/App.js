@@ -1,11 +1,11 @@
-import Header from './components/UI/header/Header';
-import AppRouter from './components/AppRouter';
-import Footer from './components/UI/footer/Footer';
-import { BrowserRouter } from "react-router-dom";
-import { AppProvider } from "./provider/AppProvider";
+import Header from './components/UI/header/Header.jsx';
+import AppRouter from './components/AppRouter.jsx';
+import Footer from './components/UI/footer/Footer.jsx';
+import { BrowserRouter } from 'react-router-dom';
+import { AppProvider } from './provider/AppProvider.jsx';
 import { Helmet } from 'react-helmet';
 import './styles/App.css';
-// rsc - create template component
+// rfc - create template component
 
 function App() {
   return (
@@ -24,6 +24,6 @@ function App() {
       </BrowserRouter>
     </AppProvider>
   );
-};
+}
 
 export default App;

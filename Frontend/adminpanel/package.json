@@ -1,17 +1,19 @@
 {
   "name": "adminpanel",
+  "type": "module",
   "version": "1.0.0",
   "private": true,
+  "author": "Kanstantsin Asinouski, Kanstantsin.Asinouski@gmail.com",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
+    "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
     "api": "file:../api",
     "axios": "^1.7.9",
     "framer-motion": "^11.12.0",
     "lucide-react": "^0.475.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-dropzone": "^14.2.3",
     "react-helmet": "^6.1.0",
     "react-hook-form": "^7.51.5",
@@ -45,6 +47,15 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@eslint/js": "^9.22.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "prettier": "^3.5.3",
+    "typescript": "^4.9.5"
   }
 }

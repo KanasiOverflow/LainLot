@@ -1,160 +1,31 @@
-import axios from 'axios';
-import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import ApiService from '../ApiService.js';
 
 export default class UsersService {
+  static async GetUsersCount(login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetUsersCount', login, password);
+  }
 
-    static async GetUsersCount() {
+  static async GetUsersFields(login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetUsersFields', login, password);
+  }
 
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUsersCount`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
+  static async GetUsers(limit, page, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetUsers', login, password, null, { limit, page });
+  }
 
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
+  static async GetUsersById(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetUsersById', login, password, null, { id });
+  }
 
-    static async GetUsersFields() {
+  static async CreateUsers(newRecord, login, password) {
+    return ApiService.sendRequest('post', 'Database', 'CreateUsers', login, password, newRecord);
+  }
 
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUsersFields`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
+  static async UpdateUsers(oldRecord, login, password) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateUsers', login, password, oldRecord);
+  }
 
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetUsers(limit, page) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUsers?limit=${limit}&page=${page}`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async GetUsersById(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetUsersById`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async CreateUsers(newRecord) {
-
-        const options = {
-            method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateUsers`,
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(newRecord),
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        var responseError = "";
-        const response = await axios(options)
-            .catch((error) => {
-                console.log(error.response.data.Message);
-                responseError = error.response.data.Message;
-            });
-
-        if (response) {
-            if (response.status === get201().Code && response.statusText === get201().Message) {
-                return response;
-            }
-        }
-        else {
-            return responseError;
-        }
-    };
-
-    static async UpdateUsers(oldRecord) {
-
-        const options = {
-            method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateUsers`,
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(oldRecord),
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        var responseError = "";
-        const response = await axios(options)
-            .catch((error) => {
-                console.log(error.response.data.Message);
-                responseError = error.response.data.Message;
-            });
-
-        if (response) {
-            if (response.status === get201().Code && response.statusText === get201().Message) {
-                return response;
-            }
-        }
-        else {
-            return responseError;
-        }
-    };
-
-    static async DeleteUsers(id) {
-
-        const options = {
-            method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteUsers`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-};
+  static async DeleteUsers(id, login, password) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteUsers', login, password, null, { id });
+  }
+}

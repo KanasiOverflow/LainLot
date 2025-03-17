@@ -1,35 +1,45 @@
 import React, { useEffect, useState, useContext } from 'react';
+import secureLocalStorage from 'react-secure-storage';
 import { useRecords } from '../hooks/useRecords';
-import { useFetching } from '../hooks/useFetching';
-import { getDBTablesList } from '../utils/getDBTablesList';
-import { ModalContext } from '../provider/context/ModalProvider';
-import { PaginationContext } from '../provider/context/PaginationProvider';
-import RecordList from '../components/RecordList/RecordList';
-import PageCountSwitcher from '../components/PageCountSwitcher/PageCountSwitcher';
-import RecordForm from '../components/RecordForm/RecordForm';
-import RecordFilter from '../components/RecordFilter/RecordFilter';
-import GeneralButton from '../components/UI/button/GeneralButton';
-import GeneralModal from '../components/UI/modal/GeneralModal';
-import Loader from '../components/UI/loader/Loader';
-import Pagination from '../components/UI/pagination/Pagination';
-import TablesSidebar from '../components/TablesSidebar/TablesSidebar';
-
-// rsc - create template component
+import { useFetching } from '../hooks/useFetching.jsx';
+import { getDBTablesList } from '../utils/getDBTablesList.js';
+import { ModalContext } from '../provider/context/ModalProvider.jsx';
+import { PaginationContext } from '../provider/context/PaginationProvider.jsx';
+import RecordList from '../components/RecordList/RecordList.jsx';
+import PageCountSwitcher from '../components/PageCountSwitcher/PageCountSwitcher.jsx';
+import RecordForm from '../components/RecordForm/RecordForm.jsx';
+import RecordFilter from '../components/RecordFilter/RecordFilter.jsx';
+import GeneralButton from '../components/UI/button/GeneralButton.jsx';
+import GeneralModal from '../components/UI/modal/GeneralModal.jsx';
+import Loader from '../components/UI/loader/Loader.jsx';
+import Pagination from '../components/UI/pagination/Pagination.jsx';
+import TablesSidebar from '../components/TablesSidebar/TablesSidebar.jsx';
 
 function Records() {
   const {
-    openCreateModal, currentTable, setCurrentTable,
-    currentRecords, recordFields,
-    fetchRecords, isRecordLoading, postError
+    openCreateModal,
+    currentTable,
+    setCurrentTable,
+    currentRecords,
+    recordFields,
+    fetchRecords,
+    isRecordLoading,
+    postError,
   } = useContext(ModalContext);
 
   const { page, limit } = useContext(PaginationContext);
 
   const [filter, setFilter] = useState({ sort: '', query: '' });
-
   const [DBTables, setDBTables] = useState([]);
 
-  const sortedAndSearchedRecords = useRecords(currentRecords, filter.sort, filter.query);
+  const login = secureLocalStorage.getItem('login');
+  const password = secureLocalStorage.getItem('password');
+
+  const sortedAndSearchedRecords = useRecords(
+    currentRecords,
+    filter.sort,
+    filter.query
+  );
 
   const [fetchTables, isTablesLoading, tablesError] = useFetching(() => {
     const response = getDBTablesList();
@@ -37,9 +47,17 @@ function Records() {
   });
 
   useEffect(() => {
-    fetchRecords(limit, page);
+    if (!fetchRecords) {
+      console.error("fetchRecords is undefined! Check ModalProvider and DataProvider.");
+      return;
+    }
+  
+    if (login && password) {
+      fetchRecords(limit, page, login, password);
+    }
     // eslint-disable-next-line
   }, [page, limit, currentTable]);
+  
 
   useEffect(() => {
     fetchTables();
@@ -48,10 +66,7 @@ function Records() {
 
   return (
     <div className="records page">
-
-      {tablesError &&
-        <h1>Cannot load list of tables!</h1>
-      }
+      {tablesError && <h1>Cannot load list of tables!</h1>}
 
       {isTablesLoading ? (
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>
@@ -61,17 +76,16 @@ function Records() {
         <TablesSidebar tables={DBTables} setCurrentTable={setCurrentTable} />
       )}
 
-
       <hr style={{ margin: '15px 0' }} />
 
-      {(isRecordLoading === false && currentTable) &&
+      {isRecordLoading === false && currentTable && (
         <GeneralButton onClick={openCreateModal}>
           Create {currentTable} record
         </GeneralButton>
-      }
+      )}
 
       <GeneralModal>
-        <RecordForm />
+        <RecordForm login={login} password={password} />
       </GeneralModal>
 
       <hr style={{ margin: '15px 0' }} />
@@ -82,20 +96,19 @@ function Records() {
 
       <hr style={{ margin: '15px 0' }} />
 
-      {postError &&
-        <h3 style={{ textAlign: 'center', color: 'red' }}>{postError}</h3>
-      }
+      {postError && <h3 style={{ textAlign: 'center', color: 'red' }}>{postError}</h3>}
 
-      {isRecordLoading
-        ? <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}><Loader /></div>
-        : <RecordList records={sortedAndSearchedRecords}
-        />
-      }
+      {isRecordLoading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>
+          <Loader />
+        </div>
+      ) : (
+        <RecordList records={sortedAndSearchedRecords} login={login} password={password} />
+      )}
 
-      <Pagination />
-
+      <Pagination login={login} password={password}/>
     </div>
   );
-};
+}
 
 export default Records;

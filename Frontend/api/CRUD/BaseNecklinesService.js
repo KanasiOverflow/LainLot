@@ -1,156 +1,31 @@
-import axios from 'axios';
-import secureLocalStorage from 'react-secure-storage';
-import { get200, get201 } from '../utils/responseCodes';
-import { getRestAPIUrl } from '../utils/getRestAPIUrl';
+import ApiService from '../ApiService.js';
 
 export default class BaseNecklinesService {
+  static async GetBaseNecklinesCount(login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklinesCount', login, password);
+  }
 
-    static async GetBaseNecklinesCount() {
+  static async GetBaseNecklinesFields(login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklinesFields', login, password);
+  }
 
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetBaseNecklinesCount`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
+  static async GetBaseNecklines(limit, page, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklines', login, password, null, { limit, page });
+  }
 
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
+  static async GetBaseNecklinesById(id, login, password) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklinesById', login, password, null, { id });
+  }
 
-    static async GetBaseNecklinesFields() {
-        
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetBaseNecklinesFields`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
+  static async CreateBaseNecklines(newRecord, login, password) {
+    return ApiService.sendRequest('post', 'Database', 'CreateBaseNecklines', login, password, newRecord);
+  }
 
-    static async GetBaseNecklines(limit, page) {
-        
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetBaseNecklines?limit=${limit}&page=${page}`,
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
+  static async UpdateBaseNecklines(oldRecord, login, password) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateBaseNecklines', login, password, oldRecord);
+  }
 
-    static async GetBaseNecklinesById(id) {
-
-        const options = {
-            method: 'get',
-            url: `${getRestAPIUrl()}/Database/GetBaseNecklinesById`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-    static async CreateBaseNecklines(newRecord) {
-
-        const options = {
-            method: 'post',
-            url: `${getRestAPIUrl()}/Database/CreateBaseNecklines`,
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(newRecord),
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        var responseError = "";
-        const response = await axios(options)
-            .catch((error) => {
-                console.log(error.response.data.Message);
-                responseError = error.response.data.Message;
-            });
-
-        if (response) {
-            if (response.status === get201().Code && response.statusText === get201().Message) {
-                return response;
-            }
-        }
-        else {
-            return responseError;
-        }
-    };
-
-    static async UpdateBaseNecklines(oldRecord) {
-
-        const options = {
-            method: 'put',
-            url: `${getRestAPIUrl()}/Database/UpdateBaseNecklines`,
-            headers: { 'Content-Type': 'application/json' },
-            data: JSON.stringify(oldRecord),
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-
-        var responseError = "";
-        const response = await axios(options)
-            .catch((error) => {
-                console.log(error.response.data.Message);
-                responseError = error.response.data.Message;
-            });
-
-        if (response) {
-            if (response.status === get201().Code && response.statusText === get201().Message) {
-                return response;
-            }
-        }
-        else {
-            return responseError;
-        }
-    };
-
-    static async DeleteBaseNecklines(id) {
-
-        const options = {
-            method: 'delete',
-            url: `${getRestAPIUrl()}/Database/DeleteBaseNecklines`,
-            params: { id: id },
-            auth: {
-                username: secureLocalStorage.getItem('login'),
-                password: secureLocalStorage.getItem('password')
-            }
-        };
-        const response = await axios(options);
-        if (response.status === get200().Code && response.statusText === get200().Message) {
-            return response;
-        }
-        return null;
-    };
-
-};
+  static async DeleteBaseNecklines(id, login, password) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteBaseNecklines', login, password, null, { id });
+  }
+}

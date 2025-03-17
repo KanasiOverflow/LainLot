@@ -18,9 +18,11 @@ builder.Services.AddSwaggerGen();
 var HostOrigins = "HostOrigins";
 var corsAdresses = new string[]
 {
-    "http://localhost:3000",
-    "http://localhost:8040",
-    "https://lainlot.com"
+    "http://localhost:3000", // adminPanel
+    "http://localhost:3001", // atelier
+    "http://localhost:3002", // shop
+    "http://localhost:8040", // RestAPI
+    "https://lainlot.com"    // PROD
 };
 
 builder.Services.AddCors(options =>
