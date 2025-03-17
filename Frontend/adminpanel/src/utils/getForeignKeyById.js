@@ -1,4 +1,4 @@
-import ApiService from 'api/CRUD/ApiService.js';
+import ForeignKeysService from 'api/ForeignKeysService.js';
 
 export const getForeignKeyById = async (foreignFieldKey, id, login, password) => {
   const endpointMapping = {
@@ -47,15 +47,15 @@ export const getForeignKeyById = async (foreignFieldKey, id, login, password) =>
     fkShippingAddresses: 'GetFkShippingAddressesData'
   };
 
-  const endpoint = endpointMapping[foreignFieldKey];
+  const methodName = endpointMapping[foreignFieldKey];
 
-  if (!endpoint) {
-    console.error(`Unknown foreign key: ${foreignFieldKey}`);
+  if (!methodName || !ForeignKeysService[methodName]) {
+    console.error(`Unknown foreign key or method not found: ${foreignFieldKey}`);
     return null;
   }
 
   try {
-    return await ApiService.sendRequest('get', endpoint, login, password, null, { id });
+    return await ForeignKeysService[methodName](id, login, password);
   } catch (error) {
     console.error(`Error fetching foreign key data for ${foreignFieldKey}:`, error);
     return null;
