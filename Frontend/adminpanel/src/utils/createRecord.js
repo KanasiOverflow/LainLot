@@ -1,4 +1,4 @@
-import * as Services from 'api';
+import * as Services from 'api/CRUD';
 
 export const createRecord = async (currentTable, data, login, password) => {
   if (!Services[`${currentTable}Service`] || !Services[`${currentTable}Service`].Create) {

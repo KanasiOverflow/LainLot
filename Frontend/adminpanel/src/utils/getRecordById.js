@@ -1,4 +1,4 @@
-import * as Services from 'api';
+import * as Services from 'api/CRUD';
 
 export const getRecordById = async (currentTable, id, login, password) => {
   if (!Services[`${currentTable}Service`] || !Services[`${currentTable}Service`].GetById) {

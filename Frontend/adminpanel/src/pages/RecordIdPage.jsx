@@ -62,7 +62,7 @@ export default function RecordIdPage({ login, password }) {
       .map(([key, value]) => ({ key, value }));
 
     if (fkFields.length) {
-      fetchMultipleFkData(fkFields);
+      fetchMultipleFkData(fkFields, login, password);
     }
   }, [record, fetchMultipleFkData]);
 

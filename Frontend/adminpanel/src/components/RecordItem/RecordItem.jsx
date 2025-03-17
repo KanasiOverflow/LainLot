@@ -31,7 +31,7 @@ export default function RecordItem({ record, ref, login, password }) {
       .map(([key, value]) => ({ key, value }));
 
     if (fkFields.length) {
-      fetchMultipleFkData(fkFields);
+      fetchMultipleFkData(fkFields, login, password);
     }
   }, [record, fetchMultipleFkData]);
 
