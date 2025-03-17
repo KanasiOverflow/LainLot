@@ -74,7 +74,7 @@ export default function RecordIdPage() {
   return (
     <div>
       <GeneralModal visible={modal} setVisible={setModal}>
-        <RecordForm />
+        <RecordForm login={login} password={password}/>
       </GeneralModal>
       <h1>
         {params.table} page with id {params.id}
