@@ -14,9 +14,9 @@ function App() {
         <Helmet>
           <title>{process.env.REACT_APP_WEBSITE_NAME}</title>
         </Helmet>
-        <div className="appWrapper">
+        <div className='appWrapper'>
           <Header />
-          <main className="contentWrapper">
+          <main className='contentWrapper'>
             <AppRouter />
           </main>
           <Footer />

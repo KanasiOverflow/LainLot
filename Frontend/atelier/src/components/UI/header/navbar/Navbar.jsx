@@ -6,26 +6,26 @@ export default function Navbar() {
   const { t } = useTranslation();
 
   return (
-    <div className={'container'}>
+    <div className='container'>
       <div className={mcss.headerSectionTop}>
-        <div className={'row'}>
-          <div className={'col-sm-12'}>
+        <div className='row'>
+          <div className='col-sm-12'>
             <div className={mcss.customMenu + ' ' + mcss.hideOnMobile}>
               <ul>
                 <li>
-                  <a href="/Home">{t('Home')}</a>
+                  <a href='/Home'>{t('Home')}</a>
                 </li>
                 <li>
-                  <a href="/Contacts">{t('Contacts')}</a>
+                  <a href='/Contacts'>{t('Contacts')}</a>
                 </li>
                 <li>
-                  <a href="/About">{t('About')}</a>
+                  <a href='/About'>{t('About')}</a>
                 </li>
                 <li>
-                  <a href="/Cart">{t('Cart')}</a>
+                  <a href='/Cart'>{t('Cart')}</a>
                 </li>
                 <li>
-                  <a href="/Profile">{t('Profile')}</a>
+                  <a href='/Profile'>{t('Profile')}</a>
                 </li>
               </ul>
             </div>

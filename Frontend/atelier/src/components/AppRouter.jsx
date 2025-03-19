@@ -21,11 +21,11 @@ export default function AppRouter() {
         <Route
           key={route.path}
           path={route.path}
-          element={isAuth ? route.component : <Navigate to="/login" replace />}
+          element={isAuth ? route.component : <Navigate to='/login' replace />}
         />
       ))}
 
-      <Route path="/*" element={<Navigate to="/home" replace />} />
+      <Route path='/*' element={<Navigate to='/home' replace />} />
     </Routes>
   );
 }
