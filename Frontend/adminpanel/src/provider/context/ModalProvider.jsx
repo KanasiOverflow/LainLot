@@ -31,7 +31,7 @@ export const ModalProvider = ({ children }) => {
       setModal(true);
       setOldRecord(record);
     },
-    [setMode, setModifyRecordError, setModal, setOldRecord],
+    [setMode, setModifyRecordError, setModal, setOldRecord]
   );
 
   const openCreateModal = useCallback(() => {
@@ -44,7 +44,12 @@ export const ModalProvider = ({ children }) => {
   const addRecord = useCallback(
     async (record, login, password) => {
       try {
-        const response = await createRecord(currentTable, record, login, password);
+        const response = await createRecord(
+          currentTable,
+          record,
+          login,
+          password
+        );
         if (response && response.data) {
           setCurrentRecords([...currentRecords, response.data]);
           setModal(false);
@@ -62,16 +67,21 @@ export const ModalProvider = ({ children }) => {
       currentRecords,
       setModal,
       setModifyRecordError,
-    ],
+    ]
   );
 
   const editRecord = useCallback(
     async (record, login, password) => {
       try {
-        const response = await updateRecord(currentTable, record, login, password);
+        const response = await updateRecord(
+          currentTable,
+          record,
+          login,
+          password
+        );
         if (response && response.data) {
           setCurrentRecords((prevRecords) =>
-            prevRecords.map((p) => (p.id === record.id ? response.data : p)),
+            prevRecords.map((p) => (p.id === record.id ? response.data : p))
           );
           setModal(false);
         } else {
@@ -82,23 +92,28 @@ export const ModalProvider = ({ children }) => {
         setModifyRecordError(error.message || 'Failed to edit record');
       }
     },
-    [currentTable, setCurrentRecords, setModal, setModifyRecordError],
+    [currentTable, setCurrentRecords, setModal, setModifyRecordError]
   );
 
   const removeRecord = useCallback(
     async (record, login, password) => {
       try {
-        const response = await removeRecordById(currentTable, record.id, login, password);
+        const response = await removeRecordById(
+          currentTable,
+          record.id,
+          login,
+          password
+        );
         if (response) {
           setCurrentRecords((prevRecords) =>
-            prevRecords.filter((p) => p.id !== record.id),
+            prevRecords.filter((p) => p.id !== record.id)
           );
         }
       } catch (error) {
         console.error('Error removing record:', error);
       }
     },
-    [currentTable, setCurrentRecords],
+    [currentTable, setCurrentRecords]
   );
 
   return (

@@ -17,9 +17,23 @@ export const DataProvider = ({ children }) => {
   const [fetchRecords, isRecordLoading, postError] = useFetching(
     async (limit, page, login, password) => {
       try {
-        const responseData = await getAllRecords(currentTable, limit, page, login, password);
-        const responseFields = await getRecordFields(currentTable, login, password);
-        const responseTotalCount = await getTableTotalCount(currentTable, login, password);
+        const responseData = await getAllRecords(
+          currentTable,
+          limit,
+          page,
+          login,
+          password
+        );
+        const responseFields = await getRecordFields(
+          currentTable,
+          login,
+          password
+        );
+        const responseTotalCount = await getTableTotalCount(
+          currentTable,
+          login,
+          password
+        );
 
         if (responseData && responseData.data) {
           setCurrentTable(currentTable);
@@ -45,7 +59,7 @@ export const DataProvider = ({ children }) => {
         totalPages,
         fetchRecords,
         isRecordLoading,
-        postError
+        postError,
       }}
     >
       {children}

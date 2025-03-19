@@ -15,7 +15,7 @@ export const PaginationProvider = ({ children }) => {
       setPage(page);
       fetchRecords(limit, page, login, password);
     },
-    [fetchRecords, limit],
+    [fetchRecords, limit]
   );
 
   return (

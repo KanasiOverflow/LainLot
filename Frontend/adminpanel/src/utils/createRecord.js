@@ -45,7 +45,6 @@ import UserRolesService from 'api/CRUD/UserRolesService.js';
 import UsersService from 'api/CRUD/UsersService.js';
 
 export const createRecord = async (currentTable, data, login, password) => {
-
   var response = null;
 
   switch (currentTable) {
@@ -53,40 +52,76 @@ export const createRecord = async (currentTable, data, login, password) => {
       response = await AboutService.CreateAbout(data, login, password);
       break;
     case 'AccessLevels':
-      response = await AccessLevelsService.CreateAccessLevels(data, login, password);
+      response = await AccessLevelsService.CreateAccessLevels(
+        data,
+        login,
+        password
+      );
       break;
     case 'BaseBelts':
       response = await BaseBeltsService.CreateBaseBelts(data, login, password);
       break;
     case 'BaseNecklines':
-      response = await BaseNecklinesService.CreateBaseNecklines(data, login, password);
+      response = await BaseNecklinesService.CreateBaseNecklines(
+        data,
+        login,
+        password
+      );
       break;
     case 'BasePantsCuffs':
-      response = await BasePantsCuffsService.CreateBasePantsCuffs(data, login, password);
+      response = await BasePantsCuffsService.CreateBasePantsCuffs(
+        data,
+        login,
+        password
+      );
       break;
     case 'BasePants':
       response = await BasePantsService.CreateBasePants(data, login, password);
       break;
     case 'BaseSleeveCuffs':
-      response = await BaseSleeveCuffsService.CreateBaseSleeveCuffs(data, login, password);
+      response = await BaseSleeveCuffsService.CreateBaseSleeveCuffs(
+        data,
+        login,
+        password
+      );
       break;
     case 'BaseSleeves':
-      response = await BaseSleevesService.CreateBaseSleeves(data, login, password);
+      response = await BaseSleevesService.CreateBaseSleeves(
+        data,
+        login,
+        password
+      );
       break;
     case 'BaseSportSuits':
-      response = await BaseSportSuitsService.CreateBaseSportSuits(data, login, password);
+      response = await BaseSportSuitsService.CreateBaseSportSuits(
+        data,
+        login,
+        password
+      );
       break;
     case 'BaseSweaters':
-      response = await BaseSweatersService.CreateBaseSweaters(data, login, password);
+      response = await BaseSweatersService.CreateBaseSweaters(
+        data,
+        login,
+        password
+      );
       break;
     case 'Cart':
       response = await CartService.CreateCart(data, login, password);
       break;
     case 'Categories':
-      response = await CategoriesService.CreateCategories(data, login, password);
+      response = await CategoriesService.CreateCategories(
+        data,
+        login,
+        password
+      );
       break;
     case 'CategoryHierarchy':
-      response = await CategoryHierarchyService.CreateCategoryHierarchy(data, login, password);
+      response = await CategoryHierarchyService.CreateCategoryHierarchy(
+        data,
+        login,
+        password
+      );
       break;
     case 'Colors':
       response = await ColorsService.CreateColors(data, login, password);
@@ -98,37 +133,81 @@ export const createRecord = async (currentTable, data, login, password) => {
       response = await CountriesService.CreateCountries(data, login, password);
       break;
     case 'Currencies':
-      response = await CurrenciesService.CreateCurrencies(data, login, password);
+      response = await CurrenciesService.CreateCurrencies(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomBelts':
-      response = await CustomBeltsService.CreateCustomBelts(data, login, password);
+      response = await CustomBeltsService.CreateCustomBelts(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomizableProducts':
-      response = await CustomizableProductsService.CreateCustomizableProducts(data, login, password);
+      response = await CustomizableProductsService.CreateCustomizableProducts(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomNecklines':
-      response = await CustomNecklinesService.CreateCustomNecklines(data, login, password);
+      response = await CustomNecklinesService.CreateCustomNecklines(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomPantsCuffs':
-      response = await CustomPantsCuffsService.CreateCustomPantsCuffs(data, login, password);
+      response = await CustomPantsCuffsService.CreateCustomPantsCuffs(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomPants':
-      response = await CustomPantsService.CreateCustomPants(data, login, password);
+      response = await CustomPantsService.CreateCustomPants(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomSleeveCuffs':
-      response = await CustomSleeveCuffsService.CreateCustomSleeveCuffs(data, login, password);
+      response = await CustomSleeveCuffsService.CreateCustomSleeveCuffs(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomSleeves':
-      response = await CustomSleevesService.CreateCustomSleeves(data, login, password);
+      response = await CustomSleevesService.CreateCustomSleeves(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomSportSuits':
-      response = await CustomSportSuitsService.CreateCustomSportSuits(data, login, password);
+      response = await CustomSportSuitsService.CreateCustomSportSuits(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomSweaters':
-      response = await CustomSweatersService.CreateCustomSweaters(data, login, password);
+      response = await CustomSweatersService.CreateCustomSweaters(
+        data,
+        login,
+        password
+      );
       break;
     case 'FabricTypes':
-      response = await FabricTypesService.CreateFabricTypes(data, login, password);
+      response = await FabricTypesService.CreateFabricTypes(
+        data,
+        login,
+        password
+      );
       break;
     case 'Languages':
       response = await LanguagesService.CreateLanguages(data, login, password);
@@ -137,46 +216,90 @@ export const createRecord = async (currentTable, data, login, password) => {
       response = await OrdersService.CreateOrders(data, login, password);
       break;
     case 'OrderHistory':
-      response = await OrderHistoryService.CreateOrderHistory(data, login, password);
+      response = await OrderHistoryService.CreateOrderHistory(
+        data,
+        login,
+        password
+      );
       break;
     case 'OrderStatuses':
-      response = await OrderStatusesService.CreateOrderStatuses(data, login, password);
+      response = await OrderStatusesService.CreateOrderStatuses(
+        data,
+        login,
+        password
+      );
       break;
     case 'PaymentMethods':
-      response = await PaymentMethodsService.CreatePaymentMethods(data, login, password);
+      response = await PaymentMethodsService.CreatePaymentMethods(
+        data,
+        login,
+        password
+      );
       break;
     case 'Payments':
       response = await PaymentsService.CreatePayments(data, login, password);
       break;
     case 'PaymentStatuses':
-      response = await PaymentStatusesService.CreatePaymentStatuses(data, login, password);
+      response = await PaymentStatusesService.CreatePaymentStatuses(
+        data,
+        login,
+        password
+      );
       break;
     case 'ProductImages':
-      response = await ProductImagesService.CreateProductImages(data, login, password);
+      response = await ProductImagesService.CreateProductImages(
+        data,
+        login,
+        password
+      );
       break;
     case 'ProductOrders':
-      response = await ProductOrdersService.CreateProductOrders(data, login, password);
+      response = await ProductOrdersService.CreateProductOrders(
+        data,
+        login,
+        password
+      );
       break;
     case 'Products':
       response = await ProductsService.CreateProducts(data, login, password);
       break;
     case 'ProductTranslations':
-      response = await ProductTranslationsService.CreateProductTranslations(data, login, password);
+      response = await ProductTranslationsService.CreateProductTranslations(
+        data,
+        login,
+        password
+      );
       break;
     case 'Reviews':
       response = await ReviewsService.CreateReviews(data, login, password);
       break;
     case 'ShippingAddresses':
-      response = await ShippingAddressesService.CreateShippingAddresses(data, login, password);
+      response = await ShippingAddressesService.CreateShippingAddresses(
+        data,
+        login,
+        password
+      );
       break;
     case 'SizeOptions':
-      response = await SizeOptionsService.CreateSizeOptions(data, login, password);
+      response = await SizeOptionsService.CreateSizeOptions(
+        data,
+        login,
+        password
+      );
       break;
     case 'UserOrderHistory':
-      response = await UserOrderHistoryService.CreateUserOrderHistory(data, login, password);
+      response = await UserOrderHistoryService.CreateUserOrderHistory(
+        data,
+        login,
+        password
+      );
       break;
     case 'UserProfiles':
-      response = await UserProfilesService.CreateUserProfiles(data, login, password);
+      response = await UserProfilesService.CreateUserProfiles(
+        data,
+        login,
+        password
+      );
       break;
     case 'UserRoles':
       response = await UserRolesService.CreateUserRoles(data, login, password);
@@ -186,7 +309,7 @@ export const createRecord = async (currentTable, data, login, password) => {
       break;
     default:
       break;
-  };
+  }
 
   return response;
-}
+};

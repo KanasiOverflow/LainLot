@@ -5,7 +5,7 @@ import { itemVariants } from '../../utils/animationVariants.js';
 import RecordItem from '../RecordItem/RecordItem.jsx';
 
 const MemoizedRecordItem = React.memo(
-  forwardRef((props, ref) => <RecordItem ref={ref} {...props} />),
+  forwardRef((props, ref) => <RecordItem ref={ref} {...props} />)
 );
 
 export default function RecordList({ records, login, password }) {
@@ -36,7 +36,11 @@ export default function RecordList({ records, login, password }) {
             exit="exit"
             layout
           >
-            <MemoizedRecordItem record={record} login={login} password={password} />
+            <MemoizedRecordItem
+              record={record}
+              login={login}
+              password={password}
+            />
           </motion.div>
         ))}
       </AnimatePresence>

@@ -52,31 +52,59 @@ export const removeRecordById = async (currentTable, id, login, password) => {
       response = await AboutService.DeleteAbout(id, login, password);
       break;
     case 'AccessLevels':
-      response = await AccessLevelsService.DeleteAccessLevels(id, login, password);
+      response = await AccessLevelsService.DeleteAccessLevels(
+        id,
+        login,
+        password
+      );
       break;
     case 'BaseBelts':
       response = await BaseBeltsService.DeleteBaseBelts(id, login, password);
       break;
     case 'BaseNecklines':
-      response = await BaseNecklinesService.DeleteBaseNecklines(id, login, password);
+      response = await BaseNecklinesService.DeleteBaseNecklines(
+        id,
+        login,
+        password
+      );
       break;
     case 'BasePantsCuffs':
-      response = await BasePantsCuffsService.DeleteBasePantsCuffs(id, login, password);
+      response = await BasePantsCuffsService.DeleteBasePantsCuffs(
+        id,
+        login,
+        password
+      );
       break;
     case 'BasePants':
       response = await BasePantsService.DeleteBasePants(id, login, password);
       break;
     case 'BaseSleeveCuffs':
-      response = await BaseSleeveCuffsService.DeleteBaseSleeveCuffs(id, login, password);
+      response = await BaseSleeveCuffsService.DeleteBaseSleeveCuffs(
+        id,
+        login,
+        password
+      );
       break;
     case 'BaseSleeves':
-      response = await BaseSleevesService.DeleteBaseSleeves(id, login, password);
+      response = await BaseSleevesService.DeleteBaseSleeves(
+        id,
+        login,
+        password
+      );
       break;
     case 'BaseSportSuits':
-      response = await BaseSportSuitsService.DeleteBaseSportSuits(id, login, password);
+      response = await BaseSportSuitsService.DeleteBaseSportSuits(
+        id,
+        login,
+        password
+      );
       break;
     case 'BaseSweaters':
-      response = await BaseSweatersService.DeleteBaseSweaters(id, login, password);
+      response = await BaseSweatersService.DeleteBaseSweaters(
+        id,
+        login,
+        password
+      );
       break;
     case 'Cart':
       response = await CartService.DeleteCart(id, login, password);
@@ -85,7 +113,11 @@ export const removeRecordById = async (currentTable, id, login, password) => {
       response = await CategoriesService.DeleteCategories(id, login, password);
       break;
     case 'CategoryHierarchy':
-      response = await CategoryHierarchyService.DeleteCategoryHierarchy(id, login, password);
+      response = await CategoryHierarchyService.DeleteCategoryHierarchy(
+        id,
+        login,
+        password
+      );
       break;
     case 'Colors':
       response = await ColorsService.DeleteColors(id, login, password);
@@ -100,34 +132,74 @@ export const removeRecordById = async (currentTable, id, login, password) => {
       response = await CurrenciesService.DeleteCurrencies(id, login, password);
       break;
     case 'CustomBelts':
-      response = await CustomBeltsService.DeleteCustomBelts(id, login, password);
+      response = await CustomBeltsService.DeleteCustomBelts(
+        id,
+        login,
+        password
+      );
       break;
     case 'CustomizableProducts':
-      response = await CustomizableProductsService.DeleteCustomizableProducts(id, login, password);
+      response = await CustomizableProductsService.DeleteCustomizableProducts(
+        id,
+        login,
+        password
+      );
       break;
     case 'CustomNecklines':
-      response = await CustomNecklinesService.DeleteCustomNecklines(id, login, password);
+      response = await CustomNecklinesService.DeleteCustomNecklines(
+        id,
+        login,
+        password
+      );
       break;
     case 'CustomPantsCuffs':
-      response = await CustomPantsCuffsService.DeleteCustomPantsCuffs(id, login, password);
+      response = await CustomPantsCuffsService.DeleteCustomPantsCuffs(
+        id,
+        login,
+        password
+      );
       break;
     case 'CustomPants':
-      response = await CustomPantsService.DeleteCustomPants(id, login, password);
+      response = await CustomPantsService.DeleteCustomPants(
+        id,
+        login,
+        password
+      );
       break;
     case 'CustomSleeveCuffs':
-      response = await CustomSleeveCuffsService.DeleteCustomSleeveCuffs(id, login, password);
+      response = await CustomSleeveCuffsService.DeleteCustomSleeveCuffs(
+        id,
+        login,
+        password
+      );
       break;
     case 'CustomSleeves':
-      response = await CustomSleevesService.DeleteCustomSleeves(id, login, password);
+      response = await CustomSleevesService.DeleteCustomSleeves(
+        id,
+        login,
+        password
+      );
       break;
     case 'CustomSportSuits':
-      response = await CustomSportSuitsService.DeleteCustomSportSuits(id, login, password);
+      response = await CustomSportSuitsService.DeleteCustomSportSuits(
+        id,
+        login,
+        password
+      );
       break;
     case 'CustomSweaters':
-      response = await CustomSweatersService.DeleteCustomSweaters(id, login, password);
+      response = await CustomSweatersService.DeleteCustomSweaters(
+        id,
+        login,
+        password
+      );
       break;
     case 'FabricTypes':
-      response = await FabricTypesService.DeleteFabricTypes(id, login, password);
+      response = await FabricTypesService.DeleteFabricTypes(
+        id,
+        login,
+        password
+      );
       break;
     case 'Languages':
       response = await LanguagesService.DeleteLanguages(id, login, password);
@@ -136,46 +208,90 @@ export const removeRecordById = async (currentTable, id, login, password) => {
       response = await OrdersService.DeleteOrders(id, login, password);
       break;
     case 'OrderHistory':
-      response = await OrderHistoryService.DeleteOrderHistory(id, login, password);
+      response = await OrderHistoryService.DeleteOrderHistory(
+        id,
+        login,
+        password
+      );
       break;
     case 'OrderStatuses':
-      response = await OrderStatusesService.DeleteOrderStatuses(id, login, password);
+      response = await OrderStatusesService.DeleteOrderStatuses(
+        id,
+        login,
+        password
+      );
       break;
     case 'PaymentMethods':
-      response = await PaymentMethodsService.DeletePaymentMethods(id, login, password);
+      response = await PaymentMethodsService.DeletePaymentMethods(
+        id,
+        login,
+        password
+      );
       break;
     case 'Payments':
       response = await PaymentsService.DeletePayments(id, login, password);
       break;
     case 'PaymentStatuses':
-      response = await PaymentStatusesService.DeletePaymentStatuses(id, login, password);
+      response = await PaymentStatusesService.DeletePaymentStatuses(
+        id,
+        login,
+        password
+      );
       break;
     case 'ProductImages':
-      response = await ProductImagesService.DeleteProductImages(id, login, password);
+      response = await ProductImagesService.DeleteProductImages(
+        id,
+        login,
+        password
+      );
       break;
     case 'ProductOrders':
-      response = await ProductOrdersService.DeleteProductOrders(id, login, password);
+      response = await ProductOrdersService.DeleteProductOrders(
+        id,
+        login,
+        password
+      );
       break;
     case 'Products':
       response = await ProductsService.DeleteProducts(id, login, password);
       break;
     case 'ProductTranslations':
-      response = await ProductTranslationsService.DeleteProductTranslations(id, login, password);
+      response = await ProductTranslationsService.DeleteProductTranslations(
+        id,
+        login,
+        password
+      );
       break;
     case 'Reviews':
       response = await ReviewsService.DeleteReviews(id, login, password);
       break;
     case 'ShippingAddresses':
-      response = await ShippingAddressesService.DeleteShippingAddresses(id, login, password);
+      response = await ShippingAddressesService.DeleteShippingAddresses(
+        id,
+        login,
+        password
+      );
       break;
     case 'SizeOptions':
-      response = await SizeOptionsService.DeleteSizeOptions(id, login, password);
+      response = await SizeOptionsService.DeleteSizeOptions(
+        id,
+        login,
+        password
+      );
       break;
     case 'UserOrderHistory':
-      response = await UserOrderHistoryService.DeleteUserOrderHistory(id, login, password);
+      response = await UserOrderHistoryService.DeleteUserOrderHistory(
+        id,
+        login,
+        password
+      );
       break;
     case 'UserProfiles':
-      response = await UserProfilesService.DeleteUserProfiles(id, login, password);
+      response = await UserProfilesService.DeleteUserProfiles(
+        id,
+        login,
+        password
+      );
       break;
     case 'UserRoles':
       response = await UserRolesService.DeleteUserRoles(id, login, password);
@@ -185,7 +301,7 @@ export const removeRecordById = async (currentTable, id, login, password) => {
       break;
     default:
       break;
-  };
+  }
 
   return response;
-}
+};

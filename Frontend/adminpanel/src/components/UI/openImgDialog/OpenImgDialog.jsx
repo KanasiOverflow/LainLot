@@ -13,8 +13,8 @@ export default function OpenImgDialog({ onData, files, setFiles }) {
         acceptedFiles.map((file) =>
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          }),
-        ),
+          })
+        )
       );
     },
   });

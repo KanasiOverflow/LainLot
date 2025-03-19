@@ -20,7 +20,7 @@ export default function Login() {
 
     var response = await CheckCredentialsService.CheckCredentials(
       login,
-      password,
+      password
     );
 
     if (response) {

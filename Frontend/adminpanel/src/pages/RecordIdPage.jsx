@@ -18,8 +18,10 @@ export default function RecordIdPage() {
   const { modal, setModal, fetchRecords } = useContext(ModalContext);
   const { page, limit } = useContext(PaginationContext);
   const { openEditModal, removeRecord } = useContext(ModalContext);
-  const { setCurrentTable, currentTable, currentRecords } = useContext(DataContext);
-  const { fetchMultipleFkData, foreignKeys, fkError } = useContext(ForeignKeysContext);
+  const { setCurrentTable, currentTable, currentRecords } =
+    useContext(DataContext);
+  const { fetchMultipleFkData, foreignKeys, fkError } =
+    useContext(ForeignKeysContext);
 
   const login = secureLocalStorage.getItem('login');
   const password = secureLocalStorage.getItem('password');
@@ -74,7 +76,7 @@ export default function RecordIdPage() {
   return (
     <div>
       <GeneralModal visible={modal} setVisible={setModal}>
-        <RecordForm login={login} password={password}/>
+        <RecordForm login={login} password={password} />
       </GeneralModal>
       <h1>
         {params.table} page with id {params.id}
@@ -94,7 +96,10 @@ export default function RecordIdPage() {
                     `${foreignKeys[`${key}_${value}`] || 'Loading...'} (${value})`
                   )
                 ) : key === 'imageData' ? (
-                  <DisplayImage base64Img={byteArrayToBase64(value)} fullSize={false} />
+                  <DisplayImage
+                    base64Img={byteArrayToBase64(value)}
+                    fullSize={false}
+                  />
                 ) : (
                   value
                 )}

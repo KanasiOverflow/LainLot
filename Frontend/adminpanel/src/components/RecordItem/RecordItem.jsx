@@ -8,8 +8,10 @@ import DisplayImage from '../UI/image/DisplayImage.jsx';
 import mcss from './RecordItem.module.css';
 
 export default function RecordItem({ record, ref, login, password }) {
-  const { openEditModal, removeRecord, currentTable } = useContext(ModalContext);
-  const { fetchMultipleFkData, foreignKeys, fkError } = useContext(ForeignKeysContext);
+  const { openEditModal, removeRecord, currentTable } =
+    useContext(ModalContext);
+  const { fetchMultipleFkData, foreignKeys, fkError } =
+    useContext(ForeignKeysContext);
 
   const navigate = useNavigate();
 

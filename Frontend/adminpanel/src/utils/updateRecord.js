@@ -45,7 +45,6 @@ import UserRolesService from 'api/CRUD/UserRolesService.js';
 import UsersService from 'api/CRUD/UsersService.js';
 
 export const updateRecord = async (currentTable, data, login, password) => {
-
   var response = null;
 
   switch (currentTable) {
@@ -53,40 +52,76 @@ export const updateRecord = async (currentTable, data, login, password) => {
       response = await AboutService.UpdateAbout(data, login, password);
       break;
     case 'AccessLevels':
-      response = await AccessLevelsService.UpdateAccessLevels(data, login, password);
+      response = await AccessLevelsService.UpdateAccessLevels(
+        data,
+        login,
+        password
+      );
       break;
     case 'BaseBelts':
       response = await BaseBeltsService.UpdateBaseBelts(data, login, password);
       break;
     case 'BaseNecklines':
-      response = await BaseNecklinesService.UpdateBaseNecklines(data, login, password);
+      response = await BaseNecklinesService.UpdateBaseNecklines(
+        data,
+        login,
+        password
+      );
       break;
     case 'BasePantsCuffs':
-      response = await BasePantsCuffsService.UpdateBasePantsCuffs(data, login, password);
+      response = await BasePantsCuffsService.UpdateBasePantsCuffs(
+        data,
+        login,
+        password
+      );
       break;
     case 'BasePants':
       response = await BasePantsService.UpdateBasePants(data, login, password);
       break;
     case 'BaseSleeveCuffs':
-      response = await BaseSleeveCuffsService.UpdateBaseSleeveCuffs(data, login, password);
+      response = await BaseSleeveCuffsService.UpdateBaseSleeveCuffs(
+        data,
+        login,
+        password
+      );
       break;
     case 'BaseSleeves':
-      response = await BaseSleevesService.UpdateBaseSleeves(data, login, password);
+      response = await BaseSleevesService.UpdateBaseSleeves(
+        data,
+        login,
+        password
+      );
       break;
     case 'BaseSportSuits':
-      response = await BaseSportSuitsService.UpdateBaseSportSuits(data, login, password);
+      response = await BaseSportSuitsService.UpdateBaseSportSuits(
+        data,
+        login,
+        password
+      );
       break;
     case 'BaseSweaters':
-      response = await BaseSweatersService.UpdateBaseSweaters(data, login, password);
+      response = await BaseSweatersService.UpdateBaseSweaters(
+        data,
+        login,
+        password
+      );
       break;
     case 'Cart':
       response = await CartService.UpdateCart(data, login, password);
       break;
     case 'Categories':
-      response = await CategoriesService.UpdateCategories(data, login, password);
+      response = await CategoriesService.UpdateCategories(
+        data,
+        login,
+        password
+      );
       break;
     case 'CategoryHierarchy':
-      response = await CategoryHierarchyService.UpdateCategoryHierarchy(data, login, password);
+      response = await CategoryHierarchyService.UpdateCategoryHierarchy(
+        data,
+        login,
+        password
+      );
       break;
     case 'Colors':
       response = await ColorsService.UpdateColors(data, login, password);
@@ -98,37 +133,81 @@ export const updateRecord = async (currentTable, data, login, password) => {
       response = await CountriesService.UpdateCountries(data, login, password);
       break;
     case 'Currencies':
-      response = await CurrenciesService.UpdateCurrencies(data, login, password);
+      response = await CurrenciesService.UpdateCurrencies(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomBelts':
-      response = await CustomBeltsService.UpdateCustomBelts(data, login, password);
+      response = await CustomBeltsService.UpdateCustomBelts(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomizableProducts':
-      response = await CustomizableProductsService.UpdateCustomizableProducts(data, login, password);
+      response = await CustomizableProductsService.UpdateCustomizableProducts(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomNecklines':
-      response = await CustomNecklinesService.UpdateCustomNecklines(data, login, password);
+      response = await CustomNecklinesService.UpdateCustomNecklines(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomPantsCuffs':
-      response = await CustomPantsCuffsService.UpdateCustomPantsCuffs(data, login, password);
+      response = await CustomPantsCuffsService.UpdateCustomPantsCuffs(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomPants':
-      response = await CustomPantsService.UpdateCustomPants(data, login, password);
+      response = await CustomPantsService.UpdateCustomPants(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomSleeveCuffs':
-      response = await CustomSleeveCuffsService.UpdateCustomSleeveCuffs(data, login, password);
+      response = await CustomSleeveCuffsService.UpdateCustomSleeveCuffs(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomSleeves':
-      response = await CustomSleevesService.UpdateCustomSleeves(data, login, password);
+      response = await CustomSleevesService.UpdateCustomSleeves(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomSportSuits':
-      response = await CustomSportSuitsService.UpdateCustomSportSuits(data, login, password);
+      response = await CustomSportSuitsService.UpdateCustomSportSuits(
+        data,
+        login,
+        password
+      );
       break;
     case 'CustomSweaters':
-      response = await CustomSweatersService.UpdateCustomSweaters(data, login, password);
+      response = await CustomSweatersService.UpdateCustomSweaters(
+        data,
+        login,
+        password
+      );
       break;
     case 'FabricTypes':
-      response = await FabricTypesService.UpdateFabricTypes(data, login, password);
+      response = await FabricTypesService.UpdateFabricTypes(
+        data,
+        login,
+        password
+      );
       break;
     case 'Languages':
       response = await LanguagesService.UpdateLanguages(data, login, password);
@@ -137,46 +216,90 @@ export const updateRecord = async (currentTable, data, login, password) => {
       response = await OrdersService.UpdateOrders(data, login, password);
       break;
     case 'OrderHistory':
-      response = await OrderHistoryService.UpdateOrderHistory(data, login, password);
+      response = await OrderHistoryService.UpdateOrderHistory(
+        data,
+        login,
+        password
+      );
       break;
     case 'OrderStatuses':
-      response = await OrderStatusesService.UpdateOrderStatuses(data, login, password);
+      response = await OrderStatusesService.UpdateOrderStatuses(
+        data,
+        login,
+        password
+      );
       break;
     case 'PaymentMethods':
-      response = await PaymentMethodsService.UpdatePaymentMethods(data, login, password);
+      response = await PaymentMethodsService.UpdatePaymentMethods(
+        data,
+        login,
+        password
+      );
       break;
     case 'Payments':
       response = await PaymentsService.UpdatePayments(data, login, password);
       break;
     case 'PaymentStatuses':
-      response = await PaymentStatusesService.UpdatePaymentStatuses(data, login, password);
+      response = await PaymentStatusesService.UpdatePaymentStatuses(
+        data,
+        login,
+        password
+      );
       break;
     case 'ProductImages':
-      response = await ProductImagesService.UpdateProductImages(data, login, password);
+      response = await ProductImagesService.UpdateProductImages(
+        data,
+        login,
+        password
+      );
       break;
     case 'ProductOrders':
-      response = await ProductOrdersService.UpdateProductOrders(data, login, password);
+      response = await ProductOrdersService.UpdateProductOrders(
+        data,
+        login,
+        password
+      );
       break;
     case 'Products':
       response = await ProductsService.UpdateProducts(data, login, password);
       break;
     case 'ProductTranslations':
-      response = await ProductTranslationsService.UpdateProductTranslations(data, login, password);
+      response = await ProductTranslationsService.UpdateProductTranslations(
+        data,
+        login,
+        password
+      );
       break;
     case 'Reviews':
       response = await ReviewsService.UpdateReviews(data, login, password);
       break;
     case 'ShippingAddresses':
-      response = await ShippingAddressesService.UpdateShippingAddresses(data, login, password);
+      response = await ShippingAddressesService.UpdateShippingAddresses(
+        data,
+        login,
+        password
+      );
       break;
     case 'SizeOptions':
-      response = await SizeOptionsService.UpdateSizeOptions(data, login, password);
+      response = await SizeOptionsService.UpdateSizeOptions(
+        data,
+        login,
+        password
+      );
       break;
     case 'UserOrderHistory':
-      response = await UserOrderHistoryService.UpdateUserOrderHistory(data, login, password);
+      response = await UserOrderHistoryService.UpdateUserOrderHistory(
+        data,
+        login,
+        password
+      );
       break;
     case 'UserProfiles':
-      response = await UserProfilesService.UpdateUserProfiles(data, login, password);
+      response = await UserProfilesService.UpdateUserProfiles(
+        data,
+        login,
+        password
+      );
       break;
     case 'UserRoles':
       response = await UserRolesService.UpdateUserRoles(data, login, password);
@@ -186,7 +309,7 @@ export const updateRecord = async (currentTable, data, login, password) => {
       break;
     default:
       break;
-  };
+  }
 
   return response;
-}
+};
