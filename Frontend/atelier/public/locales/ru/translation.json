@@ -10,5 +10,13 @@
   "Atelier": "Ателье",
   "HelpLineNumber": "Номер горячей линии",
   "MakeYourFavoriteSportSuit": "Создай свой <br />любимый спортивный костюм",
-  "CreateNow": "Создать Сейчас"
+  "CreateNow": "Создать Сейчас",
+  "Authorization": "Авторизация",
+  "Email": "Электронная почта",
+  "EnterEmail": "Введите адрес электронной почты",
+  "Password": "Пароль",
+  "EnterPassword": "Введите пароль",
+  "Login": "Авторизоваться",
+  "ForgotYourPassword": "Забыли пароль?",
+  "Registration": "Регистрация"
 }

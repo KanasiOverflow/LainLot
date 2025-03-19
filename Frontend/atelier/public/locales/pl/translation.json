@@ -10,5 +10,13 @@
   "Atelier": "Atelier",
   "HelpLineNumber": "Numer infolinii",
   "MakeYourFavoriteSportSuit": "Stwórz swój <br />ulubiony strój sportowy",
-  "CreateNow": "Utwórz Teraz"
+  "CreateNow": "Utwórz Teraz",
+  "Authorization": "Upoważnienie",
+  "Email": "E-mail",
+  "EnterEmail": "Wprowadź adres e-mail",
+  "Password": "Hasło",
+  "EnterPassword": "Wprowadź hasło",
+  "Login": "Login",
+  "ForgotYourPassword": "Zapomniałeś hasła?",
+  "Registration": "Rejestracja"
 }

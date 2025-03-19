@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import mcss from './Search.module.css';
 
 export default function Search() {
+
   const { t } = useTranslation();
 
   return (
