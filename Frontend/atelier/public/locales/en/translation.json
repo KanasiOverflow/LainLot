@@ -18,5 +18,8 @@
   "EnterPassword": "Enter password",
   "Login": "Login",
   "ForgotYourPassword": "Forgot your password?",
-  "Registration": "Registration"
+  "Registration": "Registration",
+  "RepeatPassword": "Repeat password",
+  "ClearFields": "Clear fields",
+  "RestorePassword": "Restore password"
 }

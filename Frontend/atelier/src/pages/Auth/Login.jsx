@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function Login() {
+
   const { t } = useTranslation();
 
   return (
@@ -32,10 +33,10 @@ export default function Login() {
           {t('Login')}
         </button>
         <div className='login-links'>
-          <a href='/forgot-password' className='forgot-password'>
+          <a href='/ForgotPassword' className='forgot-password'>
             {t('ForgotYourPassword')}
           </a>
-          <a href='/register' className='register-link'>
+          <a href='/Registration' className='register-link'>
             {t('Registration')}
           </a>
         </div>

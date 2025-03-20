@@ -18,5 +18,8 @@
   "EnterPassword": "Введите пароль",
   "Login": "Авторизоваться",
   "ForgotYourPassword": "Забыли пароль?",
-  "Registration": "Регистрация"
+  "Registration": "Регистрация",
+  "RepeatPassword": "Повторите пароль",
+  "ClearFields": "Очистить поля",
+  "RestorePassword": "Восстановить пароль"
 }

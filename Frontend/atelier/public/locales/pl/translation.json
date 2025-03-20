@@ -18,5 +18,8 @@
   "EnterPassword": "Wprowadź hasło",
   "Login": "Login",
   "ForgotYourPassword": "Zapomniałeś hasła?",
-  "Registration": "Rejestracja"
+  "Registration": "Rejestracja",
+  "RepeatPassword": "Powtórz hasło",
+  "ClearFields": "Wyczyść pola",
+  "RestorePassword": "Przywróć hasło"
 }
