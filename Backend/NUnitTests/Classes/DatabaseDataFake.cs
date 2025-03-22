@@ -82,7 +82,7 @@ namespace NUnitTests.Classes
             return
             [
                 new BaseSportSuit
-                {            
+                {
                     Id = 1, FkBaseNecklines = 1, FkBaseSweaters = 1, FkBaseSleeves = 1, FkBaseSleeveCuffsLeft = 1, FkBaseSleeveCuffsRight = 1, FkBaseBelts = 1, FkBasePants = 1, FkBasePantsCuffsLeft = 1, FkBasePantsCuffsRight = 1 },
                 new BaseSportSuit
                 {

@@ -485,7 +485,7 @@ namespace RestAPI.AutoMapper
                 cfg.CreateMap<DB.OrderStatus, API.OrderStatus>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status));
-                
+
                 cfg.CreateMap<DB.Payment, API.Payment>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkPaymentMethods, opt => opt.MapFrom(s => s.FkPaymentMethods))
