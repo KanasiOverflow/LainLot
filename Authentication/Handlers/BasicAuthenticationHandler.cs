@@ -5,10 +5,10 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication;
 using DatabaseProvider.Models;
 using DatabaseRepository.Interfaces;
-using RestAPI.Enums;
+using Authentication.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace RestAPI.Classes
+namespace Authentication.Handlers
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {

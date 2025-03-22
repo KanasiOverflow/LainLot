@@ -1,4 +1,4 @@
-﻿namespace RestAPI.Enums
+﻿namespace Authentication.Enums
 {
     public enum AccessLevels
     {

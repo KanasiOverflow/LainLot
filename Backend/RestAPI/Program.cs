@@ -3,7 +3,7 @@ using DatabaseProvider.Models;
 using DatabaseRepository.Classes;
 using DatabaseRepository.Interfaces;
 using Microsoft.AspNetCore.Authentication;
-using RestAPI.Classes;
+using Authentication.Handlers;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
