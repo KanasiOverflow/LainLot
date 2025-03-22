@@ -11,7 +11,7 @@ namespace Authentication.Controllers
     [ApiController]
     [Authorize]
     [Route("api/v1/[controller]")]
-    public class AuthController (
+    public class AuthController(
         ILogger<AuthController> logger,
         JwtService jwtService,
         IRepository<User> userRepository,
