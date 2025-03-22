@@ -30,7 +30,7 @@ namespace Authentication.Controllers
         private readonly IRepository<UserRole> _userRoleRepository = userRoleRepository;
         #endregion
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             var user = await _userRepository.GetAll()
