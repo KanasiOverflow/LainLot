@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace RestAPI.Controllers
 {
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [Route("api/v1/[controller]")]
     public class DatabaseController(
         ILogger<DatabaseController> logger,

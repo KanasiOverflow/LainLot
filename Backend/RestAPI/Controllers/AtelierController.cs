@@ -12,7 +12,7 @@ namespace RestAPI.Controllers
     [Authorize]
     [Route("api/v1/[controller]")]
     public class AtelierController(
-        ILogger<DatabaseController> logger,
+        ILogger<AtelierController> logger,
         IRepository<DB.About> aboutRepository,
         IRepository<DB.Contact> contactRepository,
         IRepository<DB.Language> languageRepository)
@@ -25,7 +25,7 @@ namespace RestAPI.Controllers
 
         private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
         #region repos init
-        private readonly ILogger<DatabaseController> _logger = logger;
+        private readonly ILogger<AtelierController> _logger = logger;
         private readonly IRepository<DB.About> _aboutRepository = aboutRepository;
         private readonly IRepository<DB.Contact> _contactRepository = contactRepository;
         private readonly IRepository<DB.Language> _languageRepository = languageRepository;

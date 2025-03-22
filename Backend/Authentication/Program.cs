@@ -2,10 +2,10 @@ using Newtonsoft.Json;
 using DatabaseProvider.Models;
 using DatabaseRepository.Classes;
 using DatabaseRepository.Interfaces;
-using Microsoft.AspNetCore.Authentication;
-using Authentication.Handlers;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Authentication.Configuration;
+using Authentication.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -100,9 +100,8 @@ builder.Services.AddScoped<IRepository<UserProfile>, Repository<UserProfile>>();
 builder.Services.AddScoped<IRepository<UserRole>, Repository<UserRole>>();
 
 // Add auth service
-builder.Services.AddAuthentication("BasicAuthentication")
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
-builder.Services.AddAuthorization();
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
+builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
