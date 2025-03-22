@@ -44,217 +44,149 @@ import UserProfilesService from 'api/CRUD/UserProfilesService.js';
 import UserRolesService from 'api/CRUD/UserRolesService.js';
 import UsersService from 'api/CRUD/UsersService.js';
 
-export const getRecordFields = async (currentTable, login, password) => {
+export const getRecordFields = async (currentTable, token) => {
   var response = null;
 
   switch (currentTable) {
     case 'About':
-      response = await AboutService.GetAboutFields(login, password);
+      response = await AboutService.GetAboutFields(token);
       break;
     case 'AccessLevels':
-      response = await AccessLevelsService.GetAccessLevelsFields(
-        login,
-        password
-      );
+      response = await AccessLevelsService.GetAccessLevelsFields(token);
       break;
     case 'BaseBelts':
-      response = await BaseBeltsService.GetBaseBeltsFields(login, password);
+      response = await BaseBeltsService.GetBaseBeltsFields(token);
       break;
     case 'BaseNecklines':
-      response = await BaseNecklinesService.GetBaseNecklinesFields(
-        login,
-        password
-      );
+      response = await BaseNecklinesService.GetBaseNecklinesFields(token);
       break;
     case 'BasePantsCuffs':
-      response = await BasePantsCuffsService.GetBasePantsCuffsFields(
-        login,
-        password
-      );
+      response = await BasePantsCuffsService.GetBasePantsCuffsFields(token);
       break;
     case 'BasePants':
-      response = await BasePantsService.GetBasePantsFields(login, password);
+      response = await BasePantsService.GetBasePantsFields(token);
       break;
     case 'BaseSleeveCuffs':
-      response = await BaseSleeveCuffsService.GetBaseSleeveCuffsFields(
-        login,
-        password
-      );
+      response = await BaseSleeveCuffsService.GetBaseSleeveCuffsFields(token);
       break;
     case 'BaseSleeves':
-      response = await BaseSleevesService.GetBaseSleevesFields(login, password);
+      response = await BaseSleevesService.GetBaseSleevesFields(token);
       break;
     case 'BaseSportSuits':
-      response = await BaseSportSuitsService.GetBaseSportSuitsFields(
-        login,
-        password
-      );
+      response = await BaseSportSuitsService.GetBaseSportSuitsFields(token);
       break;
     case 'BaseSweaters':
-      response = await BaseSweatersService.GetBaseSweatersFields(
-        login,
-        password
-      );
+      response = await BaseSweatersService.GetBaseSweatersFields(token);
       break;
     case 'Cart':
-      response = await CartService.GetCartFields(login, password);
+      response = await CartService.GetCartFields(token);
       break;
     case 'Categories':
-      response = await CategoriesService.GetCategoriesFields(login, password);
+      response = await CategoriesService.GetCategoriesFields(token);
       break;
     case 'CategoryHierarchy':
-      response = await CategoryHierarchyService.GetCategoryHierarchyFields(
-        login,
-        password
-      );
+      response =
+        await CategoryHierarchyService.GetCategoryHierarchyFields(token);
       break;
     case 'Colors':
-      response = await ColorsService.GetColorsFields(login, password);
+      response = await ColorsService.GetColorsFields(token);
       break;
     case 'Contacts':
-      response = await ContactsService.GetContactsFields(login, password);
+      response = await ContactsService.GetContactsFields(token);
       break;
     case 'Countries':
-      response = await CountriesService.GetCountriesFields(login, password);
+      response = await CountriesService.GetCountriesFields(token);
       break;
     case 'Currencies':
-      response = await CurrenciesService.GetCurrenciesFields(login, password);
+      response = await CurrenciesService.GetCurrenciesFields(token);
       break;
     case 'CustomBelts':
-      response = await CustomBeltsService.GetCustomBeltsFields(login, password);
+      response = await CustomBeltsService.GetCustomBeltsFields(token);
       break;
     case 'CustomizableProducts':
       response =
-        await CustomizableProductsService.GetCustomizableProductsFields(
-          login,
-          password
-        );
+        await CustomizableProductsService.GetCustomizableProductsFields(token);
       break;
     case 'CustomNecklines':
-      response = await CustomNecklinesService.GetCustomNecklinesFields(
-        login,
-        password
-      );
+      response = await CustomNecklinesService.GetCustomNecklinesFields(token);
       break;
     case 'CustomPantsCuffs':
-      response = await CustomPantsCuffsService.GetCustomPantsCuffsFields(
-        login,
-        password
-      );
+      response = await CustomPantsCuffsService.GetCustomPantsCuffsFields(token);
       break;
     case 'CustomPants':
-      response = await CustomPantsService.GetCustomPantsFields(login, password);
+      response = await CustomPantsService.GetCustomPantsFields(token);
       break;
     case 'CustomSleeveCuffs':
-      response = await CustomSleeveCuffsService.GetCustomSleeveCuffsFields(
-        login,
-        password
-      );
+      response =
+        await CustomSleeveCuffsService.GetCustomSleeveCuffsFields(token);
       break;
     case 'CustomSleeves':
-      response = await CustomSleevesService.GetCustomSleevesFields(
-        login,
-        password
-      );
+      response = await CustomSleevesService.GetCustomSleevesFields(token);
       break;
     case 'CustomSportSuits':
-      response = await CustomSportSuitsService.GetCustomSportSuitsFields(
-        login,
-        password
-      );
+      response = await CustomSportSuitsService.GetCustomSportSuitsFields(token);
       break;
     case 'CustomSweaters':
-      response = await CustomSweatersService.GetCustomSweatersFields(
-        login,
-        password
-      );
+      response = await CustomSweatersService.GetCustomSweatersFields(token);
       break;
     case 'FabricTypes':
-      response = await FabricTypesService.GetFabricTypesFields(login, password);
+      response = await FabricTypesService.GetFabricTypesFields(token);
       break;
     case 'Languages':
-      response = await LanguagesService.GetLanguagesFields(login, password);
+      response = await LanguagesService.GetLanguagesFields(token);
       break;
     case 'Orders':
-      response = await OrdersService.GetOrdersFields(login, password);
+      response = await OrdersService.GetOrdersFields(token);
       break;
     case 'OrderHistory':
-      response = await OrderHistoryService.GetOrderHistoryFields(
-        login,
-        password
-      );
+      response = await OrderHistoryService.GetOrderHistoryFields(token);
       break;
     case 'OrderStatuses':
-      response = await OrderStatusesService.GetOrderStatusesFields(
-        login,
-        password
-      );
+      response = await OrderStatusesService.GetOrderStatusesFields(token);
       break;
     case 'PaymentMethods':
-      response = await PaymentMethodsService.GetPaymentMethodsFields(
-        login,
-        password
-      );
+      response = await PaymentMethodsService.GetPaymentMethodsFields(token);
       break;
     case 'Payments':
-      response = await PaymentsService.GetPaymentsFields(login, password);
+      response = await PaymentsService.GetPaymentsFields(token);
       break;
     case 'PaymentStatuses':
-      response = await PaymentStatusesService.GetPaymentStatusesFields(
-        login,
-        password
-      );
+      response = await PaymentStatusesService.GetPaymentStatusesFields(token);
       break;
     case 'ProductImages':
-      response = await ProductImagesService.GetProductImagesFields(
-        login,
-        password
-      );
+      response = await ProductImagesService.GetProductImagesFields(token);
       break;
     case 'ProductOrders':
-      response = await ProductOrdersService.GetProductOrdersFields(
-        login,
-        password
-      );
+      response = await ProductOrdersService.GetProductOrdersFields(token);
       break;
     case 'Products':
-      response = await ProductsService.GetProductsFields(login, password);
+      response = await ProductsService.GetProductsFields(token);
       break;
     case 'ProductTranslations':
-      response = await ProductTranslationsService.GetProductTranslationsFields(
-        login,
-        password
-      );
+      response =
+        await ProductTranslationsService.GetProductTranslationsFields(token);
       break;
     case 'Reviews':
-      response = await ReviewsService.GetReviewsFields(login, password);
+      response = await ReviewsService.GetReviewsFields(token);
       break;
     case 'ShippingAddresses':
-      response = await ShippingAddressesService.GetShippingAddressesFields(
-        login,
-        password
-      );
+      response =
+        await ShippingAddressesService.GetShippingAddressesFields(token);
       break;
     case 'SizeOptions':
-      response = await SizeOptionsService.GetSizeOptionsFields(login, password);
+      response = await SizeOptionsService.GetSizeOptionsFields(token);
       break;
     case 'UserOrderHistory':
-      response = await UserOrderHistoryService.GetUserOrderHistoryFields(
-        login,
-        password
-      );
+      response = await UserOrderHistoryService.GetUserOrderHistoryFields(token);
       break;
     case 'UserProfiles':
-      response = await UserProfilesService.GetUserProfilesFields(
-        login,
-        password
-      );
+      response = await UserProfilesService.GetUserProfilesFields(token);
       break;
     case 'UserRoles':
-      response = await UserRolesService.GetUserRolesFields(login, password);
+      response = await UserRolesService.GetUserRolesFields(token);
       break;
     case 'Users':
-      response = await UsersService.GetUsersFields(login, password);
+      response = await UsersService.GetUsersFields(token);
       break;
     default:
       break;

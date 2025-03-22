@@ -48,341 +48,341 @@ export const getAllRecords = async (
   currentTable,
   limit,
   page,
-  login,
-  password
+
+  token
 ) => {
   var response = null;
 
   switch (currentTable) {
     case 'About':
-      response = await AboutService.GetAbout(limit, page, login, password);
+      response = await AboutService.GetAbout(limit, page, token);
       break;
     case 'AccessLevels':
       response = await AccessLevelsService.GetAccessLevels(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseBelts':
       response = await BaseBeltsService.GetBaseBelts(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseNecklines':
       response = await BaseNecklinesService.GetBaseNecklines(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'BasePantsCuffs':
       response = await BasePantsCuffsService.GetBasePantsCuffs(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'BasePants':
       response = await BasePantsService.GetBasePants(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseSleeveCuffs':
       response = await BaseSleeveCuffsService.GetBaseSleeveCuffs(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseSleeves':
       response = await BaseSleevesService.GetBaseSleeves(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseSportSuits':
       response = await BaseSportSuitsService.GetBaseSportSuits(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseSweaters':
       response = await BaseSweatersService.GetBaseSweaters(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'Cart':
-      response = await CartService.GetCart(limit, page, login, password);
+      response = await CartService.GetCart(limit, page, token);
       break;
     case 'Categories':
       response = await CategoriesService.GetCategories(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'CategoryHierarchy':
       response = await CategoryHierarchyService.GetCategoryHierarchy(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'Colors':
-      response = await ColorsService.GetColors(limit, page, login, password);
+      response = await ColorsService.GetColors(limit, page, token);
       break;
     case 'Contacts':
       response = await ContactsService.GetContacts(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'Countries':
       response = await CountriesService.GetCountries(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'Currencies':
       response = await CurrenciesService.GetCurrencies(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomBelts':
       response = await CustomBeltsService.GetCustomBelts(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomizableProducts':
       response = await CustomizableProductsService.GetCustomizableProducts(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomNecklines':
       response = await CustomNecklinesService.GetCustomNecklines(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomPantsCuffs':
       response = await CustomPantsCuffsService.GetCustomPantsCuffs(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomPants':
       response = await CustomPantsService.GetCustomPants(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSleeveCuffs':
       response = await CustomSleeveCuffsService.GetCustomSleeveCuffs(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSleeves':
       response = await CustomSleevesService.GetCustomSleeves(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSportSuits':
       response = await CustomSportSuitsService.GetCustomSportSuits(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSweaters':
       response = await CustomSweatersService.GetCustomSweaters(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'FabricTypes':
       response = await FabricTypesService.GetFabricTypes(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'Languages':
       response = await LanguagesService.GetLanguages(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'Orders':
-      response = await OrdersService.GetOrders(limit, page, login, password);
+      response = await OrdersService.GetOrders(limit, page, token);
       break;
     case 'OrderHistory':
       response = await OrderHistoryService.GetOrderHistory(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'OrderStatuses':
       response = await OrderStatusesService.GetOrderStatuses(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'PaymentMethods':
       response = await PaymentMethodsService.GetPaymentMethods(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'Payments':
       response = await PaymentsService.GetPayments(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'PaymentStatuses':
       response = await PaymentStatusesService.GetPaymentStatuses(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'ProductImages':
       response = await ProductImagesService.GetProductImages(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'ProductOrders':
       response = await ProductOrdersService.GetProductOrders(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'Products':
       response = await ProductsService.GetProducts(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'ProductTranslations':
       response = await ProductTranslationsService.GetProductTranslations(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'Reviews':
-      response = await ReviewsService.GetReviews(limit, page, login, password);
+      response = await ReviewsService.GetReviews(limit, page, token);
       break;
     case 'ShippingAddresses':
       response = await ShippingAddressesService.GetShippingAddresses(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'SizeOptions':
       response = await SizeOptionsService.GetSizeOptions(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'UserOrderHistory':
       response = await UserOrderHistoryService.GetUserOrderHistory(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'UserProfiles':
       response = await UserProfilesService.GetUserProfiles(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'UserRoles':
       response = await UserRolesService.GetUserRoles(
         limit,
         page,
-        login,
-        password
+
+        token
       );
       break;
     case 'Users':
-      response = await UsersService.GetUsers(limit, page, login, password);
+      response = await UsersService.GetUsers(limit, page, token);
       break;
     default:
       break;

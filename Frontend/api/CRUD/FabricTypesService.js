@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class FabricTypesService {
-  static async GetFabricTypesCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetFabricTypesCount', login, password);
+  static async GetFabricTypesCount(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetFabricTypesCount', token);
   }
 
-  static async GetFabricTypesFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetFabricTypesFields', login, password);
+  static async GetFabricTypesFields(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetFabricTypesFields', token);
   }
 
-  static async GetFabricTypes(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetFabricTypes', login, password, null, { limit, page });
+  static async GetFabricTypes(limit, page, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetFabricTypes', token, null, { limit, page });
   }
 
-  static async GetFabricTypesById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetFabricTypesById', login, password, null, { id });
+  static async GetFabricTypesById(id, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetFabricTypesById', token, null, { id });
   }
 
-  static async CreateFabricTypes(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateFabricTypes', login, password, newRecord);
+  static async CreateFabricTypes(newRecord, token) {
+    return ApiService.sendRequest('post', 'Database', 'CreateFabricTypes', token, newRecord);
   }
 
-  static async UpdateFabricTypes(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateFabricTypes', login, password, oldRecord);
+  static async UpdateFabricTypes(oldRecord, token) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateFabricTypes', token, oldRecord);
   }
 
-  static async DeleteFabricTypes(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteFabricTypes', login, password, null, { id });
+  static async DeleteFabricTypes(id, token) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteFabricTypes', token, null, { id });
   }
 }

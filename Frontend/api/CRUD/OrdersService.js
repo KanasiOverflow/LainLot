@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class OrdersService {
-  static async GetOrdersCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetOrdersCount', login, password);
+  static async GetOrdersCount(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetOrdersCount', token);
   }
 
-  static async GetOrdersFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetOrdersFields', login, password);
+  static async GetOrdersFields(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetOrdersFields', token);
   }
 
-  static async GetOrders(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetOrders', login, password, null, { limit, page });
+  static async GetOrders(limit, page, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetOrders', token, null, { limit, page });
   }
 
-  static async GetOrdersById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetOrdersById', login, password, null, { id });
+  static async GetOrdersById(id, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetOrdersById', token, null, { id });
   }
 
-  static async CreateOrders(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateOrders', login, password, newRecord);
+  static async CreateOrders(newRecord, token) {
+    return ApiService.sendRequest('post', 'Database', 'CreateOrders', token, newRecord);
   }
 
-  static async UpdateOrders(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateOrders', login, password, oldRecord);
+  static async UpdateOrders(oldRecord, token) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateOrders', token, oldRecord);
   }
 
-  static async DeleteOrders(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteOrders', login, password, null, { id });
+  static async DeleteOrders(id, token) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteOrders', token, null, { id });
   }
 }

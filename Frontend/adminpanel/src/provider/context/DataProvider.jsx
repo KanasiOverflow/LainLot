@@ -15,24 +15,18 @@ export const DataProvider = ({ children }) => {
   const [totalPages, setTotalPages] = useState(0);
 
   const [fetchRecords, isRecordLoading, postError] = useFetching(
-    async (limit, page, login, password) => {
+    async (limit, page, token) => {
       try {
         const responseData = await getAllRecords(
           currentTable,
           limit,
           page,
-          login,
-          password
+          token
         );
-        const responseFields = await getRecordFields(
-          currentTable,
-          login,
-          password
-        );
+        const responseFields = await getRecordFields(currentTable, token);
         const responseTotalCount = await getTableTotalCount(
           currentTable,
-          login,
-          password
+          token
         );
 
         if (responseData && responseData.data) {

@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class OrderHistoryService {
-  static async GetOrderHistoryCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetOrderHistoryCount', login, password);
+  static async GetOrderHistoryCount(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetOrderHistoryCount', token);
   }
 
-  static async GetOrderHistoryFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetOrderHistoryFields', login, password);
+  static async GetOrderHistoryFields(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetOrderHistoryFields', token);
   }
 
-  static async GetOrderHistory(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetOrderHistory', login, password, null, { limit, page });
+  static async GetOrderHistory(limit, page, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetOrderHistory', token, null, { limit, page });
   }
 
-  static async GetOrderHistoryById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetOrderHistoryById', login, password, null, { id });
+  static async GetOrderHistoryById(id, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetOrderHistoryById', token, null, { id });
   }
 
-  static async CreateOrderHistory(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateOrderHistory', login, password, newRecord);
+  static async CreateOrderHistory(newRecord, token) {
+    return ApiService.sendRequest('post', 'Database', 'CreateOrderHistory', token, newRecord);
   }
 
-  static async UpdateOrderHistory(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateOrderHistory', login, password, oldRecord);
+  static async UpdateOrderHistory(oldRecord, token) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateOrderHistory', token, oldRecord);
   }
 
-  static async DeleteOrderHistory(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteOrderHistory', login, password, null, { id });
+  static async DeleteOrderHistory(id, token) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteOrderHistory', token, null, { id });
   }
 }

@@ -9,10 +9,8 @@ export default function Navbar() {
   const { setIsAuth } = useContext(AuthContext);
 
   const logout = () => {
+    secureLocalStorage.clear();
     setIsAuth(false);
-    secureLocalStorage.removeItem('auth');
-    secureLocalStorage.removeItem('login');
-    secureLocalStorage.removeItem('password');
   };
 
   return (

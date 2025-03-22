@@ -18,17 +18,13 @@ export default function Login() {
 
     setIsLoading(true);
 
-    var response = await CheckCredentialsService.CheckCredentials(
-      login,
-      password
-    );
+    var response = await CheckCredentialsService.Login(login, password);
 
     if (response) {
-      if (response.data === 'Connected!') {
+      if (response?.token) {
         setIsAuth(true);
         secureLocalStorage.setItem('auth', 'true');
-        secureLocalStorage.setItem('login', login);
-        secureLocalStorage.setItem('password', password);
+        secureLocalStorage.setItem('token', response.token);
       } else {
         console.log('Wrong credentials!');
       }

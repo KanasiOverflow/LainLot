@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class UserRolesService {
-  static async GetUserRolesCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUserRolesCount', login, password);
+  static async GetUserRolesCount(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetUserRolesCount', token);
   }
 
-  static async GetUserRolesFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUserRolesFields', login, password);
+  static async GetUserRolesFields(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetUserRolesFields', token);
   }
 
-  static async GetUserRoles(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUserRoles', login, password, null, { limit, page });
+  static async GetUserRoles(limit, page, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetUserRoles', token, null, { limit, page });
   }
 
-  static async GetUserRolesById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUserRolesById', login, password, null, { id });
+  static async GetUserRolesById(id, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetUserRolesById', token, null, { id });
   }
 
-  static async CreateUserRoles(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateUserRoles', login, password, newRecord);
+  static async CreateUserRoles(newRecord, token) {
+    return ApiService.sendRequest('post', 'Database', 'CreateUserRoles', token, newRecord);
   }
 
-  static async UpdateUserRoles(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateUserRoles', login, password, oldRecord);
+  static async UpdateUserRoles(oldRecord, token) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateUserRoles', token, oldRecord);
   }
 
-  static async DeleteUserRoles(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteUserRoles', login, password, null, { id });
+  static async DeleteUserRoles(id, token) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteUserRoles', token, null, { id });
   }
 }

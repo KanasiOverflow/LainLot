@@ -44,260 +44,260 @@ import UserProfilesService from 'api/CRUD/UserProfilesService.js';
 import UserRolesService from 'api/CRUD/UserRolesService.js';
 import UsersService from 'api/CRUD/UsersService.js';
 
-export const getRecordById = async (currentTable, id, login, password) => {
+export const getRecordById = async (currentTable, id, token) => {
   var response = null;
 
   switch (currentTable) {
     case 'About':
-      response = await AboutService.GetAboutById(id, login, password);
+      response = await AboutService.GetAboutById(id, token);
       break;
     case 'AccessLevels':
       response = await AccessLevelsService.GetAccessLevelsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseBelts':
-      response = await BaseBeltsService.GetBaseBeltsById(id, login, password);
+      response = await BaseBeltsService.GetBaseBeltsById(id, token);
       break;
     case 'BaseNecklines':
       response = await BaseNecklinesService.GetBaseNecklinesById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'BasePantsCuffs':
       response = await BasePantsCuffsService.GetBasePantsCuffsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'BasePants':
-      response = await BasePantsService.GetBasePantsById(id, login, password);
+      response = await BasePantsService.GetBasePantsById(id, token);
       break;
     case 'BaseSleeveCuffs':
       response = await BaseSleeveCuffsService.GetBaseSleeveCuffsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseSleeves':
       response = await BaseSleevesService.GetBaseSleevesById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseSportSuits':
       response = await BaseSportSuitsService.GetBaseSportSuitsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseSweaters':
       response = await BaseSweatersService.GetBaseSweatersById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'Cart':
-      response = await CartService.GetCartById(id, login, password);
+      response = await CartService.GetCartById(id, token);
       break;
     case 'Categories':
-      response = await CategoriesService.GetCategoriesById(id, login, password);
+      response = await CategoriesService.GetCategoriesById(id, token);
       break;
     case 'CategoryHierarchy':
       response = await CategoryHierarchyService.GetCategoryHierarchyById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'Colors':
-      response = await ColorsService.GetColorsById(id, login, password);
+      response = await ColorsService.GetColorsById(id, token);
       break;
     case 'Contacts':
-      response = await ContactsService.GetContactsById(id, login, password);
+      response = await ContactsService.GetContactsById(id, token);
       break;
     case 'Countries':
-      response = await CountriesService.GetCountriesById(id, login, password);
+      response = await CountriesService.GetCountriesById(id, token);
       break;
     case 'Currencies':
-      response = await CurrenciesService.GetCurrenciesById(id, login, password);
+      response = await CurrenciesService.GetCurrenciesById(id, token);
       break;
     case 'CustomBelts':
       response = await CustomBeltsService.GetCustomBeltsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomizableProducts':
       response = await CustomizableProductsService.GetCustomizableProductsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomNecklines':
       response = await CustomNecklinesService.GetCustomNecklinesById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomPantsCuffs':
       response = await CustomPantsCuffsService.GetCustomPantsCuffsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomPants':
       response = await CustomPantsService.GetCustomPantsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSleeveCuffs':
       response = await CustomSleeveCuffsService.GetCustomSleeveCuffsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSleeves':
       response = await CustomSleevesService.GetCustomSleevesById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSportSuits':
       response = await CustomSportSuitsService.GetCustomSportSuitsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSweaters':
       response = await CustomSweatersService.GetCustomSweatersById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'FabricTypes':
       response = await FabricTypesService.GetFabricTypesById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'Languages':
-      response = await LanguagesService.GetLanguagesById(id, login, password);
+      response = await LanguagesService.GetLanguagesById(id, token);
       break;
     case 'Orders':
-      response = await OrdersService.GetOrdersById(id, login, password);
+      response = await OrdersService.GetOrdersById(id, token);
       break;
     case 'OrderHistory':
       response = await OrderHistoryService.GetOrderHistoryById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'OrderStatuses':
       response = await OrderStatusesService.GetOrderStatusesById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'PaymentMethods':
       response = await PaymentMethodsService.GetPaymentMethodsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'Payments':
-      response = await PaymentsService.GetPaymentsById(id, login, password);
+      response = await PaymentsService.GetPaymentsById(id, token);
       break;
     case 'PaymentStatuses':
       response = await PaymentStatusesService.GetPaymentStatusesById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'ProductImages':
       response = await ProductImagesService.GetProductImagesById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'ProductOrders':
       response = await ProductOrdersService.GetProductOrdersById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'Products':
-      response = await ProductsService.GetProductsById(id, login, password);
+      response = await ProductsService.GetProductsById(id, token);
       break;
     case 'ProductTranslations':
       response = await ProductTranslationsService.GetProductTranslationsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'Reviews':
-      response = await ReviewsService.GetReviewsById(id, login, password);
+      response = await ReviewsService.GetReviewsById(id, token);
       break;
     case 'ShippingAddresses':
       response = await ShippingAddressesService.GetShippingAddressesById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'SizeOptions':
       response = await SizeOptionsService.GetSizeOptionsById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'UserOrderHistory':
       response = await UserOrderHistoryService.GetUserOrderHistoryById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'UserProfiles':
       response = await UserProfilesService.GetUserProfilesById(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'UserRoles':
-      response = await UserRolesService.GetUserRolesById(id, login, password);
+      response = await UserRolesService.GetUserRolesById(id, token);
       break;
     case 'Users':
-      response = await UsersService.GetUsersById(id, login, password);
+      response = await UsersService.GetUsersById(id, token);
       break;
     default:
       break;

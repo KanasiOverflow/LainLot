@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class ProductsService {
-  static async GetProductsCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetProductsCount', login, password);
+  static async GetProductsCount(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetProductsCount', token);
   }
 
-  static async GetProductsFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetProductsFields', login, password);
+  static async GetProductsFields(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetProductsFields', token);
   }
 
-  static async GetProducts(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetProducts', login, password, null, { limit, page });
+  static async GetProducts(limit, page, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetProducts', token, null, { limit, page });
   }
 
-  static async GetProductsById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetProductsById', login, password, null, { id });
+  static async GetProductsById(id, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetProductsById', token, null, { id });
   }
 
-  static async CreateProducts(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateProducts', login, password, newRecord);
+  static async CreateProducts(newRecord, token) {
+    return ApiService.sendRequest('post', 'Database', 'CreateProducts', token, newRecord);
   }
 
-  static async UpdateProducts(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateProducts', login, password, oldRecord);
+  static async UpdateProducts(oldRecord, token) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateProducts', token, oldRecord);
   }
 
-  static async DeleteProducts(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteProducts', login, password, null, { id });
+  static async DeleteProducts(id, token) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteProducts', token, null, { id });
   }
 }

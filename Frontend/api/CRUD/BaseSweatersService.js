@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class BaseSweatersService {
-  static async GetBaseSweatersCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseSweatersCount', login, password);
+  static async GetBaseSweatersCount(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseSweatersCount', token);
   }
 
-  static async GetBaseSweatersFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseSweatersFields', login, password);
+  static async GetBaseSweatersFields(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseSweatersFields', token);
   }
 
-  static async GetBaseSweaters(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseSweaters', login, password, null, { limit, page });
+  static async GetBaseSweaters(limit, page, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseSweaters', token, null, { limit, page });
   }
 
-  static async GetBaseSweatersById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseSweatersById', login, password, null, { id });
+  static async GetBaseSweatersById(id, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseSweatersById', token, null, { id });
   }
 
-  static async CreateBaseSweaters(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateBaseSweaters', login, password, newRecord);
+  static async CreateBaseSweaters(newRecord, token) {
+    return ApiService.sendRequest('post', 'Database', 'CreateBaseSweaters', token, newRecord);
   }
 
-  static async UpdateBaseSweaters(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateBaseSweaters', login, password, oldRecord);
+  static async UpdateBaseSweaters(oldRecord, token) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateBaseSweaters', token, oldRecord);
   }
 
-  static async DeleteBaseSweaters(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteBaseSweaters', login, password, null, { id });
+  static async DeleteBaseSweaters(id, token) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteBaseSweaters', token, null, { id });
   }
 }

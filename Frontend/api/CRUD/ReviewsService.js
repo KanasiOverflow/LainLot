@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class ReviewsService {
-  static async GetReviewsCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetReviewsCount', login, password);
+  static async GetReviewsCount(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetReviewsCount', token);
   }
 
-  static async GetReviewsFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetReviewsFields', login, password);
+  static async GetReviewsFields(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetReviewsFields', token);
   }
 
-  static async GetReviews(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetReviews', login, password, null, { limit, page });
+  static async GetReviews(limit, page, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetReviews', token, null, { limit, page });
   }
 
-  static async GetReviewsById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetReviewsById', login, password, null, { id });
+  static async GetReviewsById(id, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetReviewsById', token, null, { id });
   }
 
-  static async CreateReviews(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateReviews', login, password, newRecord);
+  static async CreateReviews(newRecord, token) {
+    return ApiService.sendRequest('post', 'Database', 'CreateReviews', token, newRecord);
   }
 
-  static async UpdateReviews(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateReviews', login, password, oldRecord);
+  static async UpdateReviews(oldRecord, token) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateReviews', token, oldRecord);
   }
 
-  static async DeleteReviews(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteReviews', login, password, null, { id });
+  static async DeleteReviews(id, token) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteReviews', token, null, { id });
   }
 }

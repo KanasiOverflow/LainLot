@@ -23,15 +23,14 @@ export default function RecordIdPage() {
   const { fetchMultipleFkData, foreignKeys, fkError } =
     useContext(ForeignKeysContext);
 
-  const login = secureLocalStorage.getItem('login');
-  const password = secureLocalStorage.getItem('password');
+  const token = secureLocalStorage.getItem('token');
 
   const params = useParams();
   const navigate = useNavigate();
   const [record, setRecord] = useState({});
 
   const [fetchRecordById, isLoading, error] = useFetching(async (table, id) => {
-    const response = await getRecordById(table, id, login, password);
+    const response = await getRecordById(table, id, token);
     if (response?.data) {
       setRecord(response.data);
     }
@@ -46,13 +45,13 @@ export default function RecordIdPage() {
   }, [openEditModal, record]);
 
   const handleRemoveRecord = useCallback(() => {
-    removeRecord(record, login, password);
+    removeRecord(record, token);
     navigate('/records');
-  }, [removeRecord, record, navigate, login, password]);
+  }, [removeRecord, record, navigate, token]);
 
   useEffect(() => {
     setCurrentTable(params.table);
-    fetchRecords(limit, page, login, password);
+    fetchRecords(limit, page, token);
     fetchRecordById(params.table, params.id);
     // eslint-disable-next-line
   }, [currentTable]);
@@ -68,7 +67,7 @@ export default function RecordIdPage() {
       .map(([key, value]) => ({ key, value }));
 
     if (fkFields.length) {
-      fetchMultipleFkData(fkFields, login, password);
+      fetchMultipleFkData(fkFields, token);
     }
     // eslint-disable-next-line
   }, [record, fetchMultipleFkData]);
@@ -76,7 +75,7 @@ export default function RecordIdPage() {
   return (
     <div>
       <GeneralModal visible={modal} setVisible={setModal}>
-        <RecordForm login={login} password={password} />
+        <RecordForm token={token} />
       </GeneralModal>
       <h1>
         {params.table} page with id {params.id}

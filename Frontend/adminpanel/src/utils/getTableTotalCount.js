@@ -44,216 +44,149 @@ import UserProfilesService from 'api/CRUD/UserProfilesService.js';
 import UserRolesService from 'api/CRUD/UserRolesService.js';
 import UsersService from 'api/CRUD/UsersService.js';
 
-export const getTableTotalCount = async (currentTable, login, password) => {
+export const getTableTotalCount = async (currentTable, token) => {
   var response = null;
 
   switch (currentTable) {
     case 'About':
-      response = await AboutService.GetAboutCount(login, password);
+      response = await AboutService.GetAboutCount(token);
       break;
     case 'AccessLevels':
-      response = await AccessLevelsService.GetAccessLevelsCount(
-        login,
-        password
-      );
+      response = await AccessLevelsService.GetAccessLevelsCount(token);
       break;
     case 'BaseBelts':
-      response = await BaseBeltsService.GetBaseBeltsCount(login, password);
+      response = await BaseBeltsService.GetBaseBeltsCount(token);
       break;
     case 'BaseNecklines':
-      response = await BaseNecklinesService.GetBaseNecklinesCount(
-        login,
-        password
-      );
+      response = await BaseNecklinesService.GetBaseNecklinesCount(token);
       break;
     case 'BasePantsCuffs':
-      response = await BasePantsCuffsService.GetBasePantsCuffsCount(
-        login,
-        password
-      );
+      response = await BasePantsCuffsService.GetBasePantsCuffsCount(token);
       break;
     case 'BasePants':
-      response = await BasePantsService.GetBasePantsCount(login, password);
+      response = await BasePantsService.GetBasePantsCount(token);
       break;
     case 'BaseSleeveCuffs':
-      response = await BaseSleeveCuffsService.GetBaseSleeveCuffsCount(
-        login,
-        password
-      );
+      response = await BaseSleeveCuffsService.GetBaseSleeveCuffsCount(token);
       break;
     case 'BaseSleeves':
-      response = await BaseSleevesService.GetBaseSleevesCount(login, password);
+      response = await BaseSleevesService.GetBaseSleevesCount(token);
       break;
     case 'BaseSportSuits':
-      response = await BaseSportSuitsService.GetBaseSportSuitsCount(
-        login,
-        password
-      );
+      response = await BaseSportSuitsService.GetBaseSportSuitsCount(token);
       break;
     case 'BaseSweaters':
-      response = await BaseSweatersService.GetBaseSweatersCount(
-        login,
-        password
-      );
+      response = await BaseSweatersService.GetBaseSweatersCount(token);
       break;
     case 'Cart':
-      response = await CartService.GetCartCount(login, password);
+      response = await CartService.GetCartCount(token);
       break;
     case 'Categories':
-      response = await CategoriesService.GetCategoriesCount(login, password);
+      response = await CategoriesService.GetCategoriesCount(token);
       break;
     case 'CategoryHierarchy':
-      response = await CategoryHierarchyService.GetCategoryHierarchyCount(
-        login,
-        password
-      );
+      response =
+        await CategoryHierarchyService.GetCategoryHierarchyCount(token);
       break;
     case 'Colors':
-      response = await ColorsService.GetColorsCount(login, password);
+      response = await ColorsService.GetColorsCount(token);
       break;
     case 'Contacts':
-      response = await ContactsService.GetContactsCount(login, password);
+      response = await ContactsService.GetContactsCount(token);
       break;
     case 'Countries':
-      response = await CountriesService.GetCountriesCount(login, password);
+      response = await CountriesService.GetCountriesCount(token);
       break;
     case 'Currencies':
-      response = await CurrenciesService.GetCurrenciesCount(login, password);
+      response = await CurrenciesService.GetCurrenciesCount(token);
       break;
     case 'CustomBelts':
-      response = await CustomBeltsService.GetCustomBeltsCount(login, password);
+      response = await CustomBeltsService.GetCustomBeltsCount(token);
       break;
     case 'CustomizableProducts':
-      response = await CustomizableProductsService.GetCustomizableProductsCount(
-        login,
-        password
-      );
+      response =
+        await CustomizableProductsService.GetCustomizableProductsCount(token);
       break;
     case 'CustomNecklines':
-      response = await CustomNecklinesService.GetCustomNecklinesCount(
-        login,
-        password
-      );
+      response = await CustomNecklinesService.GetCustomNecklinesCount(token);
       break;
     case 'CustomPantsCuffs':
-      response = await CustomPantsCuffsService.GetCustomPantsCuffsCount(
-        login,
-        password
-      );
+      response = await CustomPantsCuffsService.GetCustomPantsCuffsCount(token);
       break;
     case 'CustomPants':
-      response = await CustomPantsService.GetCustomPantsCount(login, password);
+      response = await CustomPantsService.GetCustomPantsCount(token);
       break;
     case 'CustomSleeveCuffs':
-      response = await CustomSleeveCuffsService.GetCustomSleeveCuffsCount(
-        login,
-        password
-      );
+      response =
+        await CustomSleeveCuffsService.GetCustomSleeveCuffsCount(token);
       break;
     case 'CustomSleeves':
-      response = await CustomSleevesService.GetCustomSleevesCount(
-        login,
-        password
-      );
+      response = await CustomSleevesService.GetCustomSleevesCount(token);
       break;
     case 'CustomSportSuits':
-      response = await CustomSportSuitsService.GetCustomSportSuitsCount(
-        login,
-        password
-      );
+      response = await CustomSportSuitsService.GetCustomSportSuitsCount(token);
       break;
     case 'CustomSweaters':
-      response = await CustomSweatersService.GetCustomSweatersCount(
-        login,
-        password
-      );
+      response = await CustomSweatersService.GetCustomSweatersCount(token);
       break;
     case 'FabricTypes':
-      response = await FabricTypesService.GetFabricTypesCount(login, password);
+      response = await FabricTypesService.GetFabricTypesCount(token);
       break;
     case 'Languages':
-      response = await LanguagesService.GetLanguagesCount(login, password);
+      response = await LanguagesService.GetLanguagesCount(token);
       break;
     case 'Orders':
-      response = await OrdersService.GetOrdersCount(login, password);
+      response = await OrdersService.GetOrdersCount(token);
       break;
     case 'OrderHistory':
-      response = await OrderHistoryService.GetOrderHistoryCount(
-        login,
-        password
-      );
+      response = await OrderHistoryService.GetOrderHistoryCount(token);
       break;
     case 'OrderStatuses':
-      response = await OrderStatusesService.GetOrderStatusesCount(
-        login,
-        password
-      );
+      response = await OrderStatusesService.GetOrderStatusesCount(token);
       break;
     case 'PaymentMethods':
-      response = await PaymentMethodsService.GetPaymentMethodsCount(
-        login,
-        password
-      );
+      response = await PaymentMethodsService.GetPaymentMethodsCount(token);
       break;
     case 'Payments':
-      response = await PaymentsService.GetPaymentsCount(login, password);
+      response = await PaymentsService.GetPaymentsCount(token);
       break;
     case 'PaymentStatuses':
-      response = await PaymentStatusesService.GetPaymentStatusesCount(
-        login,
-        password
-      );
+      response = await PaymentStatusesService.GetPaymentStatusesCount(token);
       break;
     case 'ProductImages':
-      response = await ProductImagesService.GetProductImagesCount(
-        login,
-        password
-      );
+      response = await ProductImagesService.GetProductImagesCount(token);
       break;
     case 'ProductOrders':
-      response = await ProductOrdersService.GetProductOrdersCount(
-        login,
-        password
-      );
+      response = await ProductOrdersService.GetProductOrdersCount(token);
       break;
     case 'Products':
-      response = await ProductsService.GetProductsCount(login, password);
+      response = await ProductsService.GetProductsCount(token);
       break;
     case 'ProductTranslations':
-      response = await ProductTranslationsService.GetProductTranslationsCount(
-        login,
-        password
-      );
+      response =
+        await ProductTranslationsService.GetProductTranslationsCount(token);
       break;
     case 'Reviews':
-      response = await ReviewsService.GetReviewsCount(login, password);
+      response = await ReviewsService.GetReviewsCount(token);
       break;
     case 'ShippingAddresses':
-      response = await ShippingAddressesService.GetShippingAddressesCount(
-        login,
-        password
-      );
+      response =
+        await ShippingAddressesService.GetShippingAddressesCount(token);
       break;
     case 'SizeOptions':
-      response = await SizeOptionsService.GetSizeOptionsCount(login, password);
+      response = await SizeOptionsService.GetSizeOptionsCount(token);
       break;
     case 'UserOrderHistory':
-      response = await UserOrderHistoryService.GetUserOrderHistoryCount(
-        login,
-        password
-      );
+      response = await UserOrderHistoryService.GetUserOrderHistoryCount(token);
       break;
     case 'UserProfiles':
-      response = await UserProfilesService.GetUserProfilesCount(
-        login,
-        password
-      );
+      response = await UserProfilesService.GetUserProfilesCount(token);
       break;
     case 'UserRoles':
-      response = await UserRolesService.GetUserRolesCount(login, password);
+      response = await UserRolesService.GetUserRolesCount(token);
       break;
     case 'Users':
-      response = await UsersService.GetUsersCount(login, password);
+      response = await UsersService.GetUsersCount(token);
       break;
     default:
       break;

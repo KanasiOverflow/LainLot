@@ -3,8 +3,8 @@ import ForeignKeysService from 'api/ForeignKeysService.js';
 export const getForeignKeyById = async (
   foreignFieldKey,
   id,
-  login,
-  password
+
+  token
 ) => {
   var response = null;
 
@@ -12,286 +12,286 @@ export const getForeignKeyById = async (
     case 'fkAccessLevels':
       response = await ForeignKeysService.GetFkAccessLevelsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkLanguages':
       response = await ForeignKeysService.GetFkLanguagesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCategories':
       response = await ForeignKeysService.GetFkCategoriesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkFabricTypes':
       response = await ForeignKeysService.GetFkFabricTypesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkProducts':
       response = await ForeignKeysService.GetFkProductsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkProductImages':
       response = await ForeignKeysService.GetFkProductImagesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkProductTranslations':
       response = await ForeignKeysService.GetFkProductTranslationsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkReviews':
-      response = await ForeignKeysService.GetFkReviewsData(id, login, password);
+      response = await ForeignKeysService.GetFkReviewsData(id, token);
       break;
     case 'fkOrders':
-      response = await ForeignKeysService.GetFkOrdersData(id, login, password);
+      response = await ForeignKeysService.GetFkOrdersData(id, token);
       break;
     case 'fkOrderHistory':
       response = await ForeignKeysService.GetFkOrderHistoryData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkPayments':
       response = await ForeignKeysService.GetFkPaymentsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkUsers':
-      response = await ForeignKeysService.GetFkUsersData(id, login, password);
+      response = await ForeignKeysService.GetFkUsersData(id, token);
       break;
     case 'fkUserRoles':
       response = await ForeignKeysService.GetFkUserRolesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkOrderStatus':
       response = await ForeignKeysService.GetFkOrderStatusData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkColors':
-      response = await ForeignKeysService.GetFkColorsData(id, login, password);
+      response = await ForeignKeysService.GetFkColorsData(id, token);
       break;
     case 'fkCurrencies':
       response = await ForeignKeysService.GetFkCurrenciesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkSizeOptions':
       response = await ForeignKeysService.GetFkSizeOptionsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkBaseNecklines':
       response = await ForeignKeysService.GetFkBaseNecklinesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkBaseSweaters':
       response = await ForeignKeysService.GetFkBaseSweatersData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkBaseSleeves':
       response = await ForeignKeysService.GetFkBaseSleevesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkBaseSleeveCuffsLeft':
       response = await ForeignKeysService.GetFkBaseSleeveCuffsLeftData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkBaseSleeveCuffsRight':
       response = await ForeignKeysService.GetFkBaseSleeveCuffsRightData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkBaseBelts':
       response = await ForeignKeysService.GetFkBaseBeltsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkBasePants':
       response = await ForeignKeysService.GetFkBasePantsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkBasePantsCuffs':
       response = await ForeignKeysService.GetFkBasePantsCuffsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkBasePantsCuffsLeft':
       response = await ForeignKeysService.GetFkBasePantsCuffsLeftData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkBasePantsCuffsRight':
       response = await ForeignKeysService.GetFkBasePantsCuffsRightData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomNecklines':
       response = await ForeignKeysService.GetFkCustomNecklinesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomSweaters':
       response = await ForeignKeysService.GetFkCustomSweatersData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomSleeves':
       response = await ForeignKeysService.GetFkCustomSleevesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomSleeveCuffsLeft':
       response = await ForeignKeysService.GetFkCustomSleeveCuffsLeftData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomSleeveCuffsRight':
       response = await ForeignKeysService.GetFkCustomSleeveCuffsRightData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomBelts':
       response = await ForeignKeysService.GetFkCustomBeltsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomPants':
       response = await ForeignKeysService.GetFkCustomPantsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomPantsCuffsLeft':
       response = await ForeignKeysService.GetFkCustomPantsCuffsLeftData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomPantsCuffsRight':
       response = await ForeignKeysService.GetFkCustomPantsCuffsRightData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomSportSuits':
       response = await ForeignKeysService.GetFkCustomSportSuitsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCustomizableProducts':
       response = await ForeignKeysService.GetFkCustomizableProductsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkProductOrders':
       response = await ForeignKeysService.GetFkProductOrdersData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkCountries':
       response = await ForeignKeysService.GetFkCountriesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkPaymentMethods':
       response = await ForeignKeysService.GetFkPaymentMethodsData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkPaymentStatuses':
       response = await ForeignKeysService.GetFkPaymentStatusesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     case 'fkShippingAddresses':
       response = await ForeignKeysService.GetFkShippingAddressesData(
         id,
-        login,
-        password
+
+        token
       );
       break;
     default:

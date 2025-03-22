@@ -8,16 +8,11 @@ export const ForeignKeysProvider = ({ children }) => {
   const [foreignKeys, setForeignKeys] = useState({});
 
   const [fetchFkData, fkLoading, fkError] = useFetching(
-    async (foreignFieldKey, id, login, password) => {
+    async (foreignFieldKey, id, token) => {
       const cacheKey = `${foreignFieldKey}_${id}`;
       if (foreignKeys[cacheKey]) return;
 
-      const responseData = await getForeignKeyById(
-        foreignFieldKey,
-        id,
-        login,
-        password
-      );
+      const responseData = await getForeignKeyById(foreignFieldKey, id, token);
 
       if (responseData?.data) {
         setForeignKeys((prev) => ({
@@ -29,9 +24,9 @@ export const ForeignKeysProvider = ({ children }) => {
   );
 
   const fetchMultipleFkData = useCallback(
-    async (fkFields, login, password) => {
+    async (fkFields, token) => {
       const fetchPromises = fkFields.map(({ key, value }) =>
-        fetchFkData(key, value, login, password)
+        fetchFkData(key, value, token)
       );
       await Promise.all(fetchPromises);
     },

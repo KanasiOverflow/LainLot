@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class BaseNecklinesService {
-  static async GetBaseNecklinesCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklinesCount', login, password);
+  static async GetBaseNecklinesCount(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklinesCount', token);
   }
 
-  static async GetBaseNecklinesFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklinesFields', login, password);
+  static async GetBaseNecklinesFields(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklinesFields', token);
   }
 
-  static async GetBaseNecklines(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklines', login, password, null, { limit, page });
+  static async GetBaseNecklines(limit, page, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklines', token, null, { limit, page });
   }
 
-  static async GetBaseNecklinesById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklinesById', login, password, null, { id });
+  static async GetBaseNecklinesById(id, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetBaseNecklinesById', token, null, { id });
   }
 
-  static async CreateBaseNecklines(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateBaseNecklines', login, password, newRecord);
+  static async CreateBaseNecklines(newRecord, token) {
+    return ApiService.sendRequest('post', 'Database', 'CreateBaseNecklines', token, newRecord);
   }
 
-  static async UpdateBaseNecklines(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateBaseNecklines', login, password, oldRecord);
+  static async UpdateBaseNecklines(oldRecord, token) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateBaseNecklines', token, oldRecord);
   }
 
-  static async DeleteBaseNecklines(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteBaseNecklines', login, password, null, { id });
+  static async DeleteBaseNecklines(id, token) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteBaseNecklines', token, null, { id });
   }
 }

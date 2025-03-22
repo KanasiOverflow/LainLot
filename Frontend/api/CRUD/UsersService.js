@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class UsersService {
-  static async GetUsersCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUsersCount', login, password);
+  static async GetUsersCount(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetUsersCount', token);
   }
 
-  static async GetUsersFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUsersFields', login, password);
+  static async GetUsersFields(token) {
+    return ApiService.sendRequest('get', 'Database', 'GetUsersFields', token);
   }
 
-  static async GetUsers(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUsers', login, password, null, { limit, page });
+  static async GetUsers(limit, page, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetUsers', token, null, { limit, page });
   }
 
-  static async GetUsersById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUsersById', login, password, null, { id });
+  static async GetUsersById(id, token) {
+    return ApiService.sendRequest('get', 'Database', 'GetUsersById', token, null, { id });
   }
 
-  static async CreateUsers(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateUsers', login, password, newRecord);
+  static async CreateUsers(newRecord, token) {
+    return ApiService.sendRequest('post', 'Database', 'CreateUsers', token, newRecord);
   }
 
-  static async UpdateUsers(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateUsers', login, password, oldRecord);
+  static async UpdateUsers(oldRecord, token) {
+    return ApiService.sendRequest('put', 'Database', 'UpdateUsers', token, oldRecord);
   }
 
-  static async DeleteUsers(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteUsers', login, password, null, { id });
+  static async DeleteUsers(id, token) {
+    return ApiService.sendRequest('delete', 'Database', 'DeleteUsers', token, null, { id });
   }
 }

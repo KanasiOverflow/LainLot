@@ -32,8 +32,7 @@ function Records() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [DBTables, setDBTables] = useState([]);
 
-  const login = secureLocalStorage.getItem('login');
-  const password = secureLocalStorage.getItem('password');
+  const token = secureLocalStorage.getItem('token');
 
   const sortedAndSearchedRecords = useRecords(
     currentRecords,
@@ -54,8 +53,8 @@ function Records() {
       return;
     }
 
-    if (login && password) {
-      fetchRecords(limit, page, login, password);
+    if (token) {
+      fetchRecords(limit, page, token);
     }
     // eslint-disable-next-line
   }, [page, limit, currentTable]);
@@ -88,7 +87,7 @@ function Records() {
       )}
 
       <GeneralModal>
-        <RecordForm login={login} password={password} />
+        <RecordForm token={token} />
       </GeneralModal>
 
       <hr style={{ margin: '15px 0' }} />
@@ -114,14 +113,10 @@ function Records() {
           <Loader />
         </div>
       ) : (
-        <RecordList
-          records={sortedAndSearchedRecords}
-          login={login}
-          password={password}
-        />
+        <RecordList records={sortedAndSearchedRecords} token={token} />
       )}
 
-      <Pagination login={login} password={password} />
+      <Pagination token={token} />
     </div>
   );
 }

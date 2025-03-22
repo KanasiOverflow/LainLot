@@ -42,14 +42,9 @@ export const ModalProvider = ({ children }) => {
   }, [setMode, setModifyRecordError, setModal, setOldRecord]);
 
   const addRecord = useCallback(
-    async (record, login, password) => {
+    async (record, token) => {
       try {
-        const response = await createRecord(
-          currentTable,
-          record,
-          login,
-          password
-        );
+        const response = await createRecord(currentTable, record, token);
         if (response && response.data) {
           setCurrentRecords([...currentRecords, response.data]);
           setModal(false);
@@ -71,14 +66,9 @@ export const ModalProvider = ({ children }) => {
   );
 
   const editRecord = useCallback(
-    async (record, login, password) => {
+    async (record, token) => {
       try {
-        const response = await updateRecord(
-          currentTable,
-          record,
-          login,
-          password
-        );
+        const response = await updateRecord(currentTable, record, token);
         if (response && response.data) {
           setCurrentRecords((prevRecords) =>
             prevRecords.map((p) => (p.id === record.id ? response.data : p))
@@ -96,14 +86,9 @@ export const ModalProvider = ({ children }) => {
   );
 
   const removeRecord = useCallback(
-    async (record, login, password) => {
+    async (record, token) => {
       try {
-        const response = await removeRecordById(
-          currentTable,
-          record.id,
-          login,
-          password
-        );
+        const response = await removeRecordById(currentTable, record.id, token);
         if (response) {
           setCurrentRecords((prevRecords) =>
             prevRecords.filter((p) => p.id !== record.id)

@@ -44,268 +44,268 @@ import UserProfilesService from 'api/CRUD/UserProfilesService.js';
 import UserRolesService from 'api/CRUD/UserRolesService.js';
 import UsersService from 'api/CRUD/UsersService.js';
 
-export const createRecord = async (currentTable, data, login, password) => {
+export const createRecord = async (currentTable, data, token) => {
   var response = null;
 
   switch (currentTable) {
     case 'About':
-      response = await AboutService.CreateAbout(data, login, password);
+      response = await AboutService.CreateAbout(data, token);
       break;
     case 'AccessLevels':
       response = await AccessLevelsService.CreateAccessLevels(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseBelts':
-      response = await BaseBeltsService.CreateBaseBelts(data, login, password);
+      response = await BaseBeltsService.CreateBaseBelts(data, token);
       break;
     case 'BaseNecklines':
       response = await BaseNecklinesService.CreateBaseNecklines(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'BasePantsCuffs':
       response = await BasePantsCuffsService.CreateBasePantsCuffs(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'BasePants':
-      response = await BasePantsService.CreateBasePants(data, login, password);
+      response = await BasePantsService.CreateBasePants(data, token);
       break;
     case 'BaseSleeveCuffs':
       response = await BaseSleeveCuffsService.CreateBaseSleeveCuffs(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseSleeves':
       response = await BaseSleevesService.CreateBaseSleeves(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseSportSuits':
       response = await BaseSportSuitsService.CreateBaseSportSuits(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'BaseSweaters':
       response = await BaseSweatersService.CreateBaseSweaters(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'Cart':
-      response = await CartService.CreateCart(data, login, password);
+      response = await CartService.CreateCart(data, token);
       break;
     case 'Categories':
       response = await CategoriesService.CreateCategories(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'CategoryHierarchy':
       response = await CategoryHierarchyService.CreateCategoryHierarchy(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'Colors':
-      response = await ColorsService.CreateColors(data, login, password);
+      response = await ColorsService.CreateColors(data, token);
       break;
     case 'Contacts':
-      response = await ContactsService.CreateContacts(data, login, password);
+      response = await ContactsService.CreateContacts(data, token);
       break;
     case 'Countries':
-      response = await CountriesService.CreateCountries(data, login, password);
+      response = await CountriesService.CreateCountries(data, token);
       break;
     case 'Currencies':
       response = await CurrenciesService.CreateCurrencies(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomBelts':
       response = await CustomBeltsService.CreateCustomBelts(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomizableProducts':
       response = await CustomizableProductsService.CreateCustomizableProducts(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomNecklines':
       response = await CustomNecklinesService.CreateCustomNecklines(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomPantsCuffs':
       response = await CustomPantsCuffsService.CreateCustomPantsCuffs(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomPants':
       response = await CustomPantsService.CreateCustomPants(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSleeveCuffs':
       response = await CustomSleeveCuffsService.CreateCustomSleeveCuffs(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSleeves':
       response = await CustomSleevesService.CreateCustomSleeves(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSportSuits':
       response = await CustomSportSuitsService.CreateCustomSportSuits(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'CustomSweaters':
       response = await CustomSweatersService.CreateCustomSweaters(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'FabricTypes':
       response = await FabricTypesService.CreateFabricTypes(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'Languages':
-      response = await LanguagesService.CreateLanguages(data, login, password);
+      response = await LanguagesService.CreateLanguages(data, token);
       break;
     case 'Orders':
-      response = await OrdersService.CreateOrders(data, login, password);
+      response = await OrdersService.CreateOrders(data, token);
       break;
     case 'OrderHistory':
       response = await OrderHistoryService.CreateOrderHistory(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'OrderStatuses':
       response = await OrderStatusesService.CreateOrderStatuses(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'PaymentMethods':
       response = await PaymentMethodsService.CreatePaymentMethods(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'Payments':
-      response = await PaymentsService.CreatePayments(data, login, password);
+      response = await PaymentsService.CreatePayments(data, token);
       break;
     case 'PaymentStatuses':
       response = await PaymentStatusesService.CreatePaymentStatuses(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'ProductImages':
       response = await ProductImagesService.CreateProductImages(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'ProductOrders':
       response = await ProductOrdersService.CreateProductOrders(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'Products':
-      response = await ProductsService.CreateProducts(data, login, password);
+      response = await ProductsService.CreateProducts(data, token);
       break;
     case 'ProductTranslations':
       response = await ProductTranslationsService.CreateProductTranslations(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'Reviews':
-      response = await ReviewsService.CreateReviews(data, login, password);
+      response = await ReviewsService.CreateReviews(data, token);
       break;
     case 'ShippingAddresses':
       response = await ShippingAddressesService.CreateShippingAddresses(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'SizeOptions':
       response = await SizeOptionsService.CreateSizeOptions(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'UserOrderHistory':
       response = await UserOrderHistoryService.CreateUserOrderHistory(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'UserProfiles':
       response = await UserProfilesService.CreateUserProfiles(
         data,
-        login,
-        password
+
+        token
       );
       break;
     case 'UserRoles':
-      response = await UserRolesService.CreateUserRoles(data, login, password);
+      response = await UserRolesService.CreateUserRoles(data, token);
       break;
     case 'Users':
-      response = await UsersService.CreateUsers(data, login, password);
+      response = await UsersService.CreateUsers(data, token);
       break;
     default:
       break;
