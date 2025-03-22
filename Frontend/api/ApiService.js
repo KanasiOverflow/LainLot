@@ -4,8 +4,7 @@ import { get200, get201 } from './utils/responseCodes.js';
 import { getRestAPIUrl } from './utils/getRestAPIUrl.js';
 
 export default class ApiService {
-    static async sendRequest(method, controller, endpoint, data = null, params = null) {
-        const token = secureLocalStorage.getItem('token');
+    static async sendRequest(service, method, controller, endpoint, token, data = null, params = null) {
 
         const headers = {
             'Content-Type': 'application/json'
@@ -17,7 +16,7 @@ export default class ApiService {
 
         const options = {
             method,
-            url: `${getRestAPIUrl()}/${controller}/${endpoint}`,
+            url: `${getRestAPIUrl(service)}/${controller}/${endpoint}`,
             headers,
             data: data ? JSON.stringify(data) : null,
             params,
@@ -31,13 +30,13 @@ export default class ApiService {
                 response.status === get201().Code &&
                 response.statusText === get201().Message
             ) {
-                return response.data;
+                return response;
             } else if (
                 (method === 'get' || method === 'delete') &&
                 response.status === get200().Code &&
                 response.statusText === get200().Message
             ) {
-                return response.data;
+                return response;
             }
         } catch (error) {
             if (error.response?.status === 401) {

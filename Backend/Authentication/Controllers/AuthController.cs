@@ -32,7 +32,9 @@ namespace Authentication.Controllers
 
         [AllowAnonymous]
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<string>> Login([FromBody] LoginDto dto)
         {
             var user = await _userRepository.GetAll()
                 .FirstOrDefaultAsync(u => u.Login == dto.Login && u.Password == dto.Password);
@@ -47,7 +49,7 @@ namespace Authentication.Controllers
             var token = _jwtService.GenerateToken(user.Login, role);
 
             _logger.LogInformation("AuthController. Token has been generated.");
-            return Ok(new { token });
+            return CreatedAtAction(nameof(Login), new { token });
         }
 
     }

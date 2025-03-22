@@ -9,7 +9,7 @@ import { useFetching } from '../../hooks/useFetching.jsx';
 export const DataContext = createContext(null);
 
 export const DataProvider = ({ children }) => {
-  const [currentTable, setCurrentTable] = useState('');
+  const [currentTable, setCurrentTable] = useState('About');
   const [currentRecords, setCurrentRecords] = useState([]);
   const [recordFields, setRecordFields] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -23,6 +23,7 @@ export const DataProvider = ({ children }) => {
           page,
           token
         );
+
         const responseFields = await getRecordFields(currentTable, token);
         const responseTotalCount = await getTableTotalCount(
           currentTable,
