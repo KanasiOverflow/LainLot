@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function ForgotPassword() {
-
   const { t } = useTranslation();
 
   return (
@@ -23,5 +22,6 @@ export default function ForgotPassword() {
           {t('RestorePassword')}
         </button>
       </form>
-    </div>);
+    </div>
+  );
 }

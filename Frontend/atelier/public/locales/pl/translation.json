@@ -21,5 +21,6 @@
   "Registration": "Rejestracja",
   "RepeatPassword": "Powtórz hasło",
   "ClearFields": "Wyczyść pola",
-  "RestorePassword": "Przywróć hasło"
+  "RestorePassword": "Przywróć hasło",
+  "EmailConfirmed": "Potwierdzono e-mail"
 }

@@ -6,6 +6,7 @@ import Contacts from '../pages/Contacts.jsx';
 import Cart from '../pages/Cart.jsx';
 import ForgotPassword from '../pages/Auth/ForgotPassword.jsx';
 import Registration from '../pages/Auth/Registration.jsx';
+import EmailConfirmed from '../pages/Auth/EmailConfirmed.jsx';
 
 export const privateRoutes = [{ path: '/profile', component: <Profile /> }];
 
@@ -17,4 +18,5 @@ export const publicRoutes = [
   { path: '/cart', component: <Cart /> },
   { path: '/registration', component: <Registration /> },
   { path: '/forgotpassword', component: <ForgotPassword /> },
+  { path: '/emailconfirmed', component: <EmailConfirmed /> },
 ];

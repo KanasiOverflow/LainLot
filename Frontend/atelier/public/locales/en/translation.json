@@ -21,5 +21,6 @@
   "Registration": "Registration",
   "RepeatPassword": "Repeat password",
   "ClearFields": "Clear fields",
-  "RestorePassword": "Restore password"
+  "RestorePassword": "Restore password",
+  "EmailConfirmed": "Email confirmed"
 }

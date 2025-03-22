@@ -21,5 +21,6 @@
   "Registration": "Регистрация",
   "RepeatPassword": "Повторите пароль",
   "ClearFields": "Очистить поля",
-  "RestorePassword": "Восстановить пароль"
+  "RestorePassword": "Восстановить пароль",
+  "EmailConfirmed": "Электронная почта подтверждена"
 }
