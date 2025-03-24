@@ -22,6 +22,7 @@ var corsAdresses = new string[]
     "http://localhost:3001", // atelier
     "http://localhost:3002", // shop
     "http://localhost:8040", // RestAPI
+    "http://localhost:8041", // Authentication
     "https://lainlot.com"    // PROD
 };
 
