@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from '../provider/context/AuthProvider.jsx';
-import { getUserInfo } from '../utils/getUserInfo.js';
 import { useFetching } from '../hooks/useFetching.jsx';
 import Loader from '../components/UI/loader/Loader.jsx';
+import ProfilePageService from 'api/Atelier/ProfilePageService.js';
 
 export default function Profile() {
   const { t } = useTranslation();
@@ -14,7 +14,8 @@ export default function Profile() {
   const token = secureLocalStorage.getItem('token');
 
   const [fetchUserInfo, isLoading, error] = useFetching(async () => {
-    const response = await getUserInfo(token);
+    const response = await ProfilePageService.GetUserInfo(token);
+    console.log(response);
     setUser(response.data);
   });
 
