@@ -5,11 +5,11 @@ import { AuthContext } from '../provider/context/AuthProvider.jsx';
 
 export default function Profile() {
   const { t } = useTranslation();
-  const { setIsAuth, setJustLoggedOut } = useContext(AuthContext);
+  const { setIsAuth, setloggedOut } = useContext(AuthContext);
 
   const logout = () => {
     secureLocalStorage.clear();
-    setJustLoggedOut(true);
+    setloggedOut(true);
     setIsAuth(false);
   };
 

@@ -5,7 +5,7 @@ import { useFetching } from '../hooks/useFetching.jsx';
 import Loader from '../components/UI/loader/Loader.jsx';
 
 export default function About() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [aboutTexts, setAboutTexts] = useState([]);
 
   const [fetchAbout, isLoading, error] = useFetching(async () => {
@@ -26,14 +26,17 @@ export default function About() {
       {isLoading ? (
         <Loader />
       ) : (
-        <ul>
-          {aboutTexts.map((item) => (
-            <li key={item.id}>
-              <h3>{item.header}</h3>
-              <p>{item.text}</p>
-            </li>
-          ))}
-        </ul>
+        <div>
+          <h3>{t('About')}</h3>
+          <ul>
+            {aboutTexts.map((item) => (
+              <li key={item.id}>
+                <h3>{item.header}</h3>
+                <p>{item.text}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );

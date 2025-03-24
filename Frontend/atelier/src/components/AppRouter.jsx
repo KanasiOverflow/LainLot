@@ -3,11 +3,14 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { publicRoutes, privateRoutes } from '../router';
 import { AuthContext } from '../provider/context/AuthProvider';
 import Loader from './UI/loader/Loader';
-import RequireAuth from './auth/RequireAuth';
 import Profile from '../pages/Profile';
+import Login from '../pages/Auth/Login';
+import EmailConfirmed from '../pages/Auth/EmailConfirmed';
+import Registration from '../pages/Auth/Registration';
+import ForgotPassword from '../pages/Auth/ForgotPassword';
 
 export default function AppRouter() {
-  const { isAuth, isLoading, justLoggedOut } = useContext(AuthContext);
+  const { isAuth, isLoading, loggedOut } = useContext(AuthContext);
 
   if (isLoading) {
     return <Loader />;
@@ -17,17 +20,49 @@ export default function AppRouter() {
     <Routes>
 
       <Route
-        path="/profile"
+        path='profile'
         element={
-          isAuth ? (
-            <RequireAuth>
-              <Profile />
-            </RequireAuth>
-          ) : justLoggedOut ? (
-            <Navigate to="/home" replace />
-          ) : (
-            <Navigate to="/login" replace />
-          )
+          isAuth ? (<Profile />) :
+            (loggedOut ?
+              (<Navigate to='/home' replace />) :
+              (<Navigate to='/login' replace />)
+            )
+        }
+      />
+
+      <Route
+        path='login'
+        element={
+          isAuth
+            ? <Navigate to="/profile" replace />
+            : <Login />
+        }
+      />
+
+      <Route
+        path='emailconfirmed'
+        element={
+          isAuth
+            ? <Navigate to="/profile" replace />
+            : <EmailConfirmed />
+        }
+      />
+
+      <Route
+        path='registration'
+        element={
+          isAuth
+            ? <Navigate to="/profile" replace />
+            : <Registration />
+        }
+      />
+
+      <Route
+        path='forgotpassword'
+        element={
+          isAuth
+            ? <Navigate to="/profile" replace />
+            : <ForgotPassword />
         }
       />
 
