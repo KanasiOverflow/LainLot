@@ -9,7 +9,7 @@ export default function About() {
   const [aboutTexts, setAboutTexts] = useState([]);
 
   const [fetchAbout, isLoading, error] = useFetching(async () => {
-    const response = await AboutPageService.GetAbout(i18n.language);
+    const response = await AboutPageService.GetAbout(i18n.resolvedLanguage?.split('-')[0].toLowerCase());
     if (response && Array.isArray(response.data)) {
       setAboutTexts(response.data);
     }
