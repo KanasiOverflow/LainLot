@@ -40,6 +40,9 @@ namespace Authentication.Controllers
             var user = await _userRepository.GetAll()
                 .FirstOrDefaultAsync(u => u.Email.Equals(dto.Email) && u.Password.Equals(dto.Password));
 
+            _logger.LogInformation($"Trying login for: {dto.Email}");
+            _logger.LogInformation($"Login attempt: {dto.Email} | {dto.Password}");
+
             if (user == null)
             {
                 _logger.LogError("AuthController. Wrong credentials.");

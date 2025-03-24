@@ -15,9 +15,9 @@ namespace Authentication.Services
         {
             var claims = new[]
             {
-            new Claim(ClaimTypes.Name, email),
-            new Claim(ClaimTypes.Role, role)
-        };
+                new Claim(ClaimTypes.Name, email),
+                new Claim(ClaimTypes.Role, role)
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

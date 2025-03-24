@@ -21,7 +21,7 @@ export default function Login() {
     var response = await CheckCredentialsService.Login(email, password);
 
     if (response) {
-      if (response?.token) {
+      if (response?.data) {
         setIsAuth(true);
         secureLocalStorage.setItem('auth', 'true');
         secureLocalStorage.setItem('token', response.token);
