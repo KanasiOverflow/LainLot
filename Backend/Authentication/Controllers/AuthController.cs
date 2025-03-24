@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Authentication.Services;
 using Authentication.ModeDTOs;
+using System.Security.Claims;
 
 namespace Authentication.Controllers
 {
@@ -37,7 +38,7 @@ namespace Authentication.Controllers
         public async Task<ActionResult<string>> Login([FromBody] LoginDto dto)
         {
             var user = await _userRepository.GetAll()
-                .FirstOrDefaultAsync(u => u.Login == dto.Login && u.Password == dto.Password);
+                .FirstOrDefaultAsync(u => u.Email == dto.Email && u.Password == dto.Password);
 
             if (user == null)
             {
@@ -46,10 +47,22 @@ namespace Authentication.Controllers
             }
 
             var role = (await _userRoleRepository.GetById(user.FkUserRoles))?.Name ?? "User";
-            var token = _jwtService.GenerateToken(user.Login, role);
+            var token = _jwtService.GenerateToken(user.Email, role);
 
             _logger.LogInformation("AuthController. Token has been generated.");
             return CreatedAtAction(nameof(Login), new { token });
+        }
+
+        [Authorize]
+        [HttpGet("Me")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetCurrentUser()
+        {
+            var login = User.Identity?.Name;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            return Ok(new { login, role });
         }
 
     }

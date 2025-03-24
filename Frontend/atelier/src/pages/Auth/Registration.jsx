@@ -19,6 +19,16 @@ export default function Registration() {
           />
         </div>
         <div className='form-group'>
+          <label htmlFor='login'>{t('UserLogin')}</label>
+          <input
+            type='login'
+            id='login'
+            className='form-control'
+            placeholder={t('EnterUserLogin')}
+            required
+          />
+        </div>
+        <div className='form-group'>
           <label htmlFor='password'>{t('Password')}</label>
           <input
             type='password'

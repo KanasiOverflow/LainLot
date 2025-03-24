@@ -17,6 +17,8 @@
   "Password": "Пароль",
   "EnterPassword": "Введите пароль",
   "Login": "Авторизоваться",
+  "UserLogin": "Login",
+  "EnterUserLogin": "Введите логин",
   "ForgotYourPassword": "Забыли пароль?",
   "Registration": "Регистрация",
   "RepeatPassword": "Повторите пароль",

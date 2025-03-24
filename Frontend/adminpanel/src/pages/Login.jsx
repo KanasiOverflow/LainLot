@@ -8,7 +8,7 @@ import { AuthContext } from '../provider/context/AuthProvider.jsx';
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
-  const [login, setLogin] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState(false);
 
@@ -18,7 +18,7 @@ export default function Login() {
 
     setIsLoading(true);
 
-    var response = await CheckCredentialsService.Login(login, password);
+    var response = await CheckCredentialsService.Login(email, password);
 
     if (response) {
       if (response?.token) {
@@ -33,7 +33,7 @@ export default function Login() {
     }
 
     setIsLoading(false);
-    setLogin('');
+    setEmail('');
     setPassword('');
   };
 
@@ -42,8 +42,8 @@ export default function Login() {
       <h1>Login page</h1>
       <form onSubmit={auth}>
         <GeneralInput
-          value={login}
-          onChange={(e) => setLogin(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           type="login"
           placeholder="login"
           required

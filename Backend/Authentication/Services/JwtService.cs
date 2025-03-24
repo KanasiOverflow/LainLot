@@ -11,11 +11,11 @@ namespace Authentication.Services
     {
         private readonly JwtSettings _settings = options.Value;
 
-        public string GenerateToken(string login, string role)
+        public string GenerateToken(string email, string role)
         {
             var claims = new[]
             {
-            new Claim(ClaimTypes.Name, login),
+            new Claim(ClaimTypes.Name, email),
             new Claim(ClaimTypes.Role, role)
         };
 

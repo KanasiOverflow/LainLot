@@ -1,16 +1,51 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
+import secureLocalStorage from 'react-secure-storage';
 import { useTranslation } from 'react-i18next';
+import CheckCredentialsService from 'api/CheckCredentialsService.js';
+import { AuthContext } from '../provider/context/AuthProvider.jsx';
 
 export default function Login() {
   const { t } = useTranslation();
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [authError, setAuthError] = useState(false);
+
+  const { setIsAuth } = useContext(AuthContext);
+  const auth = async (event) => {
+    event.preventDefault();
+
+    setIsLoading(true);
+
+    var response = await CheckCredentialsService.Login(email, password);
+
+    if (response) {
+      if (response?.token) {
+        setIsAuth(true);
+        secureLocalStorage.setItem('auth', 'true');
+        secureLocalStorage.setItem('token', response.token);
+      } else {
+        console.log('Wrong credentials!');
+      }
+    } else {
+      setAuthError(true);
+    }
+
+    setIsLoading(false);
+    setEmail('');
+    setPassword('');
+  };
+
   return (
     <div className='login-container'>
       <h2 className='login-title'>{t('Authorization')}</h2>
-      <form className='login-form'>
+      <form className='login-form' onSubmit={auth}>
         <div className='form-group'>
           <label htmlFor='email'>{t('Email')}</label>
           <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             type='email'
             id='email'
             className='form-control'
@@ -21,6 +56,8 @@ export default function Login() {
         <div className='form-group'>
           <label htmlFor='password'>{t('Password')}</label>
           <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             type='password'
             id='password'
             className='form-control'
@@ -28,9 +65,15 @@ export default function Login() {
             required
           />
         </div>
-        <button type='submit' className='btn btn-primary'>
-          {t('Login')}
-        </button>
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <button type='submit' className='btn btn-primary'>
+            {t('Login')}
+          </button>
+        )}
+
+        {authError && <h4>Wrong Credentials!</h4>}
         <div className='login-links'>
           <a href='/ForgotPassword' className='forgot-password'>
             {t('ForgotYourPassword')}

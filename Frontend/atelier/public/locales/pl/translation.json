@@ -17,6 +17,8 @@
   "Password": "Hasło",
   "EnterPassword": "Wprowadź hasło",
   "Login": "Login",
+  "UserLogin": "Login",
+  "EnterUserLogin": "Wprowadź login",
   "ForgotYourPassword": "Zapomniałeś hasła?",
   "Registration": "Rejestracja",
   "RepeatPassword": "Powtórz hasło",

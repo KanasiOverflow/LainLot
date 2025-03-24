@@ -1,9 +1,9 @@
 import ApiService from './ApiService.js';
 
 export default class CheckCredentialsService {
-  static async Login(login, password) {
+  static async Login(email, password) {
     try {
-      const response = await ApiService.sendRequest('auth', 'post', 'auth', 'login', null, { login, password }, null);
+      const response = await ApiService.sendRequest('auth', 'post', 'auth', 'login', null, { email, password }, null);
 
       return response;
 
