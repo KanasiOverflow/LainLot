@@ -44,8 +44,8 @@ export default function Login() {
         <GeneralInput
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          type="login"
-          placeholder="login"
+          type="email"
+          placeholder="email"
           required
         />
         <GeneralInput

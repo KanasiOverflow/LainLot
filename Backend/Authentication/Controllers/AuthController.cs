@@ -38,7 +38,7 @@ namespace Authentication.Controllers
         public async Task<ActionResult<string>> Login([FromBody] LoginDto dto)
         {
             var user = await _userRepository.GetAll()
-                .FirstOrDefaultAsync(u => u.Email == dto.Email && u.Password == dto.Password);
+                .FirstOrDefaultAsync(u => u.Email.Equals(dto.Email) && u.Password.Equals(dto.Password));
 
             if (user == null)
             {
@@ -59,10 +59,10 @@ namespace Authentication.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetCurrentUser()
         {
-            var login = User.Identity?.Name;
+            var email = User.Identity?.Name;
             var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
-            return Ok(new { login, role });
+            return Ok(new { email, role });
         }
 
     }
