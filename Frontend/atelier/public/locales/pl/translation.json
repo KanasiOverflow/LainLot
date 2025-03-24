@@ -24,5 +24,6 @@
   "RepeatPassword": "Powtórz hasło",
   "ClearFields": "Wyczyść pola",
   "RestorePassword": "Przywróć hasło",
-  "EmailConfirmed": "Potwierdzono e-mail"
+  "EmailConfirmed": "Potwierdzono e-mail",
+  "LogOut": "Wyloguj się"
 }

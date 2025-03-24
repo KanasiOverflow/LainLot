@@ -24,5 +24,6 @@
   "RepeatPassword": "Повторите пароль",
   "ClearFields": "Очистить поля",
   "RestorePassword": "Восстановить пароль",
-  "EmailConfirmed": "Электронная почта подтверждена"
+  "EmailConfirmed": "Электронная почта подтверждена",
+  "LogOut": "Выйти"
 }

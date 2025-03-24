@@ -24,5 +24,6 @@
   "RepeatPassword": "Repeat password",
   "ClearFields": "Clear fields",
   "RestorePassword": "Restore password",
-  "EmailConfirmed": "Email confirmed"
+  "EmailConfirmed": "Email confirmed",
+  "LogOut": "Log out"
 }

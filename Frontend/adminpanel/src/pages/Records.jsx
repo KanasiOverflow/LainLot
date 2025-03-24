@@ -53,7 +53,6 @@ function Records() {
       return;
     }
 
-    console.log("token:" + token);
     if (token) {
       fetchRecords(limit, page, token);
     }
