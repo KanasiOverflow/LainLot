@@ -24,7 +24,7 @@ export default function Login() {
       if (response?.data) {
         setIsAuth(true);
         secureLocalStorage.setItem('auth', 'true');
-        secureLocalStorage.setItem('token', response.token);
+        secureLocalStorage.setItem('token', response.data.token);
       } else {
         console.log('Wrong credentials!');
       }
