@@ -1,22 +1,57 @@
+using System.Text;
+using Authentication.Services;
+using Authentication.Configuration;
 using Newtonsoft.Json;
 using DatabaseProvider.Models;
 using DatabaseRepository.Classes;
 using DatabaseRepository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Authentication.Configuration;
-using Authentication.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Serilog;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
-
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "LainLot API. Authentication service",
+        Version = "v1",
+        Description = "API for LainLot. Authorization via email and password. Swagger automatically receives a token.."
+    });
+
+    var jwtScheme = new OpenApiSecurityScheme
+    {
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Description = "Enter your email and password via the 'Log in' button. The token will be received automatically.",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = JwtBearerDefaults.AuthenticationScheme
+        }
+    };
+
+    c.AddSecurityDefinition(jwtScheme.Reference.Id, jwtScheme);
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { jwtScheme, Array.Empty<string>() }
+    });
+
+    c.DocInclusionPredicate((docName, apiDesc) =>
+    {
+        return apiDesc.ActionDescriptor?.DisplayName?.Contains("Authentication") == true;
+    });
+});
 
 var HostOrigins = "HostOrigins";
 var corsAdresses = new string[]
@@ -24,8 +59,8 @@ var corsAdresses = new string[]
     "http://localhost:3000", // adminPanel
     "http://localhost:3001", // atelier
     "http://localhost:3002", // shop
-    "http://localhost:8040", // RestAPI
-    "http://localhost:8041", // Authentication
+    "http://localhost:8040", // RestAPI IIS
+    "https://localhost:5040", // RestAPI https
     "https://lainlot.com"    // PROD
 };
 
@@ -127,11 +162,19 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "LainLot API V1");
+
+        c.InjectJavascript("/swagger-login.js");
+    });
 }
 
 app.MapGet("/", (ILogger<Program> logger) =>

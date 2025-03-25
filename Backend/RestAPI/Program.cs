@@ -6,14 +6,51 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
-
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "LainLot API. RestAPI service",
+        Version = "v1",
+        Description = "API for LainLot. Authorization via email and password. Swagger automatically receives a token.."
+    });
+
+    var jwtScheme = new OpenApiSecurityScheme
+    {
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Description = "Enter your email and password via the 'Log in' button. The token will be received automatically.",
+        Reference = new OpenApiReference
+        {
+            Type = ReferenceType.SecurityScheme,
+            Id = JwtBearerDefaults.AuthenticationScheme
+        }
+    };
+
+    c.AddSecurityDefinition(jwtScheme.Reference.Id, jwtScheme);
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { jwtScheme, Array.Empty<string>() }
+    });
+
+    c.DocInclusionPredicate((docName, apiDesc) =>
+    {
+        return apiDesc.ActionDescriptor?.DisplayName?.Contains("RestAPI") == true;
+    });
+});
+
 
 var HostOrigins = "HostOrigins";
 var corsAdresses = new string[]
@@ -21,8 +58,6 @@ var corsAdresses = new string[]
     "http://localhost:3000", // adminPanel
     "http://localhost:3001", // atelier
     "http://localhost:3002", // shop
-    "http://localhost:8040", // RestAPI
-    "http://localhost:8041", // Authentication
     "https://lainlot.com"    // PROD
 };
 
@@ -122,11 +157,19 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "LainLot API V1");
+
+        c.InjectJavascript("/swagger-login.js");
+    });
 }
 
 app.MapGet("/", (ILogger<Program> logger) =>

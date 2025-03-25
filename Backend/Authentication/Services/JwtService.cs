@@ -19,6 +19,8 @@ namespace Authentication.Services
                 new Claim(ClaimTypes.Role, role)
             };
 
+            Console.WriteLine($"✅ JWT создан для {email} с ролью: {role}");
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

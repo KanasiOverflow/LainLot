@@ -1,7 +1,7 @@
 ﻿namespace Authentication.ModeDTOs
 
 {
-    public class LoginDto
+    public class LoginInfo
     {
         public required string Email { get; set; }
         public required string Password { get; set; }
