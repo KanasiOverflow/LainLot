@@ -36,7 +36,7 @@ export default function Login() {
       }
     } else {
       setAuthError(true);
-      setAuthErrorMessage(t('InternalServerError'));
+      setAuthErrorMessage('InternalServerError');
     }
 
     setIsLoading(false);
@@ -80,7 +80,7 @@ export default function Login() {
           </button>
         )}
 
-        {authError && <h4 className="text-danger mt-2">{authErrorMessage}</h4>}
+        {authError && <h4 className="text-danger mt-2">{t(authErrorMessage)}</h4>}
         <div className="login-links">
           <a href="/ForgotPassword" className="forgot-password">
             {t('ForgotYourPassword')}

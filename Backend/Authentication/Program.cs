@@ -164,6 +164,8 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
@@ -185,11 +187,9 @@ app.MapGet("/", (ILogger<Program> logger) =>
     return "Hello World!";
 });
 
-app.UseHttpsRedirection();
+app.UseCors(HostOrigins);
 
 app.UseRouting();
-
-app.UseCors(HostOrigins);
 
 app.UseAuthentication();
 
