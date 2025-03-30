@@ -16,7 +16,7 @@ public partial class User
 
     public string ConfirmationToken { get; set; }
 
-    public string ConfirmationTokenExpires { get; set; }
+    public DateTime? ConfirmationTokenExpires { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

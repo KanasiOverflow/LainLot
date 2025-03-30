@@ -119,7 +119,7 @@ namespace Authentication.Controllers
             // Logic for email confirmation here
             user.ConfirmEmail = false;
             user.ConfirmationToken = confirmationToken;
-            user.ConfirmationTokenExpires = tokenExpiration.ToString();
+            user.ConfirmationTokenExpires = tokenExpiration;
 
             try
             {
@@ -147,7 +147,7 @@ namespace Authentication.Controllers
             if (user == null)
                 return BadRequest("Invalid token.");
 
-            if (DateTime.Parse(user.ConfirmationTokenExpires) < DateTime.UtcNow)
+            if (user.ConfirmationTokenExpires < DateTime.UtcNow)
                 return BadRequest("Token expired.");
 
             user.ConfirmEmail = true;
