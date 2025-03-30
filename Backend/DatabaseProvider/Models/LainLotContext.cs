@@ -701,7 +701,7 @@ public partial class LainLotContext : DbContext
             entity.HasIndex(e => e.Login, "Users_Login_key").IsUnique();
 
             entity.Property(e => e.ConfirmationTokenExpires)
-                .HasColumnType("timestamp without time zone");
+                .HasColumnType("timestamp with time zone");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone");
