@@ -7,7 +7,7 @@ export default function Copyright() {
 
   return (
     <div className={mcss.copyrightSection}>
-      <div className='container'>
+      <div className="container">
         <p className={mcss.copyrightText}>
           &copy; {new Date().getFullYear()} {process.env.REACT_APP_WEBSITE_NAME}{' '}
           {t('Atelier')}. {t('AllRightsReserved')}.

@@ -142,6 +142,8 @@ builder.Services.AddScoped<IRepository<UserRole>, Repository<UserRole>>();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddScoped<JwtService>();
 
+builder.Services.AddScoped<EmailService>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

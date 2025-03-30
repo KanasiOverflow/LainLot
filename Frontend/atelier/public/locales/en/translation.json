@@ -25,5 +25,12 @@
   "ClearFields": "Clear fields",
   "RestorePassword": "Restore password",
   "EmailConfirmed": "Email confirmed",
-  "LogOut": "Log out"
+  "LogOut": "Log out",
+  "RegistrationSuccessful": "Registration successful. Please check your email to confirm your account",
+  "UserAlreadyExists": "User with this email or login already exists",
+  "PasswordsDoNotMatch": "Passwords do not match",
+  "RegistrationFailed": "Registration failed. Please try again",
+  "WrongCredentials": "Wrong credentials",
+  "EmailNotConfirmed": "Email not confirmed",
+  "InternalServerError": "500. Internal server error"
 }

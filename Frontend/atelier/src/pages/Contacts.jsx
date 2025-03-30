@@ -9,7 +9,9 @@ export default function Contacts() {
   const [aboutContacts, setAboutContacts] = useState([]);
 
   const [fetchContacts, isLoading, error] = useFetching(async () => {
-    const response = await ContactsPageService.GetContacts(i18n.resolvedLanguage?.split('-')[0].toLowerCase());
+    const response = await ContactsPageService.GetContacts(
+      i18n.resolvedLanguage?.split('-')[0].toLowerCase()
+    );
     if (response && Array.isArray(response.data)) {
       setAboutContacts(response.data);
     }

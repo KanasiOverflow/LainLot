@@ -4132,7 +4132,7 @@ namespace NUnitTests.RestAPI
                 Password = "Password 3",
                 ConfirmEmail = false,
                 ConfirmationToken = "ConfirmationToken 3",
-                ConfirmationTokenExpires = DateTime.Now
+                ConfirmationTokenExpires = DateTime.Now.ToString()
             };
 
             var result = await _restApiController.CreateUsers(entity);

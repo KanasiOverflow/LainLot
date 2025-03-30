@@ -18,70 +18,56 @@ export default function AppRouter() {
 
   return (
     <Routes>
-
       <Route
-        path='profile'
+        path="profile"
         element={
-          isAuth ? (<Profile />) :
-            (loggedOut ?
-              (<Navigate to='/home' replace />) :
-              (<Navigate to='/login' replace />)
-            )
+          isAuth ? (
+            <Profile />
+          ) : loggedOut ? (
+            <Navigate to="/home" replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
         }
       />
 
       <Route
-        path='login'
+        path="login"
+        element={isAuth ? <Navigate to="/profile" replace /> : <Login />}
+      />
+
+      <Route
+        path="emailconfirmed"
         element={
-          isAuth
-            ? <Navigate to="/profile" replace />
-            : <Login />
+          isAuth ? <Navigate to="/profile" replace /> : <EmailConfirmed />
         }
       />
 
       <Route
-        path='emailconfirmed'
-        element={
-          isAuth
-            ? <Navigate to="/profile" replace />
-            : <EmailConfirmed />
-        }
+        path="registration"
+        element={isAuth ? <Navigate to="/profile" replace /> : <Registration />}
       />
 
       <Route
-        path='registration'
+        path="forgotpassword"
         element={
-          isAuth
-            ? <Navigate to="/profile" replace />
-            : <Registration />
-        }
-      />
-
-      <Route
-        path='forgotpassword'
-        element={
-          isAuth
-            ? <Navigate to="/profile" replace />
-            : <ForgotPassword />
+          isAuth ? <Navigate to="/profile" replace /> : <ForgotPassword />
         }
       />
 
       {publicRoutes.map((route) => (
-        <Route key={route.path}
-          path={route.path}
-          element={route.component} />
+        <Route key={route.path} path={route.path} element={route.component} />
       ))}
 
       {privateRoutes.map((route) => (
         <Route
           key={route.path}
           path={route.path}
-          element={isAuth ? route.component : <Navigate to='/login' replace />}
+          element={isAuth ? route.component : <Navigate to="/login" replace />}
         />
       ))}
 
-      <Route path='/*' element={<Navigate to='/home' replace />} />
-
+      <Route path="/*" element={<Navigate to="/home" replace />} />
     </Routes>
   );
 }

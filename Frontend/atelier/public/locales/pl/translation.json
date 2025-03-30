@@ -25,5 +25,12 @@
   "ClearFields": "Wyczyść pola",
   "RestorePassword": "Przywróć hasło",
   "EmailConfirmed": "Potwierdzono e-mail",
-  "LogOut": "Wyloguj się"
+  "LogOut": "Wyloguj się",
+  "RegistrationSuccessful": "Rejestracja powiodła się. Sprawdź swoją pocztę e-mail, aby potwierdzić swoje konto",
+  "UserAlreadyExists": "Użytkownik o tym adresie e-mail lub loginie już istnieje",
+  "PasswordsDoNotMatch": "Hasła nie pasują",
+  "RegistrationFailed": "Rejestracja nie powiodła się. Spróbuj ponownie",
+  "WrongCredentials": "Błędne dane uwierzytelniające",
+  "EmailNotConfirmed": "Adres e-mail niepotwierdzony",
+  "InternalServerError": "500. Wewnętrzny błąd serwera"
 }

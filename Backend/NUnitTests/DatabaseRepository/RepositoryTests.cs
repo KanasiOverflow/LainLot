@@ -3907,7 +3907,7 @@ namespace NUnitTests.DatabaseRepository
                 Id = 3,
                 Login = "new_user",
                 ConfirmationToken = "ConfirmationToken",
-                ConfirmationTokenExpires = DateTime.Now,
+                ConfirmationTokenExpires = DateTime.Now.ToString(),
                 Email = "new_user@example.com",
                 FkUserRoles = 1,
                 CreatedAt = DateTime.Now,

@@ -16,6 +16,7 @@ namespace Authentication.Controllers
     public class AuthController(
         ILogger<AuthController> logger,
         JwtService jwtService,
+        EmailService emailService,
         IRepository<User> userRepository,
         IRepository<UserRole> userRoleRepository)
         : ControllerBase
@@ -28,6 +29,7 @@ namespace Authentication.Controllers
         #region repos init
         private readonly ILogger<AuthController> _logger = logger;
         private readonly JwtService _jwtService = jwtService;
+        private readonly EmailService _emailService = emailService;
         private readonly IRepository<User> _userRepository = userRepository;
         private readonly IRepository<UserRole> _userRoleRepository = userRoleRepository;
         #endregion
@@ -51,7 +53,15 @@ namespace Authentication.Controllers
             if (user == null)
             {
                 _logger.LogError("AuthController. Wrong credentials.");
-                return Unauthorized("Wrong credentials.");
+                return Unauthorized("WrongCredentials");
+            }
+            else
+            {
+                if (user.ConfirmEmail == false)
+                {
+                    _logger.LogError("AuthController. Email not confirmed.");
+                    return Unauthorized("EmailNotConfirmed");
+                }
             }
 
             var role = (await _userRoleRepository.GetById(user.FkUserRoles))?.Name ?? "User";
@@ -84,10 +94,10 @@ namespace Authentication.Controllers
         public async Task<ActionResult<string>> Registration(Registration entity)
         {
             if (entity == null)
-                return BadRequest("Invalid data");
+                return BadRequest();
 
             if (_userRepository.GetAll().Any(u => u.Email == entity.Email || u.Login == entity.Login))
-                return BadRequest("User with this email or login already exists.");
+                return BadRequest("UserAlreadyExists");
 
             var user = new User
             {
@@ -108,11 +118,17 @@ namespace Authentication.Controllers
 
             // Logic for email confirmation here
             user.ConfirmEmail = false;
+            user.ConfirmationToken = confirmationToken;
+            user.ConfirmationTokenExpires = tokenExpiration.ToString();
 
             try
             {
                 await _userRepository.Add(user);
-                return CreatedAtAction(nameof(Registration), entity);
+
+                var confirmationUrl = $"{Request.Scheme}://{Request.Host}/api/v1/Auth/Verify?token={confirmationToken}";
+                await _emailService.SendVerificationEmail(user.Email, confirmationUrl);
+
+                return Ok("RegistrationSuccessful");
             }
             catch (Exception exc)
             {
@@ -120,6 +136,28 @@ namespace Authentication.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
             }
         }
+
+        [AllowAnonymous]
+        [HttpGet("Verify")]
+        public async Task<IActionResult> VerifyEmail(string token)
+        {
+            var user = _userRepository.GetAll()
+                .FirstOrDefault(u => u.ConfirmationToken == token);
+
+            if (user == null)
+                return BadRequest("Invalid token.");
+
+            if (DateTime.Parse(user.ConfirmationTokenExpires) < DateTime.UtcNow)
+                return BadRequest("Token expired.");
+
+            user.ConfirmEmail = true;
+            user.ConfirmationToken = null;
+            user.ConfirmationTokenExpires = null;
+
+            await _userRepository.Update(user);
+            return Ok("Email confirmed successfully.");
+        }
+
         #endregion
     }
 }

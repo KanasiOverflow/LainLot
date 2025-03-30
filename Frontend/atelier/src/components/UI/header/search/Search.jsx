@@ -7,15 +7,15 @@ export default function Search() {
 
   return (
     <div className={mcss.main}>
-      <div className='input-group'>
+      <div className="input-group">
         <input
-          type='text'
-          className='form-control'
+          type="text"
+          className="form-control"
           placeholder={t('SearchThisSite')}
         />
-        <div className='input-group-append'>
-          <button className='btn btn-secondary btn-search' type='button'>
-            <i className='fa fa-search'></i>
+        <div className="input-group-append">
+          <button className="btn btn-secondary btn-search" type="button">
+            <i className="fa fa-search"></i>
           </button>
         </div>
       </div>

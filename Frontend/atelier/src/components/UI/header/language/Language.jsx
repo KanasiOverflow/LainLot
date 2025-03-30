@@ -20,27 +20,27 @@ export default function Language() {
   return (
     <div className={mcss.lang_box}>
       <button
-        className='nav-link dropdown-toggle'
-        data-toggle='dropdown'
-        aria-expanded='true'
+        className="nav-link dropdown-toggle"
+        data-toggle="dropdown"
+        aria-expanded="true"
       >
         <img
           src={currentLang.flag}
-          alt='flag'
-          className='mr-2'
+          alt="flag"
+          className="mr-2"
           title={currentLang.title}
         />
         {currentLang.label}
-        <i className='fa fa-angle-down ml-2' aria-hidden='true'></i>
+        <i className="fa fa-angle-down ml-2" aria-hidden="true"></i>
       </button>
-      <div className='dropdown-menu'>
+      <div className="dropdown-menu">
         {Object.keys(languages).map((lang) => (
           <button
             key={lang}
-            className='dropdown-item'
+            className="dropdown-item"
             onClick={() => i18n.changeLanguage(lang)}
           >
-            <img src={languages[lang].flag} className='mr-2' alt='flag' />
+            <img src={languages[lang].flag} className="mr-2" alt="flag" />
             {languages[lang].label}
           </button>
         ))}

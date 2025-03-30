@@ -12,22 +12,22 @@ export default function Sidebar() {
   return (
     <>
       <div
-        id='Sidebar'
+        id="Sidebar"
         className={`${mcss.sidenav} ${isSidebarOpen ? mcss.sidenavOpen : mcss.sidenavClose}`}
       >
         <button className={mcss.closebtn} onClick={closeNav}>
           &times;
         </button>
-        <a href='/Home'>{t('Home')}</a>
-        <a href='/Contacts'>{t('Contacts')}</a>
-        <a href='/About'>{t('About')}</a>
-        <a href='/Cart'>{t('Cart')}</a>
-        <a href='/Profile'>{t('Profile')}</a>
+        <a href="/Home">{t('Home')}</a>
+        <a href="/Contacts">{t('Contacts')}</a>
+        <a href="/About">{t('About')}</a>
+        <a href="/Cart">{t('Cart')}</a>
+        <a href="/Profile">{t('Profile')}</a>
       </div>
 
       {!isSidebarOpen && (
         <span className={mcss.toggle_icon} onClick={openNav}>
-          <img src='/images/toggle-icon.png' alt='Toggle Sidebar' />
+          <img src="/images/toggle-icon.png" alt="Toggle Sidebar" />
         </span>
       )}
     </>

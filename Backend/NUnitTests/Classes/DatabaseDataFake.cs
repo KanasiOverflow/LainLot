@@ -394,8 +394,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new User { Id = 1, FkUserRoles = 1, Login = "user1", Email = "user1@example.com", Password = "password1", ConfirmEmail = false, ConfirmationToken = "ConfirmationToken1", ConfirmationTokenExpires = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
-                new User { Id = 2, FkUserRoles = 2, Login = "user2", Email = "user2@example.com", Password = "password2", ConfirmEmail = false, ConfirmationToken = "ConfirmationToken2", ConfirmationTokenExpires = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+                new User { Id = 1, FkUserRoles = 1, Login = "user1", Email = "user1@example.com", Password = "password1", ConfirmEmail = false, ConfirmationToken = "ConfirmationToken1", ConfirmationTokenExpires = DateTime.Now.ToString(), CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new User { Id = 2, FkUserRoles = 2, Login = "user2", Email = "user2@example.com", Password = "password2", ConfirmEmail = false, ConfirmationToken = "ConfirmationToken2", ConfirmationTokenExpires = DateTime.Now.ToString(), CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
             ];
         }
 

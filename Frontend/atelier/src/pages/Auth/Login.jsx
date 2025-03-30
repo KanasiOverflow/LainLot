@@ -14,6 +14,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState(false);
+  const [authErrorMessage, setAuthErrorMessage] = useState('');
 
   const { setIsAuth } = useContext(AuthContext);
   const auth = async (event) => {
@@ -24,16 +25,18 @@ export default function Login() {
     var response = await CheckCredentialsService.Login(email, password);
     console.log(response);
     if (response) {
-      if (response?.data) {
+      if (response?.data.token) {
         setIsAuth(true);
         secureLocalStorage.setItem('auth', 'true');
         secureLocalStorage.setItem('token', response.data.token);
         navigate('/profile');
-      } else {
-        console.log('Wrong credentials!');
+      } else if (typeof response?.data === 'string') {
+        setAuthError(true);
+        console.log(setAuthErrorMessage(t(response.data)));
       }
     } else {
       setAuthError(true);
+      setAuthErrorMessage(t('InternalServerError'));
     }
 
     setIsLoading(false);
@@ -42,29 +45,29 @@ export default function Login() {
   };
 
   return (
-    <div className='login-container'>
-      <h2 className='login-title'>{t('Authorization')}</h2>
-      <form className='login-form' onSubmit={auth}>
-        <div className='form-group'>
-          <label htmlFor='email'>{t('Email')}</label>
+    <div className="login-container">
+      <h2 className="login-title">{t('Authorization')}</h2>
+      <form className="login-form" onSubmit={auth}>
+        <div className="form-group">
+          <label htmlFor="email">{t('Email')}</label>
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            type='email'
-            id='email'
-            className='form-control'
+            type="email"
+            id="email"
+            className="form-control"
             placeholder={t('EnterEmail')}
             required
           />
         </div>
-        <div className='form-group'>
-          <label htmlFor='password'>{t('Password')}</label>
+        <div className="form-group">
+          <label htmlFor="password">{t('Password')}</label>
           <input
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            type='password'
-            id='password'
-            className='form-control'
+            type="password"
+            id="password"
+            className="form-control"
             placeholder={t('EnterPassword')}
             required
           />
@@ -72,17 +75,17 @@ export default function Login() {
         {isLoading ? (
           <Loader />
         ) : (
-          <button type='submit' className='btn btn-primary'>
+          <button type="submit" className="btn btn-primary">
             {t('Login')}
           </button>
         )}
 
-        {authError && <h4>Wrong Credentials!</h4>}
-        <div className='login-links'>
-          <a href='/ForgotPassword' className='forgot-password'>
+        {authError && <h4 className="text-danger mt-2">{authErrorMessage}</h4>}
+        <div className="login-links">
+          <a href="/ForgotPassword" className="forgot-password">
             {t('ForgotYourPassword')}
           </a>
-          <a href='/Registration' className='register-link'>
+          <a href="/Registration" className="register-link">
             {t('Registration')}
           </a>
         </div>

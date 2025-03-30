@@ -42,14 +42,14 @@ export default function Profile() {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {user && (
           <div>
-            <p><strong>{t('Email')}:</strong> {user.email}</p>
+            <p>
+              <strong>{t('Email')}:</strong> {user.email}
+            </p>
           </div>
         )}
       </div>
       <div>
-        <button onClick={logout}>
-          {t('LogOut')}
-        </button>
+        <button onClick={logout}>{t('LogOut')}</button>
       </div>
     </div>
   );

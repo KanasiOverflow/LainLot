@@ -14,9 +14,9 @@ public class User
 
     public bool ConfirmEmail { get; set; }
 
-    public string ConfirmationToken { get; set; } = null!;
+    public string ConfirmationToken { get; set; }
 
-    public DateTime ConfirmationTokenExpires { get; set; }
+    public string ConfirmationTokenExpires { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
