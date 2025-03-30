@@ -23,20 +23,16 @@ export default function Login() {
     setIsLoading(true);
 
     var response = await CheckCredentialsService.Login(email, password);
-    console.log(response);
-    if (response) {
-      if (response?.data.token) {
-        setIsAuth(true);
-        secureLocalStorage.setItem('auth', 'true');
-        secureLocalStorage.setItem('token', response.data.token);
-        navigate('/profile');
-      } else if (typeof response?.data === 'string') {
-        setAuthError(true);
-        console.log(setAuthErrorMessage(t(response.data)));
-      }
+
+    if (response?.data) {
+      setIsAuth(true);
+      secureLocalStorage.setItem('auth', 'true');
+      secureLocalStorage.setItem('token', response.data.token);
+      navigate('/profile');
     } else {
+      setAuthErrorMessage(t(response));
       setAuthError(true);
-      setAuthErrorMessage('InternalServerError');
+      secureLocalStorage.clear();
     }
 
     setIsLoading(false);

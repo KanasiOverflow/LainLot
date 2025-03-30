@@ -42,11 +42,7 @@ export default function Registration() {
       setPassword('');
       setRepeatPassword('');
     } else {
-      const key =
-        typeof response?.data === 'string'
-          ? response.data
-          : 'RegistrationFailed';
-      setErrorMessage(t(key));
+      setErrorMessage(t(response));
     }
   };
 

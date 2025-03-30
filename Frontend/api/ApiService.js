@@ -1,5 +1,4 @@
 import axios from 'axios';
-import secureLocalStorage from 'react-secure-storage';
 import { get200, get201 } from './utils/responseCodes.js';
 import { getRestAPIUrl } from './utils/getRestAPIUrl.js';
 
@@ -39,18 +38,15 @@ export default class ApiService {
                 return response;
             }
         } catch (error) {
+
+            const code = error.response?.data ?? 'InternalServerError';
+
             if (error.response?.status === 401) {
                 console.warn('Unauthorized: clearing session');
-                secureLocalStorage.removeItem('token');
-                secureLocalStorage.removeItem('auth');
-                window.location.href = '/login';
             }
 
-            console.error(`Error in ${endpoint}:`, error.response?.data?.Message || error.message);
-            return null;
+            console.warn(`Error in ${endpoint}:`, error.response?.data?.Message || error.message);
+            return code;
         }
-
-
-        return null;
     }
 }

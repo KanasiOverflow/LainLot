@@ -42,7 +42,7 @@ namespace Authentication.Controllers
         public async Task<ActionResult<string>> Login(LoginInfo entity)
         {
             if (entity == null)
-                return BadRequest();
+                return BadRequest("WrongCredentials");
 
             var user = await _userRepository.GetAll()
                 .FirstOrDefaultAsync(u => u.Email.Equals(entity.Email) && u.Password.Equals(entity.Password));
@@ -133,7 +133,7 @@ namespace Authentication.Controllers
             catch (Exception exc)
             {
                 _logger.LogError(exc.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, exc.InnerException);
+                return StatusCode(StatusCodes.Status500InternalServerError, "InternalServerError");
             }
         }
 
