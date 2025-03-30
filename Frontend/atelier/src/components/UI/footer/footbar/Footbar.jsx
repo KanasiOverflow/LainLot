@@ -30,6 +30,9 @@ export default function Footbar() {
             <li>
               <a href="/Profile">{t('Profile')}</a>
             </li>
+            <li>
+              <a href="/Registration">{t('Registration')}</a>
+            </li>
           </ul>
         </div>
         <div className={mcss.locationMain}>

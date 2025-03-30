@@ -27,6 +27,9 @@ export default function Navbar() {
                 <li>
                   <a href="/Profile">{t('Profile')}</a>
                 </li>
+                <li>
+                  <a href="/Registration">{t('Registration')}</a>
+                </li>
               </ul>
             </div>
           </div>
