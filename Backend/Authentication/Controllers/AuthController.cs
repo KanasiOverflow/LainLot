@@ -84,7 +84,10 @@ namespace Authentication.Controllers
         public async Task<ActionResult<string>> Registration(Registration entity)
         {
             if (entity == null)
-                return BadRequest();
+                return BadRequest("Invalid data");
+
+            if (_userRepository.GetAll().Any(u => u.Email == entity.Email || u.Login == entity.Login))
+                return BadRequest("User with this email or login already exists.");
 
             var user = new User
             {
@@ -100,9 +103,11 @@ namespace Authentication.Controllers
             if (userRole != null)
                 user.FkUserRoles = userRole.Id;
 
+            var confirmationToken = Guid.NewGuid().ToString();
+            var tokenExpiration = DateTime.UtcNow.AddHours(24);
+
             // Logic for email confirmation here
-            user.ConfirmEmail = 0;
-            user.Hash = string.Empty;
+            user.ConfirmEmail = false;
 
             try
             {
