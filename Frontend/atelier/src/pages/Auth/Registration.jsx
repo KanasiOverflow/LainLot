@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ApiService from 'api/ApiService';
+import Loader from '../../components/UI/loader/Loader.jsx';
 
 export default function Registration() {
   const { t } = useTranslation();
@@ -11,6 +12,7 @@ export default function Registration() {
   const [repeatPassword, setRepeatPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -25,6 +27,8 @@ export default function Registration() {
 
     const data = { email, login, password };
 
+    setIsLoading(true);
+
     const response = await ApiService.sendRequest(
       'auth',
       'post',
@@ -34,6 +38,8 @@ export default function Registration() {
       data,
       null
     );
+
+    setIsLoading(false);
 
     if (response?.status === 200 || response?.status === 201) {
       setSuccessMessage(t(response.data));
@@ -99,9 +105,12 @@ export default function Registration() {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary">
-          {t('Registration')}
-        </button>
+        {isLoading ?
+          <Loader /> : (
+            <button type="submit" className="btn btn-primary">
+              {t('Registration')}
+            </button>
+          )}
 
         {successMessage && (
           <div className="alert alert-success mt-3">{successMessage}</div>
