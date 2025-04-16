@@ -5,11 +5,13 @@ import { useFetching } from '../hooks/useFetching.jsx';
 import Loader from '../components/UI/loader/Loader.jsx';
 
 export default function Contacts() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [aboutContacts, setAboutContacts] = useState([]);
 
   const [fetchContacts, isLoading, error] = useFetching(async () => {
-    const response = await ContactsPageService.GetContacts(i18n.language);
+    const response = await ContactsPageService.GetContacts(
+      i18n.resolvedLanguage?.split('-')[0].toLowerCase()
+    );
     if (response && Array.isArray(response.data)) {
       setAboutContacts(response.data);
     }
@@ -26,15 +28,18 @@ export default function Contacts() {
       {isLoading ? (
         <Loader />
       ) : (
-        <ul>
-          {aboutContacts.map((item) => (
-            <li key={item.id}>
-              <h3>{item.address}</h3>
-              <h3>{item.phone}</h3>
-              <h3>{item.email}</h3>
-            </li>
-          ))}
-        </ul>
+        <div>
+          <h3>{t('Contacts')}</h3>
+          <ul>
+            {aboutContacts.map((item) => (
+              <li key={item.id}>
+                <h3>{item.address}</h3>
+                <h3>{item.phone}</h3>
+                <h3>{item.email}</h3>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );

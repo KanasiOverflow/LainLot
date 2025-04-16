@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class ColorsService {
-  static async GetColorsCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetColorsCount', login, password);
+  static async GetColorsCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetColorsCount', token);
   }
 
-  static async GetColorsFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetColorsFields', login, password);
+  static async GetColorsFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetColorsFields', token);
   }
 
-  static async GetColors(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetColors', login, password, null, { limit, page });
+  static async GetColors(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetColors', token, null, { limit, page });
   }
 
-  static async GetColorsById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetColorsById', login, password, null, { id });
+  static async GetColorsById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetColorsById', token, null, { id });
   }
 
-  static async CreateColors(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateColors', login, password, newRecord);
+  static async CreateColors(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateColors', token, newRecord);
   }
 
-  static async UpdateColors(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateColors', login, password, oldRecord);
+  static async UpdateColors(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateColors', token, oldRecord);
   }
 
-  static async DeleteColors(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteColors', login, password, null, { id });
+  static async DeleteColors(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteColors', token, null, { id });
   }
 }

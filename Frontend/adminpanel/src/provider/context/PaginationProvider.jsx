@@ -11,11 +11,11 @@ export const PaginationProvider = ({ children }) => {
   const [limit, setLimit] = useState(5);
 
   const changePage = useCallback(
-    (page, login, password) => {
+    (page, token) => {
       setPage(page);
-      fetchRecords(limit, page, login, password);
+      fetchRecords(limit, page, token);
     },
-    [fetchRecords, limit],
+    [fetchRecords, limit]
   );
 
   return (

@@ -270,7 +270,8 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email))
                     .ForMember(d => d.Password, opt => opt.MapFrom(s => s.Password))
                     .ForMember(d => d.ConfirmEmail, opt => opt.MapFrom(s => s.ConfirmEmail))
-                    .ForMember(d => d.Hash, opt => opt.MapFrom(s => s.Hash))
+                    .ForMember(d => d.ConfirmationToken, opt => opt.MapFrom(s => s.ConfirmationToken))
+                    .ForMember(d => d.ConfirmationTokenExpires, opt => opt.MapFrom(s => s.ConfirmationTokenExpires))
                     .ForMember(d => d.CreatedAt, opt => opt.MapFrom(s => s.CreatedAt))
                     .ForMember(d => d.UpdatedAt, opt => opt.MapFrom(s => s.UpdatedAt));
 
@@ -485,7 +486,7 @@ namespace RestAPI.AutoMapper
                 cfg.CreateMap<DB.OrderStatus, API.OrderStatus>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.Status, opt => opt.MapFrom(s => s.Status));
-                
+
                 cfg.CreateMap<DB.Payment, API.Payment>()
                     .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Id))
                     .ForMember(d => d.FkPaymentMethods, opt => opt.MapFrom(s => s.FkPaymentMethods))
@@ -557,7 +558,8 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email))
                     .ForMember(d => d.Password, opt => opt.MapFrom(s => s.Password))
                     .ForMember(d => d.ConfirmEmail, opt => opt.MapFrom(s => s.ConfirmEmail))
-                    .ForMember(d => d.Hash, opt => opt.MapFrom(s => s.Hash))
+                    .ForMember(d => d.ConfirmationToken, opt => opt.MapFrom(s => s.ConfirmationToken))
+                    .ForMember(d => d.ConfirmationTokenExpires, opt => opt.MapFrom(s => s.ConfirmationTokenExpires))
                     .ForMember(d => d.CreatedAt, opt => opt.MapFrom(s => s.CreatedAt))
                     .ForMember(d => d.UpdatedAt, opt => opt.MapFrom(s => s.UpdatedAt));
 

@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class BasePantsCuffsService {
-  static async GetBasePantsCuffsCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBasePantsCuffsCount', login, password);
+  static async GetBasePantsCuffsCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBasePantsCuffsCount', token);
   }
 
-  static async GetBasePantsCuffsFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBasePantsCuffsFields', login, password);
+  static async GetBasePantsCuffsFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBasePantsCuffsFields', token);
   }
 
-  static async GetBasePantsCuffs(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBasePantsCuffs', login, password, null, { limit, page });
+  static async GetBasePantsCuffs(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBasePantsCuffs', token, null, { limit, page });
   }
 
-  static async GetBasePantsCuffsById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBasePantsCuffsById', login, password, null, { id });
+  static async GetBasePantsCuffsById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBasePantsCuffsById', token, null, { id });
   }
 
-  static async CreateBasePantsCuffs(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateBasePantsCuffs', login, password, newRecord);
+  static async CreateBasePantsCuffs(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateBasePantsCuffs', token, newRecord);
   }
 
-  static async UpdateBasePantsCuffs(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateBasePantsCuffs', login, password, oldRecord);
+  static async UpdateBasePantsCuffs(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateBasePantsCuffs', token, oldRecord);
   }
 
-  static async DeleteBasePantsCuffs(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteBasePantsCuffs', login, password, null, { id });
+  static async DeleteBasePantsCuffs(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteBasePantsCuffs', token, null, { id });
   }
 }

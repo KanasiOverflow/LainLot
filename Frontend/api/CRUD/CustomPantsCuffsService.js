@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class CustomPantsCuffsService {
-  static async GetCustomPantsCuffsCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomPantsCuffsCount', login, password);
+  static async GetCustomPantsCuffsCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomPantsCuffsCount', token);
   }
 
-  static async GetCustomPantsCuffsFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomPantsCuffsFields', login, password);
+  static async GetCustomPantsCuffsFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomPantsCuffsFields', token);
   }
 
-  static async GetCustomPantsCuffs(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomPantsCuffs', login, password, null, { limit, page });
+  static async GetCustomPantsCuffs(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomPantsCuffs', token, null, { limit, page });
   }
 
-  static async GetCustomPantsCuffsById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomPantsCuffsById', login, password, null, { id });
+  static async GetCustomPantsCuffsById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomPantsCuffsById', token, null, { id });
   }
 
-  static async CreateCustomPantsCuffs(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateCustomPantsCuffs', login, password, newRecord);
+  static async CreateCustomPantsCuffs(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateCustomPantsCuffs', token, newRecord);
   }
 
-  static async UpdateCustomPantsCuffs(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateCustomPantsCuffs', login, password, oldRecord);
+  static async UpdateCustomPantsCuffs(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateCustomPantsCuffs', token, oldRecord);
   }
 
-  static async DeleteCustomPantsCuffs(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteCustomPantsCuffs', login, password, null, { id });
+  static async DeleteCustomPantsCuffs(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteCustomPantsCuffs', token, null, { id });
   }
 }

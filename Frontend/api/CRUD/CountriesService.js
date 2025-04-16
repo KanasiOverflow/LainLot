@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class CountriesService {
-  static async GetCountriesCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCountriesCount', login, password);
+  static async GetCountriesCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCountriesCount', token);
   }
 
-  static async GetCountriesFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCountriesFields', login, password);
+  static async GetCountriesFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCountriesFields', token);
   }
 
-  static async GetCountries(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCountries', login, password, null, { limit, page });
+  static async GetCountries(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCountries', token, null, { limit, page });
   }
 
-  static async GetCountriesById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCountriesById', login, password, null, { id });
+  static async GetCountriesById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCountriesById', token, null, { id });
   }
 
-  static async CreateCountries(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateCountries', login, password, newRecord);
+  static async CreateCountries(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateCountries', token, newRecord);
   }
 
-  static async UpdateCountries(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateCountries', login, password, oldRecord);
+  static async UpdateCountries(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateCountries', token, oldRecord);
   }
 
-  static async DeleteCountries(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteCountries', login, password, null, { id });
+  static async DeleteCountries(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteCountries', token, null, { id });
   }
 }

@@ -82,7 +82,7 @@ namespace NUnitTests.Classes
             return
             [
                 new BaseSportSuit
-                {            
+                {
                     Id = 1, FkBaseNecklines = 1, FkBaseSweaters = 1, FkBaseSleeves = 1, FkBaseSleeveCuffsLeft = 1, FkBaseSleeveCuffsRight = 1, FkBaseBelts = 1, FkBasePants = 1, FkBasePantsCuffsLeft = 1, FkBasePantsCuffsRight = 1 },
                 new BaseSportSuit
                 {
@@ -394,8 +394,8 @@ namespace NUnitTests.Classes
         {
             return
             [
-                new User { Id = 1, FkUserRoles = 1, Login = "user1", Email = "user1@example.com", Password = "password1", ConfirmEmail = 1, Hash = "hash1", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
-                new User { Id = 2, FkUserRoles = 2, Login = "user2", Email = "user2@example.com", Password = "password2", ConfirmEmail = 1, Hash = "hash2", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+                new User { Id = 1, FkUserRoles = 1, Login = "user1", Email = "user1@example.com", Password = "password1", ConfirmEmail = false, ConfirmationToken = "ConfirmationToken1", ConfirmationTokenExpires = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new User { Id = 2, FkUserRoles = 2, Login = "user2", Email = "user2@example.com", Password = "password2", ConfirmEmail = false, ConfirmationToken = "ConfirmationToken2", ConfirmationTokenExpires = DateTime.Now, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
             ];
         }
 

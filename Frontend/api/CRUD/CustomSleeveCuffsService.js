@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class CustomSleeveCuffsService {
-  static async GetCustomSleeveCuffsCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomSleeveCuffsCount', login, password);
+  static async GetCustomSleeveCuffsCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomSleeveCuffsCount', token);
   }
 
-  static async GetCustomSleeveCuffsFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomSleeveCuffsFields', login, password);
+  static async GetCustomSleeveCuffsFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomSleeveCuffsFields', token);
   }
 
-  static async GetCustomSleeveCuffs(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomSleeveCuffs', login, password, null, { limit, page });
+  static async GetCustomSleeveCuffs(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomSleeveCuffs', token, null, { limit, page });
   }
 
-  static async GetCustomSleeveCuffsById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomSleeveCuffsById', login, password, null, { id });
+  static async GetCustomSleeveCuffsById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomSleeveCuffsById', token, null, { id });
   }
 
-  static async CreateCustomSleeveCuffs(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateCustomSleeveCuffs', login, password, newRecord);
+  static async CreateCustomSleeveCuffs(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateCustomSleeveCuffs', token, newRecord);
   }
 
-  static async UpdateCustomSleeveCuffs(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateCustomSleeveCuffs', login, password, oldRecord);
+  static async UpdateCustomSleeveCuffs(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateCustomSleeveCuffs', token, oldRecord);
   }
 
-  static async DeleteCustomSleeveCuffs(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteCustomSleeveCuffs', login, password, null, { id });
+  static async DeleteCustomSleeveCuffs(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteCustomSleeveCuffs', token, null, { id });
   }
 }

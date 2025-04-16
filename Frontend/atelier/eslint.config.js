@@ -47,15 +47,28 @@ export default [
       'react-hooks': reactHooksPlugin,
     },
     rules: {
-      'prettier/prettier': 'error', // Using Prettier
-      quotes: ['error', 'single'], // Single quotes
-      semi: ['error', 'always'], // Always put `;`
+      'prettier/prettier': [
+        'error',
+        { singleQuote: true, jsxSingleQuote: false },
+      ], // Use Prettier
+      quotes: [
+        'error',
+        'single',
+        { avoidEscape: true, allowTemplateLiterals: true },
+      ], // Single quotes in JS
+      semi: ['error', 'always'], // Always use semicolons
       'no-unused-vars': 'warn', // Warning for unused variables
-      'no-console': 'off', // Allow `console.log`
+      'no-console': 'off', // Allow console.log
       'react/jsx-uses-react': 'error',
       'react/jsx-uses-vars': 'error',
-      'react-hooks/rules-of-hooks': 'error', // Checks hook rules
+      'react-hooks/rules-of-hooks': 'error', // Checks hooks rules
       'react-hooks/exhaustive-deps': 'warn', // Checks effect dependencies
+
+      // Removing extra curly braces {} in JSX
+      'react/jsx-curly-brace-presence': [
+        'error',
+        { props: 'never', children: 'ignore' },
+      ],
     },
   },
 ];

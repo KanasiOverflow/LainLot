@@ -9,7 +9,7 @@ export default function TablesSidebar({ tables, setCurrentTable }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredTables = tables.filter((table) =>
-    table.toLowerCase().includes(searchQuery.toLowerCase()),
+    table.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (

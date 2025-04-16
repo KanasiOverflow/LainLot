@@ -26,7 +26,12 @@
     "start": "react-scripts --max-http-header-size=1024 start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:format": "npx eslint . --fix && npx prettier --write ."
   },
   "eslintConfig": {
     "extends": [

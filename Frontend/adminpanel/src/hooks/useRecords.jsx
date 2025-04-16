@@ -34,7 +34,7 @@ export const useRecords = (records, sort, query) => {
       return Object.values(record).some((value) =>
         String(value ?? '')
           .toLowerCase()
-          .includes(lowerQuery),
+          .includes(lowerQuery)
       );
     });
   }, [query, sortedRecords]);

@@ -3906,13 +3906,14 @@ namespace NUnitTests.DatabaseRepository
             {
                 Id = 3,
                 Login = "new_user",
-                Hash = "hashed_password",
+                ConfirmationToken = "ConfirmationToken",
+                ConfirmationTokenExpires = DateTime.Now,
                 Email = "new_user@example.com",
                 FkUserRoles = 1,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 Password = "Password",
-                ConfirmEmail = 0
+                ConfirmEmail = false
             };
 
             await _userRepository?.Add(entity);

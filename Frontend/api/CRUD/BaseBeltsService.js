@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class BaseBeltsService {
-  static async GetBaseBeltsCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseBeltsCount', login, password);
+  static async GetBaseBeltsCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBaseBeltsCount', token);
   }
 
-  static async GetBaseBeltsFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseBeltsFields', login, password);
+  static async GetBaseBeltsFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBaseBeltsFields', token);
   }
 
-  static async GetBaseBelts(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseBelts', login, password, null, { limit, page });
+  static async GetBaseBelts(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBaseBelts', token, null, { limit, page });
   }
 
-  static async GetBaseBeltsById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBaseBeltsById', login, password, null, { id });
+  static async GetBaseBeltsById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBaseBeltsById', token, null, { id });
   }
 
-  static async CreateBaseBelts(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateBaseBelts', login, password, newRecord);
+  static async CreateBaseBelts(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateBaseBelts', token, newRecord);
   }
 
-  static async UpdateBaseBelts(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateBaseBelts', login, password, oldRecord);
+  static async UpdateBaseBelts(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateBaseBelts', token, oldRecord);
   }
 
-  static async DeleteBaseBelts(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteBaseBelts', login, password, null, { id });
+  static async DeleteBaseBelts(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteBaseBelts', token, null, { id });
   }
 }

@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class UserOrderHistoryService {
-  static async GetUserOrderHistoryCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUserOrderHistoryCount', login, password);
+  static async GetUserOrderHistoryCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetUserOrderHistoryCount', token);
   }
 
-  static async GetUserOrderHistoryFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUserOrderHistoryFields', login, password);
+  static async GetUserOrderHistoryFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetUserOrderHistoryFields', token);
   }
 
-  static async GetUserOrderHistory(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUserOrderHistory', login, password, null, { limit, page });
+  static async GetUserOrderHistory(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetUserOrderHistory', token, null, { limit, page });
   }
 
-  static async GetUserOrderHistoryById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetUserOrderHistoryById', login, password, null, { id });
+  static async GetUserOrderHistoryById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetUserOrderHistoryById', token, null, { id });
   }
 
-  static async CreateUserOrderHistory(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateUserOrderHistory', login, password, newRecord);
+  static async CreateUserOrderHistory(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateUserOrderHistory', token, newRecord);
   }
 
-  static async UpdateUserOrderHistory(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateUserOrderHistory', login, password, oldRecord);
+  static async UpdateUserOrderHistory(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateUserOrderHistory', token, oldRecord);
   }
 
-  static async DeleteUserOrderHistory(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteUserOrderHistory', login, password, null, { id });
+  static async DeleteUserOrderHistory(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteUserOrderHistory', token, null, { id });
   }
 }

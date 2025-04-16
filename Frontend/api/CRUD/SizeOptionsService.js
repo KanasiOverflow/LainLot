@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class SizeOptionsService {
-  static async GetSizeOptionsCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetSizeOptionsCount', login, password);
+  static async GetSizeOptionsCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetSizeOptionsCount', token);
   }
 
-  static async GetSizeOptionsFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetSizeOptionsFields', login, password);
+  static async GetSizeOptionsFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetSizeOptionsFields', token);
   }
 
-  static async GetSizeOptions(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetSizeOptions', login, password, null, { limit, page });
+  static async GetSizeOptions(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetSizeOptions', token, null, { limit, page });
   }
 
-  static async GetSizeOptionsById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetSizeOptionsById', login, password, null, { id });
+  static async GetSizeOptionsById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetSizeOptionsById', token, null, { id });
   }
 
-  static async CreateSizeOptions(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateSizeOptions', login, password, newRecord);
+  static async CreateSizeOptions(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateSizeOptions', token, newRecord);
   }
 
-  static async UpdateSizeOptions(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateSizeOptions', login, password, oldRecord);
+  static async UpdateSizeOptions(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateSizeOptions', token, oldRecord);
   }
 
-  static async DeleteSizeOptions(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteSizeOptions', login, password, null, { id });
+  static async DeleteSizeOptions(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteSizeOptions', token, null, { id });
   }
 }

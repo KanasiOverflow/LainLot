@@ -5,9 +5,9 @@ export default function Dropdown() {
   const { t } = useTranslation();
 
   return (
-    <div className={'dropdown'}>
+    <div className="dropdown">
       <button
-        className={'btn btn-secondary dropdown-toggle'}
+        className="btn btn-secondary dropdown-toggle"
         type="button"
         id="dropdownMenuButton"
         data-toggle="dropdown"
@@ -16,14 +16,14 @@ export default function Dropdown() {
       >
         {t('AllCategory')}
       </button>
-      <div className={'dropdown-menu'} aria-labelledby="dropdownMenuButton">
-        <a className={'dropdown-item'} href="/home">
+      <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a className="dropdown-item" href="/home">
           Action
         </a>
-        <a className={'dropdown-item'} href="/home">
+        <a className="dropdown-item" href="/home">
           Another action
         </a>
-        <a className={'dropdown-item'} href="/home">
+        <a className="dropdown-item" href="/home">
           Something else here
         </a>
       </div>

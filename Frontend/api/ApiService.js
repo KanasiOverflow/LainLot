@@ -3,18 +3,27 @@ import { get200, get201 } from './utils/responseCodes.js';
 import { getRestAPIUrl } from './utils/getRestAPIUrl.js';
 
 export default class ApiService {
-    static async sendRequest(method, controller, endpoint, login, password, data = null, params = null) {
+    static async sendRequest(service, method, controller, endpoint, token, data = null, params = null) {
+
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         const options = {
             method,
-            url: `${getRestAPIUrl()}/${controller}/${endpoint}`,
-            auth: { username: login, password: password },
-            headers: { 'Content-Type': 'application/json' },
+            url: `${getRestAPIUrl(service)}/${controller}/${endpoint}`,
+            headers,
             data: data ? JSON.stringify(data) : null,
             params,
         };
 
         try {
             const response = await axios(options);
+
             if (
                 (method === 'post' || method === 'put') &&
                 response.status === get201().Code &&
@@ -29,9 +38,15 @@ export default class ApiService {
                 return response;
             }
         } catch (error) {
-            console.error(`Error in ${endpoint}:`, error.response?.data?.Message || error.message);
-            return error.response?.data?.Message || null;
+
+            const code = error.response?.data ?? 'InternalServerError';
+
+            if (error.response?.status === 401) {
+                console.warn('Unauthorized: clearing session');
+            }
+
+            console.warn(`Error in ${endpoint}:`, error.response?.data?.Message || error.message);
+            return code;
         }
-        return null;
     }
 }

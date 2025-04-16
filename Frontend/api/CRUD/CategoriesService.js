@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class CategoriesService {
-  static async GetCategoriesCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCategoriesCount', login, password);
+  static async GetCategoriesCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCategoriesCount', token);
   }
 
-  static async GetCategoriesFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCategoriesFields', login, password);
+  static async GetCategoriesFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCategoriesFields', token);
   }
 
-  static async GetCategories(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCategories', login, password, null, { limit, page });
+  static async GetCategories(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCategories', token, null, { limit, page });
   }
 
-  static async GetCategoriesById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCategoriesById', login, password, null, { id });
+  static async GetCategoriesById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCategoriesById', token, null, { id });
   }
 
-  static async CreateCategories(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateCategories', login, password, newRecord);
+  static async CreateCategories(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateCategories', token, newRecord);
   }
 
-  static async UpdateCategories(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateCategories', login, password, oldRecord);
+  static async UpdateCategories(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateCategories', token, oldRecord);
   }
 
-  static async DeleteCategories(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteCategories', login, password, null, { id });
+  static async DeleteCategories(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteCategories', token, null, { id });
   }
 }

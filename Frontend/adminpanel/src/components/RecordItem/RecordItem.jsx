@@ -7,9 +7,11 @@ import GeneralButton from '../UI/button/GeneralButton.jsx';
 import DisplayImage from '../UI/image/DisplayImage.jsx';
 import mcss from './RecordItem.module.css';
 
-export default function RecordItem({ record, ref, login, password }) {
-  const { openEditModal, removeRecord, currentTable } = useContext(ModalContext);
-  const { fetchMultipleFkData, foreignKeys, fkError } = useContext(ForeignKeysContext);
+export default function RecordItem({ record, ref, token }) {
+  const { openEditModal, removeRecord, currentTable } =
+    useContext(ModalContext);
+  const { fetchMultipleFkData, foreignKeys, fkError } =
+    useContext(ForeignKeysContext);
 
   const navigate = useNavigate();
 
@@ -22,8 +24,8 @@ export default function RecordItem({ record, ref, login, password }) {
   }, [openEditModal, record]);
 
   const handleRemoveRecord = useCallback(() => {
-    removeRecord(record, login, password);
-  }, [removeRecord, record, login, password]);
+    removeRecord(record, token);
+  }, [removeRecord, record, token]);
 
   useEffect(() => {
     const fkFields = Object.entries(record)
@@ -31,7 +33,7 @@ export default function RecordItem({ record, ref, login, password }) {
       .map(([key, value]) => ({ key, value }));
 
     if (fkFields.length) {
-      fetchMultipleFkData(fkFields, login, password);
+      fetchMultipleFkData(fkFields, token);
     }
     // eslint-disable-next-line
   }, [record, fetchMultipleFkData]);

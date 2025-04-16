@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class CustomPantsService {
-  static async GetCustomPantsCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomPantsCount', login, password);
+  static async GetCustomPantsCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomPantsCount', token);
   }
 
-  static async GetCustomPantsFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomPantsFields', login, password);
+  static async GetCustomPantsFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomPantsFields', token);
   }
 
-  static async GetCustomPants(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomPants', login, password, null, { limit, page });
+  static async GetCustomPants(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomPants', token, null, { limit, page });
   }
 
-  static async GetCustomPantsById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomPantsById', login, password, null, { id });
+  static async GetCustomPantsById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomPantsById', token, null, { id });
   }
 
-  static async CreateCustomPants(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateCustomPants', login, password, newRecord);
+  static async CreateCustomPants(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateCustomPants', token, newRecord);
   }
 
-  static async UpdateCustomPants(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateCustomPants', login, password, oldRecord);
+  static async UpdateCustomPants(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateCustomPants', token, oldRecord);
   }
 
-  static async DeleteCustomPants(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteCustomPants', login, password, null, { id });
+  static async DeleteCustomPants(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteCustomPants', token, null, { id });
   }
 }

@@ -12,9 +12,11 @@ public class User
 
     public string Password { get; set; } = null!;
 
-    public int ConfirmEmail { get; set; }
+    public bool ConfirmEmail { get; set; }
 
-    public string Hash { get; set; } = null!;
+    public string ConfirmationToken { get; set; }
+
+    public DateTime? ConfirmationTokenExpires { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

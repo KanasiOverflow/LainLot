@@ -3,29 +3,29 @@
 namespace RestAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class WeatherForecastController(ILogger<WeatherForecastController> logger) : ControllerBase
+[Route("api/rest/[controller]")]
+public class WeatherForecastRestController(ILogger<WeatherForecastRestController> logger) : ControllerBase
 {
     private static readonly string[] Summaries =
     [
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     ];
 
-    private readonly ILogger<WeatherForecastController> _logger = logger;
+    private readonly ILogger<WeatherForecastRestController> _logger = logger;
 
     [HttpGet]
-    public IEnumerable<WeatherForecast> Get()
+    public IEnumerable<WeatherForecastRest> Get()
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        return [.. Enumerable.Range(1, 5).Select(index => new WeatherForecastRest
         {
             Date = DateTime.Now.AddDays(index),
             TemperatureC = Random.Shared.Next(-20, 55),
             Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        }).ToArray();
+        })];
     }
 }
 
-public class WeatherForecast
+public class WeatherForecastRest
 {
     public DateTime Date { get; set; }
 

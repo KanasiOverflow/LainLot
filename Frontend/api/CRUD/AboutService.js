@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class AboutService {
-  static async GetAboutCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetAboutCount', login, password);
+  static async GetAboutCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetAboutCount', token);
   }
 
-  static async GetAboutFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetAboutFields', login, password);
+  static async GetAboutFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetAboutFields', token);
   }
 
-  static async GetAbout(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetAbout', login, password, null, { limit, page });
+  static async GetAbout(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetAbout', token, null, { limit, page });
   }
 
-  static async GetAboutById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetAboutById', login, password, null, { id });
+  static async GetAboutById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetAboutById', token, null, { id });
   }
 
-  static async CreateAbout(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateAbout', login, password, newRecord);
+  static async CreateAbout(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateAbout', token, newRecord);
   }
 
-  static async UpdateAbout(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateAbout', login, password, oldRecord);
+  static async UpdateAbout(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateAbout', token, oldRecord);
   }
 
-  static async DeleteAbout(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteAbout', login, password, null, { id });
+  static async DeleteAbout(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteAbout', token, null, { id });
   }
 }

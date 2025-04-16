@@ -9,17 +9,26 @@ import { useFetching } from '../../hooks/useFetching.jsx';
 export const DataContext = createContext(null);
 
 export const DataProvider = ({ children }) => {
-  const [currentTable, setCurrentTable] = useState('');
+  const [currentTable, setCurrentTable] = useState('About');
   const [currentRecords, setCurrentRecords] = useState([]);
   const [recordFields, setRecordFields] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
 
   const [fetchRecords, isRecordLoading, postError] = useFetching(
-    async (limit, page, login, password) => {
+    async (limit, page, token) => {
       try {
-        const responseData = await getAllRecords(currentTable, limit, page, login, password);
-        const responseFields = await getRecordFields(currentTable, login, password);
-        const responseTotalCount = await getTableTotalCount(currentTable, login, password);
+        const responseData = await getAllRecords(
+          currentTable,
+          limit,
+          page,
+          token
+        );
+
+        const responseFields = await getRecordFields(currentTable, token);
+        const responseTotalCount = await getTableTotalCount(
+          currentTable,
+          token
+        );
 
         if (responseData && responseData.data) {
           setCurrentTable(currentTable);
@@ -45,7 +54,7 @@ export const DataProvider = ({ children }) => {
         totalPages,
         fetchRecords,
         isRecordLoading,
-        postError
+        postError,
       }}
     >
       {children}

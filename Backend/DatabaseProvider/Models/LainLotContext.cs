@@ -14,7 +14,7 @@ public partial class LainLotContext : DbContext
     private readonly ILogger<LainLotContext> _logger;
 
     public LainLotContext(DbContextOptions<LainLotContext> options, ILogger<LainLotContext> logger)
-         : base(options)
+        : base(options)
     {
         _logger = logger;
     }
@@ -700,6 +700,8 @@ public partial class LainLotContext : DbContext
 
             entity.HasIndex(e => e.Login, "Users_Login_key").IsUnique();
 
+            entity.Property(e => e.ConfirmationTokenExpires)
+                .HasColumnType("timestamp with time zone");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone");

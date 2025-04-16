@@ -17,14 +17,22 @@ export default function AppRouter() {
       {isAuth ? (
         <Routes>
           {privateRoutes.map((route) => (
-            <Route key={route.path} path={route.path} element={route.component} />
+            <Route
+              key={route.path}
+              path={route.path}
+              element={route.component}
+            />
           ))}
           <Route path="/*" element={<Navigate to="/records" replace />} />
         </Routes>
       ) : (
         <Routes>
           {publicRoutes.map((route) => (
-            <Route key={route.path} path={route.path} element={route.component} />
+            <Route
+              key={route.path}
+              path={route.path}
+              element={route.component}
+            />
           ))}
           <Route path="/*" element={<Navigate to="/login" replace />} />
         </Routes>

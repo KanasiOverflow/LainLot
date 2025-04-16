@@ -7,7 +7,7 @@ export default function Footbar() {
 
   return (
     <div className={mcss.footerSection + ' ' + mcss.layoutPadding}>
-      <div className={'container'}>
+      <div className="container">
         <div className={mcss.footerLogo}>
           <a href="/">
             <img src="/images/lainlot_footer_logo.png" alt="Footer Logo" />
@@ -29,6 +29,9 @@ export default function Footbar() {
             </li>
             <li>
               <a href="/Profile">{t('Profile')}</a>
+            </li>
+            <li>
+              <a href="/Registration">{t('Registration')}</a>
             </li>
           </ul>
         </div>

@@ -32,8 +32,7 @@ function Records() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
   const [DBTables, setDBTables] = useState([]);
 
-  const login = secureLocalStorage.getItem('login');
-  const password = secureLocalStorage.getItem('password');
+  const token = secureLocalStorage.getItem('token');
 
   const sortedAndSearchedRecords = useRecords(
     currentRecords,
@@ -48,16 +47,17 @@ function Records() {
 
   useEffect(() => {
     if (!fetchRecords) {
-      console.error("fetchRecords is undefined! Check ModalProvider and DataProvider.");
+      console.error(
+        'fetchRecords is undefined! Check ModalProvider and DataProvider.'
+      );
       return;
     }
-  
-    if (login && password) {
-      fetchRecords(limit, page, login, password);
+
+    if (token) {
+      fetchRecords(limit, page, token);
     }
     // eslint-disable-next-line
   }, [page, limit, currentTable]);
-  
 
   useEffect(() => {
     fetchTables();
@@ -69,7 +69,9 @@ function Records() {
       {tablesError && <h1>Cannot load list of tables!</h1>}
 
       {isTablesLoading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>
+        <div
+          style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}
+        >
           <Loader />
         </div>
       ) : (
@@ -85,28 +87,36 @@ function Records() {
       )}
 
       <GeneralModal>
-        <RecordForm login={login} password={password} />
+        <RecordForm token={token} />
       </GeneralModal>
 
       <hr style={{ margin: '15px 0' }} />
 
-      <RecordFilter filter={filter} setFilter={setFilter} fields={recordFields} />
+      <RecordFilter
+        filter={filter}
+        setFilter={setFilter}
+        fields={recordFields}
+      />
 
       <PageCountSwitcher />
 
       <hr style={{ margin: '15px 0' }} />
 
-      {postError && <h3 style={{ textAlign: 'center', color: 'red' }}>{postError}</h3>}
+      {postError && (
+        <h3 style={{ textAlign: 'center', color: 'red' }}>{postError}</h3>
+      )}
 
       {isRecordLoading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}>
+        <div
+          style={{ display: 'flex', justifyContent: 'center', marginTop: 50 }}
+        >
           <Loader />
         </div>
       ) : (
-        <RecordList records={sortedAndSearchedRecords} login={login} password={password} />
+        <RecordList records={sortedAndSearchedRecords} token={token} />
       )}
 
-      <Pagination login={login} password={password}/>
+      <Pagination token={token} />
     </div>
   );
 }

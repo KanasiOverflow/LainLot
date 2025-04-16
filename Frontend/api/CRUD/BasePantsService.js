@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class BasePantsService {
-  static async GetBasePantsCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBasePantsCount', login, password);
+  static async GetBasePantsCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBasePantsCount', token);
   }
 
-  static async GetBasePantsFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBasePantsFields', login, password);
+  static async GetBasePantsFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBasePantsFields', token);
   }
 
-  static async GetBasePants(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBasePants', login, password, null, { limit, page });
+  static async GetBasePants(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBasePants', token, null, { limit, page });
   }
 
-  static async GetBasePantsById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetBasePantsById', login, password, null, { id });
+  static async GetBasePantsById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetBasePantsById', token, null, { id });
   }
 
-  static async CreateBasePants(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateBasePants', login, password, newRecord);
+  static async CreateBasePants(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateBasePants', token, newRecord);
   }
 
-  static async UpdateBasePants(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateBasePants', login, password, oldRecord);
+  static async UpdateBasePants(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateBasePants', token, oldRecord);
   }
 
-  static async DeleteBasePants(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteBasePants', login, password, null, { id });
+  static async DeleteBasePants(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteBasePants', token, null, { id });
   }
 }

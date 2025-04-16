@@ -1,31 +1,31 @@
 import ApiService from '../ApiService.js';
 
 export default class CustomSleevesService {
-  static async GetCustomSleevesCount(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomSleevesCount', login, password);
+  static async GetCustomSleevesCount(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomSleevesCount', token);
   }
 
-  static async GetCustomSleevesFields(login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomSleevesFields', login, password);
+  static async GetCustomSleevesFields(token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomSleevesFields', token);
   }
 
-  static async GetCustomSleeves(limit, page, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomSleeves', login, password, null, { limit, page });
+  static async GetCustomSleeves(limit, page, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomSleeves', token, null, { limit, page });
   }
 
-  static async GetCustomSleevesById(id, login, password) {
-    return ApiService.sendRequest('get', 'Database', 'GetCustomSleevesById', login, password, null, { id });
+  static async GetCustomSleevesById(id, token) {
+    return ApiService.sendRequest('rest', 'get', 'Database', 'GetCustomSleevesById', token, null, { id });
   }
 
-  static async CreateCustomSleeves(newRecord, login, password) {
-    return ApiService.sendRequest('post', 'Database', 'CreateCustomSleeves', login, password, newRecord);
+  static async CreateCustomSleeves(newRecord, token) {
+    return ApiService.sendRequest('rest', 'post', 'Database', 'CreateCustomSleeves', token, newRecord);
   }
 
-  static async UpdateCustomSleeves(oldRecord, login, password) {
-    return ApiService.sendRequest('put', 'Database', 'UpdateCustomSleeves', login, password, oldRecord);
+  static async UpdateCustomSleeves(oldRecord, token) {
+    return ApiService.sendRequest('rest', 'put', 'Database', 'UpdateCustomSleeves', token, oldRecord);
   }
 
-  static async DeleteCustomSleeves(id, login, password) {
-    return ApiService.sendRequest('delete', 'Database', 'DeleteCustomSleeves', login, password, null, { id });
+  static async DeleteCustomSleeves(id, token) {
+    return ApiService.sendRequest('rest', 'delete', 'Database', 'DeleteCustomSleeves', token, null, { id });
   }
 }
