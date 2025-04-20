@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, useGLTF } from '@react-three/drei'
 import { useState, useEffect } from 'react'
+import * as THREE from 'three'
 import styles from './ModelViewer.module.css'
 
 const Model = ({ url, settings }) => {
@@ -10,7 +11,11 @@ const Model = ({ url, settings }) => {
     Object.entries(settings).forEach(([name, color]) => {
       const mesh = scene.getObjectByName(name)
       if (mesh && mesh.material) {
-        mesh.material.color.set(color)
+        mesh.material = new THREE.MeshStandardMaterial({
+          color: new THREE.Color(color),
+          metalness: 0,
+          roughness: 1
+        })
       }
     })
   }, [scene, settings])
@@ -21,18 +26,13 @@ const Model = ({ url, settings }) => {
 export default function ModelViewer() {
   const [gender, setGender] = useState('male')
 
-  const parts = [
-    'Sweater', 'LeftSleeve', 'RightSleeve', 'Pants',
-    'Neckline', 'Hood', 'Waistband', 'SleeveCuffs', 'PantCuffs'
-  ]
-
-  const [colors, setColors] = useState(
-    Object.fromEntries(parts.map(p => [`${p}_Male`, '#cccccc']))
-  )
+  const [colors, setColors] = useState({
+    Clothes_Upper: '#ff0000',
+    Clothes_Lower: '#0000ff'
+  })
 
   const handleColorChange = (part, value) => {
-    const key = `${part}_${gender.charAt(0).toUpperCase() + gender.slice(1)}`
-    setColors(prev => ({ ...prev, [key]: value }))
+    setColors(prev => ({ ...prev, [part]: value }))
   }
 
   const modelUrl = `/models/${gender === 'male' ? 'Mannequin_Male.glb' : 'Mannequin_Female.glb'}`
@@ -52,28 +52,23 @@ export default function ModelViewer() {
         <div className={styles.fixedHeader}>
           <h2>Настройка костюма</h2>
           <div className={styles.rowButtons}>
-            <button onClick={() => setGender('male')}>Мужской</button>
-            <button onClick={() => setGender('female')}>Женский</button>
+            <button
+              className={gender === 'male' ? styles.active : ''}
+              onClick={() => setGender('male')}
+            >
+              Мужской
+            </button>
+            <button
+              className={gender === 'female' ? styles.active : ''}
+              onClick={() => setGender('female')}
+            >
+              Женский
+            </button>
           </div>
+
         </div>
 
         <div className={styles.scrollable}>
-          <div className={styles.section}>
-            <h3>Цвета</h3>
-            <div className={styles.colorGrid}>
-              {parts.map(part => (
-                <label key={part}>
-                  {part}
-                  <input
-                    type="color"
-                    value={colors[`${part}_${gender.charAt(0).toUpperCase() + gender.slice(1)}`]}
-                    onChange={(e) => handleColorChange(part, e.target.value)}
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
-
           <div className={styles.section}>
             <h3>Размер</h3>
             <div className={styles.grid}>
@@ -93,15 +88,23 @@ export default function ModelViewer() {
           </div>
 
           <div className={styles.section}>
-            <h3>Детали костюма</h3>
-            <div className={styles.grid}>
-              <button>Капюшон</button>
-              <button>Горловина</button>
-              <button>Рукава</button>
-              <button>Манжеты рук</button>
-              <button>Пояс</button>
-              <button>Манжеты брюк</button>
-            </div>
+            <h3>Покраска</h3>
+            <label>
+              Майка (Clothes_Upper)
+              <input
+                type="color"
+                value={colors.Clothes_Upper}
+                onChange={(e) => handleColorChange('Clothes_Upper', e.target.value)}
+              />
+            </label>
+            <label>
+              Шорты (Clothes_Lower)
+              <input
+                type="color"
+                value={colors.Clothes_Lower}
+                onChange={(e) => handleColorChange('Clothes_Lower', e.target.value)}
+              />
+            </label>
           </div>
         </div>
 
