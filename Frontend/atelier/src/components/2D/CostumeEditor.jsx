@@ -26,7 +26,7 @@ const CostumeEditor = () => {
       y: pointer.y,
       handleLeft: { x: pointer.x - handleOffset, y: pointer.y },
       handleRight: { x: pointer.x + handleOffset, y: pointer.y },
-      useCurve: true
+      useCurve: false
     };
     setPoints([...points, newPoint]);
   };
