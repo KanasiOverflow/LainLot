@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Stage, Layer, Circle, Line } from 'react-konva';
+import { Stage, Layer, Circle, Line, Path, Text } from 'react-konva';
 import styles from './CostumeEditor.module.css';
 
 const CostumeEditor = () => {
@@ -13,64 +13,110 @@ const CostumeEditor = () => {
   };
 
   const [points, setPoints] = useState([]);
-  const [lines, setLines] = useState([]);
-  const [connectingIndex, setConnectingIndex] = useState(null);
-  const [closedShapes, setClosedShapes] = useState([]);
   const [fillColor, setFillColor] = useState('rgba(0, 128, 255, 0.3)');
+  const [customClose, setCustomClose] = useState([]);
+  const [fillEnabled, setFillEnabled] = useState(false);
 
   const addPoint = (e) => {
     const stage = e.target.getStage();
     const pointer = stage.getPointerPosition();
-    setPoints([...points, pointer]);
+    const handleOffset = 40;
+    const newPoint = {
+      x: pointer.x,
+      y: pointer.y,
+      handleLeft: { x: pointer.x - handleOffset, y: pointer.y },
+      handleRight: { x: pointer.x + handleOffset, y: pointer.y },
+      useCurve: true
+    };
+    setPoints([...points, newPoint]);
   };
 
-  const handlePointClick = (index) => {
-    if (connectingIndex === null) {
-      setConnectingIndex(index);
-    } else if (connectingIndex !== index) {
-      const newLines = [...lines, [connectingIndex, index]];
+  const toggleCurve = (index) => {
+    const newPoints = [...points];
+    newPoints[index].useCurve = !newPoints[index].useCurve;
+    setPoints(newPoints);
+  };
 
-      // Проверка на замкнутость: возвращение к начальной точке
-      if (index === 0) {
-        const shapeIndices = newLines.map(([start]) => start).concat(0);
-        const unique = [...new Set(shapeIndices)];
-        if (unique.length >= 3) {
-          setClosedShapes([...closedShapes, unique]);
-        }
-      }
-
-      setLines(newLines);
-      setConnectingIndex(null);
+  const handleDragMove = (e, index, mode) => {
+    const { x, y } = e.target.position();
+    if (mode === 'anchor') {
+      const p = points[index];
+      const dx = x - p.x;
+      const dy = y - p.y;
+      updatePoint(index, {
+        x,
+        y,
+        handleLeft: { x: p.handleLeft.x + dx, y: p.handleLeft.y + dy },
+        handleRight: { x: p.handleRight.x + dx, y: p.handleRight.y + dy },
+      });
     } else {
-      setConnectingIndex(null);
+      updateHandle(index, mode === 'handle-left' ? 'handleLeft' : 'handleRight', { x, y });
     }
   };
 
-  const handleDragMove = (e, index) => {
+  const updatePoint = (index, updated) => {
     const newPoints = [...points];
-    newPoints[index] = {
-      x: e.target.x(),
-      y: e.target.y()
-    };
+    newPoints[index] = { ...newPoints[index], ...updated };
+    setPoints(newPoints);
+  };
+
+  const updateHandle = (index, side, pos) => {
+    const newPoints = [...points];
+    newPoints[index][side] = pos;
     setPoints(newPoints);
   };
 
   const handleUndo = () => {
-    if (points.length === 0) return;
     const newPoints = [...points];
-    const removedIndex = newPoints.length - 1;
     newPoints.pop();
     setPoints(newPoints);
-    setLines(lines.filter(([start, end]) => start !== removedIndex && end !== removedIndex));
-    setClosedShapes(closedShapes.filter(shape => !shape.includes(removedIndex)));
-    if (connectingIndex === removedIndex) setConnectingIndex(null);
+    setCustomClose([]);
   };
 
   const handleClear = () => {
     setPoints([]);
-    setLines([]);
-    setClosedShapes([]);
-    setConnectingIndex(null);
+    setCustomClose([]);
+    setFillEnabled(false);
+  };
+
+  const handleCustomClose = () => {
+    if (points.length >= 2) {
+      setCustomClose([0, points.length - 1]);
+    }
+  };
+
+  const handleToggleFill = () => {
+    if (customClose.length === 2) {
+      setFillEnabled(true);
+    }
+  };
+
+  const buildPath = () => {
+    if (points.length < 2) return '';
+    let d = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1];
+      const curr = points[i];
+      if (curr.useCurve) {
+        d += ` C ${prev.handleRight.x} ${prev.handleRight.y}, ${curr.handleLeft.x} ${curr.handleLeft.y}, ${curr.x} ${curr.y}`;
+      } else {
+        d += ` L ${curr.x} ${curr.y}`;
+      }
+    }
+    if (customClose.length === 2) {
+      const [startIdx, endIdx] = customClose;
+      const start = points[endIdx];
+      const end = points[startIdx];
+      if (end.useCurve) {
+        d += ` C ${start.handleRight.x} ${start.handleRight.y}, ${end.handleLeft.x} ${end.handleLeft.y}, ${end.x} ${end.y}`;
+      } else {
+        d += ` L ${end.x} ${end.y}`;
+      }
+      if (fillEnabled) {
+        d += ' Z';
+      }
+    }
+    return d;
   };
 
   return (
@@ -87,55 +133,74 @@ const CostumeEditor = () => {
               style={{ backgroundColor: '#f0f0f0', border: '1px solid #ccc' }}
             >
               <Layer>
-                {/* Заливка замкнутых фигур */}
-                {closedShapes.map((shape, i) => (
-                  <Line
-                    key={`fill-${i}`}
-                    points={shape.map(idx => [points[idx]?.x, points[idx]?.y]).flat()}
-                    closed
-                    fill={fillColor}
-                    stroke="none"
-                  />
-                ))}
+                <Path
+                  data={buildPath()}
+                  fill={fillEnabled ? fillColor : ''}
+                  stroke="black"
+                  strokeWidth={2}
+                />
 
-                {/* Линии */}
-                {lines.map(([start, end], i) => (
-                  <Line
-                    key={i}
-                    points={[
-                      points[start]?.x ?? 0,
-                      points[start]?.y ?? 0,
-                      points[end]?.x ?? 0,
-                      points[end]?.y ?? 0
-                    ]}
-                    stroke="black"
-                    strokeWidth={2}
-                  />
-                ))}
-
-                {/* Точки */}
-                {points.map((point, i) => (
-                  <Circle
-                    key={i}
-                    x={point.x}
-                    y={point.y}
-                    radius={6}
-                    fill={connectingIndex === i ? "red" : "blue"}
-                    draggable
-                    onClick={() => handlePointClick(i)}
-                    onDragMove={(e) => handleDragMove(e, i)}
-                  />
+                {points.map((p, i) => (
+                  <React.Fragment key={i}>
+                    <Text
+                      x={p.x + 8}
+                      y={p.y - 20}
+                      text={`#${i}`}
+                      fontSize={12}
+                      fill="black"
+                    />
+                    <Line
+                      points={[p.handleLeft.x, p.handleLeft.y, p.x, p.y]}
+                      stroke="gray"
+                      dash={[4, 4]}
+                    />
+                    <Line
+                      points={[p.x, p.y, p.handleRight.x, p.handleRight.y]}
+                      stroke="gray"
+                      dash={[4, 4]}
+                    />
+                    <Circle
+                      x={p.handleLeft.x}
+                      y={p.handleLeft.y}
+                      radius={4}
+                      fill="lightblue"
+                      draggable
+                      onDragMove={(e) => handleDragMove(e, i, 'handle-left')}
+                    />
+                    <Circle
+                      x={p.handleRight.x}
+                      y={p.handleRight.y}
+                      radius={4}
+                      fill="lightblue"
+                      draggable
+                      onDragMove={(e) => handleDragMove(e, i, 'handle-right')}
+                    />
+                    <Circle
+                      x={p.x}
+                      y={p.y}
+                      radius={6}
+                      fill={p.useCurve ? 'blue' : 'orange'}
+                      draggable
+                      onClick={() => toggleCurve(i)}
+                      onDragMove={(e) => handleDragMove(e, i, 'anchor')}
+                    />
+                  </React.Fragment>
                 ))}
               </Layer>
             </Stage>
 
-            {/* Панель управления */}
             <div className="mt-3 d-flex flex-wrap gap-2 align-items-center">
               <button className="btn btn-outline-secondary btn-sm" onClick={handleUndo}>
                 Undo Point
               </button>
               <button className="btn btn-outline-danger btn-sm" onClick={handleClear}>
                 Clear All
+              </button>
+              <button className="btn btn-outline-success btn-sm" onClick={handleCustomClose}>
+                Close Path
+              </button>
+              <button className="btn btn-outline-primary btn-sm" onClick={handleToggleFill}>
+                Fill Shape
               </button>
               <label className="ms-2 small">Fill:</label>
               <input
@@ -146,7 +211,6 @@ const CostumeEditor = () => {
                 style={{ width: '3rem', height: '2rem', padding: 0 }}
               />
             </div>
-
           </div>
         </div>
 
