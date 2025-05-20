@@ -32,5 +32,17 @@
   "RegistrationFailed": "Регистрация не удалась. Попробуйте еще раз",
   "WrongCredentials": "Неправильные учетные данные",
   "EmailNotConfirmed": "Электронная почта не подтверждена",
-  "InternalServerError": "500. Внутренняя ошибка сервера"
+  "InternalServerError": "500. Внутренняя ошибка сервера",
+  "Hood": "Капюшон",
+  "Collar": "Воротник",
+  "Center": "Центр",
+  "Sleeves": "Рукава",
+  "Pockets": "Карманы",
+  "Cuffs": "Манжеты",
+  "Hem": "Пояс",
+  "Legs": "Штанины",
+  "Sweatshirt": "Байка",
+  "Pants": "Штаны",
+  "Reset": "Сброс",
+  "Order": "Заказать"
 }

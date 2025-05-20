@@ -32,5 +32,17 @@
   "RegistrationFailed": "Rejestracja nie powiodła się. Spróbuj ponownie",
   "WrongCredentials": "Błędne dane uwierzytelniające",
   "EmailNotConfirmed": "Adres e-mail niepotwierdzony",
-  "InternalServerError": "500. Wewnętrzny błąd serwera"
+  "InternalServerError": "500. Wewnętrzny błąd serwera",
+  "Hood": "Kaptur",
+  "Collar": "Kołnierz",
+  "Center": "Środek",
+  "Sleeves": "Rękawy",
+  "Pockets": "Kieszenie",
+  "Cuffs": "Mankiety",
+  "Hem": "Pas",
+  "Legs": "Nogawki",
+  "Sweatshirt": "Bluza",
+  "Pants": "Spodnie",
+  "Reset": "Resetuj",
+  "Order": "Zamów"
 }
