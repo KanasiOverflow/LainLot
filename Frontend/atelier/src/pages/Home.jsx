@@ -1,10 +1,11 @@
-import PatternEditor from "../components/2D/PatternEditor";
+import DDCostumeEditor from "../components/2D/CostumeEditor";
+import DDDCostumeEditor from "../components/3D/CostumeEditor";
 
 export default function About() {
   return (
     <h1>
       Home page
-      <PatternEditor />
+      <DDCostumeEditor />
     </h1>
   );
 }
