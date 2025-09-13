@@ -5,14 +5,15 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  position: relative;
 }
 
 .toolbar {
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
   padding: 8px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .spacer { flex: 1; }
@@ -37,6 +38,27 @@
   box-shadow: 0 0 0 2px rgba(239,68,68,.15) inset;
 }
 
+.btnIcon {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.hotkey {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  color: #111827;
+}
+
 .paintGroup {
   display: inline-flex;
   align-items: center;
@@ -44,7 +66,6 @@
   padding-left: 6px;
   border-left: 1px dashed #e5e7eb;
 }
-
 .color {
   width: 34px;
   height: 28px;
@@ -61,17 +82,42 @@
   cursor: pointer;
 }
 
-.hotkey {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 6px;
+.help {
+  position: absolute;
+  right: 12px;
+  top: 56px;
+  width: 360px;
+  max-width: calc(100% - 24px);
+  background: #ffffff;
   border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  color: #111827;
+  border-radius: 10px;
+  box-shadow: 0 12px 34px rgba(0,0,0,.08);
+  padding: 10px 12px;
+  z-index: 10;
+}
+.helpHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.helpClose {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.helpList {
+  margin: 0;
+  padding-left: 16px;
+}
+.helpList li {
+  margin: 6px 0;
 }
 
 .canvas {
+  position: relative;
   flex: 1;
   width: 100%;
   background: #fafafa;
@@ -79,12 +125,66 @@
   touch-action: none;
 }
 
-/* исходные точки */
-.anchor { fill: #3b82f6; transition: .12s; }
+/* исходные якоря (add) */
+.anchor {
+  fill: #3b82f6;
+  transition: .12s;
+}
+.anchorHidden { opacity: 0.15; }
 .anchorClickable { cursor: pointer; }
-.anchorSelectedA { fill: #fde047; stroke: #a16207; stroke-width: 1.5; }
-.anchorSelectedB { fill: #86efac; stroke: #166534; stroke-width: 1.5; }
+.anchorSelectedA {
+  fill: #fde047;
+  stroke: #a16207;
+  stroke-width: 1.5;
+}
+.anchorSelectedB {
+  fill: #86efac;
+  stroke: #166534;
+  stroke-width: 1.5;
+}
 
-/* кривые пользователя */
-.userCurve { stroke: #ef4444; stroke-width: 2; fill: none; }
-.userCurveDeleteHover { stroke: #b91c1c; stroke-width: 3.5; filter: drop-shadow(0 0 2px rgba(185,28,28,.35)); fill: none; }
+/* пользовательские кривые */
+.userCurve {
+  stroke: #ef4444;
+  stroke-width: 2;
+  fill: none;
+}
+.userCurveDeleteHover {
+  stroke: #b91c1c;
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 2px rgba(185,28,28,.35));
+  fill: none;
+}
+.userCurvePreview {
+  stroke: #ef4444;
+  stroke-width: 2.5;
+  fill: none;
+}
+
+/* helpers/handles */
+.userHelper {
+  stroke: #f87171;
+  stroke-dasharray: 4 4;
+  vector-effect: non-scaling-stroke;
+}
+.control {
+  fill: #22c55e;
+  cursor: grab;
+}
+.userEnd {
+  fill: #f59e0b;
+  cursor: grab;
+}
+.userAnchor {
+  fill: #111;
+  opacity: .25;
+  pointer-events: none;
+}
+
+/* заливка */
+.paintPreview {
+  stroke: #10b981;
+  stroke-width: 2.5;
+  stroke-dasharray: 6 6;
+  fill: none;
+}
