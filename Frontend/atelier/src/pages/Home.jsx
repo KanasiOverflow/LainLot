@@ -1,11 +1,10 @@
-import React from 'react';
-import CostumeEditor from '../components/2D/CostumeEditor';
+import PatternEditor from "../components/2D/PatternEditor";
 
 export default function About() {
   return (
     <h1>
       Home page
-      <CostumeEditor />
+      <PatternEditor />
     </h1>
   );
 }
