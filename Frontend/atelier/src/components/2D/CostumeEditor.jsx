@@ -307,9 +307,13 @@ export default function CostumeEditor({ initialSVG }) {
         return buildFaces(cut);
     }, [segs, anchors, curves]);
 
-
     const facePath = (poly) => `M ${poly.map(p => `${p.x} ${p.y}`).join(" L ")} Z`;
     const faceKey = (poly) => poly.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join("|");
+
+    // 🔧 прочистка «протухших» заливок (если область исчезла после изменения линий)
+    useEffect(() => {
+        setFills(fs => fs.filter(f => faces.some(poly => faceKey(poly) === f.faceKey)));
+    }, [faces]);
 
     // загрузка svg
     const onFile = async (e) => {
@@ -421,7 +425,7 @@ export default function CostumeEditor({ initialSVG }) {
             else if (k === "a") { setMode("add"); setAddBuffer(null); }
             else if (k === "d") setMode("delete");
             else if (k === "f") setMode("paint");
-            else if (k === "x") setMode("deletefill");
+            else if (k === "x") setMode("deleteFill"); // ✅ фикс регистра
         };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
@@ -465,7 +469,7 @@ export default function CostumeEditor({ initialSVG }) {
                             <button key={c} className={styles.swatch} style={{ background: c }} onClick={() => setPaintColor(c)} />
                         ))}
                     </div>
-                    <button className={`${styles.btn} ${mode === "deletefill" ? styles.btnDangerActive : ""}`} onClick={() => setMode("deleteFill")} title="X">
+                    <button className={`${styles.btn} ${mode === "deleteFill" ? styles.btnDangerActive : ""}`} onClick={() => setMode("deleteFill")} title="X">
                         Удалить заливку <span className={styles.hotkey}>X</span>
                     </button>
                 </div>
@@ -548,7 +552,12 @@ export default function CostumeEditor({ initialSVG }) {
                             onPointerDown={() => onCurveClickDelete(c.id)}
                             fill="none"
                             vectorEffect="non-scaling-stroke"
-                            style={mode === "preview" ? { pointerEvents: "none" } : undefined}
+                            // ✅ кривые не перехватывают клики в paint/deleteFill/preview
+                            style={
+                                (mode === "preview" || mode === "paint" || mode === "deleteFill")
+                                    ? { pointerEvents: "none" }
+                                    : undefined
+                            }
                         />
                     );
                 })}
