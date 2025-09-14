@@ -1,190 +1,210 @@
-.container {
-  width: 100%;
-  height: calc(100vh - 280px);
-  min-height: 420px;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+/* ====== ЛЕЙАУТ: панель справа ~28%, холст слева ====== */
+.layout{
+  width:100%;
+  height: calc(100dvh - 180px);         /* динамический вьюпорт, учитывает адресную строку */
+  min-height:520px;
+  display:grid;
+  grid-template-columns: 1fr minmax(260px, 28%);
+  gap: 16px;
+  padding: 12px;
+  box-sizing:border-box;
+}
+
+/* холст */
+.canvasWrap{
   position: relative;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  box-shadow: 0 0 30px 10px #f0f0f0;    /* в стиле карточек сайта */
+  overflow: hidden;
+}
+.canvas{
+  width: 100%;
+  height: 100%;
+  display:block;
+  touch-action:none;
 }
 
-.toolbar {
-  display: flex;
-  gap: 8px;
-  padding: 8px;
-  align-items: center;
-  flex-wrap: wrap;
+/* сайдбар */
+.sidebar{
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: clip;                      /* убираем горизонтальный скролл любого контента */
 }
 
-.spacer { flex: 1; }
+/* панель в сайдбаре */
+.panel{
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:12px;
+  box-shadow: 0 0 30px 10px #f0f0f0;
+  padding:16px;
+}
+.panelTitle{
+  font-size:22px;
+  color:#30302e;
+  margin:0 0 8px 0;
+  font-weight:600;
+}
 
-.btn {
-  padding: 6px 10px;
-  border: 1px solid #ddd;
-  background: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: .15s;
+.section{
+  margin-top:14px;
+  padding-top:10px;
+  border-top:1px dashed #e5e7eb;
+}
+.sectionTitle{
+  font-size:14px;
+  color:#111;
+  margin-bottom:8px;
+  font-weight:600;
+}
+
+/* ====== FILE INPUT: прячем нативный, чтобы не распирал панель ====== */
+.fileBtn{
+  position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
 }
-.btnActive {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59,130,246,.15) inset;
+.fileBtn:hover{ border-color:#30302e; }
+.fileBtn input{ display:none; }
+
+/* ====== КНОПКИ (в стиле сайта) ====== */
+.btn{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:10px 12px;
+  border:1px solid #ddd;
+  background:#fff;
+  border-radius:8px;
+  cursor:pointer;
+  transition: all .2s ease;
+  color:#30302e;
 }
-.btnDangerActive {
-  border-color: #ef4444;
+.btn:hover{
+  border-color:#f26522;
+  color:#f26522;
+}
+.btnActive{
+  border-color:#f26522;
+  box-shadow: 0 0 0 2px rgba(242,101,34,.15) inset;
+}
+.btnDangerActive{
+  border-color:#ef4444;
   box-shadow: 0 0 0 2px rgba(239,68,68,.15) inset;
 }
-
-.btnIcon {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #ddd;
-  background: #fff;
-  border-radius: 50%;
-  cursor: pointer;
-  font-weight: 700;
-  line-height: 1;
+.btnGhost{
+  width:100%;
+  margin-top:8px;
+  padding:10px 12px;
+  border:1px dashed #ddd;
+  border-radius:8px;
+  background:#fff;
+  color:#30302e;
+}
+.btnGhost:hover{
+  border-color:#30302e;
+  color:#30302e;
+}
+.btnGroupV{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 
-.hotkey {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  color: #111827;
+.kbd{
+  font-size:11px;
+  padding:2px 6px;
+  border-radius:6px;
+  border:1px solid #e5e7eb;
+  background:#f9fafb;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  color:#111827;
 }
 
-.paintGroup {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding-left: 6px;
-  border-left: 1px dashed #e5e7eb;
+/* ====== ЗАЛИВКА / ПАЛИТРА ====== */
+.paintRow{
+  display:flex;
+  gap:8px;
+  align-items:center;
 }
-.color {
-  width: 34px;
-  height: 28px;
-  padding: 0;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  cursor: pointer;
+.color{
+  width:40px;
+  height:36px;
+  padding:0;
+  border:1px solid #ddd;
+  border-radius:8px;
+  cursor:pointer;
 }
-.swatches { display: inline-flex; gap: 4px; }
-.swatch {
-  width: 18px; height: 18px;
-  border-radius: 50%;
-  border: 1px solid rgba(0,0,0,.08);
-  cursor: pointer;
+.swatches{
+  display:flex; gap:6px; margin-top:8px; flex-wrap: wrap;
 }
-
-.help {
-  position: absolute;
-  right: 12px;
-  top: 56px;
-  width: 360px;
-  max-width: calc(100% - 24px);
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  box-shadow: 0 12px 34px rgba(0,0,0,.08);
-  padding: 10px 12px;
-  z-index: 10;
-}
-.helpHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-.helpClose {
-  border: none;
-  background: transparent;
-  font-size: 20px;
-  line-height: 1;
-  cursor: pointer;
-}
-.helpList {
-  margin: 0;
-  padding-left: 16px;
-}
-.helpList li {
-  margin: 6px 0;
+.swatch{
+  width:22px; height:22px; border-radius:50%;
+  border:1px solid rgba(0,0,0,.08);
+  cursor:pointer;
 }
 
-.canvas {
-  position: relative;
-  flex: 1;
-  width: 100%;
-  background: #fafafa;
-  border-top: 1px solid #eee;
-  touch-action: none;
+/* ====== ПОДСКАЗКА ====== */
+.hint{
+  margin:12px 0 0 0;
+  font-size:13px;
+  color:#666;
 }
 
-/* исходные якоря (add) */
-.anchor {
-  fill: #3b82f6;
-  transition: .12s;
-}
-.anchorHidden { opacity: 0.15; }
+/* ====== ТОЧКИ/ЛИНИИ НА ХОЛСТЕ ====== */
+.anchor { fill: #3b82f6; transition: .12s; }
 .anchorClickable { cursor: pointer; }
-.anchorSelectedA {
-  fill: #fde047;
-  stroke: #a16207;
-  stroke-width: 1.5;
+.anchorSelectedA { fill: #fde047; stroke: #a16207; stroke-width: 1.5; }
+.anchorSelectedB { fill: #86efac; stroke: #166534; stroke-width: 1.5; }
+
+.userCurve { stroke: #ef4444; stroke-width: 2; fill: none; }
+.userCurveDeleteHover { stroke: #b91c1c; stroke-width: 3.5; filter: drop-shadow(0 0 2px rgba(185,28,28,.35)); fill: none; }
+
+/* ссылки внутри кнопок при ховере — чуть ярче, как на сайте */
+.btn:hover a, .btnGhost:hover a { color:#f26522; text-decoration: underline; }
+
+/* ====== КОМПАКТНЫЕ РЕЖИМЫ ПО ВЫСОТЕ (чтобы панель помещалась) ====== */
+@media (max-height: 900px){
+  .layout{ height: calc(100dvh - 140px); }
+  .panel{ padding:12px; }
+  .btn{ padding:8px 10px; }
+  .panelTitle{ font-size:20px; }
+  .section{ margin-top:10px; padding-top:8px; }
+  .color{ height:32px; width:36px; }
 }
-.anchorSelectedB {
-  fill: #86efac;
-  stroke: #166534;
-  stroke-width: 1.5;
+@media (max-height: 760px){
+  .layout{ height: calc(100dvh - 120px); }
+  .btn{ padding:7px 9px; }
+  .swatch{ width:18px; height:18px; }
 }
 
-/* пользовательские кривые */
-.userCurve {
-  stroke: #ef4444;
-  stroke-width: 2;
-  fill: none;
-}
-.userCurveDeleteHover {
-  stroke: #b91c1c;
-  stroke-width: 3.5;
-  filter: drop-shadow(0 0 2px rgba(185,28,28,.35));
-  fill: none;
-}
-.userCurvePreview {
-  stroke: #ef4444;
-  stroke-width: 2.5;
-  fill: none;
-}
-
-/* helpers/handles */
-.userHelper {
-  stroke: #f87171;
-  stroke-dasharray: 4 4;
-  vector-effect: non-scaling-stroke;
-}
-.control {
-  fill: #22c55e;
-  cursor: grab;
-}
-.userEnd {
-  fill: #f59e0b;
-  cursor: grab;
-}
-.userAnchor {
-  fill: #111;
-  opacity: .25;
-  pointer-events: none;
-}
-
-/* заливка */
-.paintPreview {
-  stroke: #10b981;
-  stroke-width: 2.5;
-  stroke-dasharray: 6 6;
-  fill: none;
+/* ====== АДАПТИВ ПО ШИРИНЕ: на узких экранах панель уезжает наверх ====== */
+@media (max-width: 960px){
+  .layout{
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: calc(100dvh - 140px);
+    gap: 12px;
+  }
+  .sidebar{
+    order:-1;
+  }
+  .panel{
+    border-radius:10px;
+    padding:12px;
+  }
+  .btnGroupV{ flex-direction:row; flex-wrap:wrap; }
+  .btn{ width:auto; }
 }
