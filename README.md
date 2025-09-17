@@ -25,4 +25,4 @@ What should you do to install and run project:
 * Test RestAPI using postman;
 * Open VS Code and run project;
 
-Congrat! U were run LainLot project!
+Congrat! You is run LainLot project!
