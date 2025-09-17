@@ -1,11 +1,11 @@
-import React from 'react';
-import ClothingDesigner from '../components/clothingconstructor/ClothingConstructor.jsx';
+import DDCostumeEditor from "../components/2D/CostumeEditor";
+import DDDCostumeEditor from "../components/3D/CostumeEditor";
 
 export default function About() {
   return (
     <h1>
       Home page
-      <ClothingDesigner />
+      <DDCostumeEditor />
     </h1>
   );
 }

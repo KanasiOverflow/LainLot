@@ -23,7 +23,7 @@ namespace RestAPI.Controllers
         /// CTRL + M + O - collapse all
         /// </summary>
 
-        private readonly Mapper _mapper = MapperConfig.InitializeAutomapper();
+        private readonly IMapper _mapper = MapperConfig.InitializeAutomapper();
         #region repos init
         private readonly ILogger<AtelierController> _logger = logger;
         private readonly IRepository<DB.About> _aboutRepository = aboutRepository;

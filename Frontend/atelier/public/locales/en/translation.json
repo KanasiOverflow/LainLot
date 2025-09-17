@@ -32,5 +32,17 @@
   "RegistrationFailed": "Registration failed. Please try again",
   "WrongCredentials": "Wrong credentials",
   "EmailNotConfirmed": "Email not confirmed",
-  "InternalServerError": "500. Internal server error"
+  "InternalServerError": "500. Internal server error",
+  "Hood": "Hood",
+  "Collar": "Collar",
+  "Center": "Center",
+  "Sleeves": "Sleeves",
+  "Pockets": "Pockets",
+  "Cuffs": "Cuffs",
+  "Hem": "Hem",
+  "Legs": "Legs",
+  "Sweatshirt": "Sweatshirt",
+  "Pants": "Pants",
+  "Reset": "Reset",
+  "Order": "Order"
 }

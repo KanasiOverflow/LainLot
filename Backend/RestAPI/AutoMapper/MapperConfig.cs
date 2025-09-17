@@ -6,8 +6,9 @@ namespace RestAPI.AutoMapper
 {
     public class MapperConfig
     {
-        public static Mapper InitializeAutomapper()
+        public static IMapper InitializeAutomapper()
         {
+            var loggerFactory = new LoggerFactory();
             // Provide all the Mapping Configuration
             var config = new MapperConfiguration(cfg =>
             {
@@ -590,9 +591,10 @@ namespace RestAPI.AutoMapper
                     .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name));
 
                 #endregion
-            });
+            }, loggerFactory);
 
-            return new Mapper(config);
+            config.AssertConfigurationIsValid();
+            return config.CreateMapper();
         }
     }
 }
