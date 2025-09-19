@@ -12,7 +12,7 @@ function App() {
     <AppProvider>
       <BrowserRouter>
         <Helmet>
-          <title>{process.env.REACT_APP_WEBSITE_NAME}</title>
+          <title>{import.meta.env.VITE_WEBSITE_NAME ?? 'LainLot - Atelier'}</title>
         </Helmet>
         <div className="appWrapper">
           <Header />

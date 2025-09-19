@@ -11,7 +11,7 @@ function App() {
     <AppProvider>
       <BrowserRouter>
         <Helmet>
-          <title>{process.env.REACT_APP_WEBSITE_NAME}</title>
+          <title>{import.meta.env.VITE_WEBSITE_NAME ?? 'LainLot - Admin Panel'}</title>
         </Helmet>
         <Navbar />
         <AppRouter />

@@ -1,23 +1,23 @@
 export const getRestAPIUrl = (service) => {
-  const REACT_APP_RESTAPI_URL_DEV = process.env.REACT_APP_RESTAPI_URL_DEV;
-  const REACT_APP_RESTAPI_URL_PROD = process.env.REACT_APP_RESTAPI_URL_PROD;
-  const REACT_APP_AUTH_URL_DEV = process.env.REACT_APP_AUTH_URL_DEV;
-  const REACT_APP_AUTH_URL_PROD = process.env.REACT_APP_AUTH_URL_PROD;
-  const REACT_APP_ENVIRONMENT = process.env.REACT_APP_ENVIRONMENT;
+  const VITE_RESTAPI_URL_DEV = process.env.VITE_RESTAPI_URL_DEV;
+  const VITE_RESTAPI_URL_PROD = process.env.VITE_RESTAPI_URL_PROD;
+  const VITE_AUTH_URL_DEV = process.env.VITE_AUTH_URL_DEV;
+  const VITE_AUTH_URL_PROD = process.env.VITE_AUTH_URL_PROD;
+  const VITE_ENVIRONMENT = process.env.VITE_ENVIRONMENT;
 
 
   switch (service) {
     case "rest":
 
-      return REACT_APP_ENVIRONMENT === 'Development'
-        ? REACT_APP_RESTAPI_URL_DEV
-        : REACT_APP_RESTAPI_URL_PROD;
+      return VITE_ENVIRONMENT === 'Development'
+        ? VITE_RESTAPI_URL_DEV
+        : VITE_RESTAPI_URL_PROD;
 
     case "auth":
 
-      return REACT_APP_ENVIRONMENT === 'Development'
-        ? REACT_APP_AUTH_URL_DEV
-        : REACT_APP_AUTH_URL_PROD;
+      return VITE_ENVIRONMENT === 'Development'
+        ? VITE_AUTH_URL_DEV
+        : VITE_AUTH_URL_PROD;
 
     default:
       break;
