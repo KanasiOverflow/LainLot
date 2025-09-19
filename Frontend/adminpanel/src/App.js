@@ -11,7 +11,7 @@ function App() {
     <AppProvider>
       <BrowserRouter>
         <Helmet>
-          <title>{process.env.REACT_APP_WEBSITE_NAME}</title>
+          <title>{process.env.VITE_WEBSITE_NAME}</title>
         </Helmet>
         <Navbar />
         <AppRouter />

@@ -9,7 +9,7 @@ export default function Copyright() {
     <div className={mcss.copyrightSection}>
       <div className="container">
         <p className={mcss.copyrightText}>
-          &copy; {new Date().getFullYear()} {process.env.REACT_APP_WEBSITE_NAME}{' '}
+          &copy; {new Date().getFullYear()} {import.meta.env.VITE_WEBSITE_NAME}{' '}
           {t('Atelier')}. {t('AllRightsReserved')}.
         </p>
       </div>

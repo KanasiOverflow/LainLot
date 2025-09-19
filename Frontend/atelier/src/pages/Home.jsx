@@ -1,5 +1,4 @@
 import DDCostumeEditor from "../components/2D/CostumeEditor";
-import DDDCostumeEditor from "../components/3D/CostumeEditor";
 
 export default function About() {
   return (
