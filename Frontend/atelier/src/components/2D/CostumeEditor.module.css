@@ -204,42 +204,6 @@
 /* ссылки внутри кнопок при ховере — чуть ярче, как на сайте */
 .btn:hover a, .btnGhost:hover a { color:#f26522; text-decoration: underline; }
 
-/* ====== КОМПАКТНЫЕ РЕЖИМЫ ПО ВЫСОТЕ (чтобы панель помещалась) ====== */
-@media (max-height: 900px){
-  .layout{ height: calc(100dvh - 140px); }
-  .panel{ padding:12px; }
-  .btn{ padding:8px 10px; }
-  .panelTitle{ font-size:20px; }
-  .section{ margin-top:10px; padding-top:8px; }
-  .color{ height:32px; width:36px; }
-}
-@media (max-height: 760px){
-  .layout{ height: calc(100dvh - 120px); }
-  .btn{ padding:7px 9px; }
-  .swatch{ width:18px; height:18px; }
-}
-
-/* ====== АДАПТИВ ПО ШИРИНЕ: на узких экранах панель уезжает наверх ====== */
-@media (max-width: 960px){
-  .layout{
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    height: calc(100dvh - 140px);
-    gap: 12px;
-  }
-  .sidebar{
-    order:-1;
-  }
-  .panel{
-    border-radius:10px;
-    padding:12px;
-  }
-  .btnGroupV{ flex-direction:row; flex-wrap:wrap; }
-  .btn{ width:auto; }
-}
-
-.selectCompact { width:100%; padding:6px 10px; border:1px solid #e6e6e6; border-radius:8px; }
-
 .segmented { display:flex; gap:6px; }
 .segBtn { flex:1; padding:6px 8px; border:1px solid #e6e6e6; border-radius:10px; background:#fff; }
 .segActive { background:#eef2ff; border-color:#c7d2fe; }
@@ -303,3 +267,103 @@
 /* контейнер для позиционирования */
 .row{ position:relative; display:flex; align-items:center; gap:10px; }
 
+/* Ряд с цветом */
+.colorRow{
+  position: relative;                 /* якорь для поповера */
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* Чип текущего цвета (квадрат с «кареткой») */
+.colorChip{
+  display:inline-flex; align-items:center; justify-content:center;
+  width: 32px; height: 32px;
+  border:1px solid #e6e6e6; border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.04);
+  cursor: pointer; padding: 0;
+}
+.caret{
+  width:0; height:0; margin-left: 0;
+  border-left: 5px solid transparent;
+  border-right:5px solid transparent;
+  border-top: 6px solid rgba(0,0,0,.35);
+}
+
+/* Пилюля из двух иконок (одинаковая высота с чипом) */
+.iconSeg{ display:flex; }
+.iconBtn{
+  width: 32px; height: 32px; line-height: 32px;
+  border:1px solid #e6e6e6; background:#fff; cursor:pointer;
+}
+.iconBtn:first-child{ border-radius:10px 0 0 10px; }
+.iconBtn:last-child { border-radius:0 10px 10px 0; border-left:none; }
+.iconActive{ background:#eef2ff; border-color:#c7d2fe; }
+.iconDangerActive{ background:#fee2e2; border-color:#fecaca; }
+
+/* Поповер палитры */
+.palette{
+  position:absolute; top:38px; left:0; z-index:10;
+  background:#fff; border:1px solid #e6e6e6; border-radius:12px;
+  padding:8px; box-shadow:0 12px 28px rgba(0,0,0,.14);
+  min-width: 190px;
+}
+.palette::before{
+  content:""; position:absolute; top:-6px; left:12px;
+  width:10px;height:10px; background:#fff;
+  border-left:1px solid #e6e6e6; border-top:1px solid #e6e6e6;
+  transform: rotate(45deg);
+}
+.paletteGrid{ display:grid; grid-template-columns:repeat(6, 22px); gap:8px; padding:2px; }
+.swatchBtn{
+  width:22px;height:22px; border-radius:50%;
+  border:1px solid rgba(0,0,0,.08); cursor:pointer;
+}
+.paletteFooter{ display:flex; align-items:center; gap:8px;
+  margin-top:8px; border-top:1px dashed #eee; padding-top:8px; }
+.paletteLabel{ font-size:12px; opacity:.7; }
+.colorInline{ width:24px;height:24px;border:none;padding:0;background:transparent; }
+
+
+/* сегменты, select, подписи — уже есть, но на всякий случай */
+.selectCompact { width:100%; padding:6px 10px; border:1px solid #e6e6e6; border-radius:8px; }
+.segmented { display:flex; gap:6px; }
+.segBtn { flex:1; padding:6px 8px; border:1px solid #e6e6e6; border-radius:10px; background:#fff; }
+.segActive { background:#eef2ff; border-color:#c7d2fe; }
+.rangeCompact { width:100%; }
+.subRow { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:8px; margin-top:6px; }
+.slimLabel { font-size:12px; opacity:.75; }
+.value { width:44px; text-align:right; font-variant-numeric: tabular-nums; opacity:.8; }
+.hintSmall { font-size:11px; opacity:.65; margin-top:4px; line-height:1.25; }
+
+/* ====== КОМПАКТНЫЕ РЕЖИМЫ ПО ВЫСОТЕ (чтобы панель помещалась) ====== */
+@media (max-height: 900px){
+  .layout{ height: calc(100dvh - 140px); }
+  .panel{ padding:12px; }
+  .btn{ padding:8px 10px; }
+  .panelTitle{ font-size:20px; }
+  .section{ margin-top:10px; padding-top:8px; }
+  .color{ height:32px; width:36px; }
+}
+@media (max-height: 760px){
+  .layout{ height: calc(100dvh - 120px); }
+  .btn{ padding:7px 9px; }
+  .swatch{ width:18px; height:18px; }
+}
+
+/* ====== АДАПТИВ ПО ШИРИНЕ: на узких экранах панель уезжает наверх ====== */
+@media (max-width: 960px){
+  .layout{
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: calc(100dvh - 140px);
+    gap: 12px;
+  }
+  .sidebar{
+    order:-1;
+  }
+  .panel{
+    border-radius:10px;
+    padding:12px;
+  }
+  .btnGroupV{ flex-direction:row; flex-wrap:wrap; }
+  .btn{ width:auto; }
+}

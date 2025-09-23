@@ -527,7 +527,6 @@ function waveAlongPolyline(pts, amp, lambda, outlinePoly = null, phase = 0) {
 export default function CostumeEditor({ initialSVG }) {
     const [rawSVG, setRawSVG] = useState(initialSVG || "");
     const [panels, setPanels] = useState([]);
-    const [activePanelId, setActivePanelId] = useState(null);
 
     // кривые: 'cubic' или 'routed' (по контуру)
     const [curvesByPanel, setCurvesByPanel] = useState({});
@@ -568,7 +567,6 @@ export default function CostumeEditor({ initialSVG }) {
         if (!rawSVG) return;
         const parts = extractPanels(rawSVG);
         setPanels(parts);
-        setActivePanelId(parts[0]?.id || null);
         setCurvesByPanel({});
         setFills([]);
         setMode("preview");
@@ -687,7 +685,7 @@ export default function CostumeEditor({ initialSVG }) {
     }, []);
 
     /* ===== действия ===== */
-    const activePanel = panels.find(p => p.id === activePanelId);
+    const activePanel = panels[0] || null;
     const R = 6 * scale.k;
     const isPreview = mode === "preview";
 
@@ -978,7 +976,7 @@ export default function CostumeEditor({ initialSVG }) {
                                         // В preview/paint/deleteFill клики по линиям не нужны, в остальных — только для активной панели
                                         const pe = (isPreview || mode === "paint" || mode === "deleteFill")
                                             ? "none"
-                                            : (p.id === activePanelId ? "auto" : "none");
+                                            : "auto";
 
                                         return (
                                             <g key={key}>
@@ -1059,6 +1057,7 @@ export default function CostumeEditor({ initialSVG }) {
                 <div className={styles.panel}>
                     <h3 className={styles.panelTitle}>Редактор</h3>
 
+                    {/* Файл */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Файл</div>
                         <label className={styles.fileBtn}>
@@ -1067,17 +1066,7 @@ export default function CostumeEditor({ initialSVG }) {
                         </label>
                     </div>
 
-                    <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Панель</div>
-                        <select
-                            className={styles.selectCompact}
-                            value={activePanelId || ""}
-                            onChange={(e) => setActivePanelId(e.target.value)}
-                        >
-                            {panels.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
-                        </select>
-                    </div>
-
+                    {/* Режимы (только общие действия) */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Режим</div>
                         <div className={styles.segmented}>
@@ -1092,41 +1081,50 @@ export default function CostumeEditor({ initialSVG }) {
                             <button title="Удалить линию (D)"
                                 className={`${styles.segBtn} ${mode === 'delete' ? styles.segActive : ''}`}
                                 onClick={() => setMode('delete')}>🗑</button>
-
-                            <button title="Заливка (F)"
-                                className={`${styles.segBtn} ${mode === 'paint' ? styles.segActive : ''}`}
-                                onClick={() => setMode('paint')}>🪣</button>
-
-                            <button title="Удалить заливку (X)"
-                                className={`${styles.segBtn} ${mode === 'deleteFill' ? styles.segDangerActive : ''}`}
-                                onClick={() => setMode('deleteFill')}>✖</button>
                         </div>
                     </div>
 
+                    {/* Цвет заливки — палитра + покраска/снятие цвета */}
+                    {/* Цвет заливки — компактный ряд: чип + кнопки + dropdown */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Цвет заливки</div>
-                        <div className={styles.row}>
-                            {/* текущий цвет */}
+
+                        <div className={styles.colorRow}>
+                            {/* чип текущего цвета (открывает палитру) */}
                             <button
-                                className={styles.colorTrigger}
+                                className={styles.colorChip}
                                 title="Выбрать цвет"
                                 style={{ background: paintColor }}
                                 onClick={() => setPaletteOpen(v => !v)}
-                            />
-                            {/* нативный color для тонкой настройки */}
-                            <input
-                                type="color"
-                                className={styles.colorSmall}
-                                value={paintColor}
-                                onChange={(e) => setPaintColor(e.target.value)}
-                                aria-label="Цвет"
-                            />
-                            {/* popover */}
+                            >
+                                <span className={styles.caret} />
+                            </button>
+
+                            {/* группа действий с цветом */}
+                            <div className={styles.iconSeg}>
+                                <button
+                                    title="Залить (F)"
+                                    className={`${styles.iconBtn} ${mode === 'paint' ? styles.iconActive : ''}`}
+                                    onClick={() => setMode('paint')}
+                                >🪣</button>
+
+                                <button
+                                    title="Убрать заливку (X)"
+                                    className={`${styles.iconBtn} ${mode === 'deleteFill' ? styles.iconDangerActive : ''}`}
+                                    onClick={() => setMode('deleteFill')}
+                                >✖</button>
+                            </div>
+
+                            {/* dropdown-палитра */}
                             {paletteOpen && (
                                 <div ref={paletteRef} className={styles.palette}>
                                     <div className={styles.paletteGrid}>
-                                        {["#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe", "#ef4444", "#10b981", "#22c55e", "#0ea5e9", "#f59e0b", "#a855f7"].map(c => (
-                                            <button key={c}
+                                        {[
+                                            "#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe",
+                                            "#ef4444", "#10b981", "#22c55e", "#0ea5e9", "#f59e0b", "#a855f7"
+                                        ].map(c => (
+                                            <button
+                                                key={c}
                                                 className={styles.swatchBtn}
                                                 style={{ background: c }}
                                                 onClick={() => { setPaintColor(c); setPaletteOpen(false); }}
@@ -1135,12 +1133,12 @@ export default function CostumeEditor({ initialSVG }) {
                                         ))}
                                     </div>
                                     <div className={styles.paletteFooter}>
-                                        <span className={styles.paletteLabel}>Произвольный:</span>
+                                        <span className={styles.paletteLabel}>Произвольный</span>
                                         <input
                                             type="color"
                                             className={styles.colorInline}
                                             value={paintColor}
-                                            onChange={(e) => { setPaintColor(e.target.value); }}
+                                            onChange={(e) => setPaintColor(e.target.value)}
                                             aria-label="Произвольный цвет"
                                         />
                                     </div>
@@ -1149,21 +1147,11 @@ export default function CostumeEditor({ initialSVG }) {
                         </div>
                     </div>
 
-                    <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Отступ от края</div>
-                        <div className={styles.row}>
-                            <input type="range" min={0} max={24} step={1}
-                                value={edgeInsetPx} onChange={(e) => setEdgeInsetPx(+e.target.value)}
-                                className={styles.rangeCompact} />
-                            <div className={styles.value}>{edgeInsetPx}px</div>
-                        </div>
-                        <div className={styles.hintSmall}>
-                            Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
-                        </div>
-                    </div>
 
+                    {/* Линия — тип/параметры/отступ */}
                     <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Тип линии</div>
+                        <div className={styles.sectionTitle}>Линия</div>
+
                         <div className={styles.segmented}>
                             <button className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
                                 onClick={() => setLineStyle('straight')}>Прямая</button>
@@ -1189,10 +1177,21 @@ export default function CostumeEditor({ initialSVG }) {
                                 </div>
                             </>
                         )}
-                    </div>
 
+                        <div className={styles.subRow} style={{ marginTop: 8 }}>
+                            <span className={styles.slimLabel}>Отступ от края</span>
+                            <input type="range" min={0} max={24} step={1}
+                                value={edgeInsetPx} onChange={(e) => setEdgeInsetPx(+e.target.value)}
+                                className={styles.rangeCompact} />
+                            <span className={styles.value}>{edgeInsetPx}px</span>
+                        </div>
+                        <div className={styles.hintSmall}>
+                            Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
+                        </div>
+                    </div>
                 </div>
             </aside>
+
         </div>
     );
 }
