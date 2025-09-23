@@ -482,6 +482,47 @@ function offsetArcInside(arcPts, outlinePoly, inset) {
 }
 function pointsToPairedPolyline(pts) { const line = []; for (let i = 0; i + 1 < pts.length; i++) { line.push(pts[i], pts[i + 1]); } return line; }
 
+function cumulativeLengths(pts) {
+    const L = [0];
+    for (let i = 1; i < pts.length; i++) {
+        L.push(L[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y));
+    }
+    return L;
+}
+function normalsOnPolyline(pts) {
+    const nrm = [];
+    for (let i = 0; i < pts.length; i++) {
+        const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)];
+        let tx = b.x - a.x, ty = b.y - a.y;
+        const len = Math.hypot(tx, ty) || 1; tx /= len; ty /= len;
+        nrm.push({ x: -ty, y: tx });
+    }
+    return nrm;
+}
+/** волна вдоль ломаной pts. amp/lambda — в мировых единицах. 
+ *  Если outlinePoly задан, точка при необходимости отражается внутрь детали. */
+function waveAlongPolyline(pts, amp, lambda, outlinePoly = null, phase = 0) {
+    if (!pts || pts.length < 2) return pts || [];
+    const L = cumulativeLengths(pts), total = L[L.length - 1] || 1;
+    const nrms = normalsOnPolyline(pts);
+    const out = [];
+    for (let i = 0; i < pts.length; i++) {
+        const s = L[i];
+        const a = amp * Math.sin((2 * Math.PI * s) / lambda + phase);
+        let p = { x: pts[i].x + nrms[i].x * a, y: pts[i].y + nrms[i].y * a };
+        if (outlinePoly && !pointInPolygon(p, outlinePoly)) {
+            // если «выстрелили» наружу — перегибаем на другую сторону
+            p = { x: pts[i].x - nrms[i].x * a, y: pts[i].y - nrms[i].y * a };
+        }
+        out.push(p);
+    }
+    // гарантируем совпадение концов с исходными
+    out[0] = { ...pts[0] };
+    out[out.length - 1] = { ...pts[pts.length - 1] };
+    return out;
+}
+
+
 /* ================== компонент ================== */
 export default function CostumeEditor({ initialSVG }) {
     const [rawSVG, setRawSVG] = useState(initialSVG || "");
@@ -500,6 +541,14 @@ export default function CostumeEditor({ initialSVG }) {
     const [hoverFace, setHoverFace] = useState(null);
 
     const [toast, setToast] = useState(null);
+
+    // тип пользовательской линии
+    const [lineStyle, setLineStyle] = useState("straight"); // 'straight' | 'wavy'
+
+    // параметры волны (в пикселях экрана)
+    const [waveAmpPx, setWaveAmpPx] = useState(6);
+    const [waveLenPx, setWaveLenPx] = useState(36);
+
 
     const onFile = async (e) => { const f = e.target.files?.[0]; if (!f) return; setRawSVG(await f.text()); };
 
@@ -642,7 +691,7 @@ export default function CostumeEditor({ initialSVG }) {
     function facePath(poly) { return `M ${poly.map(p => `${p.x} ${p.y}`).join(" L ")} Z`; }
     function faceKey(poly) { return poly.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join("|"); }
 
-    function routeCurveAlongOutline(panel, draftCurve, insetWorld) {
+    function routeCurveAlongOutline(panel, draftCurve, insetWorld, opts = {}) {
         const rings = ringsByPanel[panel.id] || [];
         if (!rings.length) return null;
 
@@ -663,19 +712,26 @@ export default function CostumeEditor({ initialSVG }) {
         const offsetArc = offsetArcInside(arc, best.ring, insetWorld);
         if (offsetArc.length < 2) return null;
 
-        const d = catmullRomToBezierPath(offsetArc);
+        let workingPts = offsetArc;
+        if (opts.style === "wavy") {
+            const amp = Math.max(0, opts.ampWorld || 0);
+            const lambda = Math.max(1e-6, opts.lambdaWorld || 1);
+            workingPts = waveAlongPolyline(offsetArc, amp, lambda, best.ring);
+        }
+
+        const d = catmullRomToBezierPath(workingPts);
 
         // точки на контуре (без отступа)
         const N = best.ring.length;
         const P0 = lerpPt(best.ring[best.pa.idx], best.ring[(best.pa.idx + 1) % N], best.pa.t);
         const P1 = lerpPt(best.ring[best.pb.idx], best.ring[(best.pb.idx + 1) % N], best.pb.t);
         // точки на прижатой дуге (с отступом)
-        const Q0 = offsetArc[0];
-        const Q1 = offsetArc[offsetArc.length - 1];
+        const Q0 = workingPts[0];
+        const Q1 = workingPts[workingPts.length - 1];
 
         return {
             d,
-            pts: offsetArc,
+            pts: workingPts,
             connA: [Q0, P0],   // невидимый коннектор к контуру
             connB: [Q1, P1]
         };
@@ -714,11 +770,28 @@ export default function CostumeEditor({ initialSVG }) {
         ).every((pt) => pointInAnyFace(pt, faces));
 
         if (allInside) {
-            setCurvesByPanel((map) => {
-                const arr = [...(map[activePanel.id] || [])];
-                arr.push({ ...draft, type: "cubic" });
-                return { ...map, [activePanel.id]: arr };
-            });
+            if (lineStyle === "straight") {
+                // прежнее поведение: внутренняя ровная линия
+                setCurvesByPanel((map) => {
+                    const arr = [...(map[activePanel.id] || [])];
+                    arr.push({ ...draft, type: "cubic" });
+                    return { ...map, [activePanel.id]: arr };
+                });
+            }
+            else {
+                // внутренняя волнистая линия
+                const base = sampleBezierPoints(a.x, a.y, draft.c1.x, draft.c1.y, draft.c2.x, draft.c2.y, b.x, b.y, 64);
+                const ampW = waveAmpPx * (scale.k || 1);
+                const lambdaW = waveLenPx * (scale.k || 1);
+                const wpts = waveAlongPolyline(base, ampW, lambdaW, null);
+                const d = catmullRomToBezierPath(wpts);
+                setCurvesByPanel((map) => {
+                    const arr = [...(map[activePanel.id] || [])];
+                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts });
+                    return { ...map, [activePanel.id]: arr };
+                });
+            }
+
             setAddBuffer(null);
             setMode("preview");
             return;
@@ -727,7 +800,14 @@ export default function CostumeEditor({ initialSVG }) {
         // 2) Иначе ведём линию по кратчайшей дуге кромки с отступом внутрь.
         //    Отступ задаётся в пикселях экрана (edgeInsetPx), здесь переводим в мировые.
         const inset = Math.max(0, edgeInsetPx) * (scale.k || 1);
-        const routed = routeCurveAlongOutline(activePanel, draft, inset);
+        const routed = routeCurveAlongOutline(
+            activePanel,
+            draft,
+            inset,
+            lineStyle === "wavy"
+                ? { style: "wavy", ampWorld: waveAmpPx * (scale.k || 1), lambdaWorld: waveLenPx * (scale.k || 1) }
+                : { style: "straight" }
+        );
 
         // Если не удалось прижать (крайний случай) — просто выходим в просмотр.
         if (!routed) {
@@ -1042,6 +1122,23 @@ export default function CostumeEditor({ initialSVG }) {
                             Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
                         </div>
                     </div>
+
+                    <div className={styles.section}>
+                        <div className={styles.sectionTitle}>Тип линии</div>
+                        <div className={styles.btnGroupV}>
+                            <button className={`${styles.btn} ${lineStyle === 'straight' ? styles.btnActive : ''}`} onClick={() => setLineStyle('straight')}>Прямая</button>
+                            <button className={`${styles.btn} ${lineStyle === 'wavy' ? styles.btnActive : ''}`} onClick={() => setLineStyle('wavy')}>Волнистая</button>
+                        </div>
+                        {lineStyle === 'wavy' && (
+                            <>
+                                <div className={styles.sectionTitle} style={{ marginTop: 8 }}>Амплитуда</div>
+                                <input type="range" min={2} max={24} step={1} value={waveAmpPx} onChange={e => setWaveAmpPx(+e.target.value)} />
+                                <div className={styles.sectionTitle} style={{ marginTop: 8 }}>Длина волны</div>
+                                <input type="range" min={12} max={80} step={2} value={waveLenPx} onChange={e => setWaveLenPx(+e.target.value)} />
+                            </>
+                        )}
+                    </div>
+
 
                 </div>
             </aside>
