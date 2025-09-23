@@ -562,15 +562,6 @@ export default function CostumeEditor({ initialSVG }) {
         setMode("preview");
     }, [rawSVG]);
 
-    const loadDemo = () => {
-        const demo = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
-  <path id="front" d="M 80 120 C 100 60 300 60 420 120 L 420 460 C 420 520 100 520 80 460 Z" />
-  <path id="back"  d="M 480 120 C 500 60 700 60 820 120 L 820 460 C 820 520 500 520 480 460 Z" />
-</svg>`;
-        setRawSVG(demo);
-    };
-
     // осн. окна
     const viewBox = useMemo(() => {
         if (!panels.length) return "0 0 800 500";
@@ -1064,7 +1055,6 @@ export default function CostumeEditor({ initialSVG }) {
                             Загрузить SVG (1+ деталей)
                             <input type="file" accept=".svg,image/svg+xml" onChange={onFile} />
                         </label>
-                        <button className={styles.btnGhost} onClick={loadDemo}>Демо: 2 панели</button>
                     </div>
 
                     <div className={styles.section}>
