@@ -187,7 +187,14 @@ function splitByIntersections(segments) {
     }
     const res = [];
     for (let i = 0; i < segments.length; i++) {
-        const S = segments[i]; const ts = Array.from(new Set(lists[i])).sort((a, b) => a - b);
+        const S = segments[i];
+        const tsRaw = lists[i].slice().sort((a, b) => a - b);
+        const ts = [];
+        for (const t of tsRaw) {
+            if (!ts.length || Math.abs(t - ts[ts.length - 1]) > 1e-6) {
+                ts.push(Math.max(0, Math.min(1, t)));
+            }
+        }
         const p = (t) => ({ x: S.a.x + (S.b.x - S.a.x) * t, y: S.a.y + (S.b.y - S.a.y) * t });
         for (let k = 0; k + 1 < ts.length; k++) {
             const t1 = ts[k], t2 = ts[k + 1]; if (t2 - t1 < 1e-6) continue;
@@ -198,12 +205,40 @@ function splitByIntersections(segments) {
 }
 function buildFacesFromSegments(segments) {
     const nodes = new Map();
-    const key = (p) => `${p.x.toFixed(2)}_${p.y.toFixed(2)}`;
-    const node = (p) => { const k = key(p); if (!nodes.has(k)) nodes.set(k, { ...p, out: [] }); return nodes.get(k); };
+    const PREC = 1e-4; // при необходимости можно 1e-5
+    const norm = (v) => Math.round(v / PREC) * PREC;
+    const key = (p) => `${norm(p.x)}_${norm(p.y)}`;
+    const node = (p) => {
+        const k = key(p);
+        if (!nodes.has(k)) nodes.set(k, { ...p, out: [] });
+        return nodes.get(k);
+    };
     const half = []; const add = (A, B) => { const h = { from: A, to: B, ang: Math.atan2(B.y - A.y, B.x - A.x), twin: null, next: null, visited: false }; half.push(h); A.out.push(h); return h; };
     for (const s of segments) { const A = node(s.a), B = node(s.b); const h1 = add(A, B), h2 = add(B, A); h1.twin = h2; h2.twin = h1; }
-    for (const n of nodes.values()) n.out.sort((a, b) => b.ang - a.ang);
-    for (const n of nodes.values()) for (const h of n.out) { const arr = h.to.out; const i = arr.indexOf(h.twin); h.next = arr[(i - 1 + arr.length) % arr.length]; }
+    for (const n of nodes.values()) n.out.sort((a, b) => a.ang - b.ang); // не критично, но удобно иметь CCW
+
+    const TAU = Math.PI * 2;
+    const dpos = (a, b) => {            // положительная разница углов a - b  в (0, 2π]
+        let d = a - b;
+        while (d <= 0) d += TAU;
+        while (d > TAU) d -= TAU;
+        return d;
+    };
+
+    for (const n of nodes.values()) {
+        for (const h of n.out) {
+            const arr = h.to.out;
+            let best = null, bestDelta = Infinity;
+
+            for (const e of arr) {
+                if (e === h.twin) continue;
+                const delta = dpos(e.ang, h.twin.ang); // «сразу после twin» против часовой (левый поворот)
+                if (delta < bestDelta - 1e-9) { bestDelta = delta; best = e; }
+            }
+            h.next = best || h.twin; // на всякий случай fallback
+        }
+    }
+
     const faces = [];
     for (const h of half) {
         if (h.visited) continue;
@@ -215,7 +250,8 @@ function buildFacesFromSegments(segments) {
         const idxMax = faces.map((p, i) => ({ i, A: Math.abs(area(p)) })).sort((a, b) => b.A - a.A)[0].i;
         faces.splice(idxMax, 1);
     }
-    return faces;
+    const cleaned = faces.filter(poly => Math.abs(area(poly)) > 1e-4);
+    return cleaned;
 }
 
 /* ========== полилинии/сегменты ========== */
