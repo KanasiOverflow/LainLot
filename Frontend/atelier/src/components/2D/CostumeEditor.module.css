@@ -169,8 +169,37 @@
 .anchorSelectedA { fill: #fde047; stroke: #a16207; stroke-width: 1.5; }
 .anchorSelectedB { fill: #86efac; stroke: #166534; stroke-width: 1.5; }
 
-.userCurve { stroke: #ef4444; stroke-width: 2; fill: none; }
-.userCurveDeleteHover { stroke: #b91c1c; stroke-width: 3.5; filter: drop-shadow(0 0 2px rgba(185,28,28,.35)); fill: none; }
+.userCurve {               /* режимы редактирования */
+  stroke: #ff4d4f;         /* красный контур */
+  stroke-width: 2.5;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.userCurveDeleteHover {    /* подсветка при удалении */
+  stroke: #ff4d4f;
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 4px rgba(255,77,79,0.6));
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.userCurvePreview {        /* режим Просмотр — «шов» */
+  stroke: #111;            /* лёгкая чёрная линия */
+  opacity: 0.9;
+  stroke-width: 1.2;
+  /* если хочешь «стежки», раскомментируй: */
+  /* stroke-dasharray: 4 3; */
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 
 /* ссылки внутри кнопок при ховере — чуть ярче, как на сайте */
 .btn:hover a, .btnGhost:hover a { color:#f26522; text-decoration: underline; }

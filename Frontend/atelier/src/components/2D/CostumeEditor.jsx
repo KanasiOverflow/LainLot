@@ -841,27 +841,70 @@ export default function CostumeEditor({ initialSVG }) {
                                     })}
 
                                     {/* пользовательские кривые (клипнутые) */}
-                                    {curves.map(c => {
-                                        let d, key = `${p.id}:${c.id}`;
+                                    {curves.map((c) => {
+                                        const key = `${p.id}:${c.id}`;
+
+                                        // основной путь
+                                        let mainD;
                                         if (c.type === "cubic") {
                                             const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
-                                            d = `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`;
+                                            mainD = `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`;
                                         } else {
-                                            d = c.d;
+                                            mainD = c.d; // сглаженная прижатая дуга
                                         }
-                                        const del = mode === "delete" && hoverCurveKey === key;
-                                        const pe = (isPreview || mode === "paint" || mode === "deleteFill") ? "none" : (p.id === activePanelId ? "auto" : "none");
+
+                                        const deleting = mode === "delete" && hoverCurveKey === key;
+                                        const clsMain = isPreview
+                                            ? styles.userCurvePreview   // просмотр: тонкая чёрная
+                                            : (deleting ? styles.userCurveDeleteHover : styles.userCurve); // редактирование: красная / подсветка
+
+                                        // В preview/paint/deleteFill клики по линиям не нужны, в остальных — только для активной панели
+                                        const pe = (isPreview || mode === "paint" || mode === "deleteFill")
+                                            ? "none"
+                                            : (p.id === activePanelId ? "auto" : "none");
+
                                         return (
-                                            <path key={key} d={d}
-                                                className={del ? styles.userCurveDeleteHover : styles.userCurve}
-                                                onPointerEnter={() => onCurveEnter(p.id, c.id)}
-                                                onPointerLeave={() => onCurveLeave(p.id, c.id)}
-                                                onPointerDown={() => onCurveClickDelete(p.id, c.id)}
-                                                fill="none" vectorEffect="non-scaling-stroke"
-                                                style={{ pointerEvents: pe }}
-                                            />
+                                            <g key={key}>
+                                                <path
+                                                    d={mainD}
+                                                    className={clsMain}
+                                                    fill="none"
+                                                    vectorEffect="non-scaling-stroke"
+                                                    style={{ pointerEvents: pe }}
+                                                    onPointerEnter={() => onCurveEnter(p.id, c.id)}
+                                                    onPointerLeave={() => onCurveLeave(p.id, c.id)}
+                                                    onPointerDown={() => onCurveClickDelete(p.id, c.id)}
+                                                />
+
+                                                {/* видимые коннекторы у прижатых кривых */}
+                                                {c.type === "routed" && c.connA && c.connA.length === 2 && (
+                                                    <path
+                                                        d={`M ${c.connA[0].x} ${c.connA[0].y} L ${c.connA[1].x} ${c.connA[1].y}`}
+                                                        className={clsMain}
+                                                        fill="none"
+                                                        vectorEffect="non-scaling-stroke"
+                                                        style={{ pointerEvents: pe }}
+                                                        onPointerEnter={() => onCurveEnter(p.id, c.id)}
+                                                        onPointerLeave={() => onCurveLeave(p.id, c.id)}
+                                                        onPointerDown={() => onCurveClickDelete(p.id, c.id)}
+                                                    />
+                                                )}
+                                                {c.type === "routed" && c.connB && c.connB.length === 2 && (
+                                                    <path
+                                                        d={`M ${c.connB[0].x} ${c.connB[0].y} L ${c.connB[1].x} ${c.connB[1].y}`}
+                                                        className={clsMain}
+                                                        fill="none"
+                                                        vectorEffect="non-scaling-stroke"
+                                                        style={{ pointerEvents: pe }}
+                                                        onPointerEnter={() => onCurveEnter(p.id, c.id)}
+                                                        onPointerLeave={() => onCurveLeave(p.id, c.id)}
+                                                        onPointerDown={() => onCurveClickDelete(p.id, c.id)}
+                                                    />
+                                                )}
+                                            </g>
                                         );
                                     })}
+
                                 </g>
 
                                 {/* базовый контур */}
