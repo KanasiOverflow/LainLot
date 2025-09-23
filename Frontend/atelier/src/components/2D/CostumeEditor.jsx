@@ -549,6 +549,18 @@ export default function CostumeEditor({ initialSVG }) {
     const [waveAmpPx, setWaveAmpPx] = useState(6);
     const [waveLenPx, setWaveLenPx] = useState(36);
 
+    const [paletteOpen, setPaletteOpen] = useState(false);
+    const paletteRef = useRef(null);
+    useEffect(() => {
+        if (!paletteOpen) return;
+        const onKey = (e) => e.key === "Escape" && setPaletteOpen(false);
+        const onClick = (e) => {
+            if (paletteRef.current && !paletteRef.current.contains(e.target)) setPaletteOpen(false);
+        };
+        window.addEventListener("keydown", onKey);
+        window.addEventListener("pointerdown", onClick);
+        return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("pointerdown", onClick); };
+    }, [paletteOpen]);
 
     const onFile = async (e) => { const f = e.target.files?.[0]; if (!f) return; setRawSVG(await f.text()); };
 
@@ -828,8 +840,6 @@ export default function CostumeEditor({ initialSVG }) {
         setMode("preview");
     };
 
-
-
     const onCurveEnter = (panelId, id) => { if (mode === "delete") setHoverCurveKey(`${panelId}:${id}`); };
     const onCurveLeave = (panelId, id) => { if (mode === "delete") setHoverCurveKey(k => (k === `${panelId}:${id}` ? null : k)); };
     const onCurveClickDelete = (panelId, id) => {
@@ -1058,77 +1068,128 @@ export default function CostumeEditor({ initialSVG }) {
                     </div>
 
                     <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Панели</div>
-                        <div className={styles.btnGroupV}>
-                            {panels.map(p => (
-                                <button key={p.id}
-                                    className={`${styles.btn} ${activePanelId === p.id ? styles.btnActive : ""}`}
-                                    onClick={() => setActivePanelId(p.id)}>
-                                    {p.label}
-                                </button>
-                            ))}
-                        </div>
+                        <div className={styles.sectionTitle}>Панель</div>
+                        <select
+                            className={styles.selectCompact}
+                            value={activePanelId || ""}
+                            onChange={(e) => setActivePanelId(e.target.value)}
+                        >
+                            {panels.map(p => <option key={p.id} value={p.id}>{p.label}</option>)}
+                        </select>
                     </div>
 
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Режим</div>
-                        <div className={styles.btnGroupV}>
-                            <button className={`${styles.btn} ${isPreview ? styles.btnActive : ""}`} onClick={() => setMode("preview")}>Просмотр <kbd className={styles.kbd}>Esc</kbd></button>
-                            <button className={`${styles.btn} ${mode === "add" ? styles.btnActive : ""}`} onClick={() => { setMode("add"); setAddBuffer(null); }}>Добавить кривую <kbd className={styles.kbd}>A</kbd></button>
-                            <button className={`${styles.btn} ${mode === "delete" ? styles.btnDangerActive : ""}`} onClick={() => setMode("delete")}>Удалить линию <kbd className={styles.kbd}>D</kbd></button>
+                        <div className={styles.segmented}>
+                            <button title="Просмотр (Esc)"
+                                className={`${styles.segBtn} ${mode === 'preview' ? styles.segActive : ''}`}
+                                onClick={() => setMode('preview')}>👁</button>
+
+                            <button title="Добавить линию (A)"
+                                className={`${styles.segBtn} ${mode === 'add' ? styles.segActive : ''}`}
+                                onClick={() => { setMode('add'); setAddBuffer(null); }}>＋</button>
+
+                            <button title="Удалить линию (D)"
+                                className={`${styles.segBtn} ${mode === 'delete' ? styles.segActive : ''}`}
+                                onClick={() => setMode('delete')}>🗑</button>
+
+                            <button title="Заливка (F)"
+                                className={`${styles.segBtn} ${mode === 'paint' ? styles.segActive : ''}`}
+                                onClick={() => setMode('paint')}>🪣</button>
+
+                            <button title="Удалить заливку (X)"
+                                className={`${styles.segBtn} ${mode === 'deleteFill' ? styles.segDangerActive : ''}`}
+                                onClick={() => setMode('deleteFill')}>✖</button>
                         </div>
                     </div>
 
                     <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Заливка</div>
-                        <div className={styles.paintRow}>
-                            <button className={`${styles.btn} ${mode === "paint" ? styles.btnActive : ""}`} onClick={() => setMode("paint")}>🪣 Заливка <kbd className={styles.kbd}>F</kbd></button>
-                            <input type="color" className={styles.color} value={paintColor} onChange={(e) => setPaintColor(e.target.value)} />
+                        <div className={styles.sectionTitle}>Цвет заливки</div>
+                        <div className={styles.row}>
+                            {/* текущий цвет */}
+                            <button
+                                className={styles.colorTrigger}
+                                title="Выбрать цвет"
+                                style={{ background: paintColor }}
+                                onClick={() => setPaletteOpen(v => !v)}
+                            />
+                            {/* нативный color для тонкой настройки */}
+                            <input
+                                type="color"
+                                className={styles.colorSmall}
+                                value={paintColor}
+                                onChange={(e) => setPaintColor(e.target.value)}
+                                aria-label="Цвет"
+                            />
+                            {/* popover */}
+                            {paletteOpen && (
+                                <div ref={paletteRef} className={styles.palette}>
+                                    <div className={styles.paletteGrid}>
+                                        {["#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe", "#ef4444", "#10b981", "#22c55e", "#0ea5e9", "#f59e0b", "#a855f7"].map(c => (
+                                            <button key={c}
+                                                className={styles.swatchBtn}
+                                                style={{ background: c }}
+                                                onClick={() => { setPaintColor(c); setPaletteOpen(false); }}
+                                                aria-label={c}
+                                            />
+                                        ))}
+                                    </div>
+                                    <div className={styles.paletteFooter}>
+                                        <span className={styles.paletteLabel}>Произвольный:</span>
+                                        <input
+                                            type="color"
+                                            className={styles.colorInline}
+                                            value={paintColor}
+                                            onChange={(e) => { setPaintColor(e.target.value); }}
+                                            aria-label="Произвольный цвет"
+                                        />
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                        <div className={styles.swatches}>
-                            {["#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe"].map(c => (
-                                <button key={c} className={styles.swatch} style={{ background: c }} onClick={() => setPaintColor(c)} />
-                            ))}
-                        </div>
-                        <button className={`${styles.btn} ${mode === "deleteFill" ? styles.btnDangerActive : ""}`} onClick={() => setMode("deleteFill")}>Удалить заливку <kbd className={styles.kbd}>X</kbd></button>
                     </div>
 
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Отступ от края</div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <input
-                                type="range"
-                                min={0}
-                                max={24}
-                                step={1}
-                                value={edgeInsetPx}
-                                onChange={(e) => setEdgeInsetPx(+e.target.value)}
-                                style={{ flex: 1 }}
-                                aria-label="Отступ от кромки"
-                            />
-                            <div style={{ width: 40, textAlign: "right" }}>{edgeInsetPx}px</div>
+                        <div className={styles.row}>
+                            <input type="range" min={0} max={24} step={1}
+                                value={edgeInsetPx} onChange={(e) => setEdgeInsetPx(+e.target.value)}
+                                className={styles.rangeCompact} />
+                            <div className={styles.value}>{edgeInsetPx}px</div>
                         </div>
-                        <div style={{ fontSize: 12, opacity: .7, marginTop: 6 }}>
+                        <div className={styles.hintSmall}>
                             Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
                         </div>
                     </div>
 
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Тип линии</div>
-                        <div className={styles.btnGroupV}>
-                            <button className={`${styles.btn} ${lineStyle === 'straight' ? styles.btnActive : ''}`} onClick={() => setLineStyle('straight')}>Прямая</button>
-                            <button className={`${styles.btn} ${lineStyle === 'wavy' ? styles.btnActive : ''}`} onClick={() => setLineStyle('wavy')}>Волнистая</button>
+                        <div className={styles.segmented}>
+                            <button className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
+                                onClick={() => setLineStyle('straight')}>Прямая</button>
+                            <button className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
+                                onClick={() => setLineStyle('wavy')}>Волнистая</button>
                         </div>
+
                         {lineStyle === 'wavy' && (
                             <>
-                                <div className={styles.sectionTitle} style={{ marginTop: 8 }}>Амплитуда</div>
-                                <input type="range" min={2} max={24} step={1} value={waveAmpPx} onChange={e => setWaveAmpPx(+e.target.value)} />
-                                <div className={styles.sectionTitle} style={{ marginTop: 8 }}>Длина волны</div>
-                                <input type="range" min={12} max={80} step={2} value={waveLenPx} onChange={e => setWaveLenPx(+e.target.value)} />
+                                <div className={styles.subRow}>
+                                    <span className={styles.slimLabel}>Амплитуда</span>
+                                    <input type="range" min={2} max={24} step={1}
+                                        value={waveAmpPx} onChange={e => setWaveAmpPx(+e.target.value)}
+                                        className={styles.rangeCompact} />
+                                    <span className={styles.value}>{waveAmpPx}px</span>
+                                </div>
+                                <div className={styles.subRow}>
+                                    <span className={styles.slimLabel}>Длина волны</span>
+                                    <input type="range" min={12} max={80} step={2}
+                                        value={waveLenPx} onChange={e => setWaveLenPx(+e.target.value)}
+                                        className={styles.rangeCompact} />
+                                    <span className={styles.value}>{waveLenPx}px</span>
+                                </div>
                             </>
                         )}
                     </div>
-
 
                 </div>
             </aside>
