@@ -752,6 +752,10 @@ function looksLikeBackground(cand, root) {
 export default function CostumeEditor({ initialSVG }) {
     const scopeRef = useRef(null);
 
+    // state для «запоминания» последнего подрежима
+    const [lastFillMode, setLastFillMode] = useState('paint');   // 'paint' | 'deleteFill'
+    const [lastLineMode, setLastLineMode] = useState('add');     // 'add' | 'delete
+
     const [rawSVG, setRawSVG] = useState(initialSVG || "");
     const [panels, setPanels] = useState([]);
 
@@ -813,6 +817,15 @@ export default function CostumeEditor({ initialSVG }) {
         window.addEventListener("pointerdown", onClick);
         return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("pointerdown", onClick); };
     }, [paletteOpen]);
+
+    useEffect(() => {
+        if (mode === 'paint' || mode === 'deleteFill') setLastFillMode(mode);
+        if (mode === 'add' || mode === 'delete') setLastLineMode(mode);
+    }, [mode]);
+
+    const modeGroup =
+        (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
+            (mode === 'add' || mode === 'delete') ? 'line' : 'preview';
 
     // --- PRESETS: начальная подгрузка и переключение
     useEffect(() => {
@@ -1008,21 +1021,20 @@ export default function CostumeEditor({ initialSVG }) {
         if (!el) return;
 
         const onKey = (e) => {
-            const tag = (e.target?.tagName || "").toLowerCase();
-            if (["input", "textarea", "select", "button"].includes(tag) || e.target?.isContentEditable) return;
-            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            // работаем только когда фокус внутри редактора
+            if (document.activeElement !== el) return;
 
-            const k = e.key.toLowerCase?.();
-            if (e.key === "Escape") setMode("preview");
-            else if (k === "a") { setMode("add"); setAddBuffer(null); }
-            else if (k === "d") setMode("delete");
-            else if (k === "f") setMode("paint");
-            else if (k === "x") setMode("deleteFill");
+            if (e.key === 'Escape') { setMode('preview'); setAddBuffer(null); e.preventDefault(); }
+            else if (e.key === 'a' || e.key === 'A') { setMode('add'); setAddBuffer(null); e.preventDefault(); }
+            else if (e.key === 'd' || e.key === 'D') { setMode('delete'); e.preventDefault(); }
+            else if (e.key === 'f' || e.key === 'F') { setMode('paint'); e.preventDefault(); }
+            else if (e.key === 'x' || e.key === 'X') { setMode('deleteFill'); e.preventDefault(); }
         };
 
-        el.addEventListener("keydown", onKey);
-        return () => el.removeEventListener("keydown", onKey);
-    }, [scopeRef.current]);
+        el.addEventListener('keydown', onKey);
+        return () => el.removeEventListener('keydown', onKey);
+    }, [setMode, setAddBuffer]);
+
 
     /* ===== действия ===== */
     const activePanel = panels[0] || null;
@@ -1334,7 +1346,7 @@ export default function CostumeEditor({ initialSVG }) {
                                         );
                                     })}
 
-                                    {/* ANCHORS (вершины) — показываем только при работе с линиями */}
+                                    {/* ANCHORS (вершины) — только в режимах добавления/удаления линий */}
                                     {activePanel?.id === p.id && (mode === 'add' || mode === 'delete') && p.anchors.map((A, i) => (
                                         <circle
                                             key={i}
@@ -1386,142 +1398,126 @@ export default function CostumeEditor({ initialSVG }) {
                             </button>
                         </div>
                     </div>
-                    {/* Режимы (только общие действия) */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Режим</div>
-                        <div className={styles.segmented}>
-                            <button title="Просмотр (Esc)"
-                                className={`${styles.segBtn} ${mode === 'preview' ? styles.segActive : ''}`}
-                                onClick={() => setMode('preview')}>👁</button>
-
-                            <button title="Добавить линию (A)"
-                                className={`${styles.segBtn} ${mode === 'add' ? styles.segActive : ''}`}
-                                onClick={() => { setMode('add'); setAddBuffer(null); }}>＋</button>
-
-                            <button title="Удалить линию (D)"
-                                className={`${styles.segBtn} ${mode === 'delete' ? styles.segActive : ''}`}
-                                onClick={() => setMode('delete')}>🗑</button>
+                        <div className={`${styles.segmented} ${styles.tabs3}`}>
+                            <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'preview' ? styles.segActive : ''}`}
+                                onClick={() => setMode('preview')}>Просмотр</button>
+                            <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'fill' ? styles.segActive : ''}`}
+                                onClick={() => setMode(lastFillMode)}>Заливка</button>
+                            <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'line' ? styles.segActive : ''}`}
+                                onClick={() => { setAddBuffer(null); setMode(lastLineMode); }}>Линии</button>
                         </div>
                     </div>
 
-                    {/* Цвет заливки — палитра + покраска/снятие цвета */}
-                    {/* Цвет заливки — компактный ряд: чип + кнопки + dropdown */}
-                    <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Цвет заливки</div>
+                    {/* Цвет заливки — видна только в режимах покраски */}
 
-                        <div className={styles.colorRow}>
-                            {/* чип текущего цвета (открывает палитру) */}
-                            <button
-                                className={styles.colorChip}
-                                title="Выбрать цвет"
-                                style={{ background: paintColor }}
-                                onClick={() => setPaletteOpen(v => !v)}
-                            >
-                                <span className={styles.caret} />
-                            </button>
+                    {modeGroup === 'fill' && (
+                        <div className={styles.section}>
+                            <div className={styles.sectionTitle}>Цвет заливки</div>
 
-                            {/* группа действий с цветом */}
-                            <div className={styles.iconSeg}>
-                                <button
-                                    title="Залить (F)"
-                                    className={`${styles.iconBtn} ${mode === 'paint' ? styles.iconActive : ''}`}
-                                    onClick={() => setMode('paint')}
-                                >🪣</button>
-
-                                <button
-                                    title="Убрать заливку (X)"
-                                    className={`${styles.iconBtn} ${mode === 'deleteFill' ? styles.iconDangerActive : ''}`}
-                                    onClick={() => setMode('deleteFill')}
-                                >✖</button>
+                            <div className={`${styles.segmented} ${styles.two}`} style={{ marginBottom: 8 }}>
+                                <button className={`${styles.segBtn} ${mode === 'paint' ? styles.segActive : ''}`} onClick={() => setMode('paint')}>🪣 Залить</button>
+                                <button className={`${styles.segBtn} ${mode === 'deleteFill' ? styles.segActive : ''}`} onClick={() => setMode('deleteFill')}>✖ Стереть</button>
                             </div>
 
-                            {/* dropdown-палитра */}
-                            {paletteOpen && (
-                                <div ref={paletteRef} className={styles.palette}>
-                                    <div className={styles.paletteGrid}>
-                                        {[
-                                            "#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe",
-                                            "#ef4444", "#10b981", "#22c55e", "#0ea5e9", "#f59e0b", "#a855f7"
-                                        ].map(c => (
-                                            <button
-                                                key={c}
-                                                className={styles.swatchBtn}
-                                                style={{ background: c }}
-                                                onClick={() => { setPaintColor(c); setPaletteOpen(false); }}
-                                                aria-label={c}
-                                            />
-                                        ))}
+                            <div className={styles.colorRow}>
+                                <button className={`${styles.colorChip} ${mode === 'deleteFill' ? styles.colorChipDisabled : ''}`}
+                                    style={{ background: paintColor }}
+                                    onClick={() => mode !== 'deleteFill' && setPaletteOpen(v => !v)} />
+                                {paletteOpen && mode !== 'deleteFill' && (<div className={styles.palettePopover}>
+                                    {/* dropdown-палитра */}
+                                    {paletteOpen && (
+                                        <div ref={paletteRef} className={styles.palette}>
+                                            <div className={styles.paletteGrid}>
+                                                {[
+                                                    "#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe",
+                                                    "#ef4444", "#10b981", "#22c55e", "#0ea5e9", "#f59e0b", "#a855f7"
+                                                ].map(c => (
+                                                    <button
+                                                        key={c}
+                                                        className={styles.swatchBtn}
+                                                        style={{ background: c }}
+                                                        onClick={() => { setPaintColor(c); setPaletteOpen(false); }}
+                                                        aria-label={c}
+                                                    />
+                                                ))}
+                                            </div>
+                                            <div className={styles.paletteFooter}>
+                                                <span className={styles.paletteLabel}>Произвольный</span>
+                                                <input
+                                                    type="color"
+                                                    className={styles.colorInline}
+                                                    value={paintColor}
+                                                    onChange={(e) => setPaintColor(e.target.value)}
+                                                    aria-label="Произвольный цвет"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>)}
+                            </div>
+                        </div>
+                    )}
+
+                    {modeGroup === 'line' && (
+                        <div className={styles.section}>
+                            <div className={styles.sectionTitle}>Линия</div>
+
+                            <div className={`${styles.segmented} ${styles.two}`} style={{ marginBottom: 8 }}>
+                                <button className={`${styles.segBtn} ${mode === 'add' ? styles.segActive : ''}`} onClick={() => { setMode('add'); setAddBuffer(null); }}>＋ Добавить</button>
+                                <button className={`${styles.segBtn} ${mode === 'delete' ? styles.segActive : ''}`} onClick={() => setMode('delete')}>🗑 Удалить</button>
+                            </div>
+
+                            {/* Тип линии и параметры — как было */}
+                            <div className={styles.segmented}>
+                                <button
+                                    className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
+                                    onClick={() => setLineStyle('straight')}
+                                >Прямая</button>
+                                <button
+                                    className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
+                                    onClick={() => setLineStyle('wavy')}
+                                >Волнистая</button>
+                            </div>
+
+                            {lineStyle === 'wavy' && (
+                                <>
+                                    <div className={styles.subRow}>
+                                        <span className={styles.slimLabel}>Амплитуда</span>
+                                        <input type="range" min={2} max={24} step={1}
+                                            value={waveAmpPx} onChange={e => setWaveAmpPx(+e.target.value)}
+                                            className={styles.rangeCompact} />
+                                        <span className={styles.value}>{waveAmpPx}px</span>
                                     </div>
-                                    <div className={styles.paletteFooter}>
-                                        <span className={styles.paletteLabel}>Произвольный</span>
-                                        <input
-                                            type="color"
-                                            className={styles.colorInline}
-                                            value={paintColor}
-                                            onChange={(e) => setPaintColor(e.target.value)}
-                                            aria-label="Произвольный цвет"
-                                        />
+                                    <div className={styles.subRow}>
+                                        <span className={styles.slimLabel}>Длина волны</span>
+                                        <input type="range" min={12} max={80} step={2}
+                                            value={waveLenPx} onChange={e => setWaveLenPx(+e.target.value)}
+                                            className={styles.rangeCompact} />
+                                        <span className={styles.value}>{waveLenPx}px</span>
                                     </div>
-                                </div>
+                                </>
+                            )}
+
+                            {lineStyle === 'straight' && (
+                                <>
+                                    <div className={styles.subRow} style={{ marginTop: 8 }}>
+                                        <span className={styles.slimLabel}>Отступ от края</span>
+                                        <input type="range" min={0} max={24} step={1}
+                                            value={edgeInsetPx} onChange={e => setEdgeInsetPx(+e.target.value)}
+                                            className={styles.rangeCompact} />
+                                        <span className={styles.value}>{edgeInsetPx}px</span>
+                                    </div>
+                                    <div className={styles.hintSmall}>
+                                        Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
+                                    </div>
+                                </>
                             )}
                         </div>
-                    </div>
+                    )}
 
 
-                    {/* Линия — тип/параметры/отступ */}
-                    <div className={styles.section}>
-                        {/* Линия — показываем только в режимах добавления/удаления */}
-                        {(mode === 'add' || mode === 'delete') && (
-                            <div className={styles.section}>
-                                <div className={styles.sectionTitle}>Линия</div>
-
-                                <div className={styles.segmented}>
-                                    <button
-                                        className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
-                                        onClick={() => setLineStyle('straight')}
-                                    >Прямая</button>
-                                    <button
-                                        className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
-                                        onClick={() => setLineStyle('wavy')}
-                                    >Волнистая</button>
-                                </div>
-
-                                {lineStyle === 'wavy' && (
-                                    <>
-                                        <div className={styles.subRow}>
-                                            <span className={styles.slimLabel}>Амплитуда</span>
-                                            <input type="range" min={2} max={24} step={1}
-                                                value={waveAmpPx} onChange={e => setWaveAmpPx(Number(e.target.value))}
-                                                className={styles.rangeCompact} />
-                                            <span className={styles.value}>{waveAmpPx}px</span>
-                                        </div>
-                                        <div className={styles.subRow}>
-                                            <span className={styles.slimLabel}>Длина волны</span>
-                                            <input type="range" min={12} max={80} step={2}
-                                                value={waveLenPx} onChange={e => setWaveLenPx(Number(e.target.value))}
-                                                className={styles.rangeCompact} />
-                                            <span className={styles.value}>{waveLenPx}px</span>
-                                        </div>
-                                    </>
-                                )}
-
-                                {lineStyle === 'straight' && (
-                                    <>
-                                        <div className={styles.subRow} style={{ marginTop: 8 }}>
-                                            <span className={styles.slimLabel}>Отступ от края</span>
-                                            <input type="range" min={0} max={24} step={1}
-                                                value={edgeInsetPx} onChange={e => setEdgeInsetPx(Number(e.target.value))}
-                                                className={styles.rangeCompact} />
-                                            <span className={styles.value}>{edgeInsetPx}px</span>
-                                        </div>
-                                        <div className={styles.hintSmall}>
-                                            Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-                        )}
-                    </div>
                 </div>
             </aside>
 
