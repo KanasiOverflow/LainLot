@@ -254,6 +254,31 @@ function buildFacesFromSegments(segments) {
     return cleaned;
 }
 
+function segsSignature(segs) {
+    // стабильный «отпечаток» геометрии
+    const parts = [];
+    for (const s of segs) {
+        if (s.kind === "M") parts.push(`M${s.x.toFixed(3)},${s.y.toFixed(3)}`);
+        else if (s.kind === "L") parts.push(`L${s.x.toFixed(3)},${s.y.toFixed(3)}`);
+        else if (s.kind === "C") parts.push(
+            `C${s.x1.toFixed(3)},${s.y1.toFixed(3)},${s.x2.toFixed(3)},${s.y2.toFixed(3)},${s.x.toFixed(3)},${s.y.toFixed(3)}`
+        );
+        else if (s.kind === "Z") parts.push("Z");
+    }
+    return parts.join(";");
+}
+
+function bboxIoU(a, b) {
+    const x1 = Math.max(a.x, b.x);
+    const y1 = Math.max(a.y, b.y);
+    const x2 = Math.min(a.x + a.w, b.x + b.w);
+    const y2 = Math.min(a.y + a.h, b.y + b.h);
+    const iw = Math.max(0, x2 - x1), ih = Math.max(0, y2 - y1);
+    const inter = iw * ih;
+    const union = a.w * a.h + b.w * b.h - inter || 1;
+    return inter / union;
+}
+
 /* ========== полилинии/сегменты ========== */
 function polylinesFromSegs(segs) {
     const lines = []; let start = null, curr = null;
@@ -296,8 +321,23 @@ function splitClosedSubpaths(d) {
     }
     return parts;
 }
+
+function pushCandidate(candidates, segs, tag, label) {
+    if (!segs || !segs.length) return;
+    const bb = getBounds(segs);
+    candidates.push({
+        segs,
+        label: label ?? (tag.match(/\sid="([^"]+)"/i)?.[1] || ""),
+        bbox: bb,
+        bboxArea: Math.abs(bb.w * bb.h) || 1,
+        rawTag: tag
+    });
+}
+
 function extractPanels(rawSVG) {
-    // 1) Собираем теги
+    const rootBox = parseViewBox(rawSVG);
+
+    // --- собираем теги
     const pathTags = [...rawSVG.matchAll(/<path\b[^>]*>/gi)].map(m => m[0]);
     const polygonTags = [...rawSVG.matchAll(/<polygon\b[^>]*>/gi)].map(m => m[0]);
     const polylineTags = [...rawSVG.matchAll(/<polyline\b[^>]*>/gi)].map(m => m[0]);
@@ -306,138 +346,145 @@ function extractPanels(rawSVG) {
     const ellipseTags = [...rawSVG.matchAll(/<ellipse\b[^>]*>/gi)].map(m => m[0]);
     const lineTags = [...rawSVG.matchAll(/<line\b[^>]*>/gi)].map(m => m[0]);
 
+    // маски/фильтры пропускаем, clip-path НЕ режем (часто это просто «окно»)
+    const skipByAttr = (tag) => /\bmask=|\bfilter=/i.test(tag);
+
     let candidates = [];
+    const push = (segs, tag, label) => {
+        pushCandidate(candidates, segs, tag, label);
+    };
 
-    // 2) path — как раньше + разбиение на закрытые подпути
+    // ----- PATH
     for (const tag of pathTags) {
-        const dMatch = tag.match(/\sd="([^"]+)"/i); if (!dMatch) continue;
-        const idMatch = tag.match(/\sid="([^"]+)"/i);
-        const label = idMatch?.[1] || "";
-        const d = dMatch[1];
+        if (skipByAttr(tag)) continue;
+        const d = tag.match(/\sd="([^"]+)"/i)?.[1]; if (!d) continue;
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || "");
         const subs = splitClosedSubpaths(d);
-
-        if (subs.length) {
-            for (const subD of subs) {
-                const segs = parsePathD(subD); if (!segs.length) continue;
-                const bb = getBounds(segs); const bboxArea = Math.abs(bb.w * bb.h) || 1;
-                candidates.push({ segs, label, bboxArea });
-            }
-        } else {
-            const segs0 = ensureClosed(parsePathD(d));
-            if (segs0.length) {
-                const bb = getBounds(segs0);
-                candidates.push({ segs: segs0, label, bboxArea: Math.abs(bb.w * bb.h) || 1 });
-            }
+        const chunks = subs.length ? subs : [d];
+        for (const subD of chunks) {
+            let segs = parsePathD(subD);
+            if (M) segs = applyMatrixToSegs(segs, M);
+            push(segs, tag);
         }
     }
 
-    // 3) polygon / polyline — как раньше
+    // ----- POLYGON
     for (const tag of polygonTags) {
+        if (skipByAttr(tag)) continue;
         const pts = tag.match(/\spoints="([^"]+)"/i)?.[1]; if (!pts) continue;
-        const idMatch = tag.match(/\sid="([^"]+)"/i); const label = idMatch?.[1] || "";
-        const segs = segsFromPoints(pts, true); if (segs.length) {
-            const bb = getBounds(segs);
-            candidates.push({ segs, label, bboxArea: Math.abs(bb.w * bb.h) || 1 });
-        }
-    }
-    for (const tag of polylineTags) {
-        const pts = tag.match(/\spoints="([^"]+)"/i)?.[1]; if (!pts) continue;
-        const idMatch = tag.match(/\sid="([^"]+)"/i); const label = idMatch?.[1] || "";
-        const segs = ensureClosed(segsFromPoints(pts, false)); if (segs.length) {
-            const bb = getBounds(segs);
-            candidates.push({ segs, label, bboxArea: Math.abs(bb.w * bb.h) || 1 });
-        }
+        let segs = segsFromPoints(pts, true);
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || "");
+        if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
     }
 
-    // 4) rect → закрытый контур (учтём rx/ry как «скошенные» углы простыми отрезками)
+    // ----- POLYLINE (закрываем)
+    for (const tag of polylineTags) {
+        if (skipByAttr(tag)) continue;
+        const pts = tag.match(/\spoints="([^"]+)"/i)?.[1]; if (!pts) continue;
+        let segs = ensureClosed(segsFromPoints(pts, false));
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || "");
+        if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
+    }
+
+    // ----- RECT
     for (const tag of rectTags) {
+        if (skipByAttr(tag)) continue;
         const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
         let x = get("x"), y = get("y"), w = get("width"), h = get("height");
         if (!(isFinite(w) && isFinite(h) && w > 0 && h > 0)) continue;
         const rx = Math.max(0, get("rx")), ry = Math.max(0, get("ry"));
         const r = Math.min(rx || ry || 0, Math.min(w, h) / 2);
-
         const pts = r > 0
-            ? [
-                { x: x + r, y }, { x: x + w - r, y }, { x: x + w, y: y + r }, { x: x + w, y: y + h - r },
-                { x: x + w - r, y: y + h }, { x: x + r, y: y + h }, { x: x, y: y + h - r }, { x, y: y + r }
-            ]
-            : [
-                { x, y }, { x: x + w, y }, { x: x + w, y: y + h }, { x, y: y + h }
-            ];
-        const segs = segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
-        const bb = getBounds(segs);
-        candidates.push({ segs, label: (tag.match(/\sid="([^"]+)"/i)?.[1] || ""), bboxArea: Math.abs(bb.w * bb.h) || 1 });
+            ? [{ x: x + r, y }, { x: x + w - r, y }, { x: x + w, y: y + r }, { x: x + w, y: y + h - r }, { x: x + w - r, y: y + h }, { x: x + r, y: y + h }, { x, y: y + h - r }, { x, y: y + r }]
+            : [{ x, y }, { x: x + w, y }, { x: x + w, y: y + h }, { x, y: y + h }];
+        let segs = segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || "");
+        if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
     }
 
-    // 5) circle / ellipse → многокутная аппроксимация
+    // ----- CIRCLE/ELLIPSE (аппроксимация многоугольником)
     const approxEllipse = (cx, cy, rx, ry, steps = 72) => {
         const pts = [];
-        for (let k = 0; k < steps; k++) {
-            const t = (k / steps) * Math.PI * 2;
-            pts.push({ x: cx + rx * Math.cos(t), y: cy + ry * Math.sin(t) });
-        }
+        for (let k = 0; k < steps; k++) { const t = (k / steps) * Math.PI * 2; pts.push({ x: cx + rx * Math.cos(t), y: cy + ry * Math.sin(t) }); }
         return segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
     };
     for (const tag of circleTags) {
+        if (skipByAttr(tag)) continue;
         const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
-        const cx = get("cx"), cy = get("cy"), r = get("r");
-        if (!(isFinite(r) && r > 0)) continue;
-        const segs = approxEllipse(cx, cy, r, r);
-        const bb = getBounds(segs);
-        candidates.push({ segs, label: (tag.match(/\sid="([^"]+)"/i)?.[1] || ""), bboxArea: Math.abs(bb.w * bb.h) || 1 });
+        const cx = get("cx"), cy = get("cy"), r = get("r"); if (!(isFinite(r) && r > 0)) continue;
+        let segs = approxEllipse(cx, cy, r, r);
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || ""); if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
     }
     for (const tag of ellipseTags) {
+        if (skipByAttr(tag)) continue;
         const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
-        const cx = get("cx"), cy = get("cy"), rx = get("rx"), ry = get("ry");
-        if (!(isFinite(rx) && rx > 0 && isFinite(ry) && ry > 0)) continue;
-        const segs = approxEllipse(cx, cy, rx, ry);
-        const bb = getBounds(segs);
-        candidates.push({ segs, label: (tag.match(/\sid="([^"]+)"/i)?.[1] || ""), bboxArea: Math.abs(bb.w * bb.h) || 1 });
+        const cx = get("cx"), cy = get("cy"), rx = get("rx"), ry = get("ry"); if (!(isFinite(rx) && rx > 0 && isFinite(ry) && ry > 0)) continue;
+        let segs = approxEllipse(cx, cy, rx, ry);
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || ""); if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
     }
 
-    // 6) line → «заделываем» в маленький прямоугольник по толщине stroke или 1px
+    // ----- LINE → тонкий «прямоугольник» по stroke-width
     for (const tag of lineTags) {
+        if (skipByAttr(tag)) continue;
         const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
-        const x1 = get("x1"), y1 = get("y1"), x2 = get("x2"), y2 = get("y2");
-        if (![x1, y1, x2, y2].every(isFinite)) continue;
-        const strokeW = +(tag.match(/\sstroke-width="([^"]+)"/i)?.[1] ?? 1);
-        const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1;
-        const nx = -dy / len, ny = dx / len, t = (strokeW || 1) / 2;
-        const pts = [
-            { x: x1 + nx * t, y: y1 + ny * t }, { x: x2 + nx * t, y: y2 + ny * t },
-            { x: x2 - nx * t, y: y2 - ny * t }, { x: x1 - nx * t, y: y1 - ny * t },
-        ];
-        const segs = segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
-        const bb = getBounds(segs);
-        candidates.push({ segs, label: (tag.match(/\sid="([^"]+)"/i)?.[1] || ""), bboxArea: Math.abs(bb.w * bb.h) || 1 });
+        const x1 = get("x1"), y1 = get("y1"), x2 = get("x2"), y2 = get("y2"); if (![x1, y1, x2, y2].every(isFinite)) continue;
+        const sw = +(tag.match(/\sstroke-width="([^"]+)"/i)?.[1] ?? 1);
+        const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1; const nx = -dy / len, ny = dx / len, t = (sw || 1) / 2;
+        const pts = [{ x: x1 + nx * t, y: y1 + ny * t }, { x: x2 + nx * t, y: y2 + ny * t }, { x: x2 - nx * t, y: y2 - ny * t }, { x: x1 - nx * t, y: y1 - ny * t }];
+        let segs = segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || ""); if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
     }
 
-    // 7) fallback: первый path d=...
+    // fallback: если вообще ничего не нашли — берём первый path
     if (!candidates.length) {
         const m = rawSVG.match(/<path[^>]*\sd="([^"]+)"[^>]*>/i);
         if (m) {
             const segs0 = ensureClosed(parsePathD(m[1]));
-            const bb = getBounds(segs0);
-            candidates.push({ segs: segs0, label: "Панель", bboxArea: Math.abs(bb.w * bb.h) || 1 });
+            pushCandidate(candidates, segs0, "<path>", "Панель");
         }
     }
     if (!candidates.length) return [];
 
-    // 8) отбор и подготовка
+    // --- Удаляем «фон/рамку», если есть из чего выбирать
+    if (candidates.length > 1) {
+        const kept = candidates.filter(c => !looksLikeBackground(c, rootBox));
+        if (kept.length) candidates = kept;
+    }
+
+    // --- Фильтрация по площади (адаптивная)
     candidates.sort((a, b) => b.bboxArea - a.bboxArea);
     const maxA = candidates[0].bboxArea || 1;
-    const ratio = candidates.length <= 3 ? 0 : PANEL_MIN_AREA_RATIO_DEFAULT;
+    const dominatesView = (candidates[0].bboxArea / (rootBox.w * rootBox.h || 1)) > 0.45;
+    const ratio = (candidates.length <= 3 || dominatesView) ? 0.02 : PANEL_MIN_AREA_RATIO_DEFAULT;
+
     let filtered = candidates.filter(c => (c.bboxArea / maxA) >= ratio);
 
+    // --- Dedup и ограничение количества
     const uniq = [];
     for (const c of filtered) {
-        const same = uniq.some(u => (Math.min(u.bboxArea, c.bboxArea) / Math.max(u.bboxArea, c.bboxArea)) > 0.92);
+        // геометрический отпечаток
+        c.sig ||= segsSignature(c.segs);
+
+        const same = uniq.some(u => {
+            const areaRatio = Math.min(u.bboxArea, c.bboxArea) / Math.max(u.bboxArea, c.bboxArea);
+            const iou = bboxIoU(u.bbox, c.bbox);
+            // считаем дубликатом только если bbox почти совпал И геометрия совпала
+            return (areaRatio > 0.999 && iou > 0.995) || (u.sig === c.sig);
+        });
+
         if (!same) uniq.push(c);
         if (uniq.length >= PANEL_MAX_COUNT) break;
     }
+    filtered = uniq;
 
-    return uniq.map((c, idx) => {
+    // --- Финально
+    return filtered.map((c, idx) => {
         let name = c.label || `Панель ${idx + 1}`;
         const lbl = c.label || "";
         if (KEYWORDS.front.test(lbl)) name = "Перед";
@@ -448,7 +495,6 @@ function extractPanels(rawSVG) {
         return { id: String(idx + 1), label: name, segs: c.segs, anchors: collectAnchors(c.segs) };
     });
 }
-
 
 /* ========== утилиты «внутри/снаружи» ========== */
 function pointOnSegment(p, a, b) {
@@ -606,6 +652,92 @@ function waveAlongPolyline(pts, amp, lambda, outlinePoly = null, phase = 0) {
     return out;
 }
 
+/* ===== SVG meta & transforms ===== */
+function parseViewBox(raw) {
+    // пробуем viewBox, иначе width/height
+    const vb = raw.match(/\bviewBox="([^"]+)"/i)?.[1]?.trim();
+    if (vb) {
+        const [minx, miny, w, h] = vb.split(/\s+/).map(parseFloat);
+        if (isFinite(w) && isFinite(h) && w > 0 && h > 0) return { w, h };
+    }
+    const w = parseFloat(raw.match(/\bwidth="([\d.]+)(?:px)?"/i)?.[1] ?? "0");
+    const h = parseFloat(raw.match(/\bheight="([\d.]+)(?:px)?"/i)?.[1] ?? "0");
+    return (isFinite(w) && isFinite(h) && w > 0 && h > 0) ? { w, h } : { w: 1, h: 1 };
+}
+
+function parseMatrix(str) {
+    // transform="matrix(a b c d e f)" или matrix(a,b,c,d,e,f)
+    const m = str?.match(/matrix\(\s*([^\)]+)\)/i);
+    if (!m) return null;
+    const nums = m[1].split(/[\s,]+/).map(parseFloat);
+    if (nums.length !== 6 || nums.some(n => !isFinite(n))) return null;
+    const [a, b, c, d, e, f] = nums;
+    return { a, b, c, d, e, f };
+}
+function applyMatrixToPoint(p, M) {
+    return { x: M.a * p.x + M.c * p.y + M.e, y: M.b * p.x + M.d * p.y + M.f };
+}
+function applyMatrixToSegs(segs, M) {
+    if (!M) return segs;
+    return segs.map(s => {
+        const r = { ...s };
+        if (s.kind === "L" || s.kind === "M") {
+            const p = applyMatrixToPoint({ x: s.x, y: s.y }, M);
+            r.x = p.x; r.y = p.y;
+            if ("ax" in s) { const a = applyMatrixToPoint({ x: s.ax, y: s.ay }, M); r.ax = a.x; r.ay = a.y; }
+        } else if (s.kind === "C") {
+            const a = applyMatrixToPoint({ x: s.ax, y: s.ay }, M);
+            const p1 = applyMatrixToPoint({ x: s.x1, y: s.y1 }, M);
+            const p2 = applyMatrixToPoint({ x: s.x2, y: s.y2 }, M);
+            const p = applyMatrixToPoint({ x: s.x, y: s.y }, M);
+            r.ax = a.x; r.ay = a.y; r.x1 = p1.x; r.y1 = p1.y; r.x2 = p2.x; r.y2 = p2.y; r.x = p.x; r.y = p.y;
+        }
+        return r;
+    });
+}
+
+/** эвристика «фон/рамка» — выкидываем только когда кандидатов больше одного */
+// cand: {segs,bbox,rawTag}, root: {w,h}
+function looksLikeBackground(cand, root) {
+    const { bbox, rawTag, segs } = cand;
+
+    const Av = Math.max(1, root.w * root.h);
+    const A = Math.abs(bbox.w * bbox.h);
+    const areaFrac = A / Av;
+    const coverW = bbox.w / root.w;
+    const coverH = bbox.h / root.h;
+
+    // «очень большой»: закрывает заметную часть листа
+    const isBig = areaFrac > 0.48 || (coverW > 0.90 && coverH > 0.90);
+
+    // 1) явный <rect>
+    const isRectTag = /^<rect\b/i.test(rawTag);
+
+    // 2) path/polygon, который геометрически «как прямоугольник»:
+    //    без кривых, оси X/Y, площадь ≈ площади bbox
+    let rectLike = false;
+    const subs = splitSegsIntoSubpaths(segs);
+    if (subs.length) {
+        const ring = polylineFromSubpath(subs[0]);
+        if (ring.length >= 4) {
+            const Ab = Math.abs(area(ring));
+            const bboxLike = Math.abs(Ab - A) / Math.max(A, 1) < 0.06;
+            const axisAligned = ring.every((p, i) => {
+                const q = ring[(i + 1) % ring.length];
+                const dx = Math.abs(q.x - p.x), dy = Math.abs(q.y - p.y);
+                return dx < 1e-3 || dy < 1e-3;
+            });
+            rectLike = bboxLike && axisAligned && !segs.some(s => s.kind === "C");
+        }
+    }
+
+    // 3) типичные «имена фона» или стили
+    const namedBg = /inkscape:label="background"|id="(?:background|bg|frame|artboard)"/i.test(rawTag);
+    const styleBg = /\sfill="(?!none)/i.test(rawTag) || /(?:\s|;)fill\s*:\s*[^;#)]/i.test(rawTag) || /\sstroke="none"/i.test(rawTag);
+
+    return isBig && (isRectTag || rectLike || namedBg || styleBg);
+}
+
 
 /* ================== компонент ================== */
 export default function CostumeEditor({ initialSVG }) {
@@ -644,8 +776,6 @@ export default function CostumeEditor({ initialSVG }) {
         window.addEventListener("pointerdown", onClick);
         return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("pointerdown", onClick); };
     }, [paletteOpen]);
-
-    const onFile = async (e) => { const f = e.target.files?.[0]; if (!f) return; setRawSVG(await f.text()); };
 
     useEffect(() => {
         if (!rawSVG) return;
