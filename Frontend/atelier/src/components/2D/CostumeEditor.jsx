@@ -297,16 +297,25 @@ function splitClosedSubpaths(d) {
     return parts;
 }
 function extractPanels(rawSVG) {
-    const pathTags = [...rawSVG.matchAll(/<path\b([^>]*?)>/gi)].map(m => m[0]);
-    const polygonTags = [...rawSVG.matchAll(/<polygon\b([^>]*?)>/gi)].map(m => m[0]);
-    const polylineTags = [...rawSVG.matchAll(/<polyline\b([^>]*?)>/gi)].map(m => m[0]);
+    // 1) Собираем теги
+    const pathTags = [...rawSVG.matchAll(/<path\b[^>]*>/gi)].map(m => m[0]);
+    const polygonTags = [...rawSVG.matchAll(/<polygon\b[^>]*>/gi)].map(m => m[0]);
+    const polylineTags = [...rawSVG.matchAll(/<polyline\b[^>]*>/gi)].map(m => m[0]);
+    const rectTags = [...rawSVG.matchAll(/<rect\b[^>]*>/gi)].map(m => m[0]);
+    const circleTags = [...rawSVG.matchAll(/<circle\b[^>]*>/gi)].map(m => m[0]);
+    const ellipseTags = [...rawSVG.matchAll(/<ellipse\b[^>]*>/gi)].map(m => m[0]);
+    const lineTags = [...rawSVG.matchAll(/<line\b[^>]*>/gi)].map(m => m[0]);
+
     let candidates = [];
 
+    // 2) path — как раньше + разбиение на закрытые подпути
     for (const tag of pathTags) {
         const dMatch = tag.match(/\sd="([^"]+)"/i); if (!dMatch) continue;
         const idMatch = tag.match(/\sid="([^"]+)"/i);
-        const label = idMatch?.[1] || ""; const d = dMatch[1];
+        const label = idMatch?.[1] || "";
+        const d = dMatch[1];
         const subs = splitClosedSubpaths(d);
+
         if (subs.length) {
             for (const subD of subs) {
                 const segs = parsePathD(subD); if (!segs.length) continue;
@@ -314,12 +323,15 @@ function extractPanels(rawSVG) {
                 candidates.push({ segs, label, bboxArea });
             }
         } else {
-            const segs0 = ensureClosed(parsePathD(d)); if (segs0.length) {
+            const segs0 = ensureClosed(parsePathD(d));
+            if (segs0.length) {
                 const bb = getBounds(segs0);
                 candidates.push({ segs: segs0, label, bboxArea: Math.abs(bb.w * bb.h) || 1 });
             }
         }
     }
+
+    // 3) polygon / polyline — как раньше
     for (const tag of polygonTags) {
         const pts = tag.match(/\spoints="([^"]+)"/i)?.[1]; if (!pts) continue;
         const idMatch = tag.match(/\sid="([^"]+)"/i); const label = idMatch?.[1] || "";
@@ -336,15 +348,83 @@ function extractPanels(rawSVG) {
             candidates.push({ segs, label, bboxArea: Math.abs(bb.w * bb.h) || 1 });
         }
     }
+
+    // 4) rect → закрытый контур (учтём rx/ry как «скошенные» углы простыми отрезками)
+    for (const tag of rectTags) {
+        const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
+        let x = get("x"), y = get("y"), w = get("width"), h = get("height");
+        if (!(isFinite(w) && isFinite(h) && w > 0 && h > 0)) continue;
+        const rx = Math.max(0, get("rx")), ry = Math.max(0, get("ry"));
+        const r = Math.min(rx || ry || 0, Math.min(w, h) / 2);
+
+        const pts = r > 0
+            ? [
+                { x: x + r, y }, { x: x + w - r, y }, { x: x + w, y: y + r }, { x: x + w, y: y + h - r },
+                { x: x + w - r, y: y + h }, { x: x + r, y: y + h }, { x: x, y: y + h - r }, { x, y: y + r }
+            ]
+            : [
+                { x, y }, { x: x + w, y }, { x: x + w, y: y + h }, { x, y: y + h }
+            ];
+        const segs = segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
+        const bb = getBounds(segs);
+        candidates.push({ segs, label: (tag.match(/\sid="([^"]+)"/i)?.[1] || ""), bboxArea: Math.abs(bb.w * bb.h) || 1 });
+    }
+
+    // 5) circle / ellipse → многокутная аппроксимация
+    const approxEllipse = (cx, cy, rx, ry, steps = 72) => {
+        const pts = [];
+        for (let k = 0; k < steps; k++) {
+            const t = (k / steps) * Math.PI * 2;
+            pts.push({ x: cx + rx * Math.cos(t), y: cy + ry * Math.sin(t) });
+        }
+        return segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
+    };
+    for (const tag of circleTags) {
+        const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
+        const cx = get("cx"), cy = get("cy"), r = get("r");
+        if (!(isFinite(r) && r > 0)) continue;
+        const segs = approxEllipse(cx, cy, r, r);
+        const bb = getBounds(segs);
+        candidates.push({ segs, label: (tag.match(/\sid="([^"]+)"/i)?.[1] || ""), bboxArea: Math.abs(bb.w * bb.h) || 1 });
+    }
+    for (const tag of ellipseTags) {
+        const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
+        const cx = get("cx"), cy = get("cy"), rx = get("rx"), ry = get("ry");
+        if (!(isFinite(rx) && rx > 0 && isFinite(ry) && ry > 0)) continue;
+        const segs = approxEllipse(cx, cy, rx, ry);
+        const bb = getBounds(segs);
+        candidates.push({ segs, label: (tag.match(/\sid="([^"]+)"/i)?.[1] || ""), bboxArea: Math.abs(bb.w * bb.h) || 1 });
+    }
+
+    // 6) line → «заделываем» в маленький прямоугольник по толщине stroke или 1px
+    for (const tag of lineTags) {
+        const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
+        const x1 = get("x1"), y1 = get("y1"), x2 = get("x2"), y2 = get("y2");
+        if (![x1, y1, x2, y2].every(isFinite)) continue;
+        const strokeW = +(tag.match(/\sstroke-width="([^"]+)"/i)?.[1] ?? 1);
+        const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1;
+        const nx = -dy / len, ny = dx / len, t = (strokeW || 1) / 2;
+        const pts = [
+            { x: x1 + nx * t, y: y1 + ny * t }, { x: x2 + nx * t, y: y2 + ny * t },
+            { x: x2 - nx * t, y: y2 - ny * t }, { x: x1 - nx * t, y: y1 - ny * t },
+        ];
+        const segs = segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
+        const bb = getBounds(segs);
+        candidates.push({ segs, label: (tag.match(/\sid="([^"]+)"/i)?.[1] || ""), bboxArea: Math.abs(bb.w * bb.h) || 1 });
+    }
+
+    // 7) fallback: первый path d=...
     if (!candidates.length) {
         const m = rawSVG.match(/<path[^>]*\sd="([^"]+)"[^>]*>/i);
         if (m) {
-            const segs0 = ensureClosed(parsePathD(m[1])); const bb = getBounds(segs0);
+            const segs0 = ensureClosed(parsePathD(m[1]));
+            const bb = getBounds(segs0);
             candidates.push({ segs: segs0, label: "Панель", bboxArea: Math.abs(bb.w * bb.h) || 1 });
         }
     }
     if (!candidates.length) return [];
 
+    // 8) отбор и подготовка
     candidates.sort((a, b) => b.bboxArea - a.bboxArea);
     const maxA = candidates[0].bboxArea || 1;
     const ratio = candidates.length <= 3 ? 0 : PANEL_MIN_AREA_RATIO_DEFAULT;
@@ -358,13 +438,17 @@ function extractPanels(rawSVG) {
     }
 
     return uniq.map((c, idx) => {
-        let name = c.label || `Панель ${idx + 1}`; const lbl = c.label || "";
-        if (KEYWORDS.front.test(lbl)) name = "Перед"; else if (KEYWORDS.back.test(lbl)) name = "Спинка";
-        else if (KEYWORDS.hood.test(lbl)) name = "Капюшон"; else if (KEYWORDS.pocket.test(lbl)) name = "Карман";
+        let name = c.label || `Панель ${idx + 1}`;
+        const lbl = c.label || "";
+        if (KEYWORDS.front.test(lbl)) name = "Перед";
+        else if (KEYWORDS.back.test(lbl)) name = "Спинка";
+        else if (KEYWORDS.hood.test(lbl)) name = "Капюшон";
+        else if (KEYWORDS.pocket.test(lbl)) name = "Карман";
         else if (KEYWORDS.sleeve.test(lbl)) name = "Рукав";
         return { id: String(idx + 1), label: name, segs: c.segs, anchors: collectAnchors(c.segs) };
     });
 }
+
 
 /* ========== утилиты «внутри/снаружи» ========== */
 function pointOnSegment(p, a, b) {
@@ -565,12 +649,38 @@ export default function CostumeEditor({ initialSVG }) {
 
     useEffect(() => {
         if (!rawSVG) return;
+
         const parts = extractPanels(rawSVG);
         setPanels(parts);
         setCurvesByPanel({});
         setFills([]);
         setMode("preview");
+
+        if (!parts.length) {
+            // Диагностика причин
+            const hasImage = /<image\b[^>]+(?:href|xlink:href)=["']data:image\//i.test(rawSVG) ||
+                /<image\b[^>]+(?:href|xlink:href)=["'][^"']+\.(png|jpe?g|webp)/i.test(rawSVG);
+            const hasForeign = /<foreignObject\b/i.test(rawSVG);
+            const hasVectorTags = /<(path|polygon|polyline|rect|circle|ellipse|line)\b/i.test(rawSVG);
+
+            let msg =
+                "В SVG не найдено векторных контуров для деталей. " +
+                "Экспортируйте выкройку как вектор (path/polygon/polyline/rect/circle/ellipse/line).";
+
+            if (hasImage && !hasVectorTags) {
+                msg = "Похоже, это растровая картинка, встроенная в SVG (<image>). " +
+                    "Нужно экспортировать из исходной программы именно векторные контуры (path и др.).";
+            } else if (hasForeign && !hasVectorTags) {
+                msg = "Файл использует <foreignObject> (встроенный HTML/растровый контент). " +
+                    "Экспортируйте чистый векторный SVG без foreignObject.";
+            }
+
+            setToast({ text: msg });
+        } else {
+            if (toast) setToast(null);
+        }
     }, [rawSVG]);
+
 
     // осн. окна
     const viewBox = useMemo(() => {
@@ -1062,7 +1172,19 @@ export default function CostumeEditor({ initialSVG }) {
                         <div className={styles.sectionTitle}>Файл</div>
                         <label className={styles.fileBtn}>
                             Загрузить SVG (1+ деталей)
-                            <input type="file" accept=".svg,image/svg+xml" onChange={onFile} />
+                            <input
+                                type="file"
+                                accept=".svg,image/svg+xml,.png,.jpg,.jpeg,.webp"
+                                onChange={async (e) => {
+                                    const f = e.target.files?.[0]; if (!f) return;
+                                    if (!/svg/i.test(f.type) && !/\.svg$/i.test(f.name)) {
+                                        setToast({ text: "Загружен не-SVG файл. Экспортируйте выкройку как векторный SVG." });
+                                        return;
+                                    }
+                                    setRawSVG(await f.text());
+                                }}
+                            />
+
                         </label>
                     </div>
 
