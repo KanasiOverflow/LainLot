@@ -1334,7 +1334,7 @@ export default function CostumeEditor({ initialSVG }) {
                                         );
                                     })}
 
-                                    {/* ANCHORS (вершины) — показываем только не в preview */}
+                                    {/* ANCHORS (вершины) — показываем только при работе с линиями */}
                                     {activePanel?.id === p.id && (mode === 'add' || mode === 'delete') && p.anchors.map((A, i) => (
                                         <circle
                                             key={i}
@@ -1368,7 +1368,24 @@ export default function CostumeEditor({ initialSVG }) {
             <aside className={styles.sidebar}>
                 <div className={styles.panel}>
                     <h3 className={styles.panelTitle}>Редактор</h3>
-
+                    {/* Деталь: Перед/Спинка */}
+                    <div className={styles.section}>
+                        <div className={styles.sectionTitle}>Деталь</div>
+                        <div className={styles.segmented}>
+                            <button
+                                className={`${styles.segBtn} ${presetIdx === 0 ? styles.segActive : ''}`}
+                                onClick={() => setPresetIdx(0)}
+                            >
+                                Перед
+                            </button>
+                            <button
+                                className={`${styles.segBtn} ${presetIdx === 1 ? styles.segActive : ''}`}
+                                onClick={() => setPresetIdx(1)}
+                            >
+                                Спинка
+                            </button>
+                        </div>
+                    </div>
                     {/* Режимы (только общие действия) */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Режим</div>
@@ -1453,44 +1470,48 @@ export default function CostumeEditor({ initialSVG }) {
 
                     {/* Линия — тип/параметры/отступ */}
                     <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Линия</div>
-
-                        <div className={styles.segmented}>
-                            <button className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
-                                onClick={() => setLineStyle('straight')}>Прямая</button>
-                            <button className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
-                                onClick={() => setLineStyle('wavy')}>Волнистая</button>
-                        </div>
-
-                        {lineStyle === 'wavy' && (
-                            <>
-                                <div className={styles.subRow}>
-                                    <span className={styles.slimLabel}>Амплитуда</span>
-                                    <input type="range" min={2} max={24} step={1}
-                                        value={waveAmpPx} onChange={e => setWaveAmpPx(+e.target.value)}
-                                        className={styles.rangeCompact} />
-                                    <span className={styles.value}>{waveAmpPx}px</span>
+                        {/* Линия — показываем только в режимах добавления/удаления */}
+                        {(mode === 'add' || mode === 'delete') && (
+                            <div className={styles.section}>
+                                <div className={styles.sectionTitle}>Линия</div>
+                                <div className={styles.segmented}>
+                                    <button className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
+                                        onClick={() => setLineStyle('straight')}>Прямая</button>
+                                    <button className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
+                                        onClick={() => setLineStyle('wavy')}>Волнистая</button>
                                 </div>
-                                <div className={styles.subRow}>
-                                    <span className={styles.slimLabel}>Длина волны</span>
-                                    <input type="range" min={12} max={80} step={2}
-                                        value={waveLenPx} onChange={e => setWaveLenPx(+e.target.value)}
+
+                                {lineStyle === 'wavy' && (
+                                    <>
+                                        <div className={styles.subRow}>
+                                            <span className={styles.slimLabel}>Амплитуда</span>
+                                            <input type="range" min={2} max={24} step={1}
+                                                value={waveAmpPx} onChange={e => setWaveAmpPx(+e.target.value)}
+                                                className={styles.rangeCompact} />
+                                            <span className={styles.value}>{waveAmpPx}px</span>
+                                        </div>
+                                        <div className={styles.subRow}>
+                                            <span className={styles.slimLabel}>Длина волны</span>
+                                            <input type="range" min={12} max={80} step={2}
+                                                value={waveLenPx} onChange={e => setWaveLenPx(+e.target.value)}
+                                                className={styles.rangeCompact} />
+                                            <span className={styles.value}>{waveLenPx}px</span>
+                                        </div>
+                                    </>
+                                )}
+
+                                <div className={styles.subRow} style={{ marginTop: 8 }}>
+                                    <span className={styles.slimLabel}>Отступ от края</span>
+                                    <input type="range" min={0} max={24} step={1}
+                                        value={edgeInsetPx} onChange={(e) => setEdgeInsetPx(+e.target.value)}
                                         className={styles.rangeCompact} />
-                                    <span className={styles.value}>{waveLenPx}px</span>
+                                    <span className={styles.value}>{edgeInsetPx}px</span>
                                 </div>
-                            </>
+                                <div className={styles.hintSmall}>
+                                    Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
+                                </div>
+                            </div>
                         )}
-
-                        <div className={styles.subRow} style={{ marginTop: 8 }}>
-                            <span className={styles.slimLabel}>Отступ от края</span>
-                            <input type="range" min={0} max={24} step={1}
-                                value={edgeInsetPx} onChange={(e) => setEdgeInsetPx(+e.target.value)}
-                                className={styles.rangeCompact} />
-                            <span className={styles.value}>{edgeInsetPx}px</span>
-                        </div>
-                        <div className={styles.hintSmall}>
-                            Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
-                        </div>
                     </div>
                 </div>
             </aside>
