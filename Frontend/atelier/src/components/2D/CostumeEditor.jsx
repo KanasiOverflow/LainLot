@@ -1474,11 +1474,16 @@ export default function CostumeEditor({ initialSVG }) {
                         {(mode === 'add' || mode === 'delete') && (
                             <div className={styles.section}>
                                 <div className={styles.sectionTitle}>Линия</div>
+
                                 <div className={styles.segmented}>
-                                    <button className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
-                                        onClick={() => setLineStyle('straight')}>Прямая</button>
-                                    <button className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
-                                        onClick={() => setLineStyle('wavy')}>Волнистая</button>
+                                    <button
+                                        className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
+                                        onClick={() => setLineStyle('straight')}
+                                    >Прямая</button>
+                                    <button
+                                        className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
+                                        onClick={() => setLineStyle('wavy')}
+                                    >Волнистая</button>
                                 </div>
 
                                 {lineStyle === 'wavy' && (
@@ -1486,30 +1491,34 @@ export default function CostumeEditor({ initialSVG }) {
                                         <div className={styles.subRow}>
                                             <span className={styles.slimLabel}>Амплитуда</span>
                                             <input type="range" min={2} max={24} step={1}
-                                                value={waveAmpPx} onChange={e => setWaveAmpPx(+e.target.value)}
+                                                value={waveAmpPx} onChange={e => setWaveAmpPx(Number(e.target.value))}
                                                 className={styles.rangeCompact} />
                                             <span className={styles.value}>{waveAmpPx}px</span>
                                         </div>
                                         <div className={styles.subRow}>
                                             <span className={styles.slimLabel}>Длина волны</span>
                                             <input type="range" min={12} max={80} step={2}
-                                                value={waveLenPx} onChange={e => setWaveLenPx(+e.target.value)}
+                                                value={waveLenPx} onChange={e => setWaveLenPx(Number(e.target.value))}
                                                 className={styles.rangeCompact} />
                                             <span className={styles.value}>{waveLenPx}px</span>
                                         </div>
                                     </>
                                 )}
 
-                                <div className={styles.subRow} style={{ marginTop: 8 }}>
-                                    <span className={styles.slimLabel}>Отступ от края</span>
-                                    <input type="range" min={0} max={24} step={1}
-                                        value={edgeInsetPx} onChange={(e) => setEdgeInsetPx(+e.target.value)}
-                                        className={styles.rangeCompact} />
-                                    <span className={styles.value}>{edgeInsetPx}px</span>
-                                </div>
-                                <div className={styles.hintSmall}>
-                                    Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
-                                </div>
+                                {lineStyle === 'straight' && (
+                                    <>
+                                        <div className={styles.subRow} style={{ marginTop: 8 }}>
+                                            <span className={styles.slimLabel}>Отступ от края</span>
+                                            <input type="range" min={0} max={24} step={1}
+                                                value={edgeInsetPx} onChange={e => setEdgeInsetPx(Number(e.target.value))}
+                                                className={styles.rangeCompact} />
+                                            <span className={styles.value}>{edgeInsetPx}px</span>
+                                        </div>
+                                        <div className={styles.hintSmall}>
+                                            Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         )}
                     </div>
