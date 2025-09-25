@@ -1335,7 +1335,7 @@ export default function CostumeEditor({ initialSVG }) {
                                     })}
 
                                     {/* ANCHORS (вершины) — показываем только не в preview */}
-                                    {activePanel?.id === p.id && mode !== 'preview' && p.anchors.map((A, i) => (
+                                    {activePanel?.id === p.id && (mode === 'add' || mode === 'delete') && p.anchors.map((A, i) => (
                                         <circle
                                             key={i}
                                             cx={A.x}
