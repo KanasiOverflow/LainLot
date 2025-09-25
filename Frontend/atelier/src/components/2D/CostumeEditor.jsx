@@ -1325,27 +1325,6 @@ export default function CostumeEditor({ initialSVG }) {
                 <div className={styles.panel}>
                     <h3 className={styles.panelTitle}>Редактор</h3>
 
-                    {/* Файл */}
-                    <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Файл</div>
-                        <label className={styles.fileBtn}>
-                            Загрузить SVG (1+ деталей)
-                            <input
-                                type="file"
-                                accept=".svg,image/svg+xml,.png,.jpg,.jpeg,.webp"
-                                onChange={async (e) => {
-                                    const f = e.target.files?.[0]; if (!f) return;
-                                    if (!/svg/i.test(f.type) && !/\.svg$/i.test(f.name)) {
-                                        setToast({ text: "Загружен не-SVG файл. Экспортируйте выкройку как векторный SVG." });
-                                        return;
-                                    }
-                                    setRawSVG(await f.text());
-                                }}
-                            />
-
-                        </label>
-                    </div>
-
                     {/* Режимы (только общие действия) */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Режим</div>

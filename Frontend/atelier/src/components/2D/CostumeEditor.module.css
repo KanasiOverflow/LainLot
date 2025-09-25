@@ -60,23 +60,6 @@
   font-weight:600;
 }
 
-/* ====== FILE INPUT: прячем нативный, чтобы не распирал панель ====== */
-.fileBtn{
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
-  cursor: pointer;
-}
-.fileBtn:hover{ border-color:#30302e; }
-.fileBtn input{ display:none; }
-
 /* ====== КНОПКИ (в стиле сайта) ====== */
 .btn{
   width:100%;
