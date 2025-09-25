@@ -750,6 +750,8 @@ function looksLikeBackground(cand, root) {
 
 /* ================== компонент ================== */
 export default function CostumeEditor({ initialSVG }) {
+    const scopeRef = useRef(null);
+
     const [rawSVG, setRawSVG] = useState(initialSVG || "");
     const [panels, setPanels] = useState([]);
 
@@ -832,14 +834,22 @@ export default function CostumeEditor({ initialSVG }) {
     const nextPreset = () => setPresetIdx(i => (i + 1) % PRESETS.length);
 
     useEffect(() => {
+        const el = scopeRef.current;
+        if (!el) return;
+
         const onKey = (e) => {
+            const tag = (e.target?.tagName || "").toLowerCase();
+            if (["input", "textarea", "select", "button"].includes(tag) || e.target?.isContentEditable) return;
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+
             const k = e.key.toLowerCase?.();
             if (k === "arrowleft") prevPreset();
             if (k === "arrowright") nextPreset();
         };
-        window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
-    }, []);
+
+        el.addEventListener("keydown", onKey);
+        return () => el.removeEventListener("keydown", onKey);
+    }, [scopeRef.current]);
 
     useEffect(() => {
         if (!rawSVG) return;
@@ -994,7 +1004,14 @@ export default function CostumeEditor({ initialSVG }) {
     }, [panels]);
 
     useEffect(() => {
+        const el = scopeRef.current;
+        if (!el) return;
+
         const onKey = (e) => {
+            const tag = (e.target?.tagName || "").toLowerCase();
+            if (["input", "textarea", "select", "button"].includes(tag) || e.target?.isContentEditable) return;
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+
             const k = e.key.toLowerCase?.();
             if (e.key === "Escape") setMode("preview");
             else if (k === "a") { setMode("add"); setAddBuffer(null); }
@@ -1002,9 +1019,10 @@ export default function CostumeEditor({ initialSVG }) {
             else if (k === "f") setMode("paint");
             else if (k === "x") setMode("deleteFill");
         };
-        window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
-    }, []);
+
+        el.addEventListener("keydown", onKey);
+        return () => el.removeEventListener("keydown", onKey);
+    }, [scopeRef.current]);
 
     /* ===== действия ===== */
     const activePanel = panels[0] || null;
@@ -1191,8 +1209,8 @@ export default function CostumeEditor({ initialSVG }) {
     const [edgeInsetPx, setEdgeInsetPx] = useState(8); // отступ от края, px экрана
 
     return (
-        <div className={styles.layout}>
-            <div className={styles.canvasWrap}>
+        <div ref={scopeRef} className={styles.layout} tabIndex={0}>
+            <div className={styles.canvasWrap} onMouseDown={() => scopeRef.current?.focus()}>
                 {toast && <div className={styles.toast}>{toast.text}</div>}
                 {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
 
@@ -1243,44 +1261,66 @@ export default function CostumeEditor({ initialSVG }) {
                             const faces = facesByPanel[p.id] || [];
                             const ring = outerRingByPanel[p.id];
 
+                            const clickableFaces = faces.length ? faces : (ring ? [ring] : []);
+
                             return (
                                 <g key={p.id}>
-                                    {/* заливки граней */}
-                                    {faces.map(poly => {
+                                    {clickableFaces.map(poly => {
                                         const fk = faceKey(poly);
                                         const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
                                         const hasFill = fill !== "none";
+                                        const isHover = !!hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk;
+                                        const canFaceHit = mode === 'paint' || mode === 'deleteFill';
 
                                         return (
-                                            <path
-                                                key={fk}
-                                                d={facePath(poly)}
-                                                fill={hasFill ? fill : "none"}
-                                                fillOpacity={hasFill ? 0.9 : 0}
-                                                stroke="none"
-                                                onMouseEnter={() => hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly)}
-                                                onMouseLeave={() => hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly)}
-                                                onClick={() => hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly)}
-                                            />
+                                            <>
+                                                <path
+                                                    key={fk}
+                                                    d={facePath(poly)}
+                                                    fill={hasFill ? fill : (mode === 'paint' && isHover ? '#9ca3af' : 'transparent')}
+                                                    fillOpacity={hasFill ? 0.9 : (mode === 'paint' && isHover ? 0.35 : 0.001)}
+                                                    stroke="none"
+                                                    style={{ pointerEvents: canFaceHit ? 'all' : 'none', cursor: canFaceHit ? 'pointer' : 'default' }}
+                                                    onMouseEnter={() => hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly)}
+                                                    onMouseLeave={() => hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly)}
+                                                    onClick={() => hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly)}
+                                                />
+                                                {/* оверлей для deleteFill: слегка затемняем уже залитую грань при ховере */}
+                                                {hasFill && mode === 'deleteFill' && isHover && (
+                                                    <path
+                                                        key={`${fk}-overlay`}
+                                                        d={facePath(poly)}
+                                                        fill="#000"
+                                                        fillOpacity={0.18}
+                                                        style={{ pointerEvents: 'none' }}
+                                                    />
+                                                )}
+                                            </>
                                         );
                                     })}
 
-                                    {/* внешний контур детали */}
+                                    {/* внешний контур — без событий, чтобы не перекрывал клики */}
                                     {ring && (
-                                        <path d={facePath(ring)} fill="none" stroke="#111" strokeWidth={1.8 * (scale.k || 1)} />
+                                        <path
+                                            d={facePath(ring)}
+                                            fill="none"
+                                            stroke="#111"
+                                            strokeWidth={1.8 * (scale.k || 1)}
+                                            style={{ pointerEvents: "none" }}   // важно
+                                        />
                                     )}
 
-                                    {/* пользовательские линии */}
+                                    {/* USER CURVES (швы/линии пользователя) */}
                                     {(curvesByPanel[p.id] || []).map(c => {
-                                        let d = c.d;
-                                        if (!d && c.type === "cubic") {
-                                            const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
-                                            d = `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`;
-                                        }
-                                        const hoverKey = `${p.id}:${c.id}`;
-                                        const cls = (mode === "delete")
-                                            ? (hoverCurveKey === hoverKey ? styles.userCurveDeleteHover : styles.userCurve)
-                                            : styles.userCurvePreview;
+                                        const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
+                                        const d = c.type === 'cubic'
+                                            ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
+                                            : c.d; // 'routed'/'wavy'
+
+                                        const key = `${p.id}:${c.id}`;
+                                        const cls = (mode === 'delete' && hoverCurveKey === key)
+                                            ? styles.userCurveDeleteHover
+                                            : (mode === 'preview' ? styles.userCurvePreview : styles.userCurve);
 
                                         return (
                                             <path
@@ -1294,20 +1334,24 @@ export default function CostumeEditor({ initialSVG }) {
                                         );
                                     })}
 
-                                    {/* якоря (в режиме Add) */}
-                                    {mode === "add" && p.anchors.map((a, i) => (
+                                    {/* ANCHORS (вершины) — показываем только не в preview */}
+                                    {activePanel?.id === p.id && mode !== 'preview' && p.anchors.map((A, i) => (
                                         <circle
                                             key={i}
-                                            cx={a.x} cy={a.y} r={R}
-                                            className={`${styles.anchor} ${styles.anchorClickable} ${addBuffer === i ? styles.anchorSelectedA : ""}`}
+                                            cx={A.x}
+                                            cy={A.y}
+                                            r={R}
+                                            className={`${styles.anchor} ${mode === 'add' ? styles.anchorClickable : ''} ${addBuffer === i ? styles.anchorSelectedA : ''}`}
                                             onMouseEnter={() => setHoverAnchorIdx(i)}
-                                            onMouseLeave={() => setHoverAnchorIdx(null)}
-                                            onClick={() => onAnchorClickAddMode(i)}
+                                            onMouseLeave={() => setHoverAnchorIdx(h => (h === i ? null : h))}
+                                            onClick={() => mode === 'add' && onAnchorClickAddMode(i)}
                                         />
                                     ))}
+
                                 </g>
                             );
                         })}
+
 
                     </svg>
                 </div>
