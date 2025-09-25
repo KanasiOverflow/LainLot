@@ -334,6 +334,68 @@
 .value { width:44px; text-align:right; font-variant-numeric: tabular-nums; opacity:.8; }
 .hintSmall { font-size:11px; opacity:.65; margin-top:4px; line-height:1.25; }
 
+/* ===== SVG появление (fade + small slide) ===== */
+@keyframes fadeUpIn {
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.svgEnter{
+  animation: fadeUpIn .28s ease-out both;
+}
+
+/* === стек для двух svg во время смены пресета === */
+.canvasStack{ position:absolute; inset:0; }
+.stage{ position:absolute; inset:0; }
+
+/* чуть объёма при въезде "из-за" старого */
+@keyframes swapIn {
+  0%   { opacity:0; transform: translateY(12px) scale(0.98); filter: brightness(0.96); }
+  100% { opacity:1; transform: translateY(0)   scale(1);     filter: none; }
+}
+@keyframes swapOut {
+  0%   { opacity:1; transform: translateY(0)   scale(1);     filter: none; }
+  100% { opacity:0; transform: translateY(-10px) scale(1.02); filter: blur(0.3px); }
+}
+.swapIn  { animation: swapIn  .42s cubic-bezier(.22,.61,.36,1) both; z-index:2; will-change: transform, opacity, filter; }
+.swapOut { animation: swapOut .42s cubic-bezier(.22,.61,.36,1) both; z-index:1; will-change: transform, opacity, filter; }
+
+/* тост переиспользуемый */
+.toast{
+  position:absolute; top:12px; left:50%; transform:translateX(-50%);
+  background:#30302e; color:#fff; padding:8px 12px;
+  border-radius:8px; font-size:13px; box-shadow:0 8px 24px rgba(0,0,0,.15); z-index:3;
+}
+
+/* спиннер/лоадер */
+.loader{
+  position:absolute; inset:auto 12px 12px auto; z-index:4;
+  background:#ffffffcc; backdrop-filter: blur(2px);
+  border:1px solid #eee; border-radius:10px; padding:8px 10px; font-size:13px; color:#30302e;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+
+/* ===== Плавающая навигация пресетов (как на скрине со стрелками) ===== */
+.presetNav{
+  position:absolute;
+  left:50%; bottom:14px; transform:translateX(-50%);
+  display:flex; align-items:center; gap:10px;
+  z-index:3;
+}
+.navBtn{
+  width:46px; height:42px; border-radius:12px;
+  border:1px solid #e6e6e6; background:#fff; cursor:pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  font-size:20px; line-height:42px;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.navBtn:hover{ transform: translateY(-1px); border-color:#c7d2fe; box-shadow:0 10px 22px rgba(0,0,0,.10); }
+.presetChip{
+  min-width:110px; padding:10px 14px; text-align:center;
+  border:1px solid #e6e6e6; border-radius:12px; background:#fff; color:#30302e;
+  box-shadow: 0 6px 18px rgba(0,0,0,.06); font-weight:600;
+}
+
+
 /* ====== КОМПАКТНЫЕ РЕЖИМЫ ПО ВЫСОТЕ (чтобы панель помещалась) ====== */
 @media (max-height: 900px){
   .layout{ height: calc(100dvh - 140px); }

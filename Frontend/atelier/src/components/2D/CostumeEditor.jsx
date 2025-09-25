@@ -1,9 +1,18 @@
+// CostumeEditor.jsx
 import { useEffect, useMemo, useRef, useState, useLayoutEffect } from "react";
 import styles from "./CostumeEditor.module.css";
 
 /* ================== настройки ================== */
 const PANEL_MAX_COUNT = 12;
 const PANEL_MIN_AREA_RATIO_DEFAULT = 0.08;
+// --- PRESETS: базовая папка с заранее подготовленными SVG
+const SVG_BASE = "/2d/svg";
+const PRESETS = [
+    { id: "front", title: "Перед", file: "front_new.svg" },
+    { id: "back", title: "Спинка", file: "back_new.svg" },
+    // при желании добавь сюда "hood", "sleeve" и т. п.
+];
+
 const KEYWORDS = {
     front: /(^|[^a-z])(front|перед)([^a-z]|$)/i,
     back: /(^|[^a-z])(back|спинка)([^a-z]|$)/i,
@@ -744,6 +753,32 @@ export default function CostumeEditor({ initialSVG }) {
     const [rawSVG, setRawSVG] = useState(initialSVG || "");
     const [panels, setPanels] = useState([]);
 
+    // для анимации "из-за спины"
+    const [prevPanels, setPrevPanels] = useState(null);
+    const [isSwapping, setIsSwapping] = useState(false);
+    const SWAP_MS = 420;
+
+    const didEverSwapRef = useRef(false);
+    const swapTimerRef = useRef(null);
+
+    // чтобы поймать "старые" панели до перезаписи
+    const panelsRef = useRef(panels);
+    useEffect(() => { panelsRef.current = panels; }, [panels]);
+
+    // утилита для простого outline-пути из сегментов (для нижнего слоя)
+    const segsToD = (segs) =>
+        segs.map(s => s.kind === "M" ? `M ${s.x} ${s.y}` :
+            s.kind === "L" ? `L ${s.x} ${s.y}` :
+                s.kind === "C" ? `C ${s.x1} ${s.y1} ${s.x2} ${s.y2} ${s.x} ${s.y}` :
+                    "Z").join(" ");
+
+    // --- PRESETS state
+    const [presetIdx, setPresetIdx] = useState(0);   // 0: Перед, 1: Спинка
+    const [isLoadingPreset, setIsLoadingPreset] = useState(false);
+
+    // красивый ре-монтаж svg при смене пресета (для анимации появления)
+    const [svgMountKey, setSvgMountKey] = useState(0);
+
     // кривые: 'cubic' или 'routed' (по контуру)
     const [curvesByPanel, setCurvesByPanel] = useState({});
     const [fills, setFills] = useState([]);
@@ -777,10 +812,57 @@ export default function CostumeEditor({ initialSVG }) {
         return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("pointerdown", onClick); };
     }, [paletteOpen]);
 
+    // --- PRESETS: начальная подгрузка и переключение
+    useEffect(() => {
+        if (initialSVG) return; // если SVG уже пришёл сверху — не грузим пресеты
+        const p = PRESETS[presetIdx];
+        if (!p) return;
+        let alive = true;
+        setIsLoadingPreset(true);
+        fetch(`${SVG_BASE}/${p.file}`)
+            .then(r => r.text())
+            .then(txt => { if (alive) { setRawSVG(txt); setSvgMountKey(k => k + 1); } })
+            .catch(() => { if (alive) setRawSVG(""); })
+            .finally(() => { if (alive) setIsLoadingPreset(false); });
+        return () => { alive = false; };
+    }, [presetIdx, initialSVG]);
+
+    // --- PRESETS: кнопки/клавиши
+    const prevPreset = () => setPresetIdx(i => (i - 1 + PRESETS.length) % PRESETS.length);
+    const nextPreset = () => setPresetIdx(i => (i + 1) % PRESETS.length);
+
+    useEffect(() => {
+        const onKey = (e) => {
+            const k = e.key.toLowerCase?.();
+            if (k === "arrowleft") prevPreset();
+            if (k === "arrowright") nextPreset();
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, []);
+
     useEffect(() => {
         if (!rawSVG) return;
 
         const parts = extractPanels(rawSVG);
+
+        // Снимок прежней сцены для анимации
+        const old = panelsRef.current;
+        if (old && old.length) {
+            didEverSwapRef.current = true;
+
+            setPrevPanels(old);
+            setIsSwapping(true);
+
+            // не допускаем наложения таймеров
+            if (swapTimerRef.current) clearTimeout(swapTimerRef.current);
+            swapTimerRef.current = setTimeout(() => {
+                setPrevPanels(null);
+                setIsSwapping(false);
+                swapTimerRef.current = null;
+            }, SWAP_MS);
+        }
+
         setPanels(parts);
         setCurvesByPanel({});
         setFills([]);
@@ -1111,185 +1193,131 @@ export default function CostumeEditor({ initialSVG }) {
     return (
         <div className={styles.layout}>
             <div className={styles.canvasWrap}>
-                {toast && (
-                    <div style={{
-                        position: "absolute", top: 12, left: "50%", transform: "translateX(-50%)",
-                        background: "#30302e", color: "#fff", padding: "8px 12px",
-                        borderRadius: 8, fontSize: 13, boxShadow: "0 8px 24px rgba(0,0,0,.15)", zIndex: 3
-                    }}>{toast.text}</div>
-                )}
+                {toast && <div className={styles.toast}>{toast.text}</div>}
+                {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
 
-                <svg ref={svgRef} className={styles.canvas} viewBox={viewBox} preserveAspectRatio="xMidYMid meet">
-                    <defs>
-                        <pattern id="grid" width={gridDef.step} height={gridDef.step} patternUnits="userSpaceOnUse">
-                            <path
-                                d={`M 0 0 L ${gridDef.step} 0 M 0 0 L 0 ${gridDef.step}`}
-                                stroke="#eee"
-                                strokeWidth="1"
-                                vectorEffect="non-scaling-stroke"
-                            />
-                        </pattern>
+                {/* === два слоя поверх друг друга === */}
+                <div className={styles.canvasStack}>
+                    {/* нижний: предыдущая сцена (только outline), без интерактивности */}
+                    {prevPanels && (
+                        <svg
+                            className={`${styles.canvas} ${styles.stage} ${styles.swapOut}`}
+                            viewBox={viewBox}
+                            preserveAspectRatio="xMidYMid meet"
+                            style={{ pointerEvents: "none" }}
+                        >
+                            <g>
+                                {prevPanels.map(p => (
+                                    <path
+                                        key={`prev-${p.id}`}
+                                        d={segsToD(p.segs)}
+                                        fill="none"
+                                        stroke="#c9ced6"
+                                        strokeWidth={1.2}
+                                        vectorEffect="non-scaling-stroke"
+                                    />
+                                ))}
+                            </g>
+                        </svg>
+                    )}
 
+                    {/* верхний: текущая (новая) сцена — полноценный интерактивный рендер */}
+                    <svg
+                        key={svgMountKey} // у вас уже есть, оставляем — красиво монтирует svg
+                        ref={svgRef}
+                        className={`${styles.canvas} ${styles.stage} ${isSwapping ? styles.swapIn : (!didEverSwapRef.current ? styles.svgEnter : "")}`}
+                        viewBox={viewBox}
+                        preserveAspectRatio="xMidYMid meet"
+                    >
+                        {/* GRID */}
+                        <defs>
+                            <pattern id={`grid-${svgMountKey}`} width={gridDef.step} height={gridDef.step} patternUnits="userSpaceOnUse">
+                                <path d={`M ${gridDef.step} 0 L 0 0 0 ${gridDef.step}`} fill="none"
+                                    stroke="#000" strokeOpacity=".06" strokeWidth={0.6 * (scale.k || 1)} />
+                            </pattern>
+                        </defs>
+                        <rect x={gridDef.b.x} y={gridDef.b.y} width={gridDef.b.w} height={gridDef.b.h} fill={`url(#grid-${svgMountKey})`} />
+
+                        {/* FILLS + OUTLINES + CURVES + ANCHORS */}
                         {panels.map(p => {
-                            const faces = baseFacesByPanel[p.id] || [];
-
-                            // Fallback: если вдруг faces не собрался (очень редкий случай) — клипуём исходным d
-                            const fallbackD = p.segs.map(s => {
-                                if (s.kind === "M") return `M ${s.x} ${s.y}`;
-                                if (s.kind === "L") return `L ${s.x} ${s.y}`;
-                                if (s.kind === "C") return `C ${s.x1} ${s.y1} ${s.x2} ${s.y2} ${s.x} ${s.y}`;
-                                if (s.kind === "Z") return `Z`;
-                                return "";
-                            }).join(" ");
+                            const faces = facesByPanel[p.id] || [];
+                            const ring = outerRingByPanel[p.id];
 
                             return (
-                                <clipPath key={`clip-${p.id}`} id={`clip-${p.id}`} clipPathUnits="userSpaceOnUse">
-                                    {faces.length
-                                        ? faces.map((poly, i) => (
-                                            <path key={i}
-                                                d={`M ${poly.map(pt => `${pt.x} ${pt.y}`).join(" L ")} Z`}
-                                            /* ВАЖНО: без clipRule="evenodd". Несколько <path> внутри clipPath
-                                               дают объединение областей — именно то, что нам нужно. */
+                                <g key={p.id}>
+                                    {/* заливки граней */}
+                                    {faces.map(poly => {
+                                        const fk = faceKey(poly);
+                                        const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
+                                        const hasFill = fill !== "none";
+
+                                        return (
+                                            <path
+                                                key={fk}
+                                                d={facePath(poly)}
+                                                fill={hasFill ? fill : "none"}
+                                                fillOpacity={hasFill ? 0.9 : 0}
+                                                stroke="none"
+                                                onMouseEnter={() => hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly)}
+                                                onMouseLeave={() => hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly)}
+                                                onClick={() => hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly)}
                                             />
-                                        ))
-                                        : <path d={fallbackD} />
-                                    }
-                                </clipPath>
+                                        );
+                                    })}
+
+                                    {/* внешний контур детали */}
+                                    {ring && (
+                                        <path d={facePath(ring)} fill="none" stroke="#111" strokeWidth={1.8 * (scale.k || 1)} />
+                                    )}
+
+                                    {/* пользовательские линии */}
+                                    {(curvesByPanel[p.id] || []).map(c => {
+                                        let d = c.d;
+                                        if (!d && c.type === "cubic") {
+                                            const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
+                                            d = `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`;
+                                        }
+                                        const hoverKey = `${p.id}:${c.id}`;
+                                        const cls = (mode === "delete")
+                                            ? (hoverCurveKey === hoverKey ? styles.userCurveDeleteHover : styles.userCurve)
+                                            : styles.userCurvePreview;
+
+                                        return (
+                                            <path
+                                                key={c.id}
+                                                d={d}
+                                                className={cls}
+                                                onMouseEnter={() => onCurveEnter(p.id, c.id)}
+                                                onMouseLeave={() => onCurveLeave(p.id, c.id)}
+                                                onClick={() => onCurveClickDelete(p.id, c.id)}
+                                            />
+                                        );
+                                    })}
+
+                                    {/* якоря (в режиме Add) */}
+                                    {mode === "add" && p.anchors.map((a, i) => (
+                                        <circle
+                                            key={i}
+                                            cx={a.x} cy={a.y} r={R}
+                                            className={`${styles.anchor} ${styles.anchorClickable} ${addBuffer === i ? styles.anchorSelectedA : ""}`}
+                                            onMouseEnter={() => setHoverAnchorIdx(i)}
+                                            onMouseLeave={() => setHoverAnchorIdx(null)}
+                                            onClick={() => onAnchorClickAddMode(i)}
+                                        />
+                                    ))}
+                                </g>
                             );
                         })}
-                    </defs>
 
+                    </svg>
+                </div>
 
-                    <rect x={gridDef.b.x - gridDef.b.w} y={gridDef.b.y - gridDef.b.h} width={gridDef.b.w * 3} height={gridDef.b.h * 3} fill="url(#grid)" />
-
-                    {panels.map(p => {
-                        const clip = `url(#clip-${p.id})`;
-                        const curves = (curvesByPanel[p.id] || []);
-                        return (
-                            <g key={`panel-${p.id}`}>
-                                <g clipPath={clip}>
-                                    {(facesByPanel[p.id] || []).map(poly => {
-                                        const d = facePath(poly), fk = faceKey(poly);
-                                        const exist = fills.find(f => f.panelId === p.id && f.faceKey === fk);
-                                        if (exist) {
-                                            const hovering = hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk && mode === "deleteFill";
-                                            return (
-                                                <path key={`fill-${p.id}-${fk}`} d={d} fill={exist.color} fillOpacity={hovering ? 0.55 : 0.35}
-                                                    stroke="none"
-                                                    onPointerEnter={() => onFilledEnter(p.id, fk)}
-                                                    onPointerLeave={() => onFilledLeave(p.id, fk)}
-                                                    onPointerDown={() => onFilledClick(p.id, fk)}
-                                                    style={isPreview ? { pointerEvents: "none" } : undefined}
-                                                />
-                                            );
-                                        }
-                                        const hover = hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk && mode === "paint";
-                                        return (
-                                            <path key={`face-${p.id}-${fk}`} d={d} fill={hover ? "#000" : "transparent"} fillOpacity={hover ? 0.08 : 0}
-                                                stroke="none"
-                                                onPointerEnter={() => onFaceEnter(p.id, poly)}
-                                                onPointerLeave={() => onFaceLeave(p.id, poly)}
-                                                onPointerDown={() => onFaceClick(p.id, poly)}
-                                                style={mode === "paint" ? undefined : { pointerEvents: "none" }}
-                                            />
-                                        );
-                                    })}
-
-                                    {/* пользовательские кривые (клипнутые) */}
-                                    {curves.map((c) => {
-                                        const key = `${p.id}:${c.id}`;
-
-                                        // основной путь
-                                        let mainD;
-                                        if (c.type === "cubic") {
-                                            const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
-                                            mainD = `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`;
-                                        } else {
-                                            mainD = c.d; // сглаженная прижатая дуга
-                                        }
-
-                                        const deleting = mode === "delete" && hoverCurveKey === key;
-                                        const clsMain = isPreview
-                                            ? styles.userCurvePreview   // просмотр: тонкая чёрная
-                                            : (deleting ? styles.userCurveDeleteHover : styles.userCurve); // редактирование: красная / подсветка
-
-                                        // В preview/paint/deleteFill клики по линиям не нужны, в остальных — только для активной панели
-                                        const pe = (isPreview || mode === "paint" || mode === "deleteFill")
-                                            ? "none"
-                                            : "auto";
-
-                                        return (
-                                            <g key={key}>
-                                                <path
-                                                    d={mainD}
-                                                    className={clsMain}
-                                                    fill="none"
-                                                    vectorEffect="non-scaling-stroke"
-                                                    style={{ pointerEvents: pe }}
-                                                    onPointerEnter={() => onCurveEnter(p.id, c.id)}
-                                                    onPointerLeave={() => onCurveLeave(p.id, c.id)}
-                                                    onPointerDown={() => onCurveClickDelete(p.id, c.id)}
-                                                />
-
-                                                {/* видимые коннекторы у прижатых кривых */}
-                                                {c.type === "routed" && c.connA && c.connA.length === 2 && (
-                                                    <path
-                                                        d={`M ${c.connA[0].x} ${c.connA[0].y} L ${c.connA[1].x} ${c.connA[1].y}`}
-                                                        className={clsMain}
-                                                        fill="none"
-                                                        vectorEffect="non-scaling-stroke"
-                                                        style={{ pointerEvents: pe }}
-                                                        onPointerEnter={() => onCurveEnter(p.id, c.id)}
-                                                        onPointerLeave={() => onCurveLeave(p.id, c.id)}
-                                                        onPointerDown={() => onCurveClickDelete(p.id, c.id)}
-                                                    />
-                                                )}
-                                                {c.type === "routed" && c.connB && c.connB.length === 2 && (
-                                                    <path
-                                                        d={`M ${c.connB[0].x} ${c.connB[0].y} L ${c.connB[1].x} ${c.connB[1].y}`}
-                                                        className={clsMain}
-                                                        fill="none"
-                                                        vectorEffect="non-scaling-stroke"
-                                                        style={{ pointerEvents: pe }}
-                                                        onPointerEnter={() => onCurveEnter(p.id, c.id)}
-                                                        onPointerLeave={() => onCurveLeave(p.id, c.id)}
-                                                        onPointerDown={() => onCurveClickDelete(p.id, c.id)}
-                                                    />
-                                                )}
-                                            </g>
-                                        );
-                                    })}
-
-                                </g>
-
-                                {/* базовый контур */}
-                                <path d={p.segs.map(s => {
-                                    if (s.kind === "M") return `M ${s.x} ${s.y}`;
-                                    if (s.kind === "L") return `L ${s.x} ${s.y}`;
-                                    if (s.kind === "C") return `C ${s.x1} ${s.y1} ${s.x2} ${s.y2} ${s.x} ${s.y}`;
-                                    if (s.kind === "Z") return `Z`; return "";
-                                }).join(" ")}
-                                    fill="none" stroke="#111" strokeWidth="2" vectorEffect="non-scaling-stroke"
-                                />
-                            </g>
-                        );
-                    })}
-
-                    {/* якоря для режима добавления */}
-                    {mode === "add" && activePanel && activePanel.anchors.map((pt, idx) => {
-                        const isFirst = addBuffer === idx;
-                        const isHover = hoverAnchorIdx === idx;
-                        const cls = [styles.anchor, styles.anchorClickable, isFirst ? styles.anchorSelectedA : "", (!isFirst && isHover) ? styles.anchorSelectedB : ""].join(" ");
-                        return (
-                            <circle key={idx} cx={pt.x} cy={pt.y} r={R}
-                                className={cls}
-                                onPointerEnter={() => setHoverAnchorIdx(idx)}
-                                onPointerLeave={() => setHoverAnchorIdx(null)}
-                                onPointerDown={() => onAnchorClickAddMode(idx)}
-                            />
-                        );
-                    })}
-                </svg>
+                {/* — навигация пресетов снизу — */}
+                <div className={styles.presetNav}>
+                    <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
+                    <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
+                    <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
+                </div>
             </div>
 
             {/* sidebar */}
