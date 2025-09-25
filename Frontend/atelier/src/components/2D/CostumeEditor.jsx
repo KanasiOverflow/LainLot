@@ -1,91 +1,28 @@
+// CostumeEditor.jsx
 import { useEffect, useMemo, useRef, useState, useLayoutEffect } from "react";
 import styles from "./CostumeEditor.module.css";
 
-/* ===================== utils ===================== */
-// --- парсинг исходного path ---
-function parsePathD(d) {
-    d = d.replace(/,/g, " ").replace(/\s+/g, " ").trim();
-    const tokens = d.match(/[MLCZmlcz]|-?\d*\.?\d+(?:e[-+]?\d+)?/g) || [];
-    let i = 0, cmd = null;
-    const segs = [];
-    let curr = { x: 0, y: 0 }, start = { x: 0, y: 0 };
-    const read = () => parseFloat(tokens[i++]);
+/* ================== настройки ================== */
+const PANEL_MAX_COUNT = 12;
+const PANEL_MIN_AREA_RATIO_DEFAULT = 0.08;
+// --- PRESETS: базовая папка с заранее подготовленными SVG
+const SVG_BASE = "/2d/svg";
+const PRESETS = [
+    { id: "front", title: "Перед", file: "front_new.svg" },
+    { id: "back", title: "Спинка", file: "back_new.svg" },
+    // при желании добавь сюда "hood", "sleeve" и т. п.
+];
 
-    while (i < tokens.length) {
-        const t = tokens[i++];
-        if (/[MLCZmlcz]/.test(t)) cmd = t;
+const KEYWORDS = {
+    front: /(^|[^a-z])(front|перед)([^a-z]|$)/i,
+    back: /(^|[^a-z])(back|спинка)([^a-z]|$)/i,
+    hood: /(^|[^a-z])(hood|капюш)([^a-z]|$)/i,
+    sleeve: /(^|[^a-z])(sleeve|рукав)([^a-z]|$)/i,
+    pocket: /(^|[^a-z])(pocket|карман)([^a-z]|$)/i,
+};
 
-        switch (cmd) {
-            case "M":
-            case "m": {
-                const rel = cmd === "m";
-                const x = read(), y = read();
-                const nx = rel ? curr.x + x : x;
-                const ny = rel ? curr.y + y : y;
-                curr = { x: nx, y: ny };
-                start = { ...curr };
-                segs.push({ kind: "M", x: nx, y: ny });
-                while (i < tokens.length && !/[MLCZmlcz]/.test(tokens[i])) {
-                    const lx = read(), ly = read();
-                    const nx2 = rel ? curr.x + lx : lx;
-                    const ny2 = rel ? curr.y + ly : ly;
-                    segs.push({ kind: "L", ax: curr.x, ay: curr.y, x: nx2, y: ny2 });
-                    curr = { x: nx2, y: ny2 };
-                }
-                break;
-            }
-            case "L":
-            case "l": {
-                const rel = cmd === "l";
-                const x = read(), y = read();
-                const nx = rel ? curr.x + x : x;
-                const ny = rel ? curr.y + y : y;
-                segs.push({ kind: "L", ax: curr.x, ay: curr.y, x: nx, y: ny });
-                curr = { x: nx, y: ny };
-                break;
-            }
-            case "C":
-            case "c": {
-                const rel = cmd === "c";
-                const x1 = read(), y1 = read();
-                const x2 = read(), y2 = read();
-                const x = read(), y = read();
-                const seg = {
-                    kind: "C",
-                    ax: curr.x, ay: curr.y,
-                    x1: rel ? curr.x + x1 : x1,
-                    y1: rel ? curr.y + y1 : y1,
-                    x2: rel ? curr.x + x2 : x2,
-                    y2: rel ? curr.y + y2 : y2,
-                    x: rel ? curr.x + x : x,
-                    y: rel ? curr.x + y : y
-                };
-                segs.push(seg);
-                curr = { x: seg.x, y: seg.y };
-                break;
-            }
-            case "Z":
-            case "z":
-                segs.push({ kind: "Z" });
-                curr = { ...start };
-                break;
-            default:
-                break;
-        }
-    }
-    return segs;
-}
-
-function buildPathD(segs) {
-    return segs.map(s => {
-        if (s.kind === "M") return `M ${s.x} ${s.y}`;
-        if (s.kind === "L") return `L ${s.x} ${s.y}`;
-        if (s.kind === "C") return `C ${s.x1} ${s.y1} ${s.x2} ${s.y2} ${s.x} ${s.y}`;
-        if (s.kind === "Z") return `Z`;
-        return "";
-    }).join(" ");
-}
-
+/* ================== геометрия ================== */
+function area(poly) { let s = 0; for (let i = 0; i < poly.length; i++) { const a = poly[i], b = poly[(i + 1) % poly.length]; s += a.x * b.y - b.x * a.y; } return s / 2; }
 function getBounds(segs) {
     const xs = [], ys = [];
     for (const s of segs) {
@@ -93,493 +30,1497 @@ function getBounds(segs) {
         if (s.kind === "L") { xs.push(s.ax, s.x); ys.push(s.ay, s.y); }
         if (s.kind === "C") { xs.push(s.ax, s.x1, s.x2, s.x); ys.push(s.ay, s.y1, s.y2, s.y); }
     }
+    if (!xs.length) return { x: 0, y: 0, w: 1, h: 1 };
     const minX = Math.min(...xs), maxX = Math.max(...xs);
     const minY = Math.min(...ys), maxY = Math.max(...ys);
     return { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
 }
-
-/* ===================== дискретизация и граф ===================== */
-const TOL_KEY = 2;
-function keyOf(p) { return `${p.x.toFixed(TOL_KEY)}_${p.y.toFixed(TOL_KEY)}`; }
-
-function sampleBezier(ax, ay, x1, y1, x2, y2, x, y, steps = 24) {
-    const pts = [];
-    let px = ax, py = ay;
+function sampleBezier(ax, ay, x1, y1, x2, y2, x, y, steps = 36) {
+    const pts = []; let px = ax, py = ay;
     for (let k = 1; k <= steps; k++) {
-        const t = k / steps;
-        const xt = (1 - t) ** 3 * ax + 3 * (1 - t) ** 2 * t * x1 + 3 * (1 - t) * t ** 2 * x2 + t ** 3 * x;
-        const yt = (1 - t) ** 3 * ay + 3 * (1 - t) ** 2 * t * y1 + 3 * (1 - t) * t ** 2 * y2 + t ** 3 * y;
-        pts.push({ x: px, y: py }, { x: xt, y: yt });
-        px = xt; py = yt;
+        const t = k / steps, mt = 1 - t;
+        const xt = mt * mt * mt * ax + 3 * mt * mt * t * x1 + 3 * mt * t * t * x2 + t * t * t * x;
+        const yt = mt * mt * mt * ay + 3 * mt * mt * t * y1 + 3 * mt * t * t * y2 + t * t * t * y;
+        pts.push({ x: px, y: py }, { x: xt, y: yt }); px = xt; py = yt;
     }
     return pts;
 }
-function sampleLine(ax, ay, x, y, steps = 1) {
-    const pts = [];
-    let px = ax, py = ay;
-    for (let k = 1; k <= steps; k++) {
-        const t = k / steps;
-        const xt = ax + (x - ax) * t;
-        const yt = ay + (y - ay) * t;
-        pts.push({ x: px, y: py }, { x: xt, y: yt });
-        px = xt; py = yt;
+function sampleBezierPoints(ax, ay, x1, y1, x2, y2, x, y, steps = 56) {
+    const out = []; for (let k = 0; k <= steps; k++) {
+        const t = k / steps, mt = 1 - t;
+        out.push({
+            x: mt * mt * mt * ax + 3 * mt * mt * t * x1 + 3 * mt * t * t * x2 + t * t * t * x,
+            y: mt * mt * mt * ay + 3 * mt * mt * t * y1 + 3 * mt * t * t * y2 + t * t * t * y
+        });
+    } return out;
+}
+function sampleLine(ax, ay, x, y) { return [{ x: ax, y: ay }, { x, y }]; }
+
+/* ========== парсер d: M/L/C/Z + H/V/S/Q/T, A->L ========== */
+function parsePathD(d) {
+    d = d.replace(/,/g, " ").replace(/\s+/g, " ").trim();
+    const tokens = d.match(/[MLHVCSQTAZmlhvcsqtaz]|-?\d*\.?\d+(?:e[-+]?\d+)?/g) || [];
+    let i = 0, cmd = null;
+    const segs = [];
+    let curr = { x: 0, y: 0 }, start = { x: 0, y: 0 };
+    let prevC2 = null, prevQ1 = null;
+    const read = () => parseFloat(tokens[i++]);
+    const isCmd = (t) => /[MLHVCSQTAZmlhvcsqtaz]/.test(t);
+
+    while (i < tokens.length) {
+        if (isCmd(tokens[i])) cmd = tokens[i++];
+
+        switch (cmd) {
+            case "M": case "m": {
+                const rel = cmd === "m"; const x = read(), y = read();
+                const nx = rel ? curr.x + x : x, ny = rel ? curr.y + y : y;
+                curr = { x: nx, y: ny }; start = { ...curr }; segs.push({ kind: "M", x: nx, y: ny }); prevC2 = prevQ1 = null;
+                while (i < tokens.length && !isCmd(tokens[i])) {
+                    const lx = read(), ly = read(); const nx2 = rel ? curr.x + lx : lx, ny2 = rel ? curr.y + ly : ly;
+                    segs.push({ kind: "L", ax: curr.x, ay: curr.y, x: nx2, y: ny2 }); curr = { x: nx2, y: ny2 }; prevC2 = prevQ1 = null;
+                } break;
+            }
+            case "L": case "l": {
+                const rel = cmd === "l"; const x = read(), y = read(); const nx = rel ? curr.x + x : x, ny = rel ? curr.y + y : y;
+                segs.push({ kind: "L", ax: curr.x, ay: curr.y, x: nx, y: ny }); curr = { x: nx, y: ny }; prevC2 = prevQ1 = null; break;
+            }
+            case "H": case "h": {
+                const rel = cmd === "h"; const x = read(); const nx = rel ? curr.x + x : x, ny = curr.y;
+                segs.push({ kind: "L", ax: curr.x, ay: curr.y, x: nx, y: ny }); curr = { x: nx, y: ny }; prevC2 = prevQ1 = null; break;
+            }
+            case "V": case "v": {
+                const rel = cmd === "v"; const y = read(); const nx = curr.x, ny = rel ? curr.y + y : y;
+                segs.push({ kind: "L", ax: curr.x, ay: curr.y, x: nx, y: ny }); curr = { x: nx, y: ny }; prevC2 = prevQ1 = null; break;
+            }
+            case "C": case "c": {
+                const rel = cmd === "c";
+                const x1 = read(), y1 = read(), x2 = read(), y2 = read(), x = read(), y = read();
+                const seg = {
+                    kind: "C", ax: curr.x, ay: curr.y,
+                    x1: rel ? curr.x + x1 : x1, y1: rel ? curr.y + y1 : y1,
+                    x2: rel ? curr.x + x2 : x2, y2: rel ? curr.y + y2 : y2,
+                    x: rel ? curr.x + x : x, y: rel ? curr.y + y : y
+                };
+                segs.push(seg); prevC2 = { x: seg.x2, y: seg.y2 }; prevQ1 = null; curr = { x: seg.x, y: seg.y }; break;
+            }
+            case "S": case "s": {
+                const rel = cmd === "s"; const x2 = read(), y2 = read(), x = read(), y = read();
+                const x1 = prevC2 ? 2 * curr.x - prevC2.x : curr.x;
+                const y1 = prevC2 ? 2 * curr.y - prevC2.y : curr.y;
+                const seg = {
+                    kind: "C", ax: curr.x, ay: curr.y,
+                    x1, y1,
+                    x2: rel ? curr.x + x2 : x2, y2: rel ? curr.y + y2 : y2,
+                    x: rel ? curr.x + x : x, y: rel ? curr.y + y : y
+                };
+                segs.push(seg); prevC2 = { x: seg.x2, y: seg.y2 }; prevQ1 = null; curr = { x: seg.x, y: seg.y }; break;
+            }
+            case "Q": case "q": {
+                const rel = cmd === "q"; const qx = read(), qy = read(), x = read(), y = read();
+                const Q1 = { x: rel ? curr.x + qx : qx, y: rel ? curr.y + qy : qy };
+                const P0 = { ...curr }, P2 = { x: rel ? curr.x + x : x, y: rel ? curr.y + y : y };
+                const C1 = { x: P0.x + (2 / 3) * (Q1.x - P0.x), y: P0.y + (2 / 3) * (Q1.y - P0.y) };
+                const C2 = { x: P2.x + (2 / 3) * (Q1.x - P2.x), y: P2.y + (2 / 3) * (Q1.y - P2.y) };
+                segs.push({ kind: "C", ax: P0.x, ay: P0.y, x1: C1.x, y1: C1.y, x2: C2.x, y2: C2.y, x: P2.x, y: P2.y });
+                curr = P2; prevC2 = { ...C2 }; prevQ1 = { ...Q1 }; break;
+            }
+            case "T": case "t": {
+                const rel = cmd === "t"; const refl = prevQ1 ? { x: 2 * curr.x - prevQ1.x, y: 2 * curr.y - prevQ1.y } : { ...curr };
+                const x = read(), y = read(); const P2 = { x: rel ? curr.x + x : x, y: rel ? curr.y + y : y };
+                const C1 = { x: curr.x + (2 / 3) * (refl.x - curr.x), y: curr.y + (2 / 3) * (refl.y - curr.y) };
+                const C2 = { x: P2.x + (2 / 3) * (refl.x - P2.x), y: P2.y + (2 / 3) * (refl.y - P2.y) };
+                segs.push({ kind: "C", ax: curr.x, ay: curr.y, x1: C1.x, y1: C1.y, x2: C2.x, y2: C2.y, x: P2.x, y: P2.y });
+                curr = P2; prevC2 = { ...C2 }; prevQ1 = { ...refl }; break;
+            }
+            case "A": case "a": {
+                const rel = cmd === "a";
+                const _rx = read(), _ry = read(), _rot = read(), _laf = read(), _sw = read();
+                const x = read(), y = read(); const nx = rel ? curr.x + x : x, ny = rel ? curr.y + y : y;
+                segs.push({ kind: "L", ax: curr.x, ay: curr.y, x: nx, y: ny });
+                curr = { x: nx, y: ny }; prevC2 = prevQ1 = null; break;
+            }
+            case "Z": case "z": segs.push({ kind: "Z" }); curr = { ...start }; prevC2 = prevQ1 = null; break;
+            default: break;
+        }
     }
-    return pts;
+    return segs;
 }
 
-function area(poly) {
-    let s = 0;
-    for (let i = 0; i < poly.length; i++) {
-        const a = poly[i], b = poly[(i + 1) % poly.length];
-        s += a.x * b.y - b.x * a.y;
-    }
-    return s / 2;
+/* ========== polygon / polyline ========== */
+function parsePoints(pointsStr) {
+    const nums = pointsStr.trim().split(/[\s,]+/).map(parseFloat).filter(n => !isNaN(n));
+    const pts = []; for (let i = 0; i + 1 < nums.length; i += 2) pts.push({ x: nums[i], y: nums[i + 1] }); return pts;
+}
+function segsFromPoints(pointsStr, close = true) {
+    const pts = parsePoints(pointsStr); if (!pts.length) return [];
+    const segs = [{ kind: "M", x: pts[0].x, y: pts[0].y }]; let prev = pts[0];
+    for (let i = 1; i < pts.length; i++) { const p = pts[i]; segs.push({ kind: "L", ax: prev.x, ay: prev.y, x: p.x, y: p.y }); prev = p; }
+    if (close && (prev.x !== pts[0].x || prev.y !== pts[0].y)) segs.push({ kind: "L", ax: prev.x, ay: prev.y, x: pts[0].x, y: pts[0].y });
+    if (close) segs.push({ kind: "Z" }); return segs;
 }
 
-// пересечения отрезков и нарезка
+/* ========== построение граней ========== */
 const EPS = 1e-9;
 function segIntersect(p, q, r, s) {
-    const ux = q.x - p.x, uy = q.y - p.y;
-    const vx = s.x - r.x, vy = s.y - r.y;
-    const wx = p.x - r.x, wy = p.y - r.y;
-    const D = ux * vy - uy * vx;
-    if (Math.abs(D) < EPS) return null;
-    const t = (vx * wy - vy * wx) / D;
-    const u = (ux * wy - uy * wx) / D;
-    if (t <= EPS || t >= 1 - EPS || u <= EPS || u >= 1 - EPS) return null;
-    return { t, u, x: p.x + t * ux, y: p.y + t * uy };
+    const ux = q.x - p.x, uy = q.y - p.y, vx = s.x - r.x, vy = s.y - r.y, wx = p.x - r.x, wy = p.y - r.y;
+    const D = ux * vy - uy * vx; if (Math.abs(D) < EPS) return null;
+    const t = (vx * wy - vy * wx) / D, u = (ux * wy - uy * wx) / D;
+
+    // вне отрезков — нет
+    if (t < -EPS || t > 1 + EPS || u < -EPS || u > 1 + EPS) return null;
+
+    const onEndT = (t <= EPS || t >= 1 - EPS);
+    const onEndU = (u <= EPS || u >= 1 - EPS);
+
+    // если оба только на концах (общая вершина) — пропускаем
+    if (onEndT && onEndU) return null;
+
+    // иначе допускаем (конец-внутрь или внутрь-внутрь)
+    return {
+        t: Math.max(0, Math.min(1, t)),
+        u: Math.max(0, Math.min(1, u)),
+        x: p.x + t * ux,
+        y: p.y + t * uy
+    };
 }
 
 function splitByIntersections(segments) {
-    const lists = segments.map(() => [0, 1]);
-    const pts = segments.map(() => ({}));
-
+    const lists = segments.map(() => [0, 1]); const pts = segments.map(() => ({}));
     for (let i = 0; i < segments.length; i++) {
         for (let j = i + 1; j < segments.length; j++) {
-            const A = segments[i], B = segments[j];
-            const hit = segIntersect(A.a, A.b, B.a, B.b);
+            const A = segments[i], B = segments[j]; const hit = segIntersect(A.a, A.b, B.a, B.b);
             if (!hit) continue;
             lists[i].push(hit.t); pts[i][hit.t] = { x: hit.x, y: hit.y };
             lists[j].push(hit.u); pts[j][hit.u] = { x: hit.x, y: hit.y };
         }
     }
-
     const res = [];
     for (let i = 0; i < segments.length; i++) {
         const S = segments[i];
-        const ts = Array.from(new Set(lists[i])).sort((a, b) => a - b);
+        const tsRaw = lists[i].slice().sort((a, b) => a - b);
+        const ts = [];
+        for (const t of tsRaw) {
+            if (!ts.length || Math.abs(t - ts[ts.length - 1]) > 1e-6) {
+                ts.push(Math.max(0, Math.min(1, t)));
+            }
+        }
         const p = (t) => ({ x: S.a.x + (S.b.x - S.a.x) * t, y: S.a.y + (S.b.y - S.a.y) * t });
         for (let k = 0; k + 1 < ts.length; k++) {
-            const t1 = ts[k], t2 = ts[k + 1];
-            if (t2 - t1 < 1e-6) continue;
-            const P1 = pts[i][t1] || p(t1);
-            const P2 = pts[i][t2] || p(t2);
-            res.push({ a: P1, b: P2 });
+            const t1 = ts[k], t2 = ts[k + 1]; if (t2 - t1 < 1e-6) continue;
+            const P1 = pts[i][t1] || p(t1); const P2 = pts[i][t2] || p(t2); res.push({ a: P1, b: P2 });
         }
     }
     return res;
 }
-
-function buildFaces(segments) {
+function buildFacesFromSegments(segments) {
     const nodes = new Map();
-    const key = (p) => `${p.x.toFixed(2)}_${p.y.toFixed(2)}`;
-    const getNode = (p) => {
+    const PREC = 1e-4; // при необходимости можно 1e-5
+    const norm = (v) => Math.round(v / PREC) * PREC;
+    const key = (p) => `${norm(p.x)}_${norm(p.y)}`;
+    const node = (p) => {
         const k = key(p);
         if (!nodes.has(k)) nodes.set(k, { ...p, out: [] });
         return nodes.get(k);
     };
+    const half = []; const add = (A, B) => { const h = { from: A, to: B, ang: Math.atan2(B.y - A.y, B.x - A.x), twin: null, next: null, visited: false }; half.push(h); A.out.push(h); return h; };
+    for (const s of segments) { const A = node(s.a), B = node(s.b); const h1 = add(A, B), h2 = add(B, A); h1.twin = h2; h2.twin = h1; }
+    for (const n of nodes.values()) n.out.sort((a, b) => a.ang - b.ang); // не критично, но удобно иметь CCW
 
-    const half = [];
-    const addHalf = (A, B) => {
-        const h = { from: A, to: B, ang: Math.atan2(B.y - A.y, B.x - A.x), twin: null, next: null, visited: false };
-        half.push(h);
-        A.out.push(h);
-        return h;
+    const TAU = Math.PI * 2;
+    const dpos = (a, b) => {            // положительная разница углов a - b  в (0, 2π]
+        let d = a - b;
+        while (d <= 0) d += TAU;
+        while (d > TAU) d -= TAU;
+        return d;
     };
 
-    for (const s of segments) {
-        const A = getNode(s.a), B = getNode(s.b);
-        const h1 = addHalf(A, B);
-        const h2 = addHalf(B, A);
-        h1.twin = h2; h2.twin = h1;
-    }
-
-    for (const n of nodes.values()) n.out.sort((a, b) => b.ang - a.ang);
     for (const n of nodes.values()) {
         for (const h of n.out) {
             const arr = h.to.out;
-            const i = arr.indexOf(h.twin);
-            h.next = arr[(i - 1 + arr.length) % arr.length];
+            let best = null, bestDelta = Infinity;
+
+            for (const e of arr) {
+                if (e === h.twin) continue;
+                const delta = dpos(e.ang, h.twin.ang); // «сразу после twin» против часовой (левый поворот)
+                if (delta < bestDelta - 1e-9) { bestDelta = delta; best = e; }
+            }
+            h.next = best || h.twin; // на всякий случай fallback
         }
     }
 
     const faces = [];
     for (const h of half) {
         if (h.visited) continue;
-        const poly = [];
-        let cur = h, guard = 0;
-        while (!cur.visited && guard++ < 20000) {
-            cur.visited = true;
-            poly.push({ x: cur.from.x, y: cur.from.y });
-            cur = h.next ? cur.next : null;
-            if (!cur || cur === h) break;
-        }
+        const poly = []; let cur = h, guard = 0;
+        while (!cur.visited && guard++ < 20000) { cur.visited = true; poly.push({ x: cur.from.x, y: cur.from.y }); cur = cur.next; if (cur === h) break; }
         if (poly.length >= 3) faces.push(poly);
     }
-
     if (faces.length) {
         const idxMax = faces.map((p, i) => ({ i, A: Math.abs(area(p)) })).sort((a, b) => b.A - a.A)[0].i;
         faces.splice(idxMax, 1);
     }
-    return faces;
+    const cleaned = faces.filter(poly => Math.abs(area(poly)) > 1e-4);
+    return cleaned;
 }
 
-/* ===================== helpers ===================== */
-function collectAnchorPoints(segs) {
-    const anchors = [];
-    segs.forEach(seg => {
-        if (seg.kind === "M") anchors.push({ x: seg.x, y: seg.y });
-        if (seg.kind === "L" || seg.kind === "C") anchors.push({ x: seg.x, y: seg.y });
-    });
-    return anchors;
+function segsSignature(segs) {
+    // стабильный «отпечаток» геометрии
+    const parts = [];
+    for (const s of segs) {
+        if (s.kind === "M") parts.push(`M${s.x.toFixed(3)},${s.y.toFixed(3)}`);
+        else if (s.kind === "L") parts.push(`L${s.x.toFixed(3)},${s.y.toFixed(3)}`);
+        else if (s.kind === "C") parts.push(
+            `C${s.x1.toFixed(3)},${s.y1.toFixed(3)},${s.x2.toFixed(3)},${s.y2.toFixed(3)},${s.x.toFixed(3)},${s.y.toFixed(3)}`
+        );
+        else if (s.kind === "Z") parts.push("Z");
+    }
+    return parts.join(";");
+}
+
+function bboxIoU(a, b) {
+    const x1 = Math.max(a.x, b.x);
+    const y1 = Math.max(a.y, b.y);
+    const x2 = Math.min(a.x + a.w, b.x + b.w);
+    const y2 = Math.min(a.y + a.h, b.y + b.h);
+    const iw = Math.max(0, x2 - x1), ih = Math.max(0, y2 - y1);
+    const inter = iw * ih;
+    const union = a.w * a.h + b.w * b.h - inter || 1;
+    return inter / union;
+}
+
+/* ========== полилинии/сегменты ========== */
+function polylinesFromSegs(segs) {
+    const lines = []; let start = null, curr = null;
+    for (const s of segs) {
+        if (s.kind === "M") { start = { x: s.x, y: s.y }; curr = start; }
+        else if (s.kind === "L") { lines.push(sampleLine(s.ax, s.ay, s.x, s.y)); curr = { x: s.x, y: s.y }; }
+        else if (s.kind === "C") { lines.push(sampleBezier(s.ax, s.ay, s.x1, s.y1, s.x2, s.y2, s.x, s.y)); curr = { x: s.x, y: s.y }; }
+        else if (s.kind === "Z" && curr && start && (curr.x !== start.x || curr.y !== start.y)) { lines.push(sampleLine(curr.x, curr.y, start.x, start.y)); }
+    }
+    return lines;
+}
+function segmentsFromPolylines(polylines) {
+    const segs = []; for (const line of polylines) for (let i = 0; i + 1 < line.length; i += 2) segs.push({ a: line[i], b: line[i + 1] }); return segs;
+}
+
+/* ========== якоря/прочее ========== */
+function collectAnchors(segs) {
+    const out = []; for (const s of segs) { if (s.kind === "M") out.push({ x: s.x, y: s.y }); if (s.kind === "L" || s.kind === "C") out.push({ x: s.x, y: s.y }); }
+    return out;
 }
 function makeUserCurveBetween(a, b) {
-    const k = 1 / 3;
-    const c1 = { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k };
-    const c2 = { x: b.x - (b.x - a.x) * k, y: b.y - (b.y - a.y) * k };
-    return { c1, c2 };
+    const k = 1 / 3; return { c1: { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k }, c2: { x: b.x - (b.x - a.x) * k, y: b.y - (b.y - a.y) * k } };
+}
+function ensureClosed(segs) {
+    if (segs.some(s => s.kind === "Z")) return segs;
+    let start = null, last = null;
+    for (const s of segs) { if (s.kind === "M") { start = { x: s.x, y: s.y }; last = start; } else if (s.kind === "L" || s.kind === "C") { last = { x: s.x, y: s.y }; } }
+    if (!start || !last) return segs;
+    const out = [...segs];
+    if (start.x !== last.x || start.y !== last.y) out.push({ kind: "L", ax: last.x, ay: last.y, x: start.x, y: start.y });
+    out.push({ kind: "Z" }); return out;
 }
 
-/* ===================== component ===================== */
-export default function CostumeEditor({ initialSVG }) {
-    const [rawSVG, setRawSVG] = useState(initialSVG || "");
-    const [segs, setSegs] = useState(null);
-    const [anchors, setAnchors] = useState([]);
+/* ========== разбор svg в панели ========== */
+function splitClosedSubpaths(d) {
+    const parts = []; const re = /([Mm][^MmZz]*[Zz])/g; let m; while ((m = re.exec(d))) { parts.push(m[1]); }
+    if (!parts.length) {
+        const all = d.split(/(?=[Mm])/).map(s => s.trim()).filter(Boolean);
+        for (const p of all) { if (/[Zz]/.test(p)) parts.push(p); }
+    }
+    return parts;
+}
 
-    // режимы: preview | add | delete | paint | deleteFill
-    const [mode, setMode] = useState("preview");
+function pushCandidate(candidates, segs, tag, label) {
+    if (!segs || !segs.length) return;
+    const bb = getBounds(segs);
+    candidates.push({
+        segs,
+        label: label ?? (tag.match(/\sid="([^"]+)"/i)?.[1] || ""),
+        bbox: bb,
+        bboxArea: Math.abs(bb.w * bb.h) || 1,
+        rawTag: tag
+    });
+}
 
-    // добавление кривых
-    const [addBuffer, setAddBuffer] = useState(null);
-    const [hoverAnchorIdx, setHoverAnchorIdx] = useState(null);
-    const [curves, setCurves] = useState([]);          // {id,aIdx,bIdx,c1,c2}
-    const [hoverCurveId, setHoverCurveId] = useState(null);
+function extractPanels(rawSVG) {
+    const rootBox = parseViewBox(rawSVG);
 
-    // заливки по faces
-    const [paintColor, setPaintColor] = useState("#f26522"); // акцент из сайта
-    const [fills, setFills] = useState([]);                  // [{id,color,faceKey}]
-    const [hoverFaceKey, setHoverFaceKey] = useState(null);
+    // --- собираем теги
+    const pathTags = [...rawSVG.matchAll(/<path\b[^>]*>/gi)].map(m => m[0]);
+    const polygonTags = [...rawSVG.matchAll(/<polygon\b[^>]*>/gi)].map(m => m[0]);
+    const polylineTags = [...rawSVG.matchAll(/<polyline\b[^>]*>/gi)].map(m => m[0]);
+    const rectTags = [...rawSVG.matchAll(/<rect\b[^>]*>/gi)].map(m => m[0]);
+    const circleTags = [...rawSVG.matchAll(/<circle\b[^>]*>/gi)].map(m => m[0]);
+    const ellipseTags = [...rawSVG.matchAll(/<ellipse\b[^>]*>/gi)].map(m => m[0]);
+    const lineTags = [...rawSVG.matchAll(/<line\b[^>]*>/gi)].map(m => m[0]);
 
-    // faces
-    const faces = useMemo(() => {
-        if (!segs) return [];
-        const polylines = [];
+    // маски/фильтры пропускаем, clip-path НЕ режем (часто это просто «окно»)
+    const skipByAttr = (tag) => /\bmask=|\bfilter=/i.test(tag);
 
-        // базовый путь
-        let start = null, curr = null;
-        for (const s of segs) {
-            if (s.kind === "M") { start = { x: s.x, y: s.y }; curr = start; }
-            else if (s.kind === "L") { polylines.push(sampleLine(s.ax, s.ay, s.x, s.y, 1)); curr = { x: s.x, y: s.y }; }
-            else if (s.kind === "C") { polylines.push(sampleBezier(s.ax, s.ay, s.x1, s.y1, s.x2, s.y2, s.x, s.y, 36)); curr = { x: s.x, y: s.y }; }
-            else if (s.kind === "Z" && curr && start && (curr.x !== start.x || curr.y !== start.y)) {
-                polylines.push(sampleLine(curr.x, curr.y, start.x, start.y, 1));
-            }
-        }
-        // пользовательские кривые
-        curves.forEach(c => {
-            const a = anchors[c.aIdx], b = anchors[c.bIdx];
-            polylines.push(sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y, 36));
-        });
-
-        // в отрезки → режем пересечения → строим faces
-        const segsFlat = [];
-        for (const line of polylines)
-            for (let i = 0; i + 1 < line.length; i += 2)
-                segsFlat.push({ a: line[i], b: line[i + 1] });
-
-        const cut = splitByIntersections(segsFlat);
-        return buildFaces(cut);
-    }, [segs, anchors, curves]);
-
-    const facePath = (poly) => `M ${poly.map(p => `${p.x} ${p.y}`).join(" L ")} Z`;
-    const faceKey = (poly) => poly.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join("|");
-
-    // 🔧 чистим «протухшие» заливки
-    useEffect(() => {
-        setFills(fs => fs.filter(f => faces.some(poly => faceKey(poly) === f.faceKey)));
-    }, [faces]);
-
-    // загрузка svg
-    const onFile = async (e) => {
-        const f = e.target.files?.[0];
-        if (!f) return;
-        const text = await f.text();
-        setRawSVG(text);
+    let candidates = [];
+    const push = (segs, tag, label) => {
+        pushCandidate(candidates, segs, tag, label);
     };
 
-    // парсинг и сбор якорей
+    // ----- PATH
+    for (const tag of pathTags) {
+        if (skipByAttr(tag)) continue;
+        const d = tag.match(/\sd="([^"]+)"/i)?.[1]; if (!d) continue;
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || "");
+        const subs = splitClosedSubpaths(d);
+        const chunks = subs.length ? subs : [d];
+        for (const subD of chunks) {
+            let segs = parsePathD(subD);
+            if (M) segs = applyMatrixToSegs(segs, M);
+            push(segs, tag);
+        }
+    }
+
+    // ----- POLYGON
+    for (const tag of polygonTags) {
+        if (skipByAttr(tag)) continue;
+        const pts = tag.match(/\spoints="([^"]+)"/i)?.[1]; if (!pts) continue;
+        let segs = segsFromPoints(pts, true);
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || "");
+        if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
+    }
+
+    // ----- POLYLINE (закрываем)
+    for (const tag of polylineTags) {
+        if (skipByAttr(tag)) continue;
+        const pts = tag.match(/\spoints="([^"]+)"/i)?.[1]; if (!pts) continue;
+        let segs = ensureClosed(segsFromPoints(pts, false));
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || "");
+        if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
+    }
+
+    // ----- RECT
+    for (const tag of rectTags) {
+        if (skipByAttr(tag)) continue;
+        const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
+        let x = get("x"), y = get("y"), w = get("width"), h = get("height");
+        if (!(isFinite(w) && isFinite(h) && w > 0 && h > 0)) continue;
+        const rx = Math.max(0, get("rx")), ry = Math.max(0, get("ry"));
+        const r = Math.min(rx || ry || 0, Math.min(w, h) / 2);
+        const pts = r > 0
+            ? [{ x: x + r, y }, { x: x + w - r, y }, { x: x + w, y: y + r }, { x: x + w, y: y + h - r }, { x: x + w - r, y: y + h }, { x: x + r, y: y + h }, { x, y: y + h - r }, { x, y: y + r }]
+            : [{ x, y }, { x: x + w, y }, { x: x + w, y: y + h }, { x, y: y + h }];
+        let segs = segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || "");
+        if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
+    }
+
+    // ----- CIRCLE/ELLIPSE (аппроксимация многоугольником)
+    const approxEllipse = (cx, cy, rx, ry, steps = 72) => {
+        const pts = [];
+        for (let k = 0; k < steps; k++) { const t = (k / steps) * Math.PI * 2; pts.push({ x: cx + rx * Math.cos(t), y: cy + ry * Math.sin(t) }); }
+        return segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
+    };
+    for (const tag of circleTags) {
+        if (skipByAttr(tag)) continue;
+        const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
+        const cx = get("cx"), cy = get("cy"), r = get("r"); if (!(isFinite(r) && r > 0)) continue;
+        let segs = approxEllipse(cx, cy, r, r);
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || ""); if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
+    }
+    for (const tag of ellipseTags) {
+        if (skipByAttr(tag)) continue;
+        const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
+        const cx = get("cx"), cy = get("cy"), rx = get("rx"), ry = get("ry"); if (!(isFinite(rx) && rx > 0 && isFinite(ry) && ry > 0)) continue;
+        let segs = approxEllipse(cx, cy, rx, ry);
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || ""); if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
+    }
+
+    // ----- LINE → тонкий «прямоугольник» по stroke-width
+    for (const tag of lineTags) {
+        if (skipByAttr(tag)) continue;
+        const get = (n, def = 0) => +(tag.match(new RegExp(`\\s${n}="([^"]+)"`, "i"))?.[1] ?? def);
+        const x1 = get("x1"), y1 = get("y1"), x2 = get("x2"), y2 = get("y2"); if (![x1, y1, x2, y2].every(isFinite)) continue;
+        const sw = +(tag.match(/\sstroke-width="([^"]+)"/i)?.[1] ?? 1);
+        const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1; const nx = -dy / len, ny = dx / len, t = (sw || 1) / 2;
+        const pts = [{ x: x1 + nx * t, y: y1 + ny * t }, { x: x2 + nx * t, y: y2 + ny * t }, { x: x2 - nx * t, y: y2 - ny * t }, { x: x1 - nx * t, y: y1 - ny * t }];
+        let segs = segsFromPoints(pts.map(p => `${p.x},${p.y}`).join(" "), true);
+        const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || ""); if (M) segs = applyMatrixToSegs(segs, M);
+        push(segs, tag);
+    }
+
+    // fallback: если вообще ничего не нашли — берём первый path
+    if (!candidates.length) {
+        const m = rawSVG.match(/<path[^>]*\sd="([^"]+)"[^>]*>/i);
+        if (m) {
+            const segs0 = ensureClosed(parsePathD(m[1]));
+            pushCandidate(candidates, segs0, "<path>", "Панель");
+        }
+    }
+    if (!candidates.length) return [];
+
+    // --- Удаляем «фон/рамку», если есть из чего выбирать
+    if (candidates.length > 1) {
+        const kept = candidates.filter(c => !looksLikeBackground(c, rootBox));
+        if (kept.length) candidates = kept;
+    }
+
+    // --- Фильтрация по площади (адаптивная)
+    candidates.sort((a, b) => b.bboxArea - a.bboxArea);
+    const maxA = candidates[0].bboxArea || 1;
+    const dominatesView = (candidates[0].bboxArea / (rootBox.w * rootBox.h || 1)) > 0.45;
+    const ratio = (candidates.length <= 3 || dominatesView) ? 0.02 : PANEL_MIN_AREA_RATIO_DEFAULT;
+
+    let filtered = candidates.filter(c => (c.bboxArea / maxA) >= ratio);
+
+    // --- Dedup и ограничение количества
+    const uniq = [];
+    for (const c of filtered) {
+        // геометрический отпечаток
+        c.sig ||= segsSignature(c.segs);
+
+        const same = uniq.some(u => {
+            const areaRatio = Math.min(u.bboxArea, c.bboxArea) / Math.max(u.bboxArea, c.bboxArea);
+            const iou = bboxIoU(u.bbox, c.bbox);
+            // считаем дубликатом только если bbox почти совпал И геометрия совпала
+            return (areaRatio > 0.999 && iou > 0.995) || (u.sig === c.sig);
+        });
+
+        if (!same) uniq.push(c);
+        if (uniq.length >= PANEL_MAX_COUNT) break;
+    }
+    filtered = uniq;
+
+    // --- Финально
+    return filtered.map((c, idx) => {
+        let name = c.label || `Панель ${idx + 1}`;
+        const lbl = c.label || "";
+        if (KEYWORDS.front.test(lbl)) name = "Перед";
+        else if (KEYWORDS.back.test(lbl)) name = "Спинка";
+        else if (KEYWORDS.hood.test(lbl)) name = "Капюшон";
+        else if (KEYWORDS.pocket.test(lbl)) name = "Карман";
+        else if (KEYWORDS.sleeve.test(lbl)) name = "Рукав";
+        return { id: String(idx + 1), label: name, segs: c.segs, anchors: collectAnchors(c.segs) };
+    });
+}
+
+/* ========== утилиты «внутри/снаружи» ========== */
+function pointOnSegment(p, a, b) {
+    const cross = (p.x - a.x) * (b.y - a.y) - (p.y - a.y) * (b.x - a.x);
+    if (Math.abs(cross) > 1e-6) return false;
+    const dot = (p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y);
+    if (dot < -1e-6) return false;
+    const len2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
+    return dot <= len2 + 1e-6;
+}
+function pointInPolygon(p, poly) {
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        if (pointOnSegment(p, poly[j], poly[i])) return true;
+    }
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const xi = poly[i].x, yi = poly[i].y, xj = poly[j].x, yj = poly[j].y;
+        const intersect = ((yi > p.y) != (yj > p.y)) && (p.x < (xj - xi) * (p.y - yi) / (yj - yi + 1e-12) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+function projectPointToSegment(P, A, B) {
+    const vx = B.x - A.x, vy = B.y - A.y;
+    const len2 = vx * vx + vy * vy || 1e-9;
+    let t = ((P.x - A.x) * vx + (P.y - A.y) * vy) / len2;
+    t = Math.max(0, Math.min(1, t));
+    const x = A.x + t * vx, y = A.y + t * vy;
+    const dx = P.x - x, dy = P.y - y;
+    return { x, y, t, d2: dx * dx + dy * dy };
+}
+function catmullRomToBezierPath(pts) {
+    if (pts.length < 2) return "";
+    let d = `M ${pts[0].x} ${pts[0].y}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = i > 0 ? pts[i - 1] : pts[i];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = i + 2 < pts.length ? pts[i + 2] : p2;
+        const c1 = { x: p1.x + (p2.x - p0.x) / 6, y: p1.y + (p2.y - p0.y) / 6 };
+        const c2 = { x: p2.x - (p3.x - p1.x) / 6, y: p2.y - (p3.y - p1.y) / 6 };
+        d += ` C ${c1.x} ${c1.y} ${c2.x} ${c2.y} ${p2.x} ${p2.y}`;
+    }
+    return d;
+}
+
+/* ---- доп. helpers для дуги по контуру ---- */
+function lerpPt(A, B, t) { return { x: A.x + (B.x - A.x) * t, y: A.y + (B.y - A.y) * t }; }
+function segLen(A, B) { return Math.hypot(B.x - A.x, B.y - A.y); }
+function polylineFromSubpath(subSegs) {
+    const pts = []; let start = null, curr = null;
+    const push = (p) => { if (!pts.length || Math.hypot(pts[pts.length - 1].x - p.x, pts[pts.length - 1].y - p.y) > 1e-6) pts.push(p); };
+    for (const s of subSegs) {
+        if (s.kind === "M") { start = { x: s.x, y: s.y }; curr = start; push(curr); }
+        else if (s.kind === "L") { const line = sampleLine(s.ax, s.ay, s.x, s.y); for (const p of line) push(p); curr = { x: s.x, y: s.y }; }
+        else if (s.kind === "C") { const line = sampleBezier(s.ax, s.ay, s.x1, s.y1, s.x2, s.y2, s.x, s.y); for (const p of line) push(p); curr = { x: s.x, y: s.y }; }
+        else if (s.kind === "Z" && curr && start) { push(start); }
+    }
+    if (pts.length > 1) {
+        const A = pts[0], B = pts[pts.length - 1];
+        if (Math.hypot(A.x - B.x, A.y - B.y) < 1e-6) pts.pop();
+    }
+    return pts;
+}
+function splitSegsIntoSubpaths(segs) {
+    const out = []; let cur = [];
+    for (const s of segs) {
+        if (s.kind === "M") { if (cur.length) out.push(cur); cur = [s]; }
+        else { cur.push(s); if (s.kind === "Z") { out.push(cur); cur = []; } }
+    }
+    if (cur.length) out.push(cur);
+    return out.filter(arr => arr.some(x => x.kind !== "M"));
+}
+function pointInAnyFace(p, faces) { for (const poly of faces) { if (pointInPolygon(p, poly)) return true; } return false; }
+function nearestOnRing(P, ringPts) {
+    let best = null, idx = -1, d2 = Infinity;
+    for (let i = 0; i < ringPts.length; i++) {
+        const A = ringPts[i], B = ringPts[(i + 1) % ringPts.length];
+        const pr = projectPointToSegment(P, A, B);
+        if (pr.d2 < d2) { d2 = pr.d2; best = { ...pr, A, B }; idx = i; }
+    }
+    return { ...best, idx };
+}
+function arcOnRing(ringPts, posA, posB) {
+    const N = ringPts.length;
+    const P0 = lerpPt(ringPts[posA.idx], ringPts[(posA.idx + 1) % N], posA.t);
+    const P1 = lerpPt(ringPts[posB.idx], ringPts[(posB.idx + 1) % N], posB.t);
+
+    const forward = [P0];
+    let i = posA.idx;
+    if (posA.t < 1 - 1e-6) forward.push(ringPts[(i + 1) % N]);
+    i = (i + 1) % N;
+    while (i !== posB.idx) { forward.push(ringPts[i]); i = (i + 1) % N; }
+    forward.push(P1);
+
+    const backward = [P0];
+    i = posA.idx;
+    while (i !== (posB.idx + 1 + N) % N) { backward.push(ringPts[i]); i = (i - 1 + N) % N; }
+    backward.push(P1);
+
+    const len = arr => arr.slice(0, -1).reduce((s, _, k) => s + segLen(arr[k], arr[k + 1]), 0);
+    return (len(forward) <= len(backward)) ? forward : backward;
+}
+function offsetArcInside(arcPts, outlinePoly, inset) {
+    const res = [];
+    for (let k = 0; k < arcPts.length; k++) {
+        const pPrev = arcPts[Math.max(0, k - 1)], pNext = arcPts[Math.min(arcPts.length - 1, k + 1)];
+        let tx = pNext.x - pPrev.x, ty = pNext.y - pPrev.y; const L = Math.hypot(tx, ty) || 1; tx /= L; ty /= L;
+        let nx = -ty, ny = tx;
+        let P = { x: arcPts[k].x + nx * inset, y: arcPts[k].y + ny * inset };
+        if (!pointInPolygon(P, outlinePoly)) P = { x: arcPts[k].x - nx * inset, y: arcPts[k].y - ny * inset };
+        res.push(P);
+    }
+    return res;
+}
+function pointsToPairedPolyline(pts) { const line = []; for (let i = 0; i + 1 < pts.length; i++) { line.push(pts[i], pts[i + 1]); } return line; }
+
+function cumulativeLengths(pts) {
+    const L = [0];
+    for (let i = 1; i < pts.length; i++) {
+        L.push(L[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y));
+    }
+    return L;
+}
+function normalsOnPolyline(pts) {
+    const nrm = [];
+    for (let i = 0; i < pts.length; i++) {
+        const a = pts[Math.max(0, i - 1)], b = pts[Math.min(pts.length - 1, i + 1)];
+        let tx = b.x - a.x, ty = b.y - a.y;
+        const len = Math.hypot(tx, ty) || 1; tx /= len; ty /= len;
+        nrm.push({ x: -ty, y: tx });
+    }
+    return nrm;
+}
+/** волна вдоль ломаной pts. amp/lambda — в мировых единицах. 
+ *  Если outlinePoly задан, точка при необходимости отражается внутрь детали. */
+function waveAlongPolyline(pts, amp, lambda, outlinePoly = null, phase = 0) {
+    if (!pts || pts.length < 2) return pts || [];
+    const L = cumulativeLengths(pts), total = L[L.length - 1] || 1;
+    const nrms = normalsOnPolyline(pts);
+    const out = [];
+    for (let i = 0; i < pts.length; i++) {
+        const s = L[i];
+        const a = amp * Math.sin((2 * Math.PI * s) / lambda + phase);
+        let p = { x: pts[i].x + nrms[i].x * a, y: pts[i].y + nrms[i].y * a };
+        if (outlinePoly && !pointInPolygon(p, outlinePoly)) {
+            // если «выстрелили» наружу — перегибаем на другую сторону
+            p = { x: pts[i].x - nrms[i].x * a, y: pts[i].y - nrms[i].y * a };
+        }
+        out.push(p);
+    }
+    // гарантируем совпадение концов с исходными
+    out[0] = { ...pts[0] };
+    out[out.length - 1] = { ...pts[pts.length - 1] };
+    return out;
+}
+
+/* ===== SVG meta & transforms ===== */
+function parseViewBox(raw) {
+    // пробуем viewBox, иначе width/height
+    const vb = raw.match(/\bviewBox="([^"]+)"/i)?.[1]?.trim();
+    if (vb) {
+        const [minx, miny, w, h] = vb.split(/\s+/).map(parseFloat);
+        if (isFinite(w) && isFinite(h) && w > 0 && h > 0) return { w, h };
+    }
+    const w = parseFloat(raw.match(/\bwidth="([\d.]+)(?:px)?"/i)?.[1] ?? "0");
+    const h = parseFloat(raw.match(/\bheight="([\d.]+)(?:px)?"/i)?.[1] ?? "0");
+    return (isFinite(w) && isFinite(h) && w > 0 && h > 0) ? { w, h } : { w: 1, h: 1 };
+}
+
+function parseMatrix(str) {
+    // transform="matrix(a b c d e f)" или matrix(a,b,c,d,e,f)
+    const m = str?.match(/matrix\(\s*([^\)]+)\)/i);
+    if (!m) return null;
+    const nums = m[1].split(/[\s,]+/).map(parseFloat);
+    if (nums.length !== 6 || nums.some(n => !isFinite(n))) return null;
+    const [a, b, c, d, e, f] = nums;
+    return { a, b, c, d, e, f };
+}
+function applyMatrixToPoint(p, M) {
+    return { x: M.a * p.x + M.c * p.y + M.e, y: M.b * p.x + M.d * p.y + M.f };
+}
+function applyMatrixToSegs(segs, M) {
+    if (!M) return segs;
+    return segs.map(s => {
+        const r = { ...s };
+        if (s.kind === "L" || s.kind === "M") {
+            const p = applyMatrixToPoint({ x: s.x, y: s.y }, M);
+            r.x = p.x; r.y = p.y;
+            if ("ax" in s) { const a = applyMatrixToPoint({ x: s.ax, y: s.ay }, M); r.ax = a.x; r.ay = a.y; }
+        } else if (s.kind === "C") {
+            const a = applyMatrixToPoint({ x: s.ax, y: s.ay }, M);
+            const p1 = applyMatrixToPoint({ x: s.x1, y: s.y1 }, M);
+            const p2 = applyMatrixToPoint({ x: s.x2, y: s.y2 }, M);
+            const p = applyMatrixToPoint({ x: s.x, y: s.y }, M);
+            r.ax = a.x; r.ay = a.y; r.x1 = p1.x; r.y1 = p1.y; r.x2 = p2.x; r.y2 = p2.y; r.x = p.x; r.y = p.y;
+        }
+        return r;
+    });
+}
+
+/** эвристика «фон/рамка» — выкидываем только когда кандидатов больше одного */
+// cand: {segs,bbox,rawTag}, root: {w,h}
+function looksLikeBackground(cand, root) {
+    const { bbox, rawTag, segs } = cand;
+
+    const Av = Math.max(1, root.w * root.h);
+    const A = Math.abs(bbox.w * bbox.h);
+    const areaFrac = A / Av;
+    const coverW = bbox.w / root.w;
+    const coverH = bbox.h / root.h;
+
+    // «очень большой»: закрывает заметную часть листа
+    const isBig = areaFrac > 0.48 || (coverW > 0.90 && coverH > 0.90);
+
+    // 1) явный <rect>
+    const isRectTag = /^<rect\b/i.test(rawTag);
+
+    // 2) path/polygon, который геометрически «как прямоугольник»:
+    //    без кривых, оси X/Y, площадь ≈ площади bbox
+    let rectLike = false;
+    const subs = splitSegsIntoSubpaths(segs);
+    if (subs.length) {
+        const ring = polylineFromSubpath(subs[0]);
+        if (ring.length >= 4) {
+            const Ab = Math.abs(area(ring));
+            const bboxLike = Math.abs(Ab - A) / Math.max(A, 1) < 0.06;
+            const axisAligned = ring.every((p, i) => {
+                const q = ring[(i + 1) % ring.length];
+                const dx = Math.abs(q.x - p.x), dy = Math.abs(q.y - p.y);
+                return dx < 1e-3 || dy < 1e-3;
+            });
+            rectLike = bboxLike && axisAligned && !segs.some(s => s.kind === "C");
+        }
+    }
+
+    // 3) типичные «имена фона» или стили
+    const namedBg = /inkscape:label="background"|id="(?:background|bg|frame|artboard)"/i.test(rawTag);
+    const styleBg = /\sfill="(?!none)/i.test(rawTag) || /(?:\s|;)fill\s*:\s*[^;#)]/i.test(rawTag) || /\sstroke="none"/i.test(rawTag);
+
+    return isBig && (isRectTag || rectLike || namedBg || styleBg);
+}
+
+
+/* ================== компонент ================== */
+export default function CostumeEditor({ initialSVG }) {
+    const scopeRef = useRef(null);
+
+    // state для «запоминания» последнего подрежима
+    const [lastFillMode, setLastFillMode] = useState('paint');   // 'paint' | 'deleteFill'
+    const [lastLineMode, setLastLineMode] = useState('add');     // 'add' | 'delete
+
+    const [rawSVG, setRawSVG] = useState(initialSVG || "");
+    const [panels, setPanels] = useState([]);
+
+    // для анимации "из-за спины"
+    const [prevPanels, setPrevPanels] = useState(null);
+    const [isSwapping, setIsSwapping] = useState(false);
+    const SWAP_MS = 420;
+
+    const didEverSwapRef = useRef(false);
+    const swapTimerRef = useRef(null);
+
+    // чтобы поймать "старые" панели до перезаписи
+    const panelsRef = useRef(panels);
+    useEffect(() => { panelsRef.current = panels; }, [panels]);
+
+    // утилита для простого outline-пути из сегментов (для нижнего слоя)
+    const segsToD = (segs) =>
+        segs.map(s => s.kind === "M" ? `M ${s.x} ${s.y}` :
+            s.kind === "L" ? `L ${s.x} ${s.y}` :
+                s.kind === "C" ? `C ${s.x1} ${s.y1} ${s.x2} ${s.y2} ${s.x} ${s.y}` :
+                    "Z").join(" ");
+
+    // --- PRESETS state
+    const [presetIdx, setPresetIdx] = useState(0);   // 0: Перед, 1: Спинка
+    const [isLoadingPreset, setIsLoadingPreset] = useState(false);
+
+    // красивый ре-монтаж svg при смене пресета (для анимации появления)
+    const [svgMountKey, setSvgMountKey] = useState(0);
+
+    // кривые: 'cubic' или 'routed' (по контуру)
+    const [curvesByPanel, setCurvesByPanel] = useState({});
+    const [fills, setFills] = useState([]);
+    const [paintColor, setPaintColor] = useState("#f26522");
+
+    const [mode, setMode] = useState("preview");
+    const [addBuffer, setAddBuffer] = useState(null);
+    const [hoverAnchorIdx, setHoverAnchorIdx] = useState(null);
+    const [hoverCurveKey, setHoverCurveKey] = useState(null);
+    const [hoverFace, setHoverFace] = useState(null);
+
+    const [toast, setToast] = useState(null);
+
+    // тип пользовательской линии
+    const [lineStyle, setLineStyle] = useState("straight"); // 'straight' | 'wavy'
+
+    // параметры волны (в пикселях экрана)
+    const [waveAmpPx, setWaveAmpPx] = useState(6);
+    const [waveLenPx, setWaveLenPx] = useState(36);
+
+    const [paletteOpen, setPaletteOpen] = useState(false);
+    const paletteRef = useRef(null);
+    useEffect(() => {
+        if (!paletteOpen) return;
+        const onKey = (e) => e.key === "Escape" && setPaletteOpen(false);
+        const onClick = (e) => {
+            if (paletteRef.current && !paletteRef.current.contains(e.target)) setPaletteOpen(false);
+        };
+        window.addEventListener("keydown", onKey);
+        window.addEventListener("pointerdown", onClick);
+        return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("pointerdown", onClick); };
+    }, [paletteOpen]);
+
+    useEffect(() => {
+        if (mode === 'paint' || mode === 'deleteFill') setLastFillMode(mode);
+        if (mode === 'add' || mode === 'delete') setLastLineMode(mode);
+    }, [mode]);
+
+    const modeGroup =
+        (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
+            (mode === 'add' || mode === 'delete') ? 'line' : 'preview';
+
+    // --- PRESETS: начальная подгрузка и переключение
+    useEffect(() => {
+        if (initialSVG) return; // если SVG уже пришёл сверху — не грузим пресеты
+        const p = PRESETS[presetIdx];
+        if (!p) return;
+        let alive = true;
+        setIsLoadingPreset(true);
+        fetch(`${SVG_BASE}/${p.file}`)
+            .then(r => r.text())
+            .then(txt => { if (alive) { setRawSVG(txt); setSvgMountKey(k => k + 1); } })
+            .catch(() => { if (alive) setRawSVG(""); })
+            .finally(() => { if (alive) setIsLoadingPreset(false); });
+        return () => { alive = false; };
+    }, [presetIdx, initialSVG]);
+
+    // --- PRESETS: кнопки/клавиши
+    const prevPreset = () => setPresetIdx(i => (i - 1 + PRESETS.length) % PRESETS.length);
+    const nextPreset = () => setPresetIdx(i => (i + 1) % PRESETS.length);
+
+    useEffect(() => {
+        const el = scopeRef.current;
+        if (!el) return;
+
+        const onKey = (e) => {
+            const tag = (e.target?.tagName || "").toLowerCase();
+            if (["input", "textarea", "select", "button"].includes(tag) || e.target?.isContentEditable) return;
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+            const k = e.key.toLowerCase?.();
+            if (k === "arrowleft") prevPreset();
+            if (k === "arrowright") nextPreset();
+        };
+
+        el.addEventListener("keydown", onKey);
+        return () => el.removeEventListener("keydown", onKey);
+    }, [scopeRef.current]);
+
     useEffect(() => {
         if (!rawSVG) return;
-        const m = rawSVG.match(/<path[^>]*\sd="([^"]+)"[^>]*>/i);
-        if (!m) return;
-        const s = parsePathD(m[1]);
-        setSegs(s);
-        setAnchors(collectAnchorPoints(s));
-        setCurves([]);
+
+        const parts = extractPanels(rawSVG);
+
+        // Снимок прежней сцены для анимации
+        const old = panelsRef.current;
+        if (old && old.length) {
+            didEverSwapRef.current = true;
+
+            setPrevPanels(old);
+            setIsSwapping(true);
+
+            // не допускаем наложения таймеров
+            if (swapTimerRef.current) clearTimeout(swapTimerRef.current);
+            swapTimerRef.current = setTimeout(() => {
+                setPrevPanels(null);
+                setIsSwapping(false);
+                swapTimerRef.current = null;
+            }, SWAP_MS);
+        }
+
+        setPanels(parts);
+        setCurvesByPanel({});
         setFills([]);
         setMode("preview");
+
+        if (!parts.length) {
+            // Диагностика причин
+            const hasImage = /<image\b[^>]+(?:href|xlink:href)=["']data:image\//i.test(rawSVG) ||
+                /<image\b[^>]+(?:href|xlink:href)=["'][^"']+\.(png|jpe?g|webp)/i.test(rawSVG);
+            const hasForeign = /<foreignObject\b/i.test(rawSVG);
+            const hasVectorTags = /<(path|polygon|polyline|rect|circle|ellipse|line)\b/i.test(rawSVG);
+
+            let msg =
+                "В SVG не найдено векторных контуров для деталей. " +
+                "Экспортируйте выкройку как вектор (path/polygon/polyline/rect/circle/ellipse/line).";
+
+            if (hasImage && !hasVectorTags) {
+                msg = "Похоже, это растровая картинка, встроенная в SVG (<image>). " +
+                    "Нужно экспортировать из исходной программы именно векторные контуры (path и др.).";
+            } else if (hasForeign && !hasVectorTags) {
+                msg = "Файл использует <foreignObject> (встроенный HTML/растровый контент). " +
+                    "Экспортируйте чистый векторный SVG без foreignObject.";
+            }
+
+            setToast({ text: msg });
+        } else {
+            if (toast) setToast(null);
+        }
     }, [rawSVG]);
 
-    // масштаб (адаптация к изменению размеров)
+
+    // осн. окна
+    const viewBox = useMemo(() => {
+        if (!panels.length) return "0 0 800 500";
+        const boxes = panels.map(p => getBounds(p.segs));
+        const minX = Math.min(...boxes.map(b => b.x)), minY = Math.min(...boxes.map(b => b.y));
+        const maxX = Math.max(...boxes.map(b => b.x + b.w)), maxY = Math.max(...boxes.map(b => b.y + b.h));
+        const w = maxX - minX, h = maxY - minY, pad = Math.max(w, h) * 0.06;
+        return `${minX - pad} ${minY - pad} ${w + pad * 2} ${h + pad * 2}`;
+    }, [panels]);
+
     const svgRef = useRef(null);
     const [scale, setScale] = useState({ k: 1 });
     useLayoutEffect(() => {
         const update = () => {
-            const svg = svgRef.current;
-            if (!svg || !segs) return;
-            const vb = svg.viewBox.baseVal;
-            const kx = vb.width / svg.clientWidth;
-            const ky = vb.height / svg.clientHeight;
+            const svg = svgRef.current; if (!svg || !panels.length) return;
+            const vb = svg.viewBox.baseVal; const kx = vb.width / svg.clientWidth, ky = vb.height / svg.clientHeight;
             setScale({ k: Math.max(kx, ky) });
         };
         update();
-        const ro = new ResizeObserver(update);
-        if (svgRef.current) ro.observe(svgRef.current);
+        const ro = new ResizeObserver(update); if (svgRef.current) ro.observe(svgRef.current);
         window.addEventListener("resize", update);
         return () => { ro.disconnect(); window.removeEventListener("resize", update); };
-    }, [segs]);
+    }, [panels.length]);
 
-    const viewBox = useMemo(() => {
-        if (!segs) return "0 0 800 500";
-        const b = getBounds(segs);
-        const pad = Math.max(b.w, b.h) * 0.05;
-        return `${b.x - pad} ${b.y - pad} ${b.w + pad * 2} ${b.h + pad * 2}`;
-    }, [segs]);
+    /* -------- базовые faces и кольца контура -------- */
+    const baseFacesByPanel = useMemo(() => {
+        const res = {};
+        for (const p of panels) {
+            const baseLines = polylinesFromSegs(p.segs);
+            const segsFlat = segmentsFromPolylines(baseLines);
+            res[p.id] = buildFacesFromSegments(splitByIntersections(segsFlat));
+        }
+        return res;
+    }, [panels]);
 
-    const pathD = useMemo(() => (segs ? buildPathD(segs) : ""), [segs]);
+    const ringsByPanel = useMemo(() => {
+        const res = {};
+        for (const p of panels) {
+            const subs = splitSegsIntoSubpaths(p.segs);
+            res[p.id] = subs.map(polylineFromSubpath).filter(r => r.length >= 3);
+        }
+        return res;
+    }, [panels]);
 
-    /* ---------------- режимы и действия ---------------- */
+    // faces с учётом пользовательских линий
+    const facesByPanel = useMemo(() => {
+        const res = {};
+        for (const p of panels) {
+            const baseLines = polylinesFromSegs(p.segs);
+            const userLines = (curvesByPanel[p.id] || []).flatMap(c => {
+                if (c.type === "cubic") {
+                    const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
+                    return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)];
+                } else {
+                    const lines = [pointsToPairedPolyline(c.pts)];
+                    if (c.connA && c.connA.length === 2) lines.push(pointsToPairedPolyline(c.connA));
+                    if (c.connB && c.connB.length === 2) lines.push(pointsToPairedPolyline(c.connB));
+                    return lines;
+                }
+            });
+
+            const segsFlat = segmentsFromPolylines([...baseLines, ...userLines]);
+            res[p.id] = buildFacesFromSegments(splitByIntersections(segsFlat));
+        }
+        return res;
+    }, [panels, curvesByPanel]);
+
+    useEffect(() => {
+        setFills(fs => fs.filter(f => (facesByPanel[f.panelId] || []).some(poly => faceKey(poly) === f.faceKey)));
+    }, [facesByPanel]);
+
+    const gridDef = useMemo(() => {
+        if (!panels.length) return { step: 40, b: { x: 0, y: 0, w: 800, h: 500 } };
+        const boxes = panels.map(p => getBounds(p.segs));
+        const minX = Math.min(...boxes.map(b => b.x)), minY = Math.min(...boxes.map(b => b.y));
+        const maxX = Math.max(...boxes.map(b => b.x + b.w)), maxY = Math.max(...boxes.map(b => b.y + b.h));
+        const w = maxX - minX, h = maxY - minY; const step = Math.max(1e-6, Math.min(w, h) / 20);
+        return { step, b: { x: minX, y: minY, w, h } };
+    }, [panels]);
+
+    // уже есть: splitSegsIntoSubpaths, polylineFromSubpath, area(...)
+
+    const outerRingByPanel = useMemo(() => {
+        const res = {};
+        for (const p of panels) {
+            const subpaths = splitSegsIntoSubpaths(p.segs);          // M..Z блоки
+            const rings = subpaths.map(polylineFromSubpath)          // дискретизируем
+                .filter(r => r.length >= 3);
+            if (!rings.length) continue;
+            // выбираем самое большое по модулю площади кольцо — это внешний силуэт
+            const best = rings.reduce((acc, r) => {
+                const A = Math.abs(area(r));
+                return (!acc || A > acc.A) ? { ring: r, A } : acc;
+            }, null);
+            res[p.id] = best?.ring || null;
+        }
+        return res;
+    }, [panels]);
+
+    useEffect(() => {
+        const el = scopeRef.current;
+        if (!el) return;
+
+        const onKey = (e) => {
+            // работаем только когда фокус внутри редактора
+            if (document.activeElement !== el) return;
+
+            if (e.key === 'Escape') { setMode('preview'); setAddBuffer(null); e.preventDefault(); }
+            else if (e.key === 'a' || e.key === 'A') { setMode('add'); setAddBuffer(null); e.preventDefault(); }
+            else if (e.key === 'd' || e.key === 'D') { setMode('delete'); e.preventDefault(); }
+            else if (e.key === 'f' || e.key === 'F') { setMode('paint'); e.preventDefault(); }
+            else if (e.key === 'x' || e.key === 'X') { setMode('deleteFill'); e.preventDefault(); }
+        };
+
+        el.addEventListener('keydown', onKey);
+        return () => el.removeEventListener('keydown', onKey);
+    }, [setMode, setAddBuffer]);
+
+
+    /* ===== действия ===== */
+    const activePanel = panels[0] || null;
+    const R = 6 * scale.k;
+    const isPreview = mode === "preview";
+
+    function facePath(poly) { return `M ${poly.map(p => `${p.x} ${p.y}`).join(" L ")} Z`; }
+    function faceKey(poly) { return poly.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join("|"); }
+
+    function routeCurveAlongOutline(panel, draftCurve, insetWorld, opts = {}) {
+        const rings = ringsByPanel[panel.id] || [];
+        if (!rings.length) return null;
+
+        const a = panel.anchors[draftCurve.aIdx], b = panel.anchors[draftCurve.bIdx];
+
+        let best = null;
+        for (const ring of rings) {
+            const pa = nearestOnRing(a, ring);
+            const pb = nearestOnRing(b, ring);
+            if (pa && pb) {
+                const score = (pa.d2 || 0) + (pb.d2 || 0);
+                if (!best || score < best.score) best = { ring, pa, pb, score };
+            }
+        }
+        if (!best) return null;
+
+        const arc = arcOnRing(best.ring, best.pa, best.pb);
+        const offsetArc = offsetArcInside(arc, best.ring, insetWorld);
+        if (offsetArc.length < 2) return null;
+
+        let workingPts = offsetArc;
+        if (opts.style === "wavy") {
+            const amp = Math.max(0, opts.ampWorld || 0);
+            const lambda = Math.max(1e-6, opts.lambdaWorld || 1);
+            workingPts = waveAlongPolyline(offsetArc, amp, lambda, best.ring);
+        }
+
+        const d = catmullRomToBezierPath(workingPts);
+
+        // точки на контуре (без отступа)
+        const N = best.ring.length;
+        const P0 = lerpPt(best.ring[best.pa.idx], best.ring[(best.pa.idx + 1) % N], best.pa.t);
+        const P1 = lerpPt(best.ring[best.pb.idx], best.ring[(best.pb.idx + 1) % N], best.pb.t);
+        // точки на прижатой дуге (с отступом)
+        const Q0 = workingPts[0];
+        const Q1 = workingPts[workingPts.length - 1];
+
+        return {
+            d,
+            pts: workingPts,
+            connA: [Q0, P0],   // невидимый коннектор к контуру
+            connB: [Q1, P1]
+        };
+    }
+
     const onAnchorClickAddMode = (idx) => {
+        if (!activePanel) return;
+
+        // первый клик — запоминаем начальную вершину
         if (addBuffer == null) {
             setAddBuffer(idx);
-        } else if (addBuffer !== idx) {
-            const a = anchors[addBuffer], b = anchors[idx];
-            const { c1, c2 } = makeUserCurveBetween(a, b);
-            setCurves(cs => [...cs, { id: crypto.randomUUID(), aIdx: addBuffer, bIdx: idx, c1, c2 }]);
+            return;
+        }
+
+        // клик по той же вершине — игнор
+        if (addBuffer === idx) return;
+
+        const a = activePanel.anchors[addBuffer];
+        const b = activePanel.anchors[idx];
+
+        // черновая «прямая» (кубик) между вершинами
+        const { c1, c2 } = makeUserCurveBetween(a, b);
+        const draft = {
+            id: crypto.randomUUID(),
+            aIdx: addBuffer,
+            bIdx: idx,
+            c1,
+            c2,
+        };
+
+        // 1) Если вся дискретизация прямой внутри объединения базовых граней —
+        //    сохраняем обычный кубик (ровная внутренняя линия).
+        const faces = baseFacesByPanel[activePanel.id] || [];
+        const allInside = sampleBezierPoints(
+            a.x, a.y, c1.x, c1.y, c2.x, c2.y, b.x, b.y, 40
+        ).every((pt) => pointInAnyFace(pt, faces));
+
+        if (allInside) {
+            if (lineStyle === "straight") {
+                // прежнее поведение: внутренняя ровная линия
+                setCurvesByPanel((map) => {
+                    const arr = [...(map[activePanel.id] || [])];
+                    arr.push({ ...draft, type: "cubic" });
+                    return { ...map, [activePanel.id]: arr };
+                });
+            }
+            else {
+                // внутренняя волнистая линия
+                const base = sampleBezierPoints(a.x, a.y, draft.c1.x, draft.c1.y, draft.c2.x, draft.c2.y, b.x, b.y, 64);
+                const ampW = waveAmpPx * (scale.k || 1);
+                const lambdaW = waveLenPx * (scale.k || 1);
+                const wpts = waveAlongPolyline(base, ampW, lambdaW, null);
+                const d = catmullRomToBezierPath(wpts);
+                setCurvesByPanel((map) => {
+                    const arr = [...(map[activePanel.id] || [])];
+                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts });
+                    return { ...map, [activePanel.id]: arr };
+                });
+            }
+
             setAddBuffer(null);
             setMode("preview");
+            return;
         }
+
+        // 2) Иначе ведём линию по кратчайшей дуге кромки с отступом внутрь.
+        //    Отступ задаётся в пикселях экрана (edgeInsetPx), здесь переводим в мировые.
+        const inset = Math.max(0, edgeInsetPx) * (scale.k || 1);
+        const routed = routeCurveAlongOutline(
+            activePanel,
+            draft,
+            inset,
+            lineStyle === "wavy"
+                ? { style: "wavy", ampWorld: waveAmpPx * (scale.k || 1), lambdaWorld: waveLenPx * (scale.k || 1) }
+                : { style: "straight" }
+        );
+
+        // Если не удалось прижать (крайний случай) — просто выходим в просмотр.
+        if (!routed) {
+            setAddBuffer(null);
+            setMode("preview");
+            return;
+        }
+
+        // 3) Сохраняем «прижатую» кривую и невидимые коннекторы к контуру (для корректной заливки).
+        setCurvesByPanel((map) => {
+            const arr = [...(map[activePanel.id] || [])];
+            arr.push({
+                id: draft.id,
+                type: "routed",
+                aIdx: addBuffer,
+                bIdx: idx,
+                d: routed.d,       // сглаженный путь для рендера
+                pts: routed.pts,   // точки прижатой дуги (для faces)
+                connA: routed.connA, // [Q0, P0] — коннектор к кромке
+                connB: routed.connB, // [Q1, P1] — коннектор к кромке
+            });
+            return { ...map, [activePanel.id]: arr };
+        });
+
+        // очистка состояния
+        setAddBuffer(null);
+        setMode("preview");
     };
 
-    const onCurveEnter = (id) => { if (mode === "delete") setHoverCurveId(id); };
-    const onCurveLeave = (id) => { if (mode === "delete") setHoverCurveId(c => (c === id ? null : c)); };
-    const onCurveClickDelete = (id) => {
+    const onCurveEnter = (panelId, id) => { if (mode === "delete") setHoverCurveKey(`${panelId}:${id}`); };
+    const onCurveLeave = (panelId, id) => { if (mode === "delete") setHoverCurveKey(k => (k === `${panelId}:${id}` ? null : k)); };
+    const onCurveClickDelete = (panelId, id) => {
         if (mode !== "delete") return;
-        setCurves(cs => cs.filter(c => c.id !== id));
-        setHoverCurveId(null);
+        setCurvesByPanel(map => ({ ...map, [panelId]: (map[panelId] || []).filter(c => c.id !== id) }));
+        setHoverCurveKey(null);
     };
 
-    // заливка по faces
-    const onFaceEnter = (poly) => { if (mode === "paint") setHoverFaceKey(faceKey(poly)); };
-    const onFaceLeave = (poly) => { if (mode === "paint") setHoverFaceKey(k => (k === faceKey(poly) ? null : k)); };
-    const onFaceClick = (poly) => {
+    const onFaceEnter = (panelId, poly) => { if (mode === "paint") setHoverFace({ panelId, faceKey: faceKey(poly) }); };
+    const onFaceLeave = (panelId, poly) => { if (mode === "paint") setHoverFace(h => (h && h.panelId === panelId && h.faceKey === faceKey(poly) ? null : h)); };
+    const onFaceClick = (panelId, poly) => {
         if (mode !== "paint") return;
         const fk = faceKey(poly);
         setFills(fs => {
-            const i = fs.findIndex(f => f.faceKey === fk);
-            if (i >= 0) {
-                const copy = fs.slice(); copy[i] = { ...copy[i], color: paintColor }; return copy;
-            }
-            return [...fs, { id: crypto.randomUUID(), faceKey: fk, color: paintColor }];
+            const i = fs.findIndex(f => f.panelId === panelId && f.faceKey === fk);
+            if (i >= 0) { const cp = fs.slice(); cp[i] = { ...cp[i], color: paintColor }; return cp; }
+            return [...fs, { id: crypto.randomUUID(), panelId, faceKey: fk, color: paintColor }];
         });
     };
-
-    const onFilledEnter = (fk) => { if (mode === "deleteFill") setHoverFaceKey(fk); };
-    const onFilledLeave = (fk) => { if (mode === "deleteFill") setHoverFaceKey(k => (k === fk ? null : k)); };
-    const onFilledClick = (fk) => {
+    const onFilledEnter = (panelId, fk) => { if (mode === "deleteFill") setHoverFace({ panelId, faceKey: fk }); };
+    const onFilledLeave = (panelId, fk) => { if (mode === "deleteFill") setHoverFace(h => (h && h.panelId === panelId && h.faceKey === fk ? null : h)); };
+    const onFilledClick = (panelId, fk) => {
         if (mode !== "deleteFill") return;
-        setFills(fs => fs.filter(f => f.faceKey !== fk));
-        setHoverFaceKey(null);
+        setFills(fs => fs.filter(f => !(f.panelId === panelId && f.faceKey === fk)));
+        setHoverFace(null);
     };
 
-    // хоткеи
-    useEffect(() => {
-        const onKey = (e) => {
-            const k = e.key.toLowerCase?.();
-            if (e.key === "Escape") setMode("preview");
-            else if (k === "a") { setMode("add"); setAddBuffer(null); }
-            else if (k === "d") setMode("delete");
-            else if (k === "f") setMode("paint");
-            else if (k === "x") setMode("deleteFill"); // фикс регистра
-        };
-        window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
-    }, []);
-
-    // сетка
-    const gridDef = useMemo(() => {
-        const b = segs ? getBounds(segs) : { w: 800, h: 500, x: 0, y: 0 };
-        const step = Math.max(1e-6, Math.min(b.w, b.h) / 20);
-        return { step, b };
-    }, [segs]);
-
-    const isPreview = mode === "preview";
-    const R = 6 * scale.k;
+    // ...другие состояния
+    const [edgeInsetPx, setEdgeInsetPx] = useState(8); // отступ от края, px экрана
 
     return (
-        <div className={styles.layout}>
-            {/* CANVAS */}
-            <div className={styles.canvasWrap}>
-                <svg
-                    ref={svgRef}
-                    className={styles.canvas}
-                    viewBox={viewBox}
-                    preserveAspectRatio="xMidYMid meet"
-                >
-                    {/* grid */}
-                    <defs>
-                        <pattern id="grid" width={gridDef.step} height={gridDef.step} patternUnits="userSpaceOnUse">
-                            <path d={`M 0 0 L ${gridDef.step} 0 M 0 0 L 0 ${gridDef.step}`} stroke="#eee" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-                        </pattern>
-                    </defs>
-                    {segs && (
-                        <rect
-                            x={gridDef.b.x - gridDef.b.w}
-                            y={gridDef.b.y - gridDef.b.h}
-                            width={gridDef.b.w * 3}
-                            height={gridDef.b.h * 3}
-                            fill="url(#grid)"
-                        />
+        <div ref={scopeRef} className={styles.layout} tabIndex={0}>
+            <div className={styles.canvasWrap} onMouseDown={() => scopeRef.current?.focus()}>
+                {toast && <div className={styles.toast}>{toast.text}</div>}
+                {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
+
+                {/* === два слоя поверх друг друга === */}
+                <div className={styles.canvasStack}>
+                    {/* нижний: предыдущая сцена (только outline), без интерактивности */}
+                    {prevPanels && (
+                        <svg
+                            className={`${styles.canvas} ${styles.stage} ${styles.swapOut}`}
+                            viewBox={viewBox}
+                            preserveAspectRatio="xMidYMid meet"
+                            style={{ pointerEvents: "none" }}
+                        >
+                            <g>
+                                {prevPanels.map(p => (
+                                    <path
+                                        key={`prev-${p.id}`}
+                                        d={segsToD(p.segs)}
+                                        fill="none"
+                                        stroke="#c9ced6"
+                                        strokeWidth={1.2}
+                                        vectorEffect="non-scaling-stroke"
+                                    />
+                                ))}
+                            </g>
+                        </svg>
                     )}
 
-                    {/* заливки */}
-                    {faces.map((poly) => {
-                        const d = facePath(poly);
-                        const fk = faceKey(poly);
-                        const existing = fills.find(f => f.faceKey === fk);
-                        if (existing) {
-                            const isDelHover = mode === "deleteFill" && hoverFaceKey === fk;
+                    {/* верхний: текущая (новая) сцена — полноценный интерактивный рендер */}
+                    <svg
+                        key={svgMountKey} // у вас уже есть, оставляем — красиво монтирует svg
+                        ref={svgRef}
+                        className={`${styles.canvas} ${styles.stage} ${isSwapping ? styles.swapIn : (!didEverSwapRef.current ? styles.svgEnter : "")}`}
+                        viewBox={viewBox}
+                        preserveAspectRatio="xMidYMid meet"
+                    >
+                        {/* GRID */}
+                        <defs>
+                            <pattern id={`grid-${svgMountKey}`} width={gridDef.step} height={gridDef.step} patternUnits="userSpaceOnUse">
+                                <path d={`M ${gridDef.step} 0 L 0 0 0 ${gridDef.step}`} fill="none"
+                                    stroke="#000" strokeOpacity=".06" strokeWidth={0.6 * (scale.k || 1)} />
+                            </pattern>
+                        </defs>
+                        <rect x={gridDef.b.x} y={gridDef.b.y} width={gridDef.b.w} height={gridDef.b.h} fill={`url(#grid-${svgMountKey})`} />
+
+                        {/* FILLS + OUTLINES + CURVES + ANCHORS */}
+                        {panels.map(p => {
+                            const faces = facesByPanel[p.id] || [];
+                            const ring = outerRingByPanel[p.id];
+
+                            const clickableFaces = faces.length ? faces : (ring ? [ring] : []);
+
                             return (
-                                <path key={`fill-${fk}`}
-                                    d={d}
-                                    fill={existing.color}
-                                    fillOpacity={isDelHover ? 0.55 : 0.35}
-                                    stroke="none"
-                                    onPointerEnter={() => onFilledEnter(fk)}
-                                    onPointerLeave={() => onFilledLeave(fk)}
-                                    onPointerDown={() => onFilledClick(fk)}
-                                    style={mode === "preview" ? { pointerEvents: "none" } : undefined}
-                                />
+                                <g key={p.id}>
+                                    {clickableFaces.map(poly => {
+                                        const fk = faceKey(poly);
+                                        const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
+                                        const hasFill = fill !== "none";
+                                        const isHover = !!hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk;
+                                        const canFaceHit = mode === 'paint' || mode === 'deleteFill';
+
+                                        return (
+                                            <>
+                                                <path
+                                                    key={fk}
+                                                    d={facePath(poly)}
+                                                    fill={hasFill ? fill : (mode === 'paint' && isHover ? '#9ca3af' : 'transparent')}
+                                                    fillOpacity={hasFill ? 0.9 : (mode === 'paint' && isHover ? 0.35 : 0.001)}
+                                                    stroke="none"
+                                                    style={{ pointerEvents: canFaceHit ? 'all' : 'none', cursor: canFaceHit ? 'pointer' : 'default' }}
+                                                    onMouseEnter={() => hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly)}
+                                                    onMouseLeave={() => hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly)}
+                                                    onClick={() => hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly)}
+                                                />
+                                                {/* оверлей для deleteFill: слегка затемняем уже залитую грань при ховере */}
+                                                {hasFill && mode === 'deleteFill' && isHover && (
+                                                    <path
+                                                        key={`${fk}-overlay`}
+                                                        d={facePath(poly)}
+                                                        fill="#000"
+                                                        fillOpacity={0.18}
+                                                        style={{ pointerEvents: 'none' }}
+                                                    />
+                                                )}
+                                            </>
+                                        );
+                                    })}
+
+                                    {/* внешний контур — без событий, чтобы не перекрывал клики */}
+                                    {ring && (
+                                        <path
+                                            d={facePath(ring)}
+                                            fill="none"
+                                            stroke="#111"
+                                            strokeWidth={1.8 * (scale.k || 1)}
+                                            style={{ pointerEvents: "none" }}   // важно
+                                        />
+                                    )}
+
+                                    {/* USER CURVES (швы/линии пользователя) */}
+                                    {(curvesByPanel[p.id] || []).map(c => {
+                                        const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
+                                        const d = c.type === 'cubic'
+                                            ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
+                                            : c.d; // 'routed'/'wavy'
+
+                                        const key = `${p.id}:${c.id}`;
+                                        const cls = (mode === 'delete' && hoverCurveKey === key)
+                                            ? styles.userCurveDeleteHover
+                                            : (mode === 'preview' ? styles.userCurvePreview : styles.userCurve);
+
+                                        return (
+                                            <path
+                                                key={c.id}
+                                                d={d}
+                                                className={cls}
+                                                onMouseEnter={() => onCurveEnter(p.id, c.id)}
+                                                onMouseLeave={() => onCurveLeave(p.id, c.id)}
+                                                onClick={() => onCurveClickDelete(p.id, c.id)}
+                                            />
+                                        );
+                                    })}
+
+                                    {/* ANCHORS (вершины) — только в режимах добавления/удаления линий */}
+                                    {activePanel?.id === p.id && (mode === 'add' || mode === 'delete') && p.anchors.map((A, i) => (
+                                        <circle
+                                            key={i}
+                                            cx={A.x}
+                                            cy={A.y}
+                                            r={R}
+                                            className={`${styles.anchor} ${mode === 'add' ? styles.anchorClickable : ''} ${addBuffer === i ? styles.anchorSelectedA : ''}`}
+                                            onMouseEnter={() => setHoverAnchorIdx(i)}
+                                            onMouseLeave={() => setHoverAnchorIdx(h => (h === i ? null : h))}
+                                            onClick={() => mode === 'add' && onAnchorClickAddMode(i)}
+                                        />
+                                    ))}
+
+                                </g>
                             );
-                        }
-                        const isHover = mode === "paint" && hoverFaceKey === fk;
-                        return (
-                            <path key={`face-${fk}`}
-                                d={d}
-                                fill={isHover ? "#000" : "transparent"}
-                                fillOpacity={isHover ? 0.08 : 0}
-                                stroke="none"
-                                onPointerEnter={() => onFaceEnter(poly)}
-                                onPointerLeave={() => onFaceLeave(poly)}
-                                onPointerDown={() => onFaceClick(poly)}
-                                style={mode === "paint" ? undefined : { pointerEvents: "none" }}
-                            />
-                        );
-                    })}
+                        })}
 
-                    {/* исходный путь */}
-                    {pathD && <path d={pathD} fill="none" stroke="#111" strokeWidth="2" vectorEffect="non-scaling-stroke" />}
 
-                    {/* пользовательские кривые */}
-                    {curves.map(c => {
-                        const a = anchors[c.aIdx], b = anchors[c.bIdx];
-                        const d = `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`;
-                        const del = mode === "delete" && hoverCurveId === c.id;
-                        return (
-                            <path
-                                key={c.id}
-                                d={d}
-                                className={del ? styles.userCurveDeleteHover : styles.userCurve}
-                                onPointerEnter={() => onCurveEnter(c.id)}
-                                onPointerLeave={() => onCurveLeave(c.id)}
-                                onPointerDown={() => onCurveClickDelete(c.id)}
-                                fill="none"
-                                vectorEffect="non-scaling-stroke"
-                                // кривые не перехватывают клики в paint/deleteFill/preview
-                                style={
-                                    (mode === "preview" || mode === "paint" || mode === "deleteFill")
-                                        ? { pointerEvents: "none" }
-                                        : undefined
-                                }
-                            />
-                        );
-                    })}
+                    </svg>
+                </div>
 
-                    {/* точки исходника — только в add-режиме */}
-                    {mode === "add" && anchors.map((p, idx) => {
-                        const isFirst = addBuffer === idx;
-                        const isHover = hoverAnchorIdx === idx;
-                        const classes = [
-                            styles.anchor,
-                            styles.anchorClickable,
-                            isFirst ? styles.anchorSelectedA : "",
-                            (!isFirst && isHover) ? styles.anchorSelectedB : "",
-                        ].join(" ");
-                        return (
-                            <circle key={idx}
-                                cx={p.x} cy={p.y} r={R}
-                                className={classes}
-                                onPointerEnter={() => setHoverAnchorIdx(idx)}
-                                onPointerLeave={() => setHoverAnchorIdx(null)}
-                                onPointerDown={() => onAnchorClickAddMode(idx)}
-                            />
-                        );
-                    })}
-                </svg>
+                {/* — навигация пресетов снизу — */}
+                <div className={styles.presetNav}>
+                    <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
+                    <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
+                    <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
+                </div>
             </div>
 
-            {/* SIDEBAR */}
+            {/* sidebar */}
             <aside className={styles.sidebar}>
                 <div className={styles.panel}>
                     <h3 className={styles.panelTitle}>Редактор</h3>
-
+                    {/* Деталь: Перед/Спинка */}
                     <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Файл</div>
-                        <label className={styles.fileBtn}>
-                            Загрузить SVG
-                            <input type="file" accept=".svg,image/svg+xml" onChange={onFile} />
-                        </label>
-                        <button className={styles.btnGhost} onClick={() => setRawSVG(`<svg><path d="M 20 40 C 60 10 140 70 180 40 L 180 80 L 20 80 Z"/></svg>`)}>Демо</button>
+                        <div className={styles.sectionTitle}>Деталь</div>
+                        <div className={styles.segmented}>
+                            <button
+                                className={`${styles.segBtn} ${presetIdx === 0 ? styles.segActive : ''}`}
+                                onClick={() => setPresetIdx(0)}
+                            >
+                                Перед
+                            </button>
+                            <button
+                                className={`${styles.segBtn} ${presetIdx === 1 ? styles.segActive : ''}`}
+                                onClick={() => setPresetIdx(1)}
+                            >
+                                Спинка
+                            </button>
+                        </div>
                     </div>
-
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Режим</div>
-                        <div className={styles.btnGroupV}>
-                            <button className={`${styles.btn} ${isPreview ? styles.btnActive : ""}`} onClick={() => setMode("preview")} title="Esc">Просмотр <kbd className={styles.kbd}>Esc</kbd></button>
-                            <button className={`${styles.btn} ${mode === "add" ? styles.btnActive : ""}`} onClick={() => { setMode("add"); setAddBuffer(null); }} title="A">Добавить кривую <kbd className={styles.kbd}>A</kbd></button>
-                            <button className={`${styles.btn} ${mode === "delete" ? styles.btnDangerActive : ""}`} onClick={() => setMode("delete")} title="D">Удалить линию <kbd className={styles.kbd}>D</kbd></button>
+                        <div className={`${styles.segmented} ${styles.tabs3}`}>
+                            <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'preview' ? styles.segActive : ''}`}
+                                onClick={() => setMode('preview')}>Просмотр</button>
+                            <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'fill' ? styles.segActive : ''}`}
+                                onClick={() => setMode(lastFillMode)}>Заливка</button>
+                            <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'line' ? styles.segActive : ''}`}
+                                onClick={() => { setAddBuffer(null); setMode(lastLineMode); }}>Линии</button>
                         </div>
                     </div>
 
-                    <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Заливка</div>
-                        <div className={styles.paintRow}>
-                            <button className={`${styles.btn} ${mode === "paint" ? styles.btnActive : ""}`} onClick={() => setMode("paint")} title="F">🪣 Заливка <kbd className={styles.kbd}>F</kbd></button>
-                            <input type="color" className={styles.color} value={paintColor} onChange={(e) => setPaintColor(e.target.value)} title="Цвет" />
-                        </div>
-                        <div className={styles.swatches}>
-                            {["#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe"].map(c => (
-                                <button key={c} className={styles.swatch} style={{ background: c }} onClick={() => setPaintColor(c)} aria-label={`Цвет ${c}`} />
-                            ))}
-                        </div>
-                        <button className={`${styles.btn} ${mode === "deleteFill" ? styles.btnDangerActive : ""}`} onClick={() => setMode("deleteFill")} title="X">Удалить заливку <kbd className={styles.kbd}>X</kbd></button>
-                    </div>
+                    {/* Цвет заливки — видна только в режимах покраски */}
 
-                    <p className={styles.hint}>
-                        Наведи курсор на замкнутую область — она подсветится серым. Клик — зальётся выбранным цветом.
-                    </p>
+                    {modeGroup === 'fill' && (
+                        <div className={styles.section}>
+                            <div className={styles.sectionTitle}>Цвет заливки</div>
+
+                            <div className={`${styles.segmented} ${styles.two}`} style={{ marginBottom: 8 }}>
+                                <button className={`${styles.segBtn} ${mode === 'paint' ? styles.segActive : ''}`} onClick={() => setMode('paint')}>🪣 Залить</button>
+                                <button className={`${styles.segBtn} ${mode === 'deleteFill' ? styles.segActive : ''}`} onClick={() => setMode('deleteFill')}>✖ Стереть</button>
+                            </div>
+
+                            <div className={styles.colorRow}>
+                                <button className={`${styles.colorChip} ${mode === 'deleteFill' ? styles.colorChipDisabled : ''}`}
+                                    style={{ background: paintColor }}
+                                    onClick={() => mode !== 'deleteFill' && setPaletteOpen(v => !v)} />
+                                {paletteOpen && mode !== 'deleteFill' && (<div className={styles.palettePopover}>
+                                    {/* dropdown-палитра */}
+                                    {paletteOpen && (
+                                        <div ref={paletteRef} className={styles.palette}>
+                                            <div className={styles.paletteGrid}>
+                                                {[
+                                                    "#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe",
+                                                    "#ef4444", "#10b981", "#22c55e", "#0ea5e9", "#f59e0b", "#a855f7"
+                                                ].map(c => (
+                                                    <button
+                                                        key={c}
+                                                        className={styles.swatchBtn}
+                                                        style={{ background: c }}
+                                                        onClick={() => { setPaintColor(c); setPaletteOpen(false); }}
+                                                        aria-label={c}
+                                                    />
+                                                ))}
+                                            </div>
+                                            <div className={styles.paletteFooter}>
+                                                <span className={styles.paletteLabel}>Произвольный</span>
+                                                <input
+                                                    type="color"
+                                                    className={styles.colorInline}
+                                                    value={paintColor}
+                                                    onChange={(e) => setPaintColor(e.target.value)}
+                                                    aria-label="Произвольный цвет"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>)}
+                            </div>
+                        </div>
+                    )}
+
+                    {modeGroup === 'line' && (
+                        <div className={styles.section}>
+                            <div className={styles.sectionTitle}>Линия</div>
+
+                            <div className={`${styles.segmented} ${styles.two}`} style={{ marginBottom: 8 }}>
+                                <button className={`${styles.segBtn} ${mode === 'add' ? styles.segActive : ''}`} onClick={() => { setMode('add'); setAddBuffer(null); }}>＋ Добавить</button>
+                                <button className={`${styles.segBtn} ${mode === 'delete' ? styles.segActive : ''}`} onClick={() => setMode('delete')}>🗑 Удалить</button>
+                            </div>
+
+                            {/* Тип линии и параметры — как было */}
+                            <div className={styles.segmented}>
+                                <button
+                                    className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
+                                    onClick={() => setLineStyle('straight')}
+                                >Прямая</button>
+                                <button
+                                    className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
+                                    onClick={() => setLineStyle('wavy')}
+                                >Волнистая</button>
+                            </div>
+
+                            {lineStyle === 'wavy' && (
+                                <>
+                                    <div className={styles.subRow}>
+                                        <span className={styles.slimLabel}>Амплитуда</span>
+                                        <input type="range" min={2} max={24} step={1}
+                                            value={waveAmpPx} onChange={e => setWaveAmpPx(+e.target.value)}
+                                            className={styles.rangeCompact} />
+                                        <span className={styles.value}>{waveAmpPx}px</span>
+                                    </div>
+                                    <div className={styles.subRow}>
+                                        <span className={styles.slimLabel}>Длина волны</span>
+                                        <input type="range" min={12} max={80} step={2}
+                                            value={waveLenPx} onChange={e => setWaveLenPx(+e.target.value)}
+                                            className={styles.rangeCompact} />
+                                        <span className={styles.value}>{waveLenPx}px</span>
+                                    </div>
+                                </>
+                            )}
+
+                            {lineStyle === 'straight' && (
+                                <>
+                                    <div className={styles.subRow} style={{ marginTop: 8 }}>
+                                        <span className={styles.slimLabel}>Отступ от края</span>
+                                        <input type="range" min={0} max={24} step={1}
+                                            value={edgeInsetPx} onChange={e => setEdgeInsetPx(+e.target.value)}
+                                            className={styles.rangeCompact} />
+                                        <span className={styles.value}>{edgeInsetPx}px</span>
+                                    </div>
+                                    <div className={styles.hintSmall}>
+                                        Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    )}
+
+
                 </div>
             </aside>
+
         </div>
     );
 }

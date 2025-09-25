@@ -60,23 +60,6 @@
   font-weight:600;
 }
 
-/* ====== FILE INPUT: прячем нативный, чтобы не распирал панель ====== */
-.fileBtn{
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
-  cursor: pointer;
-}
-.fileBtn:hover{ border-color:#30302e; }
-.fileBtn input{ display:none; }
-
 /* ====== КНОПКИ (в стиле сайта) ====== */
 .btn{
   width:100%;
@@ -133,6 +116,54 @@
   color:#111827;
 }
 
+/* две равные колонки для подпунктов */
+.subSegmented {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* иконка слева от текста */
+.segIcon {
+  display: inline-block;
+  margin-right: 6px;
+  line-height: 1;
+}
+
+/* отключённый чип цвета в подрежиме "Стереть" */
+.colorChipDisabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* 3 равные колонки для главных вкладок */
+.tabs3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+/* 2 равные колонки для подпунктов */
+.two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* компактная кнопка, чтобы три вкладки всегда помещались */
+.segBtnSmall {
+  padding: 8px 10px;
+  font-size: 14px;
+}
+
+/* отключённый чип цвета в подрежиме "Стереть" */
+.colorChipDisabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+
 /* ====== ЗАЛИВКА / ПАЛИТРА ====== */
 .paintRow{
   display:flex;
@@ -169,11 +200,243 @@
 .anchorSelectedA { fill: #fde047; stroke: #a16207; stroke-width: 1.5; }
 .anchorSelectedB { fill: #86efac; stroke: #166534; stroke-width: 1.5; }
 
-.userCurve { stroke: #ef4444; stroke-width: 2; fill: none; }
-.userCurveDeleteHover { stroke: #b91c1c; stroke-width: 3.5; filter: drop-shadow(0 0 2px rgba(185,28,28,.35)); fill: none; }
+.userCurve {               /* режимы редактирования */
+  stroke: #ff4d4f;         /* красный контур */
+  stroke-width: 2.5;
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.userCurveDeleteHover {    /* подсветка при удалении */
+  stroke: #ff4d4f;
+  stroke-width: 3.5;
+  filter: drop-shadow(0 0 4px rgba(255,77,79,0.6));
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.userCurvePreview {        /* режим Просмотр — «шов» */
+  stroke: #111;            /* лёгкая чёрная линия */
+  opacity: 0.9;
+  stroke-width: 1.2;
+  /* если хочешь «стежки», раскомментируй: */
+  /* stroke-dasharray: 4 3; */
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 
 /* ссылки внутри кнопок при ховере — чуть ярче, как на сайте */
 .btn:hover a, .btnGhost:hover a { color:#f26522; text-decoration: underline; }
+
+.segmented { display:flex; gap:6px; }
+.segBtn { flex:1; padding:6px 8px; border:1px solid #e6e6e6; border-radius:10px; background:#fff; }
+.segActive { background:#eef2ff; border-color:#c7d2fe; }
+.segDangerActive { background:#fee2e2; border-color:#fecaca; }
+
+.row { display:flex; align-items:center; gap:10px; }
+.subRow { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:8px; margin-top:6px; }
+.slimLabel { font-size:12px; opacity:.75; }
+.value { width:44px; text-align:right; font-variant-numeric: tabular-nums; opacity:.8; }
+
+.colorSmall { width:32px; height:28px; padding:0; border:none; background:transparent; }
+
+.swatchesPopover { position:relative; }
+.swatchesPopover summary { cursor:pointer; line-height:28px; width:28px; height:28px; text-align:center; border:1px solid #e6e6e6; border-radius:8px; user-select:none; }
+.swatchesGrid { position:absolute; top:34px; right:0; background:#fff; border:1px solid #e6e6e6; border-radius:10px; padding:8px; display:grid; grid-template-columns:repeat(6,18px); gap:6px; box-shadow:0 8px 24px rgba(0,0,0,.12); z-index:5; }
+.swatchTiny { width:18px; height:18px; border-radius:50%; border:1px solid rgba(0,0,0,.08); }
+
+.rangeCompact { width:100%; }
+.hintSmall { font-size:11px; opacity:.65; margin-top:4px; line-height:1.25; }
+
+/* немного уплотним отступы секций */
+.section { margin:10px 0; }
+.sectionTitle { margin-bottom:6px; font-size:13px; opacity:.8; }
+
+/* триггер и инлайновый color */
+.colorTrigger{
+  width:28px;height:28px;border-radius:8px;border:1px solid #e6e6e6;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.04); cursor:pointer;
+}
+.colorSmall{ width:28px;height:28px;padding:0;border:none;background:transparent; }
+
+/* поповер палитры */
+.palette{
+  position:relative; /* якорь для стрелочки */
+}
+.palette{
+  position:absolute; top:36px; left:0; z-index:10;
+  background:#fff; border:1px solid #e6e6e6; border-radius:12px;
+  padding:8px; box-shadow:0 12px 28px rgba(0,0,0,.14);
+  min-width:180px;
+}
+.palette::before{           /* маленькая стрелочка */
+  content:""; position:absolute; top:-6px; left:14px;
+  width:10px;height:10px; background:#fff; border-left:1px solid #e6e6e6; border-top:1px solid #e6e6e6;
+  transform:rotate(45deg);
+}
+.paletteGrid{
+  display:grid; grid-template-columns:repeat(6, 22px); gap:8px; padding:2px;
+}
+.swatchBtn{
+  width:22px;height:22px; border-radius:50%; border:1px solid rgba(0,0,0,.08);
+  cursor:pointer;
+}
+.swatchBtn:focus{ outline:2px solid #c7d2fe; outline-offset:2px; }
+.paletteFooter{
+  display:flex; align-items:center; gap:8px; margin-top:8px; border-top:1px dashed #eee; padding-top:8px;
+}
+.paletteLabel{ font-size:12px; opacity:.7; }
+.colorInline{ width:24px;height:24px;border:none;padding:0;background:transparent; }
+
+/* контейнер для позиционирования */
+.row{ position:relative; display:flex; align-items:center; gap:10px; }
+
+/* Ряд с цветом */
+.colorRow{
+  position: relative;                 /* якорь для поповера */
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* Чип текущего цвета (квадрат с «кареткой») */
+.colorChip{
+  display:inline-flex; align-items:center; justify-content:center;
+  width: 32px; height: 32px;
+  border:1px solid #e6e6e6; border-radius: 10px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.04);
+  cursor: pointer; padding: 0;
+}
+.caret{
+  width:0; height:0; margin-left: 0;
+  border-left: 5px solid transparent;
+  border-right:5px solid transparent;
+  border-top: 6px solid rgba(0,0,0,.35);
+}
+
+/* Пилюля из двух иконок (одинаковая высота с чипом) */
+.iconSeg{ display:flex; }
+.iconBtn{
+  width: 32px; height: 32px; line-height: 32px;
+  border:1px solid #e6e6e6; background:#fff; cursor:pointer;
+}
+.iconBtn:first-child{ border-radius:10px 0 0 10px; }
+.iconBtn:last-child { border-radius:0 10px 10px 0; border-left:none; }
+.iconActive{ background:#eef2ff; border-color:#c7d2fe; }
+.iconDangerActive{ background:#fee2e2; border-color:#fecaca; }
+
+/* Поповер палитры */
+.palette{
+  position:absolute; top:38px; left:0; z-index:10;
+  background:#fff; border:1px solid #e6e6e6; border-radius:12px;
+  padding:8px; box-shadow:0 12px 28px rgba(0,0,0,.14);
+  min-width: 190px;
+}
+.palette::before{
+  content:""; position:absolute; top:-6px; left:12px;
+  width:10px;height:10px; background:#fff;
+  border-left:1px solid #e6e6e6; border-top:1px solid #e6e6e6;
+  transform: rotate(45deg);
+}
+.paletteGrid{ display:grid; grid-template-columns:repeat(6, 22px); gap:8px; padding:2px; }
+.swatchBtn{
+  width:22px;height:22px; border-radius:50%;
+  border:1px solid rgba(0,0,0,.08); cursor:pointer;
+}
+.paletteFooter{ display:flex; align-items:center; gap:8px;
+  margin-top:8px; border-top:1px dashed #eee; padding-top:8px; }
+.paletteLabel{ font-size:12px; opacity:.7; }
+.colorInline{ width:24px;height:24px;border:none;padding:0;background:transparent; }
+
+
+/* сегменты, select, подписи — уже есть, но на всякий случай */
+.selectCompact { width:100%; padding:6px 10px; border:1px solid #e6e6e6; border-radius:8px; }
+.segmented { display:flex; gap:6px; }
+.segBtn { flex:1; padding:6px 8px; border:1px solid #e6e6e6; border-radius:10px; background:#fff; }
+.segActive { background:#eef2ff; border-color:#c7d2fe; }
+.rangeCompact { width:100%; }
+.subRow { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:8px; margin-top:6px; }
+.slimLabel { font-size:12px; opacity:.75; }
+.value { width:44px; text-align:right; font-variant-numeric: tabular-nums; opacity:.8; }
+.hintSmall { font-size:11px; opacity:.65; margin-top:4px; line-height:1.25; }
+
+.tabs3{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.two{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.segBtnSmall{ padding:8px 10px; font-size:14px; white-space:nowrap; }
+.colorChipDisabled{ opacity:.45; pointer-events:none; }
+
+/* На очень узкой панели ещё ужмём размер */
+@media (max-width: 360px){
+  .segBtnSmall{ padding:6px 8px; font-size:12px; }
+}
+
+
+/* ===== SVG появление (fade + small slide) ===== */
+@keyframes fadeUpIn {
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.svgEnter{
+  animation: fadeUpIn .28s ease-out both;
+}
+
+/* === стек для двух svg во время смены пресета === */
+.canvasStack{ position:absolute; inset:0; }
+.stage{ position:absolute; inset:0; }
+
+/* чуть объёма при въезде "из-за" старого */
+@keyframes swapIn {
+  0%   { opacity:0; transform: translateY(12px) scale(0.98); filter: brightness(0.96); }
+  100% { opacity:1; transform: translateY(0)   scale(1);     filter: none; }
+}
+@keyframes swapOut {
+  0%   { opacity:1; transform: translateY(0)   scale(1);     filter: none; }
+  100% { opacity:0; transform: translateY(-10px) scale(1.02); filter: blur(0.3px); }
+}
+.swapIn  { animation: swapIn  .42s cubic-bezier(.22,.61,.36,1) both; z-index:2; will-change: transform, opacity, filter; }
+.swapOut { animation: swapOut .42s cubic-bezier(.22,.61,.36,1) both; z-index:1; will-change: transform, opacity, filter; }
+
+/* тост переиспользуемый */
+.toast{
+  position:absolute; top:12px; left:50%; transform:translateX(-50%);
+  background:#30302e; color:#fff; padding:8px 12px;
+  border-radius:8px; font-size:13px; box-shadow:0 8px 24px rgba(0,0,0,.15); z-index:3;
+}
+
+/* спиннер/лоадер */
+.loader{
+  position:absolute; inset:auto 12px 12px auto; z-index:4;
+  background:#ffffffcc; backdrop-filter: blur(2px);
+  border:1px solid #eee; border-radius:10px; padding:8px 10px; font-size:13px; color:#30302e;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+
+/* ===== Плавающая навигация пресетов (как на скрине со стрелками) ===== */
+.presetNav{
+  position:absolute;
+  left:50%; bottom:14px; transform:translateX(-50%);
+  display:flex; align-items:center; gap:10px;
+  z-index:3;
+}
+.navBtn{
+  width:46px; height:42px; border-radius:12px;
+  border:1px solid #e6e6e6; background:#fff; cursor:pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  font-size:20px; line-height:42px;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.navBtn:hover{ transform: translateY(-1px); border-color:#c7d2fe; box-shadow:0 10px 22px rgba(0,0,0,.10); }
+.presetChip{
+  min-width:110px; padding:10px 14px; text-align:center;
+  border:1px solid #e6e6e6; border-radius:12px; background:#fff; color:#30302e;
+  box-shadow: 0 6px 18px rgba(0,0,0,.06); font-weight:600;
+}
+
 
 /* ====== КОМПАКТНЫЕ РЕЖИМЫ ПО ВЫСОТЕ (чтобы панель помещалась) ====== */
 @media (max-height: 900px){
