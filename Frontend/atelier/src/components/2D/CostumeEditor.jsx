@@ -214,7 +214,7 @@ function splitByIntersections(segments) {
 }
 function buildFacesFromSegments(segments) {
     const nodes = new Map();
-    const PREC = 1e-4; // при необходимости можно 1e-5
+    const PREC = 1e-5; // при необходимости можно 1e-5
     const norm = (v) => Math.round(v / PREC) * PREC;
     const key = (p) => `${norm(p.x)}_${norm(p.y)}`;
     const node = (p) => {
@@ -961,44 +961,6 @@ export default function CostumeEditor({ initialSVG }) {
         return res;
     }, [panels]);
 
-    // faces с учётом пользовательских линий
-    const facesByPanel = useMemo(() => {
-        const res = {};
-        for (const p of panels) {
-            const baseLines = polylinesFromSegs(p.segs);
-            const userLines = (curvesByPanel[p.id] || []).flatMap(c => {
-                if (c.type === "cubic") {
-                    const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
-                    return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)];
-                } else {
-                    const lines = [pointsToPairedPolyline(c.pts)];
-                    if (c.connA && c.connA.length === 2) lines.push(pointsToPairedPolyline(c.connA));
-                    if (c.connB && c.connB.length === 2) lines.push(pointsToPairedPolyline(c.connB));
-                    return lines;
-                }
-            });
-
-            const segsFlat = segmentsFromPolylines([...baseLines, ...userLines]);
-            res[p.id] = buildFacesFromSegments(splitByIntersections(segsFlat));
-        }
-        return res;
-    }, [panels, curvesByPanel]);
-
-    useEffect(() => {
-        setFills(fs => fs.filter(f => (facesByPanel[f.panelId] || []).some(poly => faceKey(poly) === f.faceKey)));
-    }, [facesByPanel]);
-
-    const gridDef = useMemo(() => {
-        if (!panels.length) return { step: 40, b: { x: 0, y: 0, w: 800, h: 500 } };
-        const boxes = panels.map(p => getBounds(p.segs));
-        const minX = Math.min(...boxes.map(b => b.x)), minY = Math.min(...boxes.map(b => b.y));
-        const maxX = Math.max(...boxes.map(b => b.x + b.w)), maxY = Math.max(...boxes.map(b => b.y + b.h));
-        const w = maxX - minX, h = maxY - minY; const step = Math.max(1e-6, Math.min(w, h) / 20);
-        return { step, b: { x: minX, y: minY, w, h } };
-    }, [panels]);
-
-    // уже есть: splitSegsIntoSubpaths, polylineFromSubpath, area(...)
-
     const outerRingByPanel = useMemo(() => {
         const res = {};
         for (const p of panels) {
@@ -1014,6 +976,86 @@ export default function CostumeEditor({ initialSVG }) {
             res[p.id] = best?.ring || null;
         }
         return res;
+    }, [panels]);
+
+    // faces с учётом пользовательских линий
+    const facesByPanel = useMemo(() => {
+        const centroid = (poly) => {
+            let x = 0, y = 0;
+            for (const p of poly) { x += p.x; y += p.y; }
+            const n = Math.max(1, poly.length);
+            return { x: x / n, y: y / n };
+        };
+
+        const res = {};
+        for (const p of panels) {
+            const ring = outerRingByPanel[p.id] || null;
+
+            // 1) свои линии
+            const baseLines = polylinesFromSegs(p.segs);
+
+            // 2) пользовательские линии/кривые
+            const userLines = (curvesByPanel[p.id] || []).flatMap(c => {
+                if (c.type === "cubic") {
+                    const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
+                    return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)];
+                } else {
+                    const lines = [pointsToPairedPolyline(c.pts)];
+                    if (c.connA?.length === 2) lines.push(pointsToPairedPolyline(c.connA));
+                    if (c.connB?.length === 2) lines.push(pointsToPairedPolyline(c.connB));
+                    return lines;
+                }
+            });
+
+            // 3) «чужие» РЕЗЫ — только закрытые контуры (rings) других панелей,
+            //    и только те их отрезки, что полностью лежат внутри нашего ring
+            const foreignLines = [];
+            if (ring) {
+                for (const q of panels) {
+                    if (q === p) continue;
+                    const ringsQ = (ringsByPanel[q.id] || []); // только замкнутые подконтуры
+                    for (const rq of ringsQ) {
+                        const ln = pointsToPairedPolyline(rq);   // превращаем кольцо в пары [A,B]
+                        const kept = [];
+                        for (let i = 0; i + 1 < ln.length; i += 2) {
+                            const A = ln[i], B = ln[i + 1];
+                            if (pointInPolygon(A, ring) && pointInPolygon(B, ring)) kept.push(A, B);
+                        }
+                        if (kept.length >= 2) foreignLines.push(kept);
+                    }
+                }
+            }
+
+            // 4) режем одной сценой
+            const segsFlat = segmentsFromPolylines([
+                ...baseLines,
+                ...foreignLines,
+                ...userLines,
+            ]);
+            const facesAll = buildFacesFromSegments(splitByIntersections(segsFlat));
+
+            // 5) оставляем только то, что внутри внешнего контура панели
+            const faces = ring
+                ? facesAll.filter(poly => pointInPolygon(centroid(poly), ring))
+                : facesAll;
+
+            res[p.id] = faces;
+        }
+        return res;
+        // важно: добавили outerRingByPanel в зависимости
+    }, [panels, curvesByPanel, outerRingByPanel, ringsByPanel]);
+
+    useEffect(() => {
+        setFills(fs => fs.filter(f => (facesByPanel[f.panelId] || []).some(poly => faceKey(poly) === f.faceKey)));
+    }, [facesByPanel]);
+
+    const gridDef = useMemo(() => {
+        if (!panels.length) return { step: 40, b: { x: 0, y: 0, w: 800, h: 500 } };
+        const boxes = panels.map(p => getBounds(p.segs));
+        const minX = Math.min(...boxes.map(b => b.x)), minY = Math.min(...boxes.map(b => b.y));
+        const maxX = Math.max(...boxes.map(b => b.x + b.w)), maxY = Math.max(...boxes.map(b => b.y + b.h));
+        const w = maxX - minX, h = maxY - minY; const step = Math.max(1e-6, Math.min(w, h) / 20);
+        return { step, b: { x: minX, y: minY, w, h } };
     }, [panels]);
 
     useEffect(() => {
@@ -1285,9 +1327,8 @@ export default function CostumeEditor({ initialSVG }) {
                                         const canFaceHit = mode === 'paint' || mode === 'deleteFill';
 
                                         return (
-                                            <>
+                                            <g key={fk}>
                                                 <path
-                                                    key={fk}
                                                     d={facePath(poly)}
                                                     fill={hasFill ? fill : (mode === 'paint' && isHover ? '#9ca3af' : 'transparent')}
                                                     fillOpacity={hasFill ? 0.9 : (mode === 'paint' && isHover ? 0.35 : 0.001)}
@@ -1307,7 +1348,7 @@ export default function CostumeEditor({ initialSVG }) {
                                                         style={{ pointerEvents: 'none' }}
                                                     />
                                                 )}
-                                            </>
+                                            </g>
                                         );
                                     })}
 
