@@ -185,10 +185,21 @@ function segIntersect(p, q, r, s) {
 }
 
 function splitByIntersections(segments) {
-    const lists = segments.map(() => [0, 1]); const pts = segments.map(() => ({}));
+    // sanitize: берём только валидные отрезки
+    segments = (segments || []).filter(s =>
+        s && s.a && s.b &&
+        s.a.x !== undefined && s.a.y !== undefined &&
+        s.b.x !== undefined && s.b.y !== undefined &&
+        (s.a.x !== s.b.x || s.a.y !== s.b.y)
+    );
+    if (segments.length === 0) return [];
+
+    const lists = segments.map(() => [0, 1]);
+    const pts = segments.map(() => ({}));
     for (let i = 0; i < segments.length; i++) {
         for (let j = i + 1; j < segments.length; j++) {
-            const A = segments[i], B = segments[j]; const hit = segIntersect(A.a, A.b, B.a, B.b);
+            const A = segments[i], B = segments[j];
+            const hit = segIntersect(A.a, A.b, B.a, B.b);
             if (!hit) continue;
             lists[i].push(hit.t); pts[i][hit.t] = { x: hit.x, y: hit.y };
             lists[j].push(hit.u); pts[j][hit.u] = { x: hit.x, y: hit.y };
@@ -212,6 +223,7 @@ function splitByIntersections(segments) {
     }
     return res;
 }
+
 function buildFacesFromSegments(segments) {
     const nodes = new Map();
     const PREC = 1e-5; // при необходимости можно 1e-5
@@ -255,10 +267,7 @@ function buildFacesFromSegments(segments) {
         while (!cur.visited && guard++ < 20000) { cur.visited = true; poly.push({ x: cur.from.x, y: cur.from.y }); cur = cur.next; if (cur === h) break; }
         if (poly.length >= 3) faces.push(poly);
     }
-    if (faces.length) {
-        const idxMax = faces.map((p, i) => ({ i, A: Math.abs(area(p)) })).sort((a, b) => b.A - a.A)[0].i;
-        faces.splice(idxMax, 1);
-    }
+
     const cleaned = faces.filter(poly => Math.abs(area(poly)) > 1e-4);
     return cleaned;
 }
@@ -294,14 +303,43 @@ function polylinesFromSegs(segs) {
     for (const s of segs) {
         if (s.kind === "M") { start = { x: s.x, y: s.y }; curr = start; }
         else if (s.kind === "L") { lines.push(sampleLine(s.ax, s.ay, s.x, s.y)); curr = { x: s.x, y: s.y }; }
-        else if (s.kind === "C") { lines.push(sampleBezier(s.ax, s.ay, s.x1, s.y1, s.x2, s.y2, s.x, s.y)); curr = { x: s.x, y: s.y }; }
+        else if (s.kind === "C") {
+            lines.push(sampleBezierPoints(s.ax, s.ay, s.x1, s.y1, s.x2, s.y2, s.x, s.y, 64));
+            curr = { x: s.x, y: s.y };
+        }
         else if (s.kind === "Z" && curr && start && (curr.x !== start.x || curr.y !== start.y)) { lines.push(sampleLine(curr.x, curr.y, start.x, start.y)); }
     }
     return lines;
 }
+
 function segmentsFromPolylines(polylines) {
-    const segs = []; for (const line of polylines) for (let i = 0; i + 1 < line.length; i += 2) segs.push({ a: line[i], b: line[i + 1] }); return segs;
+    const segs = [];
+    for (const line of polylines) {
+        if (!Array.isArray(line) || line.length < 2) continue;
+
+        // Если нам дали «массива пар» — нормализуем в один список точек
+        const isArrayOfPairs = Array.isArray(line[0]) && line[0].length === 2 && line[0][0]?.x !== undefined;
+        if (isArrayOfPairs) {
+            for (const pair of line) {
+                const A = pair[0], B = pair[1];
+                if (A?.x !== undefined && A?.y !== undefined && B?.x !== undefined && B?.y !== undefined) {
+                    if (A.x !== B.x || A.y !== B.y) segs.push({ a: A, b: B });
+                }
+            }
+            continue;
+        }
+
+        // Обычный полилайн: сегменты между соседями (скользящее окно)
+        for (let i = 0; i + 1 < line.length; i++) {
+            const A = line[i], B = line[i + 1];
+            if (A?.x !== undefined && A?.y !== undefined && B?.x !== undefined && B?.y !== undefined) {
+                if (A.x !== B.x || A.y !== B.y) segs.push({ a: A, b: B });
+            }
+        }
+    }
+    return segs;
 }
+
 
 /* ========== якоря/прочее ========== */
 function collectAnchors(segs) {
@@ -980,70 +1018,210 @@ export default function CostumeEditor({ initialSVG }) {
 
     // faces с учётом пользовательских линий
     const facesByPanel = useMemo(() => {
-        const centroid = (poly) => {
-            let x = 0, y = 0;
-            for (const p of poly) { x += p.x; y += p.y; }
-            const n = Math.max(1, poly.length);
-            return { x: x / n, y: y / n };
+        const res = {};
+
+        // Универсальный сборщик сегментов: принимает
+        // 1) обычные полилайны [p0,p1,p2,...]
+        // 2) пары [A,B]
+        // 3) массив пар [[A,B], [C,D], ...]
+        const collectSegs = (lines) => {
+            const segs = [];
+            for (const item of lines) {
+                if (!item) continue;
+
+                // case 3: массив пар
+                if (Array.isArray(item) && item.length && Array.isArray(item[0])) {
+                    for (const pair of item) {
+                        if (pair && pair.length === 2 && pair[0]?.x !== undefined && pair[1]?.x !== undefined) {
+                            segs.push([pair[0], pair[1]]);
+                        }
+                    }
+                    continue;
+                }
+
+                // case 2: ровно пара точек
+                if (Array.isArray(item) && item.length === 2 && item[0]?.x !== undefined && item[1]?.x !== undefined) {
+                    segs.push([item[0], item[1]]);
+                    continue;
+                }
+
+                // case 1: обычный полилайн
+                if (Array.isArray(item) && item.length >= 2) {
+                    for (let i = 0; i + 1 < item.length; i++) {
+                        const A = item[i], B = item[i + 1];
+                        if (A?.x !== undefined && B?.x !== undefined) segs.push([A, B]);
+                    }
+                }
+            }
+            return segs;
         };
 
-        const res = {};
         for (const p of panels) {
-            const ring = outerRingByPanel[p.id] || null;
+            const ring = outerRingByPanel[p.id];
 
-            // 1) свои линии
+            // 1) свои линии (полилайны)
             const baseLines = polylinesFromSegs(p.segs);
+
+            // 1.1) коннекторы для открытых подпутей
+            if (ring) {
+                const boundaryRings = [ring];
+                for (const q of panels) {
+                    if (q === p) continue;
+                    for (const rq of (ringsByPanel[q.id] || [])) {
+                        if (rq.every(pt => pointInPolygon(pt, ring))) boundaryRings.push(rq);
+                    }
+                }
+
+                const subpaths = splitSegsIntoSubpaths(p.segs);
+                const DIST = 12 * (scale.k || 1);
+                for (const sp of subpaths) {
+                    if (sp.some(s => s.kind === "Z")) continue;
+                    const poly = polylineFromSubpath(sp);
+                    if (poly.length < 2) continue;
+                    const A = poly[0], B = poly[poly.length - 1];
+
+                    const bestFor = (P) => {
+                        let best = null;
+                        for (const r of boundaryRings) {
+                            const pr = nearestOnRing(P, r);
+                            if (!best || pr.d2 < best.d2) best = { ...pr, ring: r };
+                        }
+                        return best;
+                    };
+                    const na = bestFor(A), nb = bestFor(B);
+                    if (!na || !nb) continue;
+                    if (Math.sqrt(na.d2) > DIST || Math.sqrt(nb.d2) > DIST) continue;
+
+                    const N0 = na.ring.length, N1 = nb.ring.length;
+                    const P0 = {
+                        x: na.ring[na.idx].x + (na.ring[(na.idx + 1) % N0].x - na.ring[na.idx].x) * na.t,
+                        y: na.ring[na.idx].y + (na.ring[(na.idx + 1) % N0].y - na.ring[na.idx].y) * na.t
+                    };
+                    const P1 = {
+                        x: nb.ring[nb.idx].x + (nb.ring[(nb.idx + 1) % N1].x - nb.ring[nb.idx].x) * nb.t,
+                        y: nb.ring[nb.idx].y + (nb.ring[(nb.idx + 1) % N1].y - nb.ring[nb.idx].y) * nb.t
+                    };
+
+                    baseLines.push([A, P0]); // ← это пара, не «скользящее окно»
+                    baseLines.push([B, P1]);
+                }
+            }
 
             // 2) пользовательские линии/кривые
             const userLines = (curvesByPanel[p.id] || []).flatMap(c => {
                 if (c.type === "cubic") {
                     const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
-                    return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)];
+                    return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)]; // обычный полилайн
                 } else {
-                    const lines = [pointsToPairedPolyline(c.pts)];
-                    if (c.connA?.length === 2) lines.push(pointsToPairedPolyline(c.connA));
-                    if (c.connB?.length === 2) lines.push(pointsToPairedPolyline(c.connB));
-                    return lines;
+                    const arr = [];
+                    arr.push(c.pts); // обычный полилайн
+                    if (c.connA?.length === 2) arr.push([c.connA[0], c.connA[1]]); // пара
+                    if (c.connB?.length === 2) arr.push([c.connB[0], c.connB[1]]); // пара
+                    return arr;
                 }
             });
 
-            // 3) «чужие» РЕЗЫ — только закрытые контуры (rings) других панелей,
-            //    и только те их отрезки, что полностью лежат внутри нашего ring
-            const foreignLines = [];
+            // 3) «чужие» резы — ДЕЛАЕМ СРАЗУ ПАРЫ-СЕГМЕНТЫ
+            const foreignSegPairs = [];
             if (ring) {
                 for (const q of panels) {
                     if (q === p) continue;
-                    const ringsQ = (ringsByPanel[q.id] || []); // только замкнутые подконтуры
+                    const ringsQ = (ringsByPanel[q.id] || []);
                     for (const rq of ringsQ) {
-                        const ln = pointsToPairedPolyline(rq);   // превращаем кольцо в пары [A,B]
-                        const kept = [];
+                        const ln = pointsToPairedPolyline(rq); // даёт A,B,A,B,…
                         for (let i = 0; i + 1 < ln.length; i += 2) {
                             const A = ln[i], B = ln[i + 1];
-                            if (pointInPolygon(A, ring) && pointInPolygon(B, ring)) kept.push(A, B);
+                            if (pointInPolygon(A, ring) && pointInPolygon(B, ring)) {
+                                foreignSegPairs.push([A, B]); // сразу пара
+                            }
                         }
-                        if (kept.length >= 2) foreignLines.push(kept);
                     }
                 }
             }
 
             // 4) режем одной сценой
-            const segsFlat = segmentsFromPolylines([
-                ...baseLines,
-                ...foreignLines,
-                ...userLines,
-            ]);
+            const segsFlat = [
+                ...collectSegs(baseLines),
+                ...collectSegs(userLines),
+                ...collectSegs(foreignSegPairs) // уже пары
+            ];
+
             const facesAll = buildFacesFromSegments(splitByIntersections(segsFlat));
 
-            // 5) оставляем только то, что внутри внешнего контура панели
-            const faces = ring
-                ? facesAll.filter(poly => pointInPolygon(centroid(poly), ring))
-                : facesAll;
+            // 5) фильтрация «внутри контура» + анти-сливер + близость к бордеру
+            const insideFace = (poly, ring) => {
+                if (!poly || poly.length < 3) return false;
+                if (!poly.every(pt => pointInPolygon(pt, ring))) return false;
+                for (let i = 0; i < poly.length; i++) {
+                    const a = poly[i], b = poly[(i + 1) % poly.length];
+                    const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+                    if (!pointInPolygon(mid, ring)) return false;
+                }
+                return true;
+            };
+
+            const px = scale.k || 1;
+            const Aring = ring ? Math.abs(area(ring)) : 0;
+
+            const MIN_FACE_AREA_ABS = 90 * px * px;
+            const MIN_FACE_AREA_FRAC = 0.002;
+            const MIN_AVG_WIDTH = 5 * px;
+            const MAX_COMPACTNESS = 80;
+
+            const perim = (poly) =>
+                poly.reduce((p, q, i) => {
+                    const r = poly[(i + 1) % poly.length];
+                    return p + Math.hypot(r.x - q.x, r.y - q.y);
+                }, 0);
+
+            const isSliver = (poly) => {
+                if (!poly || poly.length < 3) return true;
+                const A = Math.abs(area(poly));
+                const P = perim(poly) || 1;
+                const avgW = (2 * A) / P;
+                const compact = (P * P) / (4 * Math.PI * (A || 1));
+                if (A < MIN_FACE_AREA_ABS) return true;
+                if (Aring && A / Aring < MIN_FACE_AREA_FRAC) return true;
+                if (avgW < MIN_AVG_WIDTH) return true;
+                if (compact > MAX_COMPACTNESS) return true;
+                return false;
+            };
+
+            const facesInside = ring ? facesAll.filter(poly => insideFace(poly, ring)) : facesAll;
+
+            const pointToPolylineDist = (pt, poly) => {
+                let best = Infinity;
+                for (let i = 0; i < poly.length; i++) {
+                    const a = poly[i], b = poly[(i + 1) % poly.length];
+                    const vx = b.x - a.x, vy = b.y - a.y;
+                    const wx = pt.x - a.x, wy = pt.y - a.y;
+                    const L2 = vx * vx + vy * vy || 1e-9;
+                    let t = (vx * wx + vy * wy) / L2;
+                    if (t < 0) t = 0; else if (t > 1) t = 1;
+                    const ux = a.x + t * vx, uy = a.y + t * vy;
+                    const dx = pt.x - ux, dy = pt.y - uy;
+                    const d = Math.hypot(dx, dy);
+                    if (d < best) best = d;
+                }
+                return best;
+            };
+
+            const NEAR_BORDER = 1.0 * px;
+            const faces = facesInside
+                .filter(poly => !isSliver(poly))
+                .filter(poly => {
+                    if (!ring) return true;
+                    const c = centroid(poly);
+                    return pointToPolylineDist(c, ring) >= NEAR_BORDER;
+                })
+                .sort((a, b) => Math.abs(area(a)) - Math.abs(area(b))); // маленькие сверху
 
             res[p.id] = faces;
         }
+
         return res;
-        // важно: добавили outerRingByPanel в зависимости
-    }, [panels, curvesByPanel, outerRingByPanel, ringsByPanel]);
+    }, [panels, curvesByPanel, outerRingByPanel, ringsByPanel, scale]);
+
 
     useEffect(() => {
         setFills(fs => fs.filter(f => (facesByPanel[f.panelId] || []).some(poly => faceKey(poly) === f.faceKey)));
