@@ -4,12 +4,12 @@ import styles from "./CostumeEditor.module.css";
 
 /* ================== настройки ================== */
 const PANEL_MAX_COUNT = 12;
-const PANEL_MIN_AREA_RATIO_DEFAULT = 0.08;
+const PANEL_MIN_AREA_RATIO_DEFAULT = 0.005; // 0.3–0.8% обычно хватает для деталей
 // --- PRESETS: базовая папка с заранее подготовленными SVG
 const SVG_BASE = "/2d/svg";
 const PRESETS = [
-    { id: "front", title: "Перед", file: "front_new.svg" },
-    { id: "back", title: "Спинка", file: "back_new.svg" },
+    { id: "front", title: "Перед", file: "Front.svg" },
+    { id: "back", title: "Спинка", file: "Back.svg" },
     // при желании добавь сюда "hood", "sleeve" и т. п.
 ];
 
@@ -470,7 +470,7 @@ function extractPanels(rawSVG) {
     candidates.sort((a, b) => b.bboxArea - a.bboxArea);
     const maxA = candidates[0].bboxArea || 1;
     const dominatesView = (candidates[0].bboxArea / (rootBox.w * rootBox.h || 1)) > 0.45;
-    const ratio = (candidates.length <= 3 || dominatesView) ? 0.02 : PANEL_MIN_AREA_RATIO_DEFAULT;
+    const ratio = (candidates.length <= 3 || dominatesView) ? 0.005 : PANEL_MIN_AREA_RATIO_DEFAULT;
 
     let filtered = candidates.filter(c => (c.bboxArea / maxA) >= ratio);
 
