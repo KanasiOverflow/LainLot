@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="666.66669"
+   height="666.66669"
+   viewBox="0 0 666.66669 666.66669"
+   sodipodi:docname="Front.tar"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   inkscape:export-filename="Body.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="swatch138"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#333333;stop-opacity:1;"
+         offset="0"
+         id="stop138" />
+    </linearGradient>
+    <color-profile
+       inkscape:label="Adobe RGB (1998)"
+       name="Adobe RGB (1998)"
+       xlink:href="data:application/vnd.iccprofile;base64,AAACVGxjbXMCEAAAbW50clJHQiBYWVogB88ABgADAAAAAAAAYWNzcEFQUEwAAAAAbm9uZQAAAAAAAAAAAAAAAAAAAAAAAPbWAAEAAAAA0y1sY21zAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKY3BydAAAAPwAAAAyZGVzYwAAATAAAACQd3RwdAAAAcAAAAAUYmtwdAAAAdQAAAAUclRSQwAAAegAAAAOZ1RSQwAAAfgAAAAOYlRSQwAAAggAAAAOclhZWgAAAhgAAAAUZ1hZWgAAAiwAAAAUYlhZWgAAAkAAAAAUdGV4dAAAAABDb3B5cmlnaHQgMTk5OSBBZG9iZSBTeXN0ZW1zIEluY29ycG9yYXRlZAAAAGRlc2MAAAAAAAAAEUFkb2JlIFJHQiAoMTk5OCkAAAAAAAAAABEAQQBkAG8AYgBlACAAUgBHAEIAIAAoADEAOQA5ADgAKQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFhZWiAAAAAAAADzUQABAAAAARbMWFlaIAAAAAAAAAAAAAAAAAAAAABjdXJ2AAAAAAAAAAECMwAAY3VydgAAAAAAAAABAjMAAGN1cnYAAAAAAAAAAQIzAABYWVogAAAAAAAAnBgAAE+lAAAE/FhZWiAAAAAAAAA0jQAAoCwAAA+VWFlaIAAAAAAAACYxAAAQLwAAvpw="
+       id="color-profile2" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="321.73359"
+     inkscape:cy="423.55696"
+     inkscape:window-width="1278"
+     inkscape:window-height="1360"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer-MC1">
+    <inkscape:page
+       x="0"
+       y="0"
+       inkscape:label="1"
+       id="page1"
+       width="666.66669"
+       height="666.66669"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <g
+     id="layer-MC1"
+     inkscape:groupmode="layer"
+     inkscape:label="OBJECTS">
+    <path
+       style="display:inline;fill:none;stroke:#000000;stroke-width:1.13386"
+       d="m 196.29168,169.3551 36.4191,-13.41976 c 8.34515,10.38998 17.71028,12.73897 27.66045,16.91995 11.46727,3.56945 20.47197,5.68063 30.29534,7.35108 20.60648,4.73612 38.66836,20.57837 43.44443,30.33336 2.53937,4.5471 3.4745,6.55934 4.68285,9.58979 0.55381,1.49248 1.64391,1.64038 2.49006,1.79265 1.38626,0.097 2.31496,-0.99164 2.56779,-1.66461 1.60239,-3.47681 3.63282,-7.1403 5.13513,-9.5093 10.77473,-15.60318 20.57486,-19.404 33.11969,-26.12667 17.5205,-7.3714 32.30096,-6.61108 46.72787,-13.62893 8.99137,-4.31622 15.45767,-8.40849 21.76715,-13.85071 l 33.16992,12.21315 c -1.23186,49.62293 -8.40682,27.80911 -3.69558,148.8688 2.15632,55.40864 7.05437,112.69175 6.46896,166.22592 1.27278,47.81962 -6.30749,83.87313 -19.21124,90.18469 -6.97524,2.77399 -14.16943,4.04549 -25.26783,4.36406 l -42.60624,-4.23486 -59.42041,-0.12115 -54.13185,0.11208 -48.74904,4.43212 c -13.33229,-0.88783 -16.06244,-1.52776 -24.4136,-4.53615 -10.09114,-15.54338 -15.77323,-18.23603 -18.35655,-51.74923 l -2.69243,-55.428 c 0.95226,-21.4817 5.43839,-91.41929 8.15758,-137.12894 z"
+       id="body"
+       sodipodi:nodetypes="cccccccccccccscccccccccccc"
+       inkscape:label="body"
+       sodipodi:insensitive="true">
+      <title
+         id="title6">body</title>
+    </path>
+  </g>
+</svg>

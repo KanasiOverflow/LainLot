@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="110.56281"
+   height="443.89514"
+   viewBox="0 0 110.56281 443.89514"
+   sodipodi:docname="Back.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   inkscape:export-filename="Hoodie\Back\Back.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <color-profile
+       inkscape:label="Adobe RGB (1998)"
+       name="Adobe RGB (1998)"
+       xlink:href="data:application/vnd.iccprofile;base64,AAACVGxjbXMCEAAAbW50clJHQiBYWVogB88ABgADAAAAAAAAYWNzcEFQUEwAAAAAbm9uZQAAAAAAAAAAAAAAAAAAAAAAAPbWAAEAAAAA0y1sY21zAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKY3BydAAAAPwAAAAyZGVzYwAAATAAAACQd3RwdAAAAcAAAAAUYmtwdAAAAdQAAAAUclRSQwAAAegAAAAOZ1RSQwAAAfgAAAAOYlRSQwAAAggAAAAOclhZWgAAAhgAAAAUZ1hZWgAAAiwAAAAUYlhZWgAAAkAAAAAUdGV4dAAAAABDb3B5cmlnaHQgMTk5OSBBZG9iZSBTeXN0ZW1zIEluY29ycG9yYXRlZAAAAGRlc2MAAAAAAAAAEUFkb2JlIFJHQiAoMTk5OCkAAAAAAAAAABEAQQBkAG8AYgBlACAAUgBHAEIAIAAoADEAOQA5ADgAKQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFhZWiAAAAAAAADzUQABAAAAARbMWFlaIAAAAAAAAAAAAAAAAAAAAABjdXJ2AAAAAAAAAAECMwAAY3VydgAAAAAAAAABAjMAAGN1cnYAAAAAAAAAAQIzAABYWVogAAAAAAAAnBgAAE+lAAAE/FhZWiAAAAAAAAA0jQAAoCwAAA+VWFlaIAAAAAAAACYxAAAQLwAAvpw="
+       id="color-profile2" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.2377904"
+     inkscape:cx="358.7037"
+     inkscape:cy="458.88221"
+     inkscape:window-width="1278"
+     inkscape:window-height="1360"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer-MC1">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="110.56281"
+       height="443.89514"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <g
+     id="layer-MC1"
+     inkscape:groupmode="layer"
+     inkscape:label="OBJECTS"
+     transform="translate(-94.879992,-165.37184)">
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.13386"
+       d="m 200.70957,219.39924 -4.32307,-53.14612 c -20.94302,10.44011 -27.43638,33.11019 -32.83611,45.25645 L 128.206,355.52503 100.25363,552.00191 95.450834,576.38199 c 0.3249,4.59809 0.43616,8.7208 3.49271,12.06364 3.131166,4.68839 8.335886,5.92208 13.634926,7.85449 l 16.24907,3.9688 18.47581,6.12944 c 5.84783,1.61749 10.5286,2.39313 16.24717,2.29319 5.00753,-0.0664 11.3004,-4.20314 12.45189,-13.69546 6.85541,-22.72941 12.6394,-44.05897 18.4535,-70.21808 -0.6671,-44.38475 -0.80018,-96.02596 -1.46728,-140.41071 6.14714,-45.33706 18.2864,-101.98099 7.72094,-164.96806 z"
+       id="sleeve_left"
+       sodipodi:nodetypes="ccccccccccccccc"
+       inkscape:label="sleeve_left"
+       inkscape:export-filename="Hoodie\Back\sleeve_left.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <title
+         id="title28">sleeve_left</title>
+    </path>
+  </g>
+</svg>
