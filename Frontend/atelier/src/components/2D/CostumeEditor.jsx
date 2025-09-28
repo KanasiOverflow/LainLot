@@ -1285,9 +1285,8 @@ export default function CostumeEditor({ initialSVG }) {
                                         const canFaceHit = mode === 'paint' || mode === 'deleteFill';
 
                                         return (
-                                            <>
+                                            <g key={fk}>
                                                 <path
-                                                    key={fk}
                                                     d={facePath(poly)}
                                                     fill={hasFill ? fill : (mode === 'paint' && isHover ? '#9ca3af' : 'transparent')}
                                                     fillOpacity={hasFill ? 0.9 : (mode === 'paint' && isHover ? 0.35 : 0.001)}
@@ -1307,7 +1306,7 @@ export default function CostumeEditor({ initialSVG }) {
                                                         style={{ pointerEvents: 'none' }}
                                                     />
                                                 )}
-                                            </>
+                                            </g>
                                         );
                                     })}
 
