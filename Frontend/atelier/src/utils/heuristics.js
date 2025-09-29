@@ -1,3 +1,6 @@
+import { polylineFromSubpath, splitSegsIntoSubpaths } from "./svgParse.js";
+import { area } from "./geometry.js";
+
 /** эвристика «фон/рамка» — выкидываем только когда кандидатов больше одного */
 // cand: {segs,bbox,rawTag}, root: {w,h}
 export const looksLikeBackground = (cand, root) => {
