@@ -4,19 +4,6 @@ import {
 } from "./geometry.js";
 import { catmullRomToBezierPath } from "./svgParse.js";
 
-/* ========== якоря/прочее ========== */
-export const collectAnchors = (segs) => {
-    const out = [];
-    for (const s of segs) {
-        if (s.kind === "M")
-            out.push({ x: s.x, y: s.y });
-
-        if (s.kind === "L" || s.kind === "C")
-            out.push({ x: s.x, y: s.y });
-    }
-    return out;
-}
-
 export const makeUserCurveBetween = (a, b) => {
     const k = 1 / 3;
     return {

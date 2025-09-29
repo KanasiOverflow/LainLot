@@ -5,7 +5,7 @@ import {
 import { splitClosedSubpaths, parsePathD, segsFromPoints, ensureClosed } from "./svgParse.js";
 import { looksLikeBackground } from "./heuristics.js";
 import { parseViewBox, parseMatrix, applyMatrixToSegs } from "./transforms.js";
-import { collectAnchors } from "./routes.js";
+import { collectAnchors } from "./anchors.js";
 
 const KEYWORDS = {
     front: /(^|[^a-z])(front|перед)([^a-z]|$)/i,
