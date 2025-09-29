@@ -377,7 +377,8 @@ export default function CostumeEditor({ initialSVG }) {
             inset,
             lineStyle === "wavy"
                 ? { style: "wavy", ampWorld: waveAmpPx * (scale.k || 1), lambdaWorld: waveLenPx * (scale.k || 1) }
-                : { style: "straight" }
+                : { style: "straight" },
+            ringsByPanel
         );
 
         // Если не удалось прижать (крайний случай) — просто выходим в просмотр.

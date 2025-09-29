@@ -29,8 +29,9 @@ export const makeUserCurveBetween = (a, b) => {
     };
 }
 
-export const routeCurveAlongOutline = (panel, draftCurve, insetWorld, opts = {}) => {
-    const rings = ringsByPanel[panel.id] || [];
+export const routeCurveAlongOutline = (panel, draftCurve, insetWorld, opts = {}, ringsByPanel) => {
+
+    const rings = (ringsByPanel && ringsByPanel[panel.id]) ? ringsByPanel[panel.id] : [];
 
     if (!rings.length)
         return null;

@@ -2,7 +2,7 @@ import {
     area, getBounds, pointInPolygon, bboxIoU,
     segsSignature
 } from "./geometry.js";
-import { splitClosedSubpaths, parsePathD } from "./svgParse.js";
+import { splitClosedSubpaths, parsePathD, segsFromPoints, ensureClosed } from "./svgParse.js";
 import { looksLikeBackground } from "./heuristics.js";
 import { parseViewBox, parseMatrix, applyMatrixToSegs } from "./transforms.js";
 import { collectAnchors } from "./routes.js";
