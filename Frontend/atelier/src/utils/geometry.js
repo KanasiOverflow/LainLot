@@ -205,3 +205,21 @@ export const waveAlongPolyline = (pts, amp, lambda, outlinePoly = null, phase = 
 
     return out;
 }
+
+export const segsSignature = (segs) => {
+    // стабильный «отпечаток» геометрии
+    const parts = [];
+
+    for (const s of segs) {
+        if (s.kind === "M") parts.push(`M${s.x.toFixed(3)},${s.y.toFixed(3)}`);
+        else if
+            (s.kind === "L") parts.push(`L${s.x.toFixed(3)},${s.y.toFixed(3)}`);
+
+        else if (s.kind === "C") parts.push(
+            `C${s.x1.toFixed(3)},${s.y1.toFixed(3)},${s.x2.toFixed(3)},${s.y2.toFixed(3)},${s.x.toFixed(3)},${s.y.toFixed(3)}`);
+        else if
+            (s.kind === "Z") parts.push("Z");
+    }
+
+    return parts.join(";");
+}

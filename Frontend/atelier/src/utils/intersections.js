@@ -1,3 +1,4 @@
+/* ========== построение граней ========== */
 export const segIntersect = (p, q, r, s) => {
     const EPS = 1e-9;
 
