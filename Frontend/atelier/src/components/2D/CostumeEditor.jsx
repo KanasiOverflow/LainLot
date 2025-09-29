@@ -129,7 +129,7 @@ export default function CostumeEditor({ initialSVG }) {
 
         el.addEventListener("keydown", onKey);
         return () => el.removeEventListener("keydown", onKey);
-    }, [scopeRef.current]);
+    }, []);
 
     useEffect(() => {
         if (!rawSVG) return;
@@ -181,6 +181,13 @@ export default function CostumeEditor({ initialSVG }) {
         } else {
             if (toast) setToast(null);
         }
+
+        return () => {
+            if (swapTimerRef.current) {
+                clearTimeout(swapTimerRef.current);
+                swapTimerRef.current = null;
+            }
+        };
     }, [rawSVG]);
 
 

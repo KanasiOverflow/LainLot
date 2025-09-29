@@ -36,7 +36,9 @@ export const routeCurveAlongOutline = (panel, draftCurve, insetWorld, opts = {},
     if (!rings.length)
         return null;
 
-    const a = panel.anchors[draftCurve.aIdx], b = panel.anchors[draftCurve.bIdx];
+    const a = panel?.anchors?.[draftCurve.aIdx];
+    const b = panel?.anchors?.[draftCurve.bIdx];
+    if (!a || !b) return null;
 
     let best = null;
     for (const ring of rings) {
