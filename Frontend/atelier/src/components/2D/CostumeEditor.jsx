@@ -231,6 +231,24 @@ export default function CostumeEditor({ initialSVG }) {
     /* ===== действия ===== */
     const activePanel = panels[0] || null;
 
+    // определить источник точки по merged-индексу
+    const makeRefForMergedIndex = (panel, mi) => {
+        const base = panel.anchors || [];
+        const extras = extraAnchorsByPanel[panel.id] || [];
+        if (mi < base.length) {
+            return { type: 'base', panelId: panel.id, anchorIndex: mi };
+        }
+        const ex = extras[mi - base.length];
+        // ex.id = `${curveId}:${k}`
+        let curveId = null, subIdx = null;
+        if (ex?.id) {
+            const [cid, k] = String(ex.id).split(':');
+            curveId = cid || null;
+            subIdx = k != null ? +k : null;
+        }
+        return { type: 'extra', panelId: panel.id, curveId, subIdx };
+    };
+
     // idx теперь — индекс в mergedAnchorsOf(activePanel)
     const onAnchorClickAddMode = (idx) => {
         if (!activePanel) return;
@@ -250,6 +268,10 @@ export default function CostumeEditor({ initialSVG }) {
 
         // черновая «прямая» (кубик) между вершинами
         const { c1, c2 } = makeUserCurveBetween(a, b);
+
+        const aRef = makeRefForMergedIndex(activePanel, addBuffer);
+        const bRef = makeRefForMergedIndex(activePanel, idx);
+
         const draft = {
             id: crypto.randomUUID(),
             aIdx: addBuffer, // важно: индексы в merged
@@ -270,7 +292,7 @@ export default function CostumeEditor({ initialSVG }) {
                 // прежнее поведение: внутренняя ровная линия
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
-                    arr.push({ ...draft, type: "cubic", ax: a.x, ay: a.y, bx: b.x, by: b.y });
+                    arr.push({ ...draft, type: "cubic", ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef });
                     return { ...map, [activePanel.id]: arr };
                 });
             }
@@ -283,7 +305,7 @@ export default function CostumeEditor({ initialSVG }) {
                 const d = catmullRomToBezierPath(wpts);
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
-                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts, ax: a.x, ay: a.y, bx: b.x, by: b.y });
+                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts, ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef });
                     return { ...map, [activePanel.id]: arr };
                 });
             }
@@ -327,7 +349,9 @@ export default function CostumeEditor({ initialSVG }) {
                 pts: routed.pts,   // точки прижатой дуги (для faces)
                 connA: routed.connA, // [Q0, P0] — коннектор к кромке
                 connB: routed.connB, // [Q1, P1] — коннектор к кромке
-                ax: a.x, ay: a.y, bx: b.x, by: b.y
+                ax: a.x, ay: a.y, bx: b.x, by: b.y,
+                aRef,
+                bRef
             });
             return { ...map, [activePanel.id]: arr };
         });
@@ -337,11 +361,35 @@ export default function CostumeEditor({ initialSVG }) {
         setMode("preview");
     };
 
+    const cascadeDeleteCurve = (panelId, rootCurveId) => {
+        setCurvesByPanel(prev => {
+            const arr = [...(prev[panelId] || [])];
+            // 1) собираем id всех зависимых кривых (BFS)
+            const toDelete = new Set([rootCurveId]);
+            let changed = true;
+            while (changed) {
+                changed = false;
+                for (const c of arr) {
+                    if (toDelete.has(c.id)) continue;
+                    const aHit = c.aRef?.type === 'extra' && c.aRef.curveId && toDelete.has(c.aRef.curveId);
+                    const bHit = c.bRef?.type === 'extra' && c.bRef.curveId && toDelete.has(c.bRef.curveId);
+                    if (aHit || bHit) {
+                        toDelete.add(c.id);
+                        changed = true;
+                    }
+                }
+            }
+            // 2) фильтруем
+            const kept = arr.filter(c => !toDelete.has(c.id));
+            return { ...prev, [panelId]: kept };
+        });
+    };
+
     const onCurveEnter = (panelId, id) => { if (mode === "delete") setHoverCurveKey(`${panelId}:${id}`); };
     const onCurveLeave = (panelId, id) => { if (mode === "delete") setHoverCurveKey(k => (k === `${panelId}:${id}` ? null : k)); };
     const onCurveClickDelete = (panelId, id) => {
         if (mode !== "delete") return;
-        setCurvesByPanel(map => ({ ...map, [panelId]: (map[panelId] || []).filter(c => c.id !== id) }));
+        cascadeDeleteCurve(panelId, id);
         setHoverCurveKey(null);
     };
 
