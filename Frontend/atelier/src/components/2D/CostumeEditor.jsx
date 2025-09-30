@@ -29,167 +29,42 @@ export default function CostumeEditor({ initialSVG }) {
     // state для «запоминания» последнего подрежима
     const [lastFillMode, setLastFillMode] = useState('paint');   // 'paint' | 'deleteFill'
     const [lastLineMode, setLastLineMode] = useState('add');     // 'add' | 'delete
-
     const [rawSVG, setRawSVG] = useState(initialSVG || "");
     const [panels, setPanels] = useState([]);
-
     // для анимации "из-за спины"
     const [prevPanels, setPrevPanels] = useState(null);
     const [isSwapping, setIsSwapping] = useState(false);
     const SWAP_MS = 420;
-
     const didEverSwapRef = useRef(false);
     const swapTimerRef = useRef(null);
-
     // чтобы поймать "старые" панели до перезаписи
     const panelsRef = useRef(panels);
     useEffect(() => { panelsRef.current = panels; }, [panels]);
-
     // --- PRESETS state
     const [presetIdx, setPresetIdx] = useState(0);   // 0: Перед, 1: Спинка
     const [isLoadingPreset, setIsLoadingPreset] = useState(false);
-
     // красивый ре-монтаж svg при смене пресета (для анимации появления)
     const [svgMountKey, setSvgMountKey] = useState(0);
-
     // кривые: 'cubic' или 'routed' (по контуру)
     const [curvesByPanel, setCurvesByPanel] = useState({});
     const [fills, setFills] = useState([]);
     const [paintColor, setPaintColor] = useState("#f26522");
-
     const [mode, setMode] = useState("preview");
     const [addBuffer, setAddBuffer] = useState(null);
     const [hoverAnchorIdx, setHoverAnchorIdx] = useState(null);
     const [hoverCurveKey, setHoverCurveKey] = useState(null);
     const [hoverFace, setHoverFace] = useState(null);
-
     const [toast, setToast] = useState(null);
-
     // тип пользовательской линии
     const [lineStyle, setLineStyle] = useState("straight"); // 'straight' | 'wavy'
-
     // параметры волны (в пикселях экрана)
     const [waveAmpPx, setWaveAmpPx] = useState(6);
     const [waveLenPx, setWaveLenPx] = useState(36);
-
     const [paletteOpen, setPaletteOpen] = useState(false);
     const paletteRef = useRef(null);
-    useEffect(() => {
-        if (!paletteOpen) return;
-        const onKey = (e) => e.key === "Escape" && setPaletteOpen(false);
-        const onClick = (e) => {
-            if (paletteRef.current && !paletteRef.current.contains(e.target)) setPaletteOpen(false);
-        };
-        window.addEventListener("keydown", onKey);
-        window.addEventListener("pointerdown", onClick);
-        return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("pointerdown", onClick); };
-    }, [paletteOpen]);
-
-    useEffect(() => {
-        if (mode === 'paint' || mode === 'deleteFill') setLastFillMode(mode);
-        if (mode === 'add' || mode === 'delete') setLastLineMode(mode);
-    }, [mode]);
-
-    const modeGroup =
-        (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
-            (mode === 'add' || mode === 'delete') ? 'line' : 'preview';
-
-    // --- PRESETS: начальная подгрузка и переключение
-    useEffect(() => {
-        if (initialSVG) return; // если SVG уже пришёл сверху — не грузим пресеты
-        const p = PRESETS[presetIdx];
-        if (!p) return;
-        let alive = true;
-        setIsLoadingPreset(true);
-        fetch(`${SVG_BASE}/${p.file}`)
-            .then(r => r.text())
-            .then(txt => { if (alive) { setRawSVG(txt); setSvgMountKey(k => k + 1); } })
-            .catch(() => { if (alive) setRawSVG(""); })
-            .finally(() => { if (alive) setIsLoadingPreset(false); });
-        return () => { alive = false; };
-    }, [presetIdx, initialSVG]);
-
     // --- PRESETS: кнопки/клавиши
     const prevPreset = () => setPresetIdx(i => (i - 1 + PRESETS.length) % PRESETS.length);
     const nextPreset = () => setPresetIdx(i => (i + 1) % PRESETS.length);
-
-    useEffect(() => {
-        const el = scopeRef.current;
-        if (!el) return;
-
-        const onKey = (e) => {
-            const tag = (e.target?.tagName || "").toLowerCase();
-            if (["input", "textarea", "select", "button"].includes(tag) || e.target?.isContentEditable) return;
-            if (e.ctrlKey || e.metaKey || e.altKey) return;
-
-            const k = e.key.toLowerCase?.();
-            if (k === "arrowleft") prevPreset();
-            if (k === "arrowright") nextPreset();
-        };
-
-        el.addEventListener("keydown", onKey);
-        return () => el.removeEventListener("keydown", onKey);
-    }, []);
-
-    useEffect(() => {
-        if (!rawSVG) return;
-
-        const parts = extractPanels(rawSVG);
-
-        // Снимок прежней сцены для анимации
-        const old = panelsRef.current;
-        if (old && old.length) {
-            didEverSwapRef.current = true;
-
-            setPrevPanels(old);
-            setIsSwapping(true);
-
-            // не допускаем наложения таймеров
-            if (swapTimerRef.current) clearTimeout(swapTimerRef.current);
-            swapTimerRef.current = setTimeout(() => {
-                setPrevPanels(null);
-                setIsSwapping(false);
-                swapTimerRef.current = null;
-            }, SWAP_MS);
-        }
-
-        setPanels(parts);
-        setCurvesByPanel({});
-        setFills([]);
-        setMode("preview");
-
-        if (!parts.length) {
-            // Диагностика причин
-            const hasImage = /<image\b[^>]+(?:href|xlink:href)=["']data:image\//i.test(rawSVG) ||
-                /<image\b[^>]+(?:href|xlink:href)=["'][^"']+\.(png|jpe?g|webp)/i.test(rawSVG);
-            const hasForeign = /<foreignObject\b/i.test(rawSVG);
-            const hasVectorTags = /<(path|polygon|polyline|rect|circle|ellipse|line)\b/i.test(rawSVG);
-
-            let msg =
-                "В SVG не найдено векторных контуров для деталей. " +
-                "Экспортируйте выкройку как вектор (path/polygon/polyline/rect/circle/ellipse/line).";
-
-            if (hasImage && !hasVectorTags) {
-                msg = "Похоже, это растровая картинка, встроенная в SVG (<image>). " +
-                    "Нужно экспортировать из исходной программы именно векторные контуры (path и др.).";
-            } else if (hasForeign && !hasVectorTags) {
-                msg = "Файл использует <foreignObject> (встроенный HTML/растровый контент). " +
-                    "Экспортируйте чистый векторный SVG без foreignObject.";
-            }
-
-            setToast({ text: msg });
-        } else {
-            if (toast) setToast(null);
-        }
-
-        return () => {
-            if (swapTimerRef.current) {
-                clearTimeout(swapTimerRef.current);
-                swapTimerRef.current = null;
-            }
-        };
-    }, [rawSVG]);
-
     // общий bbox сцены — используется и для viewBox, и для сетки
     const worldBBox = useMemo(() => {
         let bb = null;
@@ -206,29 +81,14 @@ export default function CostumeEditor({ initialSVG }) {
         }
         return bb || { x: 0, y: 0, w: 800, h: 500 };
     }, [panels]);
-
     // осн. окно на основе общего bbox
     const viewBox = useMemo(() => {
         const pad = Math.max(worldBBox.w, worldBBox.h) * 0.06;
         return `${worldBBox.x - pad} ${worldBBox.y - pad} ${worldBBox.w + pad * 2} ${worldBBox.h + pad * 2}`;
     }, [worldBBox]);
-
     const svgRef = useRef(null);
     const [scale, setScale] = useState({ k: 1 });
-    useLayoutEffect(() => {
-        const update = () => {
-            const svg = svgRef.current; if (!svg || !panels.length) return;
-            const vb = svg.viewBox.baseVal; const kx = vb.width / svg.clientWidth, ky = vb.height / svg.clientHeight;
-            setScale({ k: Math.max(kx, ky) });
-        };
-        update();
-        const ro = new ResizeObserver(update); if (svgRef.current) ro.observe(svgRef.current);
-        window.addEventListener("resize", update);
-        return () => { ro.disconnect(); window.removeEventListener("resize", update); };
-    }, [panels.length]);
-
     const baseFacesCacheRef = useRef(new Map()); // panelId -> { sig, faces }
-
     /* -------- базовые faces и кольца контура -------- */
     const baseFacesByPanel = useMemo(() => {
         const res = {};
@@ -247,7 +107,6 @@ export default function CostumeEditor({ initialSVG }) {
         }
         return res;
     }, [panels]);
-
     const ringsByPanel = useMemo(() => {
         const res = {};
         for (const p of panels) {
@@ -256,7 +115,6 @@ export default function CostumeEditor({ initialSVG }) {
         }
         return res;
     }, [panels]);
-
     // faces с учётом пользовательских линий
     const facesByPanel = useMemo(() => {
         const res = {};
@@ -279,11 +137,9 @@ export default function CostumeEditor({ initialSVG }) {
         }
         return res;
     }, [panels, curvesByPanel]);
-
-    useEffect(() => {
-        setFills(fs => fs.filter(f => (facesByPanel[f.panelId] || []).some(poly => faceKey(poly) === f.faceKey)));
-    }, [facesByPanel]);
-
+    const modeGroup =
+        (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
+            (mode === 'add' || mode === 'delete') ? 'line' : 'preview';
     const gridDef = useMemo(() => {
         const step = Math.max(1e-6, Math.min(worldBBox.w, worldBBox.h) / 20);
         return { step, b: { x: worldBBox.x, y: worldBBox.y, w: worldBBox.w, h: worldBBox.h } };
@@ -303,27 +159,6 @@ export default function CostumeEditor({ initialSVG }) {
         }
         return res;
     }, [panels, ringsByPanel]);
-
-    useEffect(() => {
-        const el = scopeRef.current;
-        if (!el) return;
-
-        const onKey = (e) => {
-            // работаем только когда фокус внутри редактора
-            if (document.activeElement !== el) return;
-
-            if (e.key === 'Escape') { setMode('preview'); setAddBuffer(null); e.preventDefault(); }
-            else if (e.key === 'a' || e.key === 'A') { setMode('add'); setAddBuffer(null); e.preventDefault(); }
-            else if (e.key === 'd' || e.key === 'D') { setMode('delete'); e.preventDefault(); }
-            else if (e.key === 'f' || e.key === 'F') { setMode('paint'); e.preventDefault(); }
-            else if (e.key === 'x' || e.key === 'X') { setMode('deleteFill'); e.preventDefault(); }
-        };
-
-        el.addEventListener('keydown', onKey);
-        return () => el.removeEventListener('keydown', onKey);
-    }, [setMode, setAddBuffer]);
-
-
     /* ===== действия ===== */
     const activePanel = panels[0] || null;
     const R = 6 * scale.k;
@@ -459,6 +294,149 @@ export default function CostumeEditor({ initialSVG }) {
 
     // ...другие состояния
     const [edgeInsetPx, setEdgeInsetPx] = useState(8); // отступ от края, px экрана
+
+    useEffect(() => {
+        if (!paletteOpen) return;
+        const onKey = (e) => e.key === "Escape" && setPaletteOpen(false);
+        const onClick = (e) => {
+            if (paletteRef.current && !paletteRef.current.contains(e.target)) setPaletteOpen(false);
+        };
+        window.addEventListener("keydown", onKey);
+        window.addEventListener("pointerdown", onClick);
+        return () => { window.removeEventListener("keydown", onKey); window.removeEventListener("pointerdown", onClick); };
+    }, [paletteOpen]);
+
+    useEffect(() => {
+        if (mode === 'paint' || mode === 'deleteFill') setLastFillMode(mode);
+        if (mode === 'add' || mode === 'delete') setLastLineMode(mode);
+    }, [mode]);
+
+    // --- PRESETS: начальная подгрузка и переключение
+    useEffect(() => {
+        if (initialSVG) return; // если SVG уже пришёл сверху — не грузим пресеты
+        const p = PRESETS[presetIdx];
+        if (!p) return;
+        let alive = true;
+        setIsLoadingPreset(true);
+        fetch(`${SVG_BASE}/${p.file}`)
+            .then(r => r.text())
+            .then(txt => { if (alive) { setRawSVG(txt); setSvgMountKey(k => k + 1); } })
+            .catch(() => { if (alive) setRawSVG(""); })
+            .finally(() => { if (alive) setIsLoadingPreset(false); });
+        return () => { alive = false; };
+    }, [presetIdx, initialSVG]);
+
+    useEffect(() => {
+        const el = scopeRef.current;
+        if (!el) return;
+
+        const onKey = (e) => {
+            const tag = (e.target?.tagName || "").toLowerCase();
+            if (["input", "textarea", "select", "button"].includes(tag) || e.target?.isContentEditable) return;
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+            const k = e.key.toLowerCase?.();
+            if (k === "arrowleft") prevPreset();
+            if (k === "arrowright") nextPreset();
+        };
+
+        el.addEventListener("keydown", onKey);
+        return () => el.removeEventListener("keydown", onKey);
+    }, []);
+
+    useEffect(() => {
+        if (!rawSVG) return;
+
+        const parts = extractPanels(rawSVG);
+
+        // Снимок прежней сцены для анимации
+        const old = panelsRef.current;
+        if (old && old.length) {
+            didEverSwapRef.current = true;
+
+            setPrevPanels(old);
+            setIsSwapping(true);
+
+            // не допускаем наложения таймеров
+            if (swapTimerRef.current) clearTimeout(swapTimerRef.current);
+            swapTimerRef.current = setTimeout(() => {
+                setPrevPanels(null);
+                setIsSwapping(false);
+                swapTimerRef.current = null;
+            }, SWAP_MS);
+        }
+
+        setPanels(parts);
+        setCurvesByPanel({});
+        setFills([]);
+        setMode("preview");
+
+        if (!parts.length) {
+            // Диагностика причин
+            const hasImage = /<image\b[^>]+(?:href|xlink:href)=["']data:image\//i.test(rawSVG) ||
+                /<image\b[^>]+(?:href|xlink:href)=["'][^"']+\.(png|jpe?g|webp)/i.test(rawSVG);
+            const hasForeign = /<foreignObject\b/i.test(rawSVG);
+            const hasVectorTags = /<(path|polygon|polyline|rect|circle|ellipse|line)\b/i.test(rawSVG);
+
+            let msg =
+                "В SVG не найдено векторных контуров для деталей. " +
+                "Экспортируйте выкройку как вектор (path/polygon/polyline/rect/circle/ellipse/line).";
+
+            if (hasImage && !hasVectorTags) {
+                msg = "Похоже, это растровая картинка, встроенная в SVG (<image>). " +
+                    "Нужно экспортировать из исходной программы именно векторные контуры (path и др.).";
+            } else if (hasForeign && !hasVectorTags) {
+                msg = "Файл использует <foreignObject> (встроенный HTML/растровый контент). " +
+                    "Экспортируйте чистый векторный SVG без foreignObject.";
+            }
+
+            setToast({ text: msg });
+        } else {
+            if (toast) setToast(null);
+        }
+
+        return () => {
+            if (swapTimerRef.current) {
+                clearTimeout(swapTimerRef.current);
+                swapTimerRef.current = null;
+            }
+        };
+    }, [rawSVG]);
+
+    useLayoutEffect(() => {
+        const update = () => {
+            const svg = svgRef.current; if (!svg || !panels.length) return;
+            const vb = svg.viewBox.baseVal; const kx = vb.width / svg.clientWidth, ky = vb.height / svg.clientHeight;
+            setScale({ k: Math.max(kx, ky) });
+        };
+        update();
+        const ro = new ResizeObserver(update); if (svgRef.current) ro.observe(svgRef.current);
+        window.addEventListener("resize", update);
+        return () => { ro.disconnect(); window.removeEventListener("resize", update); };
+    }, [panels.length]);
+
+    useEffect(() => {
+        setFills(fs => fs.filter(f => (facesByPanel[f.panelId] || []).some(poly => faceKey(poly) === f.faceKey)));
+    }, [facesByPanel]);
+
+    useEffect(() => {
+        const el = scopeRef.current;
+        if (!el) return;
+
+        const onKey = (e) => {
+            // работаем только когда фокус внутри редактора
+            if (document.activeElement !== el) return;
+
+            if (e.key === 'Escape') { setMode('preview'); setAddBuffer(null); e.preventDefault(); }
+            else if (e.key === 'a' || e.key === 'A') { setMode('add'); setAddBuffer(null); e.preventDefault(); }
+            else if (e.key === 'd' || e.key === 'D') { setMode('delete'); e.preventDefault(); }
+            else if (e.key === 'f' || e.key === 'F') { setMode('paint'); e.preventDefault(); }
+            else if (e.key === 'x' || e.key === 'X') { setMode('deleteFill'); e.preventDefault(); }
+        };
+
+        el.addEventListener('keydown', onKey);
+        return () => el.removeEventListener('keydown', onKey);
+    }, [setMode, setAddBuffer]);
 
     return (
         <div ref={scopeRef} className={styles.layout} tabIndex={0}>
