@@ -4,7 +4,7 @@ import styles from "./CostumeEditor.module.css";
 import clsx from "clsx";
 import {
     area, getBounds, sampleBezier, sampleBezierPoints,
-    pointsToPairedPolyline, waveAlongPolyline, segsSignature
+    pointsToPairedPolyline, waveAlongPolyline, segsSignature, cumulativeLengths
 } from "../../utils/geometry.js";
 import {
     polylinesFromSegs, segmentsFromPolylines, splitSegsIntoSubpaths, polylineFromSubpath,
@@ -88,6 +88,7 @@ export default function CostumeEditor({ initialSVG }) {
     const svgRef = useRef(null);
     const [scale, setScale] = useState({ k: 1 });
     const baseFacesCacheRef = useRef(new Map()); // panelId -> { sig, faces }
+
     /* -------- базовые faces и кольца контура -------- */
     const baseFacesByPanel = useMemo(() => {
         const res = {};
@@ -106,6 +107,7 @@ export default function CostumeEditor({ initialSVG }) {
         }
         return res;
     }, [panels]);
+
     const ringsByPanel = useMemo(() => {
         const res = {};
         for (const p of panels) {
@@ -114,19 +116,85 @@ export default function CostumeEditor({ initialSVG }) {
         }
         return res;
     }, [panels]);
+
+    const [subAnchorCount, setSubAnchorCount] = useState(2); // 2..10
+
+    // линейная интерполяция точки на полилинии по «дуговой длине»
+    const pointAtS = (pts, Larr, s) => {
+        // Larr — cumulativeLengths(pts)
+        const total = Larr[Larr.length - 1] || 1;
+        const t = Math.max(0, Math.min(total, s));
+        let i = 0;
+        while (i + 1 < Larr.length && Larr[i + 1] < t) i++;
+        const l0 = Larr[i], l1 = Larr[Math.min(Larr.length - 1, i + 1)];
+        const p0 = pts[i], p1 = pts[Math.min(pts.length - 1, i + 1)];
+        const seg = Math.max(1e-12, l1 - l0);
+        const a = (t - l0) / seg;
+        return { x: p0.x + (p1.x - p0.x) * a, y: p0.y + (p1.y - p0.y) * a };
+    };
+
+    //вычисляем «экстра-якоря» (виртуальные вершины) для всех кривых панели
+    const extraAnchorsByPanel = useMemo(() => {
+        const map = {};
+        for (const p of panels) {
+            const arr = [];
+            const curves = (curvesByPanel[p.id] || []);
+            for (const c of curves) {
+                // получаем опорные точки полилинии кривой
+                let poly = null;
+                if (c.type === "cubic") {
+                    const a = p.anchors?.[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
+                    const b = p.anchors?.[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
+                    if (!a || !b) continue;
+                    poly = sampleBezierPoints(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y, 128);
+                } else {
+                    // 'wavy' | 'routed' — уже есть дискретизация в c.pts
+                    poly = c.pts;
+                }
+                if (!poly || poly.length < 2) continue;
+
+                const L = cumulativeLengths(poly);
+                const total = L[L.length - 1] || 1;
+                const n = Math.max(2, Math.min(10, subAnchorCount));
+                for (let k = 1; k <= n; k++) {
+                    const s = (total * k) / (n + 1);
+                    const pt = pointAtS(poly, L, s);
+                    arr.push({ id: `${c.id}:${k}`, x: pt.x, y: pt.y });
+                }
+            }
+            map[p.id] = arr;
+        }
+        return map;
+    }, [panels, curvesByPanel, subAnchorCount]);
+
+    // утилита для объединённого списка вершин панели
+    const mergedAnchorsOf = useCallback((p) => {
+        const extras = extraAnchorsByPanel[p.id] || [];
+        // порядок важен: базовые, затем дополнительные — индексы merged совпадут с кликами
+        return [...(p.anchors || []), ...extras];
+    }, [extraAnchorsByPanel]);
+
     // faces с учётом пользовательских линий
     const facesByPanel = useMemo(() => {
         const res = {};
         for (const p of panels) {
             const baseLines = polylinesFromSegs(p.segs);
+            const merged = mergedAnchorsOf(p);
+
             const userLines = (curvesByPanel[p.id] || []).flatMap(c => {
                 if (c.type === "cubic") {
-                    const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
+                    const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
+                    const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
+
                     return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)];
-                } else {
+                }
+                else {
                     const lines = [pointsToPairedPolyline(c.pts)];
-                    if (c.connA && c.connA.length === 2) lines.push(pointsToPairedPolyline(c.connA));
-                    if (c.connB && c.connB.length === 2) lines.push(pointsToPairedPolyline(c.connB));
+                    if (c.connA && c.connA.length === 2)
+                        lines.push(pointsToPairedPolyline(c.connA));
+                    if (c.connB && c.connB.length === 2)
+                        lines.push(pointsToPairedPolyline(c.connB));
+
                     return lines;
                 }
             });
@@ -135,10 +203,12 @@ export default function CostumeEditor({ initialSVG }) {
             res[p.id] = buildFacesFromSegments(splitByIntersections(segsFlat));
         }
         return res;
-    }, [panels, curvesByPanel]);
+    }, [panels, curvesByPanel, mergedAnchorsOf]);
+
     const modeGroup =
         (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
             (mode === 'add' || mode === 'delete') ? 'line' : 'preview';
+
     const gridDef = useMemo(() => {
         const step = Math.max(1e-6, Math.min(worldBBox.w, worldBBox.h) / 20);
         return { step, b: { x: worldBBox.x, y: worldBBox.y, w: worldBBox.w, h: worldBBox.h } };
@@ -161,6 +231,25 @@ export default function CostumeEditor({ initialSVG }) {
     /* ===== действия ===== */
     const activePanel = panels[0] || null;
 
+    // определить источник точки по merged-индексу
+    const makeRefForMergedIndex = (panel, mi) => {
+        const base = panel.anchors || [];
+        const extras = extraAnchorsByPanel[panel.id] || [];
+        if (mi < base.length) {
+            return { type: 'base', panelId: panel.id, anchorIndex: mi };
+        }
+        const ex = extras[mi - base.length];
+        // ex.id = `${curveId}:${k}`
+        let curveId = null, subIdx = null;
+        if (ex?.id) {
+            const [cid, k] = String(ex.id).split(':');
+            curveId = cid || null;
+            subIdx = k != null ? +k : null;
+        }
+        return { type: 'extra', panelId: panel.id, curveId, subIdx };
+    };
+
+    // idx теперь — индекс в mergedAnchorsOf(activePanel)
     const onAnchorClickAddMode = (idx) => {
         if (!activePanel) return;
 
@@ -173,14 +262,19 @@ export default function CostumeEditor({ initialSVG }) {
         // клик по той же вершине — игнор
         if (addBuffer === idx) { setAddBuffer(null); return; }
 
-        const a = activePanel.anchors[addBuffer];
-        const b = activePanel.anchors[idx];
+        const merged = mergedAnchorsOf(activePanel);
+        const a = merged[addBuffer];
+        const b = merged[idx];
 
         // черновая «прямая» (кубик) между вершинами
         const { c1, c2 } = makeUserCurveBetween(a, b);
+
+        const aRef = makeRefForMergedIndex(activePanel, addBuffer);
+        const bRef = makeRefForMergedIndex(activePanel, idx);
+
         const draft = {
             id: crypto.randomUUID(),
-            aIdx: addBuffer,
+            aIdx: addBuffer, // важно: индексы в merged
             bIdx: idx,
             c1,
             c2,
@@ -198,7 +292,7 @@ export default function CostumeEditor({ initialSVG }) {
                 // прежнее поведение: внутренняя ровная линия
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
-                    arr.push({ ...draft, type: "cubic" });
+                    arr.push({ ...draft, type: "cubic", ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef });
                     return { ...map, [activePanel.id]: arr };
                 });
             }
@@ -211,21 +305,22 @@ export default function CostumeEditor({ initialSVG }) {
                 const d = catmullRomToBezierPath(wpts);
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
-                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts });
+                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts, ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef });
                     return { ...map, [activePanel.id]: arr };
                 });
             }
 
             setAddBuffer(null);
-            setMode("preview");
             return;
         }
 
         // 2) Иначе ведём линию по кратчайшей дуге кромки с отступом внутрь.
         //    Отступ задаётся в пикселях экрана (edgeInsetPx), здесь переводим в мировые.
         const inset = Math.max(0, edgeInsetPx) * (scale.k || 1);
+        // подменяем anchors на merged, чтобы routeCurveAlongOutline видел «новые вершины»
+        const panelWithMerged = { ...activePanel, anchors: merged };
         const routed = routeCurveAlongOutline(
-            activePanel,
+            panelWithMerged,
             draft,
             inset,
             lineStyle === "wavy"
@@ -236,8 +331,7 @@ export default function CostumeEditor({ initialSVG }) {
 
         // Если не удалось прижать (крайний случай) — просто выходим в просмотр.
         if (!routed) {
-            setAddBuffer(null);
-            setMode("preview");
+            setAddBuffer(null); // остаёмся в режиме добавления
             return;
         }
 
@@ -253,20 +347,46 @@ export default function CostumeEditor({ initialSVG }) {
                 pts: routed.pts,   // точки прижатой дуги (для faces)
                 connA: routed.connA, // [Q0, P0] — коннектор к кромке
                 connB: routed.connB, // [Q1, P1] — коннектор к кромке
+                ax: a.x, ay: a.y, bx: b.x, by: b.y,
+                aRef,
+                bRef
             });
             return { ...map, [activePanel.id]: arr };
         });
 
         // очистка состояния
         setAddBuffer(null);
-        setMode("preview");
+    };
+
+    const cascadeDeleteCurve = (panelId, rootCurveId) => {
+        setCurvesByPanel(prev => {
+            const arr = [...(prev[panelId] || [])];
+            // 1) собираем id всех зависимых кривых (BFS)
+            const toDelete = new Set([rootCurveId]);
+            let changed = true;
+            while (changed) {
+                changed = false;
+                for (const c of arr) {
+                    if (toDelete.has(c.id)) continue;
+                    const aHit = c.aRef?.type === 'extra' && c.aRef.curveId && toDelete.has(c.aRef.curveId);
+                    const bHit = c.bRef?.type === 'extra' && c.bRef.curveId && toDelete.has(c.bRef.curveId);
+                    if (aHit || bHit) {
+                        toDelete.add(c.id);
+                        changed = true;
+                    }
+                }
+            }
+            // 2) фильтруем
+            const kept = arr.filter(c => !toDelete.has(c.id));
+            return { ...prev, [panelId]: kept };
+        });
     };
 
     const onCurveEnter = (panelId, id) => { if (mode === "delete") setHoverCurveKey(`${panelId}:${id}`); };
     const onCurveLeave = (panelId, id) => { if (mode === "delete") setHoverCurveKey(k => (k === `${panelId}:${id}` ? null : k)); };
     const onCurveClickDelete = (panelId, id) => {
         if (mode !== "delete") return;
-        setCurvesByPanel(map => ({ ...map, [panelId]: (map[panelId] || []).filter(c => c.id !== id) }));
+        cascadeDeleteCurve(panelId, id);
         setHoverCurveKey(null);
     };
 
@@ -540,7 +660,9 @@ export default function CostumeEditor({ initialSVG }) {
 
                                     {/* USER CURVES (швы/линии пользователя) */}
                                     {(curvesByPanel[p.id] || []).map(c => {
-                                        const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
+                                        const merged = mergedAnchorsOf(p);
+                                        const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
+                                        const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
                                         if (!a || !b)
                                             return null;
 
@@ -565,25 +687,29 @@ export default function CostumeEditor({ initialSVG }) {
                                         );
                                     })}
 
-                                    {/* ANCHORS (вершины) — только в режимах добавления/удаления линий */}
-                                    {activePanel?.id === p.id && (mode === 'add' || mode === 'delete')
-                                        && p.anchors.map((pt, i) => (
+                                    {/* ANCHORS (базовые + новые) — кликаем по merged-индексам */}
+                                    {activePanel?.id === p.id && (mode === 'add' || mode === 'delete') && (() => {
+                                        const base = p.anchors || [];
+                                        const extras = extraAnchorsByPanel[p.id] || [];
+                                        const merged = [...base, ...extras];
+                                        return merged.map((pt, mi) => (
                                             <circle
-                                                key={i}
+                                                key={`m-${mi}`}
                                                 cx={pt.x}
                                                 cy={pt.y}
                                                 r={3.5}
                                                 className={clsx(
                                                     styles.anchor,
                                                     styles.anchorClickable,
-                                                    i === hoverAnchorIdx && styles.anchorHovered,
-                                                    i === addBuffer && styles.anchorSelectedA
+                                                    mi === hoverAnchorIdx && styles.anchorHovered,
+                                                    mi === addBuffer && styles.anchorSelectedA
                                                 )}
-                                                onClick={() => onAnchorClickAddMode(i)}
-                                                onMouseEnter={() => setHoverAnchorIdx(i)}
+                                                onClick={() => onAnchorClickAddMode(mi)}
+                                                onMouseEnter={() => setHoverAnchorIdx(mi)}
                                                 onMouseLeave={() => setHoverAnchorIdx(null)}
                                             />
-                                        ))}
+                                        ));
+                                    })()}
                                 </g>
                             );
                         })}
@@ -738,9 +864,23 @@ export default function CostumeEditor({ initialSVG }) {
                                     </div>
                                 </>
                             )}
+
+                            {/* NEW: количество новых вершин на любой пользовательской линии */}
+                            <div className={styles.subRow} style={{ marginTop: 10 }}>
+                                <span className={styles.slimLabel}>Новые вершины</span>
+                                <input
+                                    type="range"
+                                    min={2}
+                                    max={10}
+                                    step={1}
+                                    value={subAnchorCount}
+                                    onChange={e => setSubAnchorCount(+e.target.value)}
+                                    className={styles.rangeCompact}
+                                />
+                                <span className={styles.value}>{subAnchorCount}</span>
+                            </div>
                         </div>
                     )}
-
 
                 </div>
             </aside>
