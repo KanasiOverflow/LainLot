@@ -225,6 +225,8 @@
   transform: rotate(45deg);
 }
 .paletteGrid { display: grid; grid-template-columns: repeat(6, 22px); gap: 8px; padding: 2px; }
+.palettePopover { position: relative; }
+
 .swatchBtn {
   width: 22px; height: 22px; border-radius: 50%;
   border: 1px solid rgba(0,0,0,.08); cursor: pointer;

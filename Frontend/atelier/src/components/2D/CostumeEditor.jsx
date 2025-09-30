@@ -39,7 +39,6 @@ export default function CostumeEditor({ initialSVG }) {
     const swapTimerRef = useRef(null);
     // чтобы поймать "старые" панели до перезаписи
     const panelsRef = useRef(panels);
-    useEffect(() => { panelsRef.current = panels; }, [panels]);
     // --- PRESETS state
     const [presetIdx, setPresetIdx] = useState(0);   // 0: Перед, 1: Спинка
     const [isLoadingPreset, setIsLoadingPreset] = useState(false);
@@ -161,10 +160,8 @@ export default function CostumeEditor({ initialSVG }) {
     }, [panels, ringsByPanel]);
     /* ===== действия ===== */
     const activePanel = panels[0] || null;
-    const R = 6 * scale.k;
-    const isPreview = mode === "preview";
 
-    const handleAnchorClick = (idx) => {
+    const onAnchorClickAddMode = (idx) => {
         if (!activePanel) return;
 
         // первый клик — запоминаем начальную вершину
@@ -174,7 +171,7 @@ export default function CostumeEditor({ initialSVG }) {
         }
 
         // клик по той же вершине — игнор
-        if (addBuffer === idx) return;
+        if (addBuffer === idx) { setAddBuffer(null); return; }
 
         const a = activePanel.anchors[addBuffer];
         const b = activePanel.anchors[idx];
@@ -294,6 +291,8 @@ export default function CostumeEditor({ initialSVG }) {
 
     // ...другие состояния
     const [edgeInsetPx, setEdgeInsetPx] = useState(8); // отступ от края, px экрана
+
+    useEffect(() => { panelsRef.current = panels; }, [panels]);
 
     useEffect(() => {
         if (!paletteOpen) return;
@@ -436,7 +435,7 @@ export default function CostumeEditor({ initialSVG }) {
 
         el.addEventListener('keydown', onKey);
         return () => el.removeEventListener('keydown', onKey);
-    }, [setMode, setAddBuffer]);
+    }, []);
 
     return (
         <div ref={scopeRef} className={styles.layout} tabIndex={0}>
@@ -542,6 +541,9 @@ export default function CostumeEditor({ initialSVG }) {
                                     {/* USER CURVES (швы/линии пользователя) */}
                                     {(curvesByPanel[p.id] || []).map(c => {
                                         const a = p.anchors[c.aIdx], b = p.anchors[c.bIdx];
+                                        if (!a || !b)
+                                            return null;
+
                                         const d = c.type === 'cubic'
                                             ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
                                             : c.d; // 'routed'/'wavy'
@@ -577,7 +579,7 @@ export default function CostumeEditor({ initialSVG }) {
                                                     i === hoverAnchorIdx && styles.anchorHovered,
                                                     i === addBuffer && styles.anchorSelectedA
                                                 )}
-                                                onClick={() => handleAnchorClick(i)}
+                                                onClick={() => onAnchorClickAddMode(i)}
                                                 onMouseEnter={() => setHoverAnchorIdx(i)}
                                                 onMouseLeave={() => setHoverAnchorIdx(null)}
                                             />
