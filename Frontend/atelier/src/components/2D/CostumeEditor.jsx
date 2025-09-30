@@ -1,7 +1,7 @@
 // CostumeEditor.jsx
-import { useEffect, useMemo, useRef, useState, useLayoutEffect } from "react";
+import { useEffect, useMemo, useRef, useState, useLayoutEffect, useCallback } from "react";
 import styles from "./CostumeEditor.module.css";
-
+import clsx from "clsx";
 import {
     area, getBounds, sampleBezier, sampleBezierPoints,
     pointsToPairedPolyline, waveAlongPolyline, segsSignature
@@ -329,7 +329,7 @@ export default function CostumeEditor({ initialSVG }) {
     const R = 6 * scale.k;
     const isPreview = mode === "preview";
 
-    const onAnchorClickAddMode = (idx) => {
+    const handleAnchorClick = (idx) => {
         if (!activePanel) return;
 
         // первый клик — запоминаем начальную вершину
@@ -586,19 +586,24 @@ export default function CostumeEditor({ initialSVG }) {
                                     })}
 
                                     {/* ANCHORS (вершины) — только в режимах добавления/удаления линий */}
-                                    {activePanel?.id === p.id && (mode === 'add' || mode === 'delete') && p.anchors.map((A, i) => (
-                                        <circle
-                                            key={i}
-                                            cx={A.x}
-                                            cy={A.y}
-                                            r={R}
-                                            className={`${styles.anchor} ${mode === 'add' ? styles.anchorClickable : ''} ${addBuffer === i ? styles.anchorSelectedA : ''}`}
-                                            onMouseEnter={() => setHoverAnchorIdx(i)}
-                                            onMouseLeave={() => setHoverAnchorIdx(h => (h === i ? null : h))}
-                                            onClick={() => mode === 'add' && onAnchorClickAddMode(i)}
-                                        />
-                                    ))}
-
+                                    {activePanel?.id === p.id && (mode === 'add' || mode === 'delete')
+                                        && p.anchors.map((pt, i) => (
+                                            <circle
+                                                key={i}
+                                                cx={pt.x}
+                                                cy={pt.y}
+                                                r={3.5}
+                                                className={clsx(
+                                                    styles.anchor,
+                                                    styles.anchorClickable,
+                                                    i === hoverAnchorIdx && styles.anchorHovered,
+                                                    i === addBuffer && styles.anchorSelectedA
+                                                )}
+                                                onClick={() => handleAnchorClick(i)}
+                                                onMouseEnter={() => setHoverAnchorIdx(i)}
+                                                onMouseLeave={() => setHoverAnchorIdx(null)}
+                                            />
+                                        ))}
                                 </g>
                             );
                         })}

@@ -246,6 +246,13 @@
 .anchorSelectedA { fill: #fde047; stroke: #a16207; stroke-width: 1.5; }
 .anchorSelectedB { fill: #86efac; stroke: #166534; stroke-width: 1.5; }
 
+.anchorHovered {
+  fill: #f97316; /* оранжевый при наведении */
+  stroke: #ea580c;
+  stroke-width: 1.5;
+  r: 5; /* чуть крупнее при наведении */
+}
+
 .userCurve {
   stroke: #ff4d4f;
   stroke-width: 2.5;

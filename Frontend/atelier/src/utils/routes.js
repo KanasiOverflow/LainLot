@@ -2,7 +2,7 @@ import {
     arcOnRing, nearestOnRing, offsetArcInside, waveAlongPolyline,
     lerpPt
 } from "./geometry.js";
-import { catmullRomToBezierPath } from "./svgParse.js";
+import { catmullRomToBezierPath, splitSegsIntoSubpaths, polylineFromSubpath } from "./svgParse.js";
 
 export const makeUserCurveBetween = (a, b) => {
     const k = 1 / 3;
@@ -16,9 +16,11 @@ export const makeUserCurveBetween = (a, b) => {
     };
 }
 
-export const routeCurveAlongOutline = (panel, draftCurve, insetWorld, opts = {}, ringsByPanel) => {
+export const routeCurveAlongOutline = (panel, draftCurve, insetWorld, opts = {}) => {
 
-    const rings = (ringsByPanel && ringsByPanel[panel.id]) ? ringsByPanel[panel.id] : [];
+    const rings = splitSegsIntoSubpaths(panel.segs)
+        .map(polylineFromSubpath)
+        .filter(r => r.length >= 3);
 
     if (!rings.length)
         return null;
