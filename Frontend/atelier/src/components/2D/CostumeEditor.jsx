@@ -4,7 +4,7 @@ import styles from "./CostumeEditor.module.css";
 
 import {
     area, getBounds, sampleBezier, sampleBezierPoints,
-    pointsToPairedPolyline, waveAlongPolyline
+    pointsToPairedPolyline, waveAlongPolyline, segsSignature
 } from "../../utils/geometry.js";
 import {
     polylinesFromSegs, segmentsFromPolylines, splitSegsIntoSubpaths, polylineFromSubpath,
@@ -190,16 +190,28 @@ export default function CostumeEditor({ initialSVG }) {
         };
     }, [rawSVG]);
 
-
-    // осн. окна
-    const viewBox = useMemo(() => {
-        if (!panels.length) return "0 0 800 500";
-        const boxes = panels.map(p => getBounds(p.segs));
-        const minX = Math.min(...boxes.map(b => b.x)), minY = Math.min(...boxes.map(b => b.y));
-        const maxX = Math.max(...boxes.map(b => b.x + b.w)), maxY = Math.max(...boxes.map(b => b.y + b.h));
-        const w = maxX - minX, h = maxY - minY, pad = Math.max(w, h) * 0.06;
-        return `${minX - pad} ${minY - pad} ${w + pad * 2} ${h + pad * 2}`;
+    // общий bbox сцены — используется и для viewBox, и для сетки
+    const worldBBox = useMemo(() => {
+        let bb = null;
+        for (const p of panels) {
+            const b = getBounds(p.segs);
+            if (!bb) bb = { ...b };
+            else {
+                const x1 = Math.min(bb.x, b.x);
+                const y1 = Math.min(bb.y, b.y);
+                const x2 = Math.max(bb.x + bb.w, b.x + b.w);
+                const y2 = Math.max(bb.y + bb.h, b.y + b.h);
+                bb = { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+            }
+        }
+        return bb || { x: 0, y: 0, w: 800, h: 500 };
     }, [panels]);
+
+    // осн. окно на основе общего bbox
+    const viewBox = useMemo(() => {
+        const pad = Math.max(worldBBox.w, worldBBox.h) * 0.06;
+        return `${worldBBox.x - pad} ${worldBBox.y - pad} ${worldBBox.w + pad * 2} ${worldBBox.h + pad * 2}`;
+    }, [worldBBox]);
 
     const svgRef = useRef(null);
     const [scale, setScale] = useState({ k: 1 });
@@ -215,13 +227,23 @@ export default function CostumeEditor({ initialSVG }) {
         return () => { ro.disconnect(); window.removeEventListener("resize", update); };
     }, [panels.length]);
 
+    const baseFacesCacheRef = useRef(new Map()); // panelId -> { sig, faces }
+
     /* -------- базовые faces и кольца контура -------- */
     const baseFacesByPanel = useMemo(() => {
         const res = {};
         for (const p of panels) {
+            const sig = segsSignature(p.segs);
+            const cached = baseFacesCacheRef.current.get(p.id);
+            if (cached && cached.sig === sig) {
+                res[p.id] = cached.faces;
+                continue;
+            }
             const baseLines = polylinesFromSegs(p.segs);
             const segsFlat = segmentsFromPolylines(baseLines);
-            res[p.id] = buildFacesFromSegments(splitByIntersections(segsFlat));
+            const faces = buildFacesFromSegments(splitByIntersections(segsFlat));
+            baseFacesCacheRef.current.set(p.id, { sig, faces });
+            res[p.id] = faces;
         }
         return res;
     }, [panels]);
@@ -263,32 +285,24 @@ export default function CostumeEditor({ initialSVG }) {
     }, [facesByPanel]);
 
     const gridDef = useMemo(() => {
-        if (!panels.length) return { step: 40, b: { x: 0, y: 0, w: 800, h: 500 } };
-        const boxes = panels.map(p => getBounds(p.segs));
-        const minX = Math.min(...boxes.map(b => b.x)), minY = Math.min(...boxes.map(b => b.y));
-        const maxX = Math.max(...boxes.map(b => b.x + b.w)), maxY = Math.max(...boxes.map(b => b.y + b.h));
-        const w = maxX - minX, h = maxY - minY; const step = Math.max(1e-6, Math.min(w, h) / 20);
-        return { step, b: { x: minX, y: minY, w, h } };
-    }, [panels]);
-
-    // уже есть: splitSegsIntoSubpaths, polylineFromSubpath, area(...)
+        const step = Math.max(1e-6, Math.min(worldBBox.w, worldBBox.h) / 20);
+        return { step, b: { x: worldBBox.x, y: worldBBox.y, w: worldBBox.w, h: worldBBox.h } };
+    }, [worldBBox]);
 
     const outerRingByPanel = useMemo(() => {
         const res = {};
         for (const p of panels) {
-            const subpaths = splitSegsIntoSubpaths(p.segs);          // M..Z блоки
-            const rings = subpaths.map(polylineFromSubpath)          // дискретизируем
-                .filter(r => r.length >= 3);
-            if (!rings.length) continue;
-            // выбираем самое большое по модулю площади кольцо — это внешний силуэт
-            const best = rings.reduce((acc, r) => {
+            const rings = ringsByPanel[p.id] || [];
+            if (!rings.length) { res[p.id] = null; continue; }
+            let best = null, bestA = -Infinity;
+            for (const r of rings) {
                 const A = Math.abs(area(r));
-                return (!acc || A > acc.A) ? { ring: r, A } : acc;
-            }, null);
-            res[p.id] = best?.ring || null;
+                if (A > bestA) { bestA = A; best = r; }
+            }
+            res[p.id] = best;
         }
         return res;
-    }, [panels]);
+    }, [panels, ringsByPanel]);
 
     useEffect(() => {
         const el = scopeRef.current;
