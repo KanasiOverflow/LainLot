@@ -143,7 +143,8 @@ export default function CostumeEditor({ initialSVG }) {
                 // получаем опорные точки полилинии кривой
                 let poly = null;
                 if (c.type === "cubic") {
-                    const a = p.anchors?.[c.aIdx], b = p.anchors?.[c.bIdx];
+                    const a = p.anchors?.[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
+                    const b = p.anchors?.[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
                     if (!a || !b) continue;
                     poly = sampleBezierPoints(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y, 128);
                 } else {
@@ -182,12 +183,18 @@ export default function CostumeEditor({ initialSVG }) {
 
             const userLines = (curvesByPanel[p.id] || []).flatMap(c => {
                 if (c.type === "cubic") {
-                    const a = merged[c.aIdx], b = merged[c.bIdx];
+                    const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
+                    const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
+
                     return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)];
-                } else {
+                }
+                else {
                     const lines = [pointsToPairedPolyline(c.pts)];
-                    if (c.connA && c.connA.length === 2) lines.push(pointsToPairedPolyline(c.connA));
-                    if (c.connB && c.connB.length === 2) lines.push(pointsToPairedPolyline(c.connB));
+                    if (c.connA && c.connA.length === 2)
+                        lines.push(pointsToPairedPolyline(c.connA));
+                    if (c.connB && c.connB.length === 2)
+                        lines.push(pointsToPairedPolyline(c.connB));
+
                     return lines;
                 }
             });
@@ -263,7 +270,7 @@ export default function CostumeEditor({ initialSVG }) {
                 // прежнее поведение: внутренняя ровная линия
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
-                    arr.push({ ...draft, type: "cubic" });
+                    arr.push({ ...draft, type: "cubic", ax: a.x, ay: a.y, bx: b.x, by: b.y });
                     return { ...map, [activePanel.id]: arr };
                 });
             }
@@ -276,7 +283,7 @@ export default function CostumeEditor({ initialSVG }) {
                 const d = catmullRomToBezierPath(wpts);
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
-                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts });
+                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts, ax: a.x, ay: a.y, bx: b.x, by: b.y });
                     return { ...map, [activePanel.id]: arr };
                 });
             }
@@ -320,6 +327,7 @@ export default function CostumeEditor({ initialSVG }) {
                 pts: routed.pts,   // точки прижатой дуги (для faces)
                 connA: routed.connA, // [Q0, P0] — коннектор к кромке
                 connB: routed.connB, // [Q1, P1] — коннектор к кромке
+                ax: a.x, ay: a.y, bx: b.x, by: b.y
             });
             return { ...map, [activePanel.id]: arr };
         });
@@ -608,7 +616,8 @@ export default function CostumeEditor({ initialSVG }) {
                                     {/* USER CURVES (швы/линии пользователя) */}
                                     {(curvesByPanel[p.id] || []).map(c => {
                                         const merged = mergedAnchorsOf(p);
-                                        const a = merged[c.aIdx], b = merged[c.bIdx];
+                                        const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
+                                        const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
                                         if (!a || !b)
                                             return null;
 
