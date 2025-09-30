@@ -311,7 +311,6 @@ export default function CostumeEditor({ initialSVG }) {
             }
 
             setAddBuffer(null);
-            setMode("preview");
             return;
         }
 
@@ -332,8 +331,7 @@ export default function CostumeEditor({ initialSVG }) {
 
         // Если не удалось прижать (крайний случай) — просто выходим в просмотр.
         if (!routed) {
-            setAddBuffer(null);
-            setMode("preview");
+            setAddBuffer(null); // остаёмся в режиме добавления
             return;
         }
 
@@ -358,7 +356,6 @@ export default function CostumeEditor({ initialSVG }) {
 
         // очистка состояния
         setAddBuffer(null);
-        setMode("preview");
     };
 
     const cascadeDeleteCurve = (panelId, rootCurveId) => {
