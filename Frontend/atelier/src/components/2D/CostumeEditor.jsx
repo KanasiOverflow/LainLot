@@ -133,6 +133,37 @@ export default function CostumeEditor({ initialSVG }) {
         if (mode !== 'delete') setSelectedCurveKey(null);
     };
 
+    const recomputeWaveForCurve = (pid, cid, ampPx, lenPx) => {
+        setCurvesByPanel(prev => {
+            const list = [...(prev[pid] || [])];
+            const i = list.findIndex(x => x.id === cid);
+            if (i < 0) return prev;
+            const c = list[i];
+
+            const ampW = ampPx * (scale.k || 1);
+            const lambdaW = lenPx * (scale.k || 1);
+
+            // внутренняя волнистая: есть basePts
+            if (c.type === 'wavy' && Array.isArray(c.basePts) && c.basePts.length >= 2) {
+                const wpts = waveAlongPolyline(c.basePts, ampW, lambdaW, null);
+                const d = catmullRomToBezierPath(wpts);
+                list[i] = { ...c, pts: wpts, d, waveAmpPx: ampPx, waveLenPx: lenPx };
+                return { ...prev, [pid]: list };
+            }
+
+            // прижатая волнистая: есть baseRoutePts
+            if (c.type === 'routed' && Array.isArray(c.baseRoutePts) && c.baseRoutePts.length >= 2) {
+                const wpts = waveAlongPolyline(c.baseRoutePts, ampW, lambdaW, null);
+                const d = catmullRomToBezierPath(wpts);
+                list[i] = { ...c, pts: wpts, d, waveAmpPx: ampPx, waveLenPx: lenPx };
+                return { ...prev, [pid]: list };
+            }
+
+            // не волнистая — ничего не делаем
+            return prev;
+        });
+    };
+
     // линейная интерполяция точки на полилинии по «дуговой длине»
     const pointAtS = (pts, Larr, s) => {
         // Larr — cumulativeLengths(pts)
@@ -306,7 +337,17 @@ export default function CostumeEditor({ initialSVG }) {
                 // прежнее поведение: внутренняя ровная линия
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
-                    arr.push({ ...draft, type: "cubic", ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef, subCount: defaultSubCount });
+                    arr.push({
+                        ...draft,
+                        type: "cubic",
+                        ax: a.x,
+                        ay: a.y,
+                        bx: b.x,
+                        by: b.y,
+                        aRef,
+                        bRef,
+                        subCount: defaultSubCount
+                    });
                     return { ...map, [activePanel.id]: arr };
                 });
             }
@@ -319,7 +360,18 @@ export default function CostumeEditor({ initialSVG }) {
                 const d = catmullRomToBezierPath(wpts);
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
-                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts, ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef, subCount: defaultSubCount });
+                    arr.push({
+                        id: draft.id,
+                        type: "wavy",
+                        aIdx: addBuffer, bIdx: idx,
+                        d, pts: wpts,
+                        // база для пересчёта:
+                        basePts: base,                    // ← исходная «ровная» полилиния
+                        waveAmpPx, waveLenPx,             // ← параметры в пикселях экрана
+                        // остальное
+                        ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef,
+                        subCount: defaultSubCount
+                    });
                     return { ...map, [activePanel.id]: arr };
                 });
             }
@@ -328,28 +380,64 @@ export default function CostumeEditor({ initialSVG }) {
             return;
         }
 
-        // 2) Иначе ведём линию по кратчайшей дуге кромки с отступом внутрь.
-        //    Отступ задаётся в пикселях экрана (edgeInsetPx), здесь переводим в мировые.
         const inset = Math.max(0, edgeInsetPx) * (scale.k || 1);
-        // подменяем anchors на merged, чтобы routeCurveAlongOutline видел «новые вершины»
+
         const panelWithMerged = { ...activePanel, anchors: merged };
-        const routed = routeCurveAlongOutline(
+        const routedStraight = routeCurveAlongOutline(
             panelWithMerged,
             draft,
             inset,
-            lineStyle === "wavy"
-                ? { style: "wavy", ampWorld: waveAmpPx * (scale.k || 1), lambdaWorld: waveLenPx * (scale.k || 1) }
-                : { style: "straight" },
+            { style: "straight" },
             ringsByPanel
         );
 
-        // Если не удалось прижать (крайний случай) — просто выходим в просмотр.
-        if (!routed) {
-            setAddBuffer(null); // остаёмся в режиме добавления
-            return;
+        if (!routedStraight) { setAddBuffer(null); return; }
+
+        let finalD, finalPts;
+        if (lineStyle === "wavy") {
+            const base = routedStraight.pts;
+            const ampW = waveAmpPx * (scale.k || 1);
+            const lambdaW = waveLenPx * (scale.k || 1);
+            const wpts = waveAlongPolyline(base, ampW, lambdaW, null);
+            finalPts = wpts;
+            finalD = catmullRomToBezierPath(wpts);
+            setCurvesByPanel((map) => {
+                const arr = [...(map[activePanel.id] || [])];
+                arr.push({
+                    id: draft.id,
+                    type: "routed",                  // тип не меняем; наличие baseRoutePts говорит, что линия волнистая
+                    aIdx: addBuffer, bIdx: idx,
+                    d: finalD, pts: finalPts,
+                    // база для пересчёта:
+                    baseRoutePts: base,              // ← прямая «кромочная» полилиния
+                    waveAmpPx, waveLenPx,
+                    // коннекторы берём от прямого маршрута
+                    connA: routedStraight.connA,
+                    connB: routedStraight.connB,
+                    ax: a.x, ay: a.y, bx: b.x, by: b.y,
+                    aRef, bRef,
+                    subCount: defaultSubCount
+                });
+                return { ...map, [activePanel.id]: arr };
+            });
+        } else {
+            // обычный «прямой» routed без волны
+            setCurvesByPanel((map) => {
+                const arr = [...(map[activePanel.id] || [])];
+                arr.push({
+                    id: draft.id,
+                    type: "routed",
+                    aIdx: addBuffer, bIdx: idx,
+                    d: routedStraight.d, pts: routedStraight.pts,
+                    connA: routedStraight.connA, connB: routedStraight.connB,
+                    ax: a.x, ay: a.y, bx: b.x, by: b.y,
+                    aRef, bRef,
+                    subCount: defaultSubCount
+                });
+                return { ...map, [activePanel.id]: arr };
+            });
         }
 
-        // 3) Сохраняем «прижатую» кривую и невидимые коннекторы к контуру (для корректной заливки).
         setCurvesByPanel((map) => {
             const arr = [...(map[activePanel.id] || [])];
             arr.push({
@@ -848,32 +936,13 @@ export default function CostumeEditor({ initialSVG }) {
                             <div className={styles.segmented}>
                                 <button
                                     className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
-                                    onClick={() => setLineStyle('straight')}
+                                    onClick={() => { setLineStyle('straight'); setSelectedCurveKey(null); setHoverCurveKey(null); }}
                                 >Прямая</button>
                                 <button
                                     className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
-                                    onClick={() => setLineStyle('wavy')}
+                                    onClick={() => { setLineStyle('wavy'); setSelectedCurveKey(null); setHoverCurveKey(null); }}
                                 >Волнистая</button>
                             </div>
-
-                            {lineStyle === 'wavy' && (
-                                <>
-                                    <div className={styles.subRow}>
-                                        <span className={styles.slimLabel}>Амплитуда</span>
-                                        <input type="range" min={2} max={24} step={1}
-                                            value={waveAmpPx} onChange={e => setWaveAmpPx(+e.target.value)}
-                                            className={styles.rangeCompact} />
-                                        <span className={styles.value}>{waveAmpPx}px</span>
-                                    </div>
-                                    <div className={styles.subRow}>
-                                        <span className={styles.slimLabel}>Длина волны</span>
-                                        <input type="range" min={12} max={80} step={2}
-                                            value={waveLenPx} onChange={e => setWaveLenPx(+e.target.value)}
-                                            className={styles.rangeCompact} />
-                                        <span className={styles.value}>{waveLenPx}px</span>
-                                    </div>
-                                </>
-                            )}
 
                             {lineStyle === 'straight' && (
                                 <>
@@ -923,6 +992,42 @@ export default function CostumeEditor({ initialSVG }) {
                                     <div style={{ fontSize: 12, marginTop: 6 }}>Кликните по линии, чтобы настроить её вершины</div>
                                 </div>
                             )}
+
+                            + {/* Live-параметры волны для выбранной линии */}
+                            {selectedCurveKey && (() => {
+                                const [pid, cid] = selectedCurveKey.split(':');
+                                const cur = (curvesByPanel[pid] || []).find(c => c.id === cid);
+                                if (!cur) return null;
+                                // волнистая, если есть basePts (внутренняя) или baseRoutePts (кромочная)
+                                const isWavyCapable = (cur.type === 'wavy' && cur.basePts) || (cur.type === 'routed' && cur.baseRoutePts);
+                                if (!isWavyCapable) return null;
+                                const amp = Math.max(2, Math.min(24, cur.waveAmpPx ?? waveAmpPx));
+                                const len = Math.max(12, Math.min(80, cur.waveLenPx ?? waveLenPx));
+                                return (
+                                    <>
+                                        <div className={styles.subRow} style={{ marginTop: 10 }}>
+                                            <span className={styles.slimLabel}>Амплитуда (выбранная линия)</span>
+                                            <input
+                                                type="range" min={2} max={24} step={1}
+                                                value={amp}
+                                                onChange={e => recomputeWaveForCurve(pid, cid, +e.target.value, len)}
+                                                className={styles.rangeCompact}
+                                            />
+                                            <span className={styles.value}>{amp}px</span>
+                                        </div>
+                                        <div className={styles.subRow}>
+                                            <span className={styles.slimLabel}>Длина волны (выбранная)</span>
+                                            <input
+                                                type="range" min={12} max={80} step={2}
+                                                value={len}
+                                                onChange={e => recomputeWaveForCurve(pid, cid, amp, +e.target.value)}
+                                                className={styles.rangeCompact}
+                                            />
+                                            <span className={styles.value}>{len}px</span>
+                                        </div>
+                                    </>
+                                );
+                            })()}
 
                         </div>
                     )}
