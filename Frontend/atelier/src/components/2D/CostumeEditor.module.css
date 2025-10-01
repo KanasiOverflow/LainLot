@@ -255,32 +255,46 @@
   r: 5; /* чуть крупнее при наведении */
 }
 
+/* базовая линия пользователя */
 .userCurve {
-  stroke: #ff4d4f;
-  stroke-width: 2.5;
+  stroke: #1f2937;
+  stroke-width: 2px;
   fill: none;
   vector-effect: non-scaling-stroke;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
-.userCurveDeleteHover {
-  stroke: #ff4d4f;
-  stroke-width: 3.5;
-  filter: drop-shadow(0 0 4px rgba(255,77,79,0.6));
-  fill: none;
-  vector-effect: non-scaling-stroke;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+
+/* ослабленная в preview */
 .userCurvePreview {
-  stroke: #111;
-  opacity: .9;
-  stroke-width: 1.2;
-  /* stroke-dasharray: 4 3; */
-  fill: none;
-  vector-effect: non-scaling-stroke;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  stroke-opacity: 0.6;
+}
+
+/* ховер в обычных режимах (синий подсвет) */
+.userCurveHover {
+  stroke-opacity: 1;
+  stroke-width: 2.6px;
+  filter: drop-shadow(0 0 2px rgba(59,130,246,.45));
+}
+
+/* ховер в delete-режиме (красный — уже у тебя есть; если нет, то:) */
+.userCurveDeleteHover {
+  stroke: #ef4444;
+  stroke-width: 2.8px;
+  filter: drop-shadow(0 0 2px rgba(239,68,68,.5));
+}
+
+/* выбранная линия (постоянная подсветка) */
+.userCurveSelected {
+  stroke-width: 3px;
+  filter: drop-shadow(0 0 3px rgba(59,130,246,.55));
+}
+
+/* короткая вспышка при клике */
+@keyframes curveFlash {
+  0%   { stroke-width: 4px; filter: drop-shadow(0 0 6px rgba(59,130,246,.8)); }
+  100% { stroke-width: 3px; filter: drop-shadow(0 0 3px rgba(59,130,246,.55)); }
+}
+.userCurveClicked {
+  animation: curveFlash 200ms ease-out;
 }
 
 /* ===== Inputs ===== */
