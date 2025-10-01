@@ -122,7 +122,15 @@ export default function CostumeEditor({ initialSVG }) {
     const [selectedCurveKey, setSelectedCurveKey] = useState(null); // `${panelId}:${curveId}`
 
     const onCurveClick = (panelId, curveId, e) => {
-        if (mode === "delete") { onCurveClickDelete(panelId, curveId); return; }
+        if (mode === "delete") {
+            onCurveClickDelete(panelId, curveId);
+            return;
+        }
+        if (mode === "preview") {
+            e?.stopPropagation?.();
+            return;
+        }
+
         e?.stopPropagation?.();
         setSelectedCurveKey(`${panelId}:${curveId}`);
         setClickedCurveKey(`${panelId}:${curveId}`);
@@ -415,8 +423,16 @@ export default function CostumeEditor({ initialSVG }) {
         });
     };
 
-    const onCurveEnter = (panelId, id) => { setHoverCurveKey(`${panelId}:${id}`); };
-    const onCurveLeave = (panelId, id) => { setHoverCurveKey(k => (k === `${panelId}:${id}` ? null : k)); };
+    const onCurveEnter = (panelId, id) => {
+        if (mode === 'preview')
+            return;
+        setHoverCurveKey(`${panelId}:${id}`);
+    };
+    const onCurveLeave = (panelId, id) => {
+        if (mode === 'preview')
+            return;
+        setHoverCurveKey(k => (k === `${panelId}:${id}` ? null : k));
+    };
     const onCurveClickDelete = (panelId, id) => {
         if (mode !== "delete") return;
         cascadeDeleteCurve(panelId, id);
@@ -441,6 +457,15 @@ export default function CostumeEditor({ initialSVG }) {
         setFills(fs => fs.filter(f => !(f.panelId === panelId && f.faceKey === fk)));
         setHoverFace(null);
     };
+
+    // Когда входим в preview — снимаем выбор/ховер и сбрасываем буфер добавления
+    useEffect(() => {
+        if (mode === 'preview') {
+            setSelectedCurveKey(null);
+            setHoverCurveKey(null);
+            setAddBuffer(null);
+        }
+    }, [mode]);
 
     useEffect(() => { panelsRef.current = panels; }, [panels]);
 
@@ -720,7 +745,8 @@ export default function CostumeEditor({ initialSVG }) {
                                                 onMouseEnter={() => onCurveEnter(p.id, c.id)}
                                                 onMouseLeave={() => onCurveLeave(p.id, c.id)}
                                                 onClick={(e) => onCurveClick(p.id, c.id, e)}
-                                                style={{ cursor: 'pointer' }}   // курсор «рука» на линиях
+                                                style={{ cursor: mode === 'preview' ? 'default' : 'pointer' }}
+                                                pointerEvents={mode === 'preview' ? 'none' : 'auto'}
                                                 strokeLinecap="round"
                                             />
                                         );
