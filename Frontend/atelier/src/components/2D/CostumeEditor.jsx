@@ -184,12 +184,12 @@ export default function CostumeEditor({ initialSVG }) {
                     if (!a || !b) continue;
                     poly = sampleBezierPoints(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y, 128);
                 } else {
-                    // для wavy используем дискретизацию из c.pts,
-                    // чтобы линия реально резала лицо на две части
+                    // для wavy берём дискретизацию самой линии
                     if (Array.isArray(c.pts) && c.pts.length >= 2) {
-                        return [pointsToPairedPolyline(c.pts)];
+                        poly = c.pts;
+                    } else {
+                        continue;
                     }
-                    return [];
                 }
 
                 if (!poly || poly.length < 2) continue;
@@ -228,6 +228,13 @@ export default function CostumeEditor({ initialSVG }) {
                     const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
                     if (!a || !b) return []; // пропускаем некорректную кривую
                     return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)];
+                }
+                else {
+                    // wavy: используем уже дискретизированные точки линии
+                    if (Array.isArray(c.pts) && c.pts.length >= 2) {
+                        return [pointsToPairedPolyline(c.pts)];
+                    }
+                    return [];
                 }
             });
 
