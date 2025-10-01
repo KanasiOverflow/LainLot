@@ -12,7 +12,7 @@ import {
 } from "../../utils/svgParse.js";
 import { splitByIntersections } from "../../utils/intersections.js";
 import { buildFacesFromSegments, extractPanels, pointInAnyFace } from "../../utils/panels.js";
-import { makeUserCurveBetween, routeCurveAlongOutline } from "../../utils/routes.js";
+import { makeUserCurveBetween } from "../../utils/routes.js";
 
 // --- PRESETS: базовая папка с заранее подготовленными SVG
 const SVG_BASE = "/2d/svg";
@@ -143,27 +143,14 @@ export default function CostumeEditor({ initialSVG }) {
             const ampW = ampPx * (scale.k || 1);
             const lambdaW = lenPx * (scale.k || 1);
 
-            // внутренняя волнистая: есть basePts
             if (c.type === 'wavy' && Array.isArray(c.basePts) && c.basePts.length >= 2) {
                 let wpts = waveAlongPolyline(c.basePts, ampW, lambdaW, null);
                 wpts = snapEnds(wpts, c.ax, c.ay, c.bx, c.by);
                 const d = catmullRomToBezierPath(wpts);
                 list[i] = { ...c, pts: wpts, d, waveAmpPx: ampPx, waveLenPx: lenPx };
-
                 return { ...prev, [pid]: list };
             }
 
-            // прижатая волнистая: есть baseRoutePts
-            if (c.type === 'routed' && Array.isArray(c.baseRoutePts) && c.baseRoutePts.length >= 2) {
-                let wpts = waveAlongPolyline(c.baseRoutePts, ampW, lambdaW, null);
-                wpts = snapEnds(wpts, c.ax, c.ay, c.bx, c.by);
-                const d = catmullRomToBezierPath(wpts);
-                list[i] = { ...c, pts: wpts, d, waveAmpPx: ampPx, waveLenPx: lenPx };
-
-                return { ...prev, [pid]: list };
-            }
-
-            // не волнистая — ничего не делаем
             return prev;
         });
     };
@@ -236,15 +223,6 @@ export default function CostumeEditor({ initialSVG }) {
                     const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
                     if (!a || !b) return []; // пропускаем некорректную кривую
                     return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)];
-                }
-                else {
-                    const lines = [pointsToPairedPolyline(c.pts)];
-                    if (c.connA && c.connA.length === 2)
-                        lines.push(pointsToPairedPolyline(c.connA));
-                    if (c.connB && c.connB.length === 2)
-                        lines.push(pointsToPairedPolyline(c.connB));
-
-                    return lines;
                 }
             });
 
@@ -390,80 +368,15 @@ export default function CostumeEditor({ initialSVG }) {
                 });
             }
 
+            //  внутренняя линия добавлена — выходим из обработчика
             setAddBuffer(null);
             return;
         }
 
-        const inset = Math.max(0, edgeInsetPx) * (scale.k || 1);
-
-        const panelWithMerged = { ...activePanel, anchors: merged };
-        const routedStraight = routeCurveAlongOutline(
-            panelWithMerged,
-            draft,
-            inset,
-            { style: "straight" },
-            ringsByPanel
-        );
-
-        if (!routedStraight) { setAddBuffer(null); return; }
-
-        let finalD, finalPts;
-        if (lineStyle === "wavy") {
-            const base = routedStraight.pts;
-            const ampW = waveAmpPx * (scale.k || 1);
-            const lambdaW = waveLenPx * (scale.k || 1);
-            let wpts = waveAlongPolyline(base, ampW, lambdaW, null);
-            wpts = snapEnds(wpts, a.x, a.y, b.x, b.y); // ← фикс концов
-            finalPts = wpts;
-            finalD = catmullRomToBezierPath(wpts);
-
-            setCurvesByPanel((map) => {
-                const arr = [...(map[activePanel.id] || [])];
-                arr.push({
-                    id: draft.id,
-                    type: "routed",                  // тип не меняем; наличие baseRoutePts говорит, что линия волнистая
-                    aIdx: addBuffer, bIdx: idx,
-                    d: finalD, pts: finalPts,
-                    // база для пересчёта:
-                    baseRoutePts: base,              // ← прямая «кромочная» полилиния
-                    waveAmpPx, waveLenPx,
-                    // коннекторы берём от прямого маршрута
-                    connA: routedStraight.connA,
-                    connB: routedStraight.connB,
-                    ax: a.x, ay: a.y, bx: b.x, by: b.y,
-                    aRef, bRef,
-                    subCount: defaultSubCount
-                });
-                return { ...map, [activePanel.id]: arr };
-            });
-        }
-        else {
-            // обычный «прямой» routed без волны — щёлкнем концы и пересоберём d
-            setCurvesByPanel((map) => {
-                const arr = [...(map[activePanel.id] || [])];
-
-                let base = routedStraight.pts;
-                base = snapEnds(base, a.x, a.y, b.x, b.y);         // ← конец-в-конец к выбранным вершинам
-                const dFixed = catmullRomToBezierPath(base);       // ← новый path из исправленных точек
-
-                arr.push({
-                    id: draft.id,
-                    type: "routed",
-                    aIdx: addBuffer, bIdx: idx,
-                    d: dFixed,
-                    pts: base,
-                    connA: routedStraight.connA,
-                    connB: routedStraight.connB,
-                    ax: a.x, ay: a.y, bx: b.x, by: b.y,
-                    aRef, bRef,
-                    subCount: defaultSubCount
-                });
-                return { ...map, [activePanel.id]: arr };
-            });
-        }
-
-        // очистка состояния
+        //  иначе (вышла за деталь) — прижатые запрещены
+        setToast({ text: "Линия выходит за пределы детали. Прижатые к краю линии отключены." });
         setAddBuffer(null);
+        return;
     };
 
     const cascadeDeleteCurve = (panelId, rootCurveId) => {
@@ -516,9 +429,6 @@ export default function CostumeEditor({ initialSVG }) {
         setFills(fs => fs.filter(f => !(f.panelId === panelId && f.faceKey === fk)));
         setHoverFace(null);
     };
-
-    // ...другие состояния
-    const [edgeInsetPx, setEdgeInsetPx] = useState(8); // отступ от края, px экрана
 
     useEffect(() => { panelsRef.current = panels; }, [panels]);
 
@@ -980,7 +890,7 @@ export default function CostumeEditor({ initialSVG }) {
                                 };
 
                                 // --- ВОЛНА (видна только когда lineStyle === 'wavy') ---
-                                const curveIsWavyCapable = !!(curve && ((curve.type === 'wavy' && curve.basePts) || (curve.type === 'routed' && curve.baseRoutePts)));
+                                const curveIsWavyCapable = !!(curve && curve.type === 'wavy' && curve.basePts);
                                 const currentAmp = hasSelection ? (curve?.waveAmpPx ?? waveAmpPx) : waveAmpPx;
                                 const currentLen = hasSelection ? (curve?.waveLenPx ?? waveLenPx) : waveLenPx;
 
@@ -998,10 +908,6 @@ export default function CostumeEditor({ initialSVG }) {
                                         setWaveLenPx(val); // преднастройка для новой волнистой
                                     }
                                 };
-
-                                // --- ОТСТУП ОТ КРОМКИ (всегда видим) ---
-                                // работает как преднастройка, а если выбрана routed-линия — просто показываем текущее значение (live-изменение ей не нужно)
-                                const insetValue = edgeInsetPx;
 
                                 return (
                                     <>
@@ -1060,20 +966,6 @@ export default function CostumeEditor({ initialSVG }) {
                                                 </div>
                                             </>
                                         )}
-
-                                        {/* Отступ от края — всегда виден (общий параметр) */}
-                                        <div className={styles.subRow} style={{ marginTop: 8 }}>
-                                            <span className={styles.slimLabel}>
-                                                {hasSelection ? 'Отступ от края (шаблон)' : 'Отступ от края (для новой)'}
-                                            </span>
-                                            <input
-                                                type="range" min={0} max={24} step={1}
-                                                value={insetValue}
-                                                onChange={e => setEdgeInsetPx(+e.target.value)}
-                                                className={styles.rangeCompact}
-                                            />
-                                            <span className={styles.value}>{insetValue}px</span>
-                                        </div>
                                     </>
                                 );
                             })()}
