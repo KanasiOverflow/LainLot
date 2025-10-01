@@ -354,6 +354,11 @@
   box-shadow: 0 6px 18px rgba(0,0,0,.06); font-weight: 600;
 }
 
+/* приглушение неактивных деталей */
+.panelDimmed {
+  opacity: .55;
+}
+
 /* ===== Responsive ===== */
 @media (max-height: 900px) {
   .layout { height: calc(100dvh - 140px); }

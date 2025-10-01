@@ -7,14 +7,6 @@ import { looksLikeBackground } from "./heuristics.js";
 import { parseViewBox, parseMatrix, applyMatrixToSegs } from "./transforms.js";
 import { collectAnchors } from "./anchors.js";
 
-const KEYWORDS = {
-    front: /(^|[^a-z])(front|перед)([^a-z]|$)/i,
-    back: /(^|[^a-z])(back|спинка)([^a-z]|$)/i,
-    hood: /(^|[^a-z])(hood|капюш)([^a-z]|$)/i,
-    sleeve: /(^|[^a-z])(sleeve|рукав)([^a-z]|$)/i,
-    pocket: /(^|[^a-z])(pocket|карман)([^a-z]|$)/i,
-};
-
 /* ================== настройки ================== */
 const PANEL_MAX_COUNT = 12;
 const PANEL_MIN_AREA_RATIO_DEFAULT = 0.005; // 0.3–0.8% обычно хватает для деталей
@@ -101,9 +93,13 @@ export const buildFacesFromSegments = (segments) => {
 export const pushCandidate = (candidates, segs, tag, label) => {
     if (!segs || !segs.length) return;
     const bb = getBounds(segs);
+    // имя берём строго из SVG: label → id
+    const mLabel = tag.match(/\s(?:inkscape:label|data-name|title)=["']([^"']+)["']/i);
+    const mId = tag.match(/\sid=["']([^"']+)["']/i);
+    const name = (label ?? mLabel?.[1] ?? mId?.[1] ?? "").trim();
     candidates.push({
         segs,
-        label: label ?? (tag.match(/\sid="([^"]+)"/i)?.[1] || ""),
+        label: name,
         bbox: bb,
         bboxArea: Math.abs(bb.w * bb.h) || 1,
         rawTag: tag
@@ -293,7 +289,7 @@ export const extractPanels = (rawSVG) => {
         const m = rawSVG.match(/<path[^>]*\sd="([^"]+)"[^>]*>/i);
         if (m) {
             const segs0 = ensureClosed(parsePathD(m[1]));
-            pushCandidate(candidates, segs0, "<path>", "Панель");
+            pushCandidate(candidates, segs0, "<path>", "panel");
         }
     }
     if (!candidates.length)
@@ -336,22 +332,13 @@ export const extractPanels = (rawSVG) => {
     filtered = uniq;
 
     // --- Финально
-    return filtered.map((c, idx) => {
-        let name = c.label || `Панель ${idx + 1}`;
-        const lbl = c.label || "";
-        if (KEYWORDS.front.test(lbl)) name = "Перед";
-        else if (KEYWORDS.back.test(lbl)) name = "Спинка";
-        else if (KEYWORDS.hood.test(lbl)) name = "Капюшон";
-        else if (KEYWORDS.pocket.test(lbl)) name = "Карман";
-        else if (KEYWORDS.sleeve.test(lbl)) name = "Рукав";
-
-        return {
-            id: String(idx + 1),
-            label: name,
-            segs: c.segs,
-            anchors: collectAnchors(c.segs)
-        };
-    });
+    return filtered.map((c, idx) => ({
+        id: String(idx + 1),
+        // показываем ровно то, что пришло из SVG; если пусто — нейтральный fallback
+        label: c.label || `panel_${idx + 1}`,
+        segs: c.segs,
+        anchors: collectAnchors(c.segs)
+    }));
 }
 
 export const pointInAnyFace = (p, faces) => {
