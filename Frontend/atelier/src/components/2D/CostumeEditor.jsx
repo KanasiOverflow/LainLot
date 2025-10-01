@@ -117,7 +117,18 @@ export default function CostumeEditor({ initialSVG }) {
         return res;
     }, [panels]);
 
-    const [subAnchorCount, setSubAnchorCount] = useState(2); // 2..10
+    const [defaultSubCount, setDefaultSubCount] = useState(2); // используется только при создании новых линий
+    const [selectedCurveKey, setSelectedCurveKey] = useState(null); // `${panelId}:${curveId}`
+
+    const onCurveClick = (panelId, curveId, e) => {
+        if (mode === "delete") { onCurveClickDelete(panelId, curveId); return; }
+        e?.stopPropagation?.();
+        setSelectedCurveKey(`${panelId}:${curveId}`);
+    };
+
+    const onCanvasClick = () => {
+        if (mode !== 'delete') setSelectedCurveKey(null);
+    };
 
     // линейная интерполяция точки на полилинии по «дуговой длине»
     const pointAtS = (pts, Larr, s) => {
@@ -155,7 +166,7 @@ export default function CostumeEditor({ initialSVG }) {
 
                 const L = cumulativeLengths(poly);
                 const total = L[L.length - 1] || 1;
-                const n = Math.max(2, Math.min(10, subAnchorCount));
+                const n = Math.max(2, Math.min(10, c?.subCount ?? defaultSubCount ?? 2));
                 for (let k = 1; k <= n; k++) {
                     const s = (total * k) / (n + 1);
                     const pt = pointAtS(poly, L, s);
@@ -165,7 +176,7 @@ export default function CostumeEditor({ initialSVG }) {
             map[p.id] = arr;
         }
         return map;
-    }, [panels, curvesByPanel, subAnchorCount]);
+    }, [panels, curvesByPanel, defaultSubCount]);
 
     // утилита для объединённого списка вершин панели
     const mergedAnchorsOf = useCallback((p) => {
@@ -292,7 +303,7 @@ export default function CostumeEditor({ initialSVG }) {
                 // прежнее поведение: внутренняя ровная линия
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
-                    arr.push({ ...draft, type: "cubic", ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef });
+                    arr.push({ ...draft, type: "cubic", ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef, subCount: defaultSubCount });
                     return { ...map, [activePanel.id]: arr };
                 });
             }
@@ -305,7 +316,7 @@ export default function CostumeEditor({ initialSVG }) {
                 const d = catmullRomToBezierPath(wpts);
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
-                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts, ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef });
+                    arr.push({ id: draft.id, type: "wavy", aIdx: addBuffer, bIdx: idx, d, pts: wpts, ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef, subCount: defaultSubCount });
                     return { ...map, [activePanel.id]: arr };
                 });
             }
@@ -349,7 +360,8 @@ export default function CostumeEditor({ initialSVG }) {
                 connB: routed.connB, // [Q1, P1] — коннектор к кромке
                 ax: a.x, ay: a.y, bx: b.x, by: b.y,
                 aRef,
-                bRef
+                bRef,
+                subCount: defaultSubCount
             });
             return { ...map, [activePanel.id]: arr };
         });
@@ -361,7 +373,6 @@ export default function CostumeEditor({ initialSVG }) {
     const cascadeDeleteCurve = (panelId, rootCurveId) => {
         setCurvesByPanel(prev => {
             const arr = [...(prev[panelId] || [])];
-            // 1) собираем id всех зависимых кривых (BFS)
             const toDelete = new Set([rootCurveId]);
             let changed = true;
             while (changed) {
@@ -370,13 +381,14 @@ export default function CostumeEditor({ initialSVG }) {
                     if (toDelete.has(c.id)) continue;
                     const aHit = c.aRef?.type === 'extra' && c.aRef.curveId && toDelete.has(c.aRef.curveId);
                     const bHit = c.bRef?.type === 'extra' && c.bRef.curveId && toDelete.has(c.bRef.curveId);
-                    if (aHit || bHit) {
-                        toDelete.add(c.id);
-                        changed = true;
-                    }
+                    if (aHit || bHit) { toDelete.add(c.id); changed = true; }
                 }
             }
-            // 2) фильтруем
+            // сброс выбора, если выбранная линия попала в toDelete
+            if (selectedCurveKey) {
+                const [pid, cid] = selectedCurveKey.split(':');
+                if (pid === panelId && toDelete.has(cid)) setSelectedCurveKey(null);
+            }
             const kept = arr.filter(c => !toDelete.has(c.id));
             return { ...prev, [panelId]: kept };
         });
@@ -595,6 +607,7 @@ export default function CostumeEditor({ initialSVG }) {
                         className={`${styles.canvas} ${styles.stage} ${isSwapping ? styles.swapIn : (!didEverSwapRef.current ? styles.svgEnter : "")}`}
                         viewBox={viewBox}
                         preserveAspectRatio="xMidYMid meet"
+                        onClick={onCanvasClick}
                     >
                         {/* GRID */}
                         <defs>
@@ -671,10 +684,13 @@ export default function CostumeEditor({ initialSVG }) {
                                             : c.d; // 'routed'/'wavy'
 
                                         const key = `${p.id}:${c.id}`;
-                                        const cls = (mode === 'delete' && hoverCurveKey === key)
-                                            ? styles.userCurveDeleteHover
-                                            : (mode === 'preview' ? styles.userCurvePreview : styles.userCurve);
-
+                                        const isSelected = selectedCurveKey === key;
+                                        const cls = clsx(
+                                            styles.userCurve,                                   // базовый стиль
+                                            mode === 'preview' && styles.userCurvePreview,      // ослабленный в preview
+                                            ((mode === 'delete' && hoverCurveKey === key) || isSelected) && styles.userCurveDeleteHover
+                                            // ↑ используем тот же яркий стиль, что и при delete-hover, ещё и для выбранной линии
+                                        );
                                         return (
                                             <path
                                                 key={c.id}
@@ -682,7 +698,7 @@ export default function CostumeEditor({ initialSVG }) {
                                                 className={cls}
                                                 onMouseEnter={() => onCurveEnter(p.id, c.id)}
                                                 onMouseLeave={() => onCurveLeave(p.id, c.id)}
-                                                onClick={() => onCurveClickDelete(p.id, c.id)}
+                                                onClick={(e) => onCurveClick(p.id, c.id, e)}
                                             />
                                         );
                                     })}
@@ -692,6 +708,7 @@ export default function CostumeEditor({ initialSVG }) {
                                         const base = p.anchors || [];
                                         const extras = extraAnchorsByPanel[p.id] || [];
                                         const merged = [...base, ...extras];
+
                                         return merged.map((pt, mi) => (
                                             <circle
                                                 key={`m-${mi}`}
@@ -704,12 +721,13 @@ export default function CostumeEditor({ initialSVG }) {
                                                     mi === hoverAnchorIdx && styles.anchorHovered,
                                                     mi === addBuffer && styles.anchorSelectedA
                                                 )}
-                                                onClick={() => onAnchorClickAddMode(mi)}
+                                                onClick={(e) => { e.stopPropagation(); onAnchorClickAddMode(mi); }}
                                                 onMouseEnter={() => setHoverAnchorIdx(mi)}
                                                 onMouseLeave={() => setHoverAnchorIdx(null)}
                                             />
                                         ));
                                     })()}
+
                                 </g>
                             );
                         })}
@@ -865,20 +883,40 @@ export default function CostumeEditor({ initialSVG }) {
                                 </>
                             )}
 
-                            {/* NEW: количество новых вершин на любой пользовательской линии */}
-                            <div className={styles.subRow} style={{ marginTop: 10 }}>
-                                <span className={styles.slimLabel}>Новые вершины</span>
-                                <input
-                                    type="range"
-                                    min={2}
-                                    max={10}
-                                    step={1}
-                                    value={subAnchorCount}
-                                    onChange={e => setSubAnchorCount(+e.target.value)}
-                                    className={styles.rangeCompact}
-                                />
-                                <span className={styles.value}>{subAnchorCount}</span>
-                            </div>
+                            {/* Управление количеством новых вершин на выбранной линии */}
+                            {selectedCurveKey ? (() => {
+                                const [pid, cid] = selectedCurveKey.split(':');
+                                const curve = (curvesByPanel[pid] || []).find(c => c.id === cid);
+                                if (!curve) return null;
+                                const value = Math.max(2, Math.min(10, curve.subCount ?? 2));
+                                const onChange = (n) => {
+                                    setCurvesByPanel(prev => {
+                                        const arr = [...(prev[pid] || [])];
+                                        const i = arr.findIndex(x => x.id === cid);
+                                        if (i >= 0) arr[i] = { ...arr[i], subCount: n };
+                                        return { ...prev, [pid]: arr };
+                                    });
+                                };
+                                return (
+                                    <div className={styles.subRow} style={{ marginTop: 10 }}>
+                                        <span className={styles.slimLabel}>Вершины на выбранной линии</span>
+                                        <input
+                                            type="range" min={2} max={10} step={1}
+                                            value={value}
+                                            onChange={e => onChange(+e.target.value)}
+                                            className={styles.rangeCompact}
+                                        />
+                                        <span className={styles.value}>{value}</span>
+                                    </div>
+                                );
+                            })() : (
+                                <div className={styles.subRow} style={{ marginTop: 10, opacity: 0.8 }}>
+                                    <span className={styles.slimLabel}>Вершины на линии</span>
+                                    <span className={styles.value}>—</span>
+                                    <div style={{ fontSize: 12, marginTop: 6 }}>Кликните по линии, чтобы настроить её вершины</div>
+                                </div>
+                            )}
+
                         </div>
                     )}
 
