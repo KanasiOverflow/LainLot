@@ -145,17 +145,21 @@ export default function CostumeEditor({ initialSVG }) {
 
             // внутренняя волнистая: есть basePts
             if (c.type === 'wavy' && Array.isArray(c.basePts) && c.basePts.length >= 2) {
-                const wpts = waveAlongPolyline(c.basePts, ampW, lambdaW, null);
+                let wpts = waveAlongPolyline(c.basePts, ampW, lambdaW, null);
+                wpts = snapEnds(wpts, c.ax, c.ay, c.bx, c.by);
                 const d = catmullRomToBezierPath(wpts);
                 list[i] = { ...c, pts: wpts, d, waveAmpPx: ampPx, waveLenPx: lenPx };
+
                 return { ...prev, [pid]: list };
             }
 
             // прижатая волнистая: есть baseRoutePts
             if (c.type === 'routed' && Array.isArray(c.baseRoutePts) && c.baseRoutePts.length >= 2) {
-                const wpts = waveAlongPolyline(c.baseRoutePts, ampW, lambdaW, null);
+                let wpts = waveAlongPolyline(c.baseRoutePts, ampW, lambdaW, null);
+                wpts = snapEnds(wpts, c.ax, c.ay, c.bx, c.by);
                 const d = catmullRomToBezierPath(wpts);
                 list[i] = { ...c, pts: wpts, d, waveAmpPx: ampPx, waveLenPx: lenPx };
+
                 return { ...prev, [pid]: list };
             }
 
@@ -230,7 +234,7 @@ export default function CostumeEditor({ initialSVG }) {
                 if (c.type === "cubic") {
                     const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
                     const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
-
+                    if (!a || !b) return []; // пропускаем некорректную кривую
                     return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)];
                 }
                 else {
@@ -275,6 +279,14 @@ export default function CostumeEditor({ initialSVG }) {
     }, [panels, ringsByPanel]);
     /* ===== действия ===== */
     const activePanel = panels[0] || null;
+
+    const snapEnds = (pts, ax, ay, bx, by) => {
+        if (!Array.isArray(pts) || pts.length < 2) return pts;
+        const out = pts.slice();
+        out[0] = { x: ax, y: ay };
+        out[out.length - 1] = { x: bx, y: by };
+        return out;
+    };
 
     // определить источник точки по merged-индексу
     const makeRefForMergedIndex = (panel, mi) => {
@@ -356,8 +368,10 @@ export default function CostumeEditor({ initialSVG }) {
                 const base = sampleBezierPoints(a.x, a.y, draft.c1.x, draft.c1.y, draft.c2.x, draft.c2.y, b.x, b.y, 64);
                 const ampW = waveAmpPx * (scale.k || 1);
                 const lambdaW = waveLenPx * (scale.k || 1);
-                const wpts = waveAlongPolyline(base, ampW, lambdaW, null);
+                let wpts = waveAlongPolyline(base, ampW, lambdaW, null);
+                wpts = snapEnds(wpts, a.x, a.y, b.x, b.y); // ← фикс концов
                 const d = catmullRomToBezierPath(wpts);
+
                 setCurvesByPanel((map) => {
                     const arr = [...(map[activePanel.id] || [])];
                     arr.push({
@@ -398,9 +412,11 @@ export default function CostumeEditor({ initialSVG }) {
             const base = routedStraight.pts;
             const ampW = waveAmpPx * (scale.k || 1);
             const lambdaW = waveLenPx * (scale.k || 1);
-            const wpts = waveAlongPolyline(base, ampW, lambdaW, null);
+            let wpts = waveAlongPolyline(base, ampW, lambdaW, null);
+            wpts = snapEnds(wpts, a.x, a.y, b.x, b.y); // ← фикс концов
             finalPts = wpts;
             finalD = catmullRomToBezierPath(wpts);
+
             setCurvesByPanel((map) => {
                 const arr = [...(map[activePanel.id] || [])];
                 arr.push({
@@ -420,16 +436,22 @@ export default function CostumeEditor({ initialSVG }) {
                 });
                 return { ...map, [activePanel.id]: arr };
             });
-        } else {
-            // обычный «прямой» routed без волны
+        }
+        else {
+            // обычный «прямой» routed без волны — щёлкнем концы и пересоберём d
             setCurvesByPanel((map) => {
                 const arr = [...(map[activePanel.id] || [])];
+
+                let base = routedStraight.pts;
+                base = snapEnds(base, a.x, a.y, b.x, b.y);         // ← конец-в-конец к выбранным вершинам
+                const dFixed = catmullRomToBezierPath(base);       // ← новый path из исправленных точек
+
                 arr.push({
                     id: draft.id,
                     type: "routed",
                     aIdx: addBuffer, bIdx: idx,
-                    d: routedStraight.d,
-                    pts: routedStraight.pts,
+                    d: dFixed,
+                    pts: base,
                     connA: routedStraight.connA,
                     connB: routedStraight.connB,
                     ax: a.x, ay: a.y, bx: b.x, by: b.y,
@@ -439,25 +461,6 @@ export default function CostumeEditor({ initialSVG }) {
                 return { ...map, [activePanel.id]: arr };
             });
         }
-
-        setCurvesByPanel((map) => {
-            const arr = [...(map[activePanel.id] || [])];
-            arr.push({
-                id: draft.id,
-                type: "routed",
-                aIdx: addBuffer,
-                bIdx: idx,
-                d: routedStraight.d,       // сглаженный путь для рендера
-                pts: routedStraight.pts,   // точки прижатой дуги (для faces)
-                connA: routedStraight.connA, // [Q0, P0] — коннектор к кромке
-                connB: routedStraight.connB, // [Q1, P1] — коннектор к кромке
-                ax: a.x, ay: a.y, bx: b.x, by: b.y,
-                aRef,
-                bRef,
-                subCount: defaultSubCount
-            });
-            return { ...map, [activePanel.id]: arr };
-        });
 
         // очистка состояния
         setAddBuffer(null);
@@ -796,6 +799,7 @@ export default function CostumeEditor({ initialSVG }) {
                                                 onMouseLeave={() => onCurveLeave(p.id, c.id)}
                                                 onClick={(e) => onCurveClick(p.id, c.id, e)}
                                                 style={{ cursor: 'pointer' }}   // курсор «рука» на линиях
+                                                strokeLinecap="round"
                                             />
                                         );
                                     })}
