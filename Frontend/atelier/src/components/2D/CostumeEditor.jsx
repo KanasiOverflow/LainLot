@@ -946,86 +946,127 @@ export default function CostumeEditor({ initialSVG }) {
                                 >Волнистая</button>
                             </div>
 
-                            {lineStyle === 'straight' && (
-                                <>
-                                    <div className={styles.subRow} style={{ marginTop: 8 }}>
-                                        <span className={styles.slimLabel}>Отступ от края</span>
-                                        <input type="range" min={0} max={24} step={1}
-                                            value={edgeInsetPx} onChange={e => setEdgeInsetPx(+e.target.value)}
-                                            className={styles.rangeCompact} />
-                                        <span className={styles.value}>{edgeInsetPx}px</span>
-                                    </div>
-                                    <div className={styles.hintSmall}>
-                                        Используется, когда прямая выходит за деталь: линия ведётся по кромке с этим отступом внутрь.
-                                    </div>
-                                </>
-                            )}
+                            {/* === НАСТРОЙКИ ЛИНИИ: преднастройка или редактирование выбранной === */}
+                            {(() => {
+                                const hasSelection = !!selectedCurveKey;
+                                let curve = null, pid = null, cid = null;
+                                if (hasSelection) {
+                                    [pid, cid] = selectedCurveKey.split(':');
+                                    curve = (curvesByPanel[pid] || []).find(c => c.id === cid) || null;
+                                }
 
-                            {/* Управление количеством новых вершин на выбранной линии */}
-                            {selectedCurveKey ? (() => {
-                                const [pid, cid] = selectedCurveKey.split(':');
-                                const curve = (curvesByPanel[pid] || []).find(c => c.id === cid);
-                                if (!curve) return null;
-                                const value = Math.max(2, Math.min(10, curve.subCount ?? 2));
-                                const onChange = (n) => {
-                                    setCurvesByPanel(prev => {
-                                        const arr = [...(prev[pid] || [])];
-                                        const i = arr.findIndex(x => x.id === cid);
-                                        if (i >= 0) arr[i] = { ...arr[i], subCount: n };
-                                        return { ...prev, [pid]: arr };
-                                    });
+                                // --- ВЕРШИНЫ (всегда видимы) ---
+                                const currentSub = hasSelection
+                                    ? Math.max(2, Math.min(10, curve?.subCount ?? 2))
+                                    : Math.max(2, Math.min(10, defaultSubCount));
+
+                                const changeSub = (n) => {
+                                    if (hasSelection) {
+                                        setCurvesByPanel(prev => {
+                                            const arr = [...(prev[pid] || [])];
+                                            const i = arr.findIndex(x => x.id === cid);
+                                            if (i >= 0) arr[i] = { ...arr[i], subCount: n };
+                                            return { ...prev, [pid]: arr };
+                                        });
+                                    } else {
+                                        setDefaultSubCount(n); // преднастройка для новой линии
+                                    }
                                 };
-                                return (
-                                    <div className={styles.subRow} style={{ marginTop: 10 }}>
-                                        <span className={styles.slimLabel}>Вершины на выбранной линии</span>
-                                        <input
-                                            type="range" min={2} max={10} step={1}
-                                            value={value}
-                                            onChange={e => onChange(+e.target.value)}
-                                            className={styles.rangeCompact}
-                                        />
-                                        <span className={styles.value}>{value}</span>
-                                    </div>
-                                );
-                            })() : (
-                                <div className={styles.subRow} style={{ marginTop: 10, opacity: 0.8 }}>
-                                    <span className={styles.slimLabel}>Вершины на линии</span>
-                                    <span className={styles.value}>—</span>
-                                    <div style={{ fontSize: 12, marginTop: 6 }}>Кликните по линии, чтобы настроить её вершины</div>
-                                </div>
-                            )}
 
-                            + {/* Live-параметры волны для выбранной линии */}
-                            {selectedCurveKey && (() => {
-                                const [pid, cid] = selectedCurveKey.split(':');
-                                const cur = (curvesByPanel[pid] || []).find(c => c.id === cid);
-                                if (!cur) return null;
-                                // волнистая, если есть basePts (внутренняя) или baseRoutePts (кромочная)
-                                const isWavyCapable = (cur.type === 'wavy' && cur.basePts) || (cur.type === 'routed' && cur.baseRoutePts);
-                                if (!isWavyCapable) return null;
-                                const amp = Math.max(2, Math.min(24, cur.waveAmpPx ?? waveAmpPx));
-                                const len = Math.max(12, Math.min(80, cur.waveLenPx ?? waveLenPx));
+                                // --- ВОЛНА (видна только когда lineStyle === 'wavy') ---
+                                const curveIsWavyCapable = !!(curve && ((curve.type === 'wavy' && curve.basePts) || (curve.type === 'routed' && curve.baseRoutePts)));
+                                const currentAmp = hasSelection ? (curve?.waveAmpPx ?? waveAmpPx) : waveAmpPx;
+                                const currentLen = hasSelection ? (curve?.waveLenPx ?? waveLenPx) : waveLenPx;
+
+                                const changeAmp = (val) => {
+                                    if (hasSelection && curveIsWavyCapable) {
+                                        recomputeWaveForCurve(pid, cid, val, currentLen); // live-редактирование выбранной волнистой
+                                    } else {
+                                        setWaveAmpPx(val); // преднастройка для новой волнистой
+                                    }
+                                };
+                                const changeLen = (val) => {
+                                    if (hasSelection && curveIsWavyCapable) {
+                                        recomputeWaveForCurve(pid, cid, currentAmp, val);
+                                    } else {
+                                        setWaveLenPx(val); // преднастройка для новой волнистой
+                                    }
+                                };
+
+                                // --- ОТСТУП ОТ КРОМКИ (всегда видим) ---
+                                // работает как преднастройка, а если выбрана routed-линия — просто показываем текущее значение (live-изменение ей не нужно)
+                                const insetValue = edgeInsetPx;
+
                                 return (
                                     <>
-                                        <div className={styles.subRow} style={{ marginTop: 10 }}>
-                                            <span className={styles.slimLabel}>Амплитуда (выбранная линия)</span>
-                                            <input
-                                                type="range" min={2} max={24} step={1}
-                                                value={amp}
-                                                onChange={e => recomputeWaveForCurve(pid, cid, +e.target.value, len)}
-                                                className={styles.rangeCompact}
-                                            />
-                                            <span className={styles.value}>{amp}px</span>
+                                        {/* индикатор */}
+                                        <div className={styles.hintSmall} style={{ marginTop: 6, marginBottom: 4 }}>
+                                            {hasSelection
+                                                ? 'Редактирование выбранной линии'
+                                                : `Преднастройка новой линии (${lineStyle === 'wavy' ? 'волнистая' : 'прямая'})`}
                                         </div>
-                                        <div className={styles.subRow}>
-                                            <span className={styles.slimLabel}>Длина волны (выбранная)</span>
+
+                                        {/* Вершины — всегда */}
+                                        <div className={styles.subRow} style={{ marginTop: 6 }}>
+                                            <span className={styles.slimLabel}>
+                                                {hasSelection ? 'Вершины на линии' : 'Вершины (для новой)'}
+                                            </span>
                                             <input
-                                                type="range" min={12} max={80} step={2}
-                                                value={len}
-                                                onChange={e => recomputeWaveForCurve(pid, cid, amp, +e.target.value)}
+                                                type="range" min={2} max={10} step={1}
+                                                value={currentSub}
+                                                onChange={e => changeSub(+e.target.value)}
                                                 className={styles.rangeCompact}
                                             />
-                                            <span className={styles.value}>{len}px</span>
+                                            <span className={styles.value}>{currentSub}</span>
+                                        </div>
+
+                                        {/* Амплитуда/Длина волны — показываем только в режиме волнистой линии */}
+                                        {lineStyle === 'wavy' && (
+                                            <>
+                                                <div className={styles.subRow} style={{ marginTop: 8 }}>
+                                                    <span className={styles.slimLabel}>
+                                                        {hasSelection
+                                                            ? (curveIsWavyCapable ? 'Амплитуда на линии' : 'Амплитуда (шаблон)')
+                                                            : 'Амплитуда (для новой волнистой)'}
+                                                    </span>
+                                                    <input
+                                                        type="range" min={2} max={24} step={1}
+                                                        value={currentAmp}
+                                                        onChange={e => changeAmp(+e.target.value)}
+                                                        className={styles.rangeCompact}
+                                                    />
+                                                    <span className={styles.value}>{currentAmp}px</span>
+                                                </div>
+
+                                                <div className={styles.subRow}>
+                                                    <span className={styles.slimLabel}>
+                                                        {hasSelection
+                                                            ? (curveIsWavyCapable ? 'Длина волны на линии' : 'Длина волны (шаблон)')
+                                                            : 'Длина волны (для новой)'}
+                                                    </span>
+                                                    <input
+                                                        type="range" min={12} max={80} step={2}
+                                                        value={currentLen}
+                                                        onChange={e => changeLen(+e.target.value)}
+                                                        className={styles.rangeCompact}
+                                                    />
+                                                    <span className={styles.value}>{currentLen}px</span>
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {/* Отступ от края — всегда виден (общий параметр) */}
+                                        <div className={styles.subRow} style={{ marginTop: 8 }}>
+                                            <span className={styles.slimLabel}>
+                                                {hasSelection ? 'Отступ от края (шаблон)' : 'Отступ от края (для новой)'}
+                                            </span>
+                                            <input
+                                                type="range" min={0} max={24} step={1}
+                                                value={insetValue}
+                                                onChange={e => setEdgeInsetPx(+e.target.value)}
+                                                className={styles.rangeCompact}
+                                            />
+                                            <span className={styles.value}>{insetValue}px</span>
                                         </div>
                                     </>
                                 );
