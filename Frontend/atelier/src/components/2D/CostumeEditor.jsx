@@ -52,6 +52,7 @@ export default function CostumeEditor({ initialSVG }) {
     const [addBuffer, setAddBuffer] = useState(null);
     const [hoverAnchorIdx, setHoverAnchorIdx] = useState(null);
     const [hoverCurveKey, setHoverCurveKey] = useState(null);
+    const [clickedCurveKey, setClickedCurveKey] = useState(null);
     const [hoverFace, setHoverFace] = useState(null);
     const [toast, setToast] = useState(null);
     // тип пользовательской линии
@@ -124,6 +125,8 @@ export default function CostumeEditor({ initialSVG }) {
         if (mode === "delete") { onCurveClickDelete(panelId, curveId); return; }
         e?.stopPropagation?.();
         setSelectedCurveKey(`${panelId}:${curveId}`);
+        setClickedCurveKey(`${panelId}:${curveId}`);
+        setTimeout(() => setClickedCurveKey(k => (k === `${panelId}:${curveId}` ? null : k)), 220);
     };
 
     const onCanvasClick = () => {
@@ -394,8 +397,8 @@ export default function CostumeEditor({ initialSVG }) {
         });
     };
 
-    const onCurveEnter = (panelId, id) => { if (mode === "delete") setHoverCurveKey(`${panelId}:${id}`); };
-    const onCurveLeave = (panelId, id) => { if (mode === "delete") setHoverCurveKey(k => (k === `${panelId}:${id}` ? null : k)); };
+    const onCurveEnter = (panelId, id) => { setHoverCurveKey(`${panelId}:${id}`); };
+    const onCurveLeave = (panelId, id) => { setHoverCurveKey(k => (k === `${panelId}:${id}` ? null : k)); };
     const onCurveClickDelete = (panelId, id) => {
         if (mode !== "delete") return;
         cascadeDeleteCurve(panelId, id);
@@ -684,12 +687,15 @@ export default function CostumeEditor({ initialSVG }) {
                                             : c.d; // 'routed'/'wavy'
 
                                         const key = `${p.id}:${c.id}`;
+                                        const isHover = hoverCurveKey === key;
                                         const isSelected = selectedCurveKey === key;
+                                        const isClicked = clickedCurveKey === key;
                                         const cls = clsx(
-                                            styles.userCurve,                                   // базовый стиль
-                                            mode === 'preview' && styles.userCurvePreview,      // ослабленный в preview
-                                            ((mode === 'delete' && hoverCurveKey === key) || isSelected) && styles.userCurveDeleteHover
-                                            // ↑ используем тот же яркий стиль, что и при delete-hover, ещё и для выбранной линии
+                                            styles.userCurve,
+                                            mode === 'preview' && styles.userCurvePreview,   // мягче в preview
+                                            (mode === 'delete' && isHover) && styles.userCurveDeleteHover, // красный в delete
+                                            isSelected && styles.userCurveSelected,          // выбранная линия (толще/подсветка)
+                                            isClicked && styles.userCurveClicked             // короткая вспышка при клике
                                         );
                                         return (
                                             <path
@@ -699,6 +705,7 @@ export default function CostumeEditor({ initialSVG }) {
                                                 onMouseEnter={() => onCurveEnter(p.id, c.id)}
                                                 onMouseLeave={() => onCurveLeave(p.id, c.id)}
                                                 onClick={(e) => onCurveClick(p.id, c.id, e)}
+                                                style={{ cursor: 'pointer' }}   // курсор «рука» на линиях
                                             />
                                         );
                                     })}
