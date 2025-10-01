@@ -928,8 +928,10 @@ export default function CostumeEditor({ initialSVG }) {
                             <div className={styles.sectionTitle}>Линия</div>
 
                             <div className={`${styles.segmented} ${styles.two}`} style={{ marginBottom: 8 }}>
-                                <button className={`${styles.segBtn} ${mode === 'add' ? styles.segActive : ''}`} onClick={() => { setMode('add'); setAddBuffer(null); }}>＋ Добавить</button>
-                                <button className={`${styles.segBtn} ${mode === 'delete' ? styles.segActive : ''}`} onClick={() => setMode('delete')}>🗑 Удалить</button>
+                                <button className={`${styles.segBtn} ${mode === 'add' ? styles.segActive : ''}`}
+                                    onClick={() => { setMode('add'); setAddBuffer(null); setSelectedCurveKey(null); setHoverCurveKey(null); }}>＋ Добавить</button>
+                                <button className={`${styles.segBtn} ${mode === 'delete' ? styles.segActive : ''}`}
+                                    onClick={() => { setMode('delete'); setSelectedCurveKey(null); setHoverCurveKey(null); }}>🗑 Удалить</button>
                             </div>
 
                             {/* Тип линии и параметры — как было */}
