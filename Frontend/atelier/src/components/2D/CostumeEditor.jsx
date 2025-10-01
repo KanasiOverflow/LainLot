@@ -853,7 +853,7 @@ export default function CostumeEditor({ initialSVG }) {
                                     className={`${styles.segBtn} ${activePanel?.id === p.id ? styles.segActive : ''}`}
                                     onClick={() => setActivePanelId(p.id)}
                                 >
-                                    {p.label || `Панель ${p.id}`}
+                                    {p.label || p.id}
                                 </button>
                             ))}
                         </div>
