@@ -31,6 +31,7 @@ export default function CostumeEditor({ initialSVG }) {
     const [lastLineMode, setLastLineMode] = useState('add');     // 'add' | 'delete
     const [rawSVG, setRawSVG] = useState(initialSVG || "");
     const [panels, setPanels] = useState([]);
+    const [activePanelId, setActivePanelId] = useState(null);
     // для анимации "из-за спины"
     const [prevPanels, setPrevPanels] = useState(null);
     const [isSwapping, setIsSwapping] = useState(false);
@@ -137,8 +138,22 @@ export default function CostumeEditor({ initialSVG }) {
         setTimeout(() => setClickedCurveKey(k => (k === `${panelId}:${curveId}` ? null : k)), 220);
     };
 
-    const onCanvasClick = () => {
-        if (mode !== 'delete') setSelectedCurveKey(null);
+    // Клик по пустому месту канвы — снимаем выделение
+    const onCanvasClick = useCallback(() => {
+        if (mode === "preview") return;      // в preview ничего не делаем
+        if (mode !== "delete") {
+            setSelectedCurveKey(null);
+        }
+    }, [mode]);
+
+    const onPanelActivate = (panelId) => {
+        if (mode === 'preview') return;
+        // В режиме заливки не мешаем покраске
+        if (mode === 'paint' || mode === 'deleteFill') return;
+        setActivePanelId(panelId);
+        setSelectedCurveKey(null);
+        setHoverCurveKey(null);
+        setAddBuffer(null);
     };
 
     const recomputeWaveForCurve = (pid, cid, ampPx, lenPx) => {
@@ -276,7 +291,10 @@ export default function CostumeEditor({ initialSVG }) {
         return res;
     }, [panels, ringsByPanel]);
     /* ===== действия ===== */
-    const activePanel = panels[0] || null;
+    const activePanel = useMemo(
+        () => panels.find(p => p.id === activePanelId) || panels[0] || null,
+        [panels, activePanelId]
+    );
 
     const snapEnds = (pts, ax, ay, bx, by) => {
         if (!Array.isArray(pts) || pts.length < 2) return pts;
@@ -512,11 +530,25 @@ export default function CostumeEditor({ initialSVG }) {
             const k = e.key.toLowerCase?.();
             if (k === "arrowleft") prevPreset();
             if (k === "arrowright") nextPreset();
+            if (k === '[') {
+                if (panels.length) {
+                    const i = Math.max(0, panels.findIndex(p => p.id === activePanel?.id));
+                    const prev = panels[(i - 1 + panels.length) % panels.length];
+                    setActivePanelId(prev?.id ?? panels[0]?.id ?? null);
+                }
+            }
+            if (k === ']') {
+                if (panels.length) {
+                    const i = Math.max(0, panels.findIndex(p => p.id === activePanel?.id));
+                    const next = panels[(i + 1) % panels.length];
+                    setActivePanelId(next?.id ?? panels[0]?.id ?? null);
+                }
+            }
         };
 
         el.addEventListener("keydown", onKey);
         return () => el.removeEventListener("keydown", onKey);
-    }, []);
+    }, [panels, activePanel]);
 
     useEffect(() => {
         if (!rawSVG) return;
@@ -541,6 +573,7 @@ export default function CostumeEditor({ initialSVG }) {
         }
 
         setPanels(parts);
+        setActivePanelId(parts[0]?.id ?? null);
         setCurvesByPanel({});
         setFills([]);
         setMode("preview");
@@ -665,11 +698,24 @@ export default function CostumeEditor({ initialSVG }) {
                         {panels.map(p => {
                             const faces = facesByPanel[p.id] || [];
                             const ring = outerRingByPanel[p.id];
+                            const isActive = activePanel?.id === p.id;
 
                             const clickableFaces = faces.length ? faces : (ring ? [ring] : []);
+                            const dimInactive = mode !== 'preview' && !isActive;
 
                             return (
-                                <g key={p.id}>
+                                <g key={p.id} className={dimInactive ? styles.panelDimmed : undefined}>
+
+                                    {/* hit-target для выбора детали (только не заливка/preview) */}
+                                    {ring && (mode !== 'preview') && (mode !== 'paint') && (mode !== 'deleteFill') && (
+                                        <path
+                                            d={facePath(ring)}
+                                            fill="transparent"
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => onPanelActivate(p.id)}
+                                        />
+                                    )}
+
                                     {clickableFaces.map(poly => {
                                         const fk = faceKey(poly);
                                         const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
@@ -742,18 +788,18 @@ export default function CostumeEditor({ initialSVG }) {
                                                 key={c.id}
                                                 d={d}
                                                 className={cls}
-                                                onMouseEnter={() => onCurveEnter(p.id, c.id)}
                                                 onMouseLeave={() => onCurveLeave(p.id, c.id)}
-                                                onClick={(e) => onCurveClick(p.id, c.id, e)}
-                                                style={{ cursor: mode === 'preview' ? 'default' : 'pointer' }}
-                                                pointerEvents={mode === 'preview' ? 'none' : 'auto'}
+                                                onMouseEnter={() => isActive && onCurveEnter(p.id, c.id)}
+                                                onClick={(e) => { if (isActive) onCurveClick(p.id, c.id, e); }}
+                                                style={{ cursor: (mode === 'preview' || !isActive) ? 'default' : 'pointer' }}
+                                                pointerEvents={(mode === 'preview' || !isActive) ? 'none' : 'auto'}
                                                 strokeLinecap="round"
                                             />
                                         );
                                     })}
 
                                     {/* ANCHORS (базовые + новые) — кликаем по merged-индексам */}
-                                    {activePanel?.id === p.id && (mode === 'add' || mode === 'delete') && (() => {
+                                    {isActive && (mode === 'add' || mode === 'delete') && (() => {
                                         const base = p.anchors || [];
                                         const extras = extraAnchorsByPanel[p.id] || [];
                                         const merged = [...base, ...extras];
@@ -797,6 +843,21 @@ export default function CostumeEditor({ initialSVG }) {
             <aside className={styles.sidebar}>
                 <div className={styles.panel}>
                     <h3 className={styles.panelTitle}>Редактор</h3>
+                    {/* Объект внутри заготовки */}
+                    <div className={styles.section}>
+                        <div className={styles.sectionTitle}>Объект</div>
+                        <div className={styles.segmented} style={{ flexWrap: 'wrap' }}>
+                            {panels.map(p => (
+                                <button
+                                    key={p.id}
+                                    className={`${styles.segBtn} ${activePanel?.id === p.id ? styles.segActive : ''}`}
+                                    onClick={() => setActivePanelId(p.id)}
+                                >
+                                    {p.label || `Панель ${p.id}`}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                     {/* Деталь: Перед/Спинка */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Деталь</div>
