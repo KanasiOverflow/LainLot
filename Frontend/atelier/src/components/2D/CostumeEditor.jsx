@@ -428,8 +428,10 @@ export default function CostumeEditor({ initialSVG }) {
                     id: draft.id,
                     type: "routed",
                     aIdx: addBuffer, bIdx: idx,
-                    d: routedStraight.d, pts: routedStraight.pts,
-                    connA: routedStraight.connA, connB: routedStraight.connB,
+                    d: routedStraight.d,
+                    pts: routedStraight.pts,
+                    connA: routedStraight.connA,
+                    connB: routedStraight.connB,
                     ax: a.x, ay: a.y, bx: b.x, by: b.y,
                     aRef, bRef,
                     subCount: defaultSubCount
@@ -445,10 +447,10 @@ export default function CostumeEditor({ initialSVG }) {
                 type: "routed",
                 aIdx: addBuffer,
                 bIdx: idx,
-                d: routed.d,       // сглаженный путь для рендера
-                pts: routed.pts,   // точки прижатой дуги (для faces)
-                connA: routed.connA, // [Q0, P0] — коннектор к кромке
-                connB: routed.connB, // [Q1, P1] — коннектор к кромке
+                d: routedStraight.d,       // сглаженный путь для рендера
+                pts: routedStraight.pts,   // точки прижатой дуги (для faces)
+                connA: routedStraight.connA, // [Q0, P0] — коннектор к кромке
+                connB: routedStraight.connB, // [Q1, P1] — коннектор к кромке
                 ax: a.x, ay: a.y, bx: b.x, by: b.y,
                 aRef,
                 bRef,
