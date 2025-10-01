@@ -184,9 +184,14 @@ export default function CostumeEditor({ initialSVG }) {
                     if (!a || !b) continue;
                     poly = sampleBezierPoints(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y, 128);
                 } else {
-                    // 'wavy' | 'routed' — уже есть дискретизация в c.pts
-                    poly = c.pts;
+                    // для wavy используем дискретизацию из c.pts,
+                    // чтобы линия реально резала лицо на две части
+                    if (Array.isArray(c.pts) && c.pts.length >= 2) {
+                        return [pointsToPairedPolyline(c.pts)];
+                    }
+                    return [];
                 }
+
                 if (!poly || poly.length < 2) continue;
 
                 const L = cumulativeLengths(poly);
