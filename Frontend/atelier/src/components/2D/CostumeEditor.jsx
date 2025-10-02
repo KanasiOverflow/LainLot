@@ -1137,6 +1137,18 @@ export default function CostumeEditor({ initialSVG }) {
                         <div className={styles.section}>
                             <div className={styles.sectionTitle}>Линия</div>
 
+                            {/* Тип линии и параметры — как было */}
+                            <div className={styles.segmented}>
+                                <button
+                                    className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
+                                    onClick={() => { setLineStyle('straight'); setSelectedCurveKey(null); setHoverCurveKey(null); }}
+                                >Прямая</button>
+                                <button
+                                    className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
+                                    onClick={() => { setLineStyle('wavy'); setSelectedCurveKey(null); setHoverCurveKey(null); }}
+                                >Волнистая</button>
+                            </div>
+
                             <div className={`${styles.segmented} ${styles.two}`} style={{ marginBottom: 8 }}>
                                 <button className={`${styles.segBtn} ${mode === 'add' ? styles.segActive : ''}`}
                                     onClick={() => { setMode('add'); setAddBuffer(null); setSelectedCurveKey(null); setHoverCurveKey(null); }}>＋ Добавить</button>
@@ -1158,18 +1170,6 @@ export default function CostumeEditor({ initialSVG }) {
                                     className={styles.rangeCompact}
                                 />
                                 <span className={styles.value}>{minGapWorld}</span>
-                            </div>
-
-                            {/* Тип линии и параметры — как было */}
-                            <div className={styles.segmented}>
-                                <button
-                                    className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
-                                    onClick={() => { setLineStyle('straight'); setSelectedCurveKey(null); setHoverCurveKey(null); }}
-                                >Прямая</button>
-                                <button
-                                    className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
-                                    onClick={() => { setLineStyle('wavy'); setSelectedCurveKey(null); setHoverCurveKey(null); }}
-                                >Волнистая</button>
                             </div>
 
                             {/* === НАСТРОЙКИ ЛИНИИ: преднастройка или редактирование выбранной === */}
