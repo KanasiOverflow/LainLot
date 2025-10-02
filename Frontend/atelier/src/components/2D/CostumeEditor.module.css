@@ -335,6 +335,19 @@
   box-shadow: 0 8px 24px rgba(0,0,0,.08);
 }
 
+.anchorManualDelete {
+  fill: #ef4444;
+  stroke: #991b1b;
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, .45));
+  cursor: pointer;
+  transform-box: fill-box;    /* центрируём систему координат на самом кружке */
+  transform-origin: center;   /* масштабируем от центра */
+}
+.anchorManualDelete:hover {
+  transform: scale(1.12);
+}
+
 /* ===== Preset navigation ===== */
 .presetNav {
   position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);

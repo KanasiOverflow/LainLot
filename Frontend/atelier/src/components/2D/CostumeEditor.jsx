@@ -333,9 +333,8 @@ export default function CostumeEditor({ initialSVG }) {
     }, [panels, curvesByPanel, mergedAnchorsOf]);
 
     const modeGroup =
-        (mode === 'paint' || mode === 'deleteFill') ? 'fill'
-            : (mode === 'add' || mode === 'delete' || mode === 'insert') ? 'line'
-                : 'preview'
+        (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
+            (mode === 'add' || mode === 'delete' || mode === 'insert' || mode === 'deleteVertex') ? 'line' : 'preview';
 
     const gridDef = useMemo(() => {
         const step = Math.max(1e-6, Math.min(worldBBox.w, worldBBox.h) / 20);
@@ -361,6 +360,22 @@ export default function CostumeEditor({ initialSVG }) {
         () => panels.find(p => p.id === activePanelId) || panels[0] || null,
         [panels, activePanelId]
     );
+
+    // сколько ручных вершин осталось в активной детали
+    const manualLeftInActive = useMemo(() => {
+        if (!activePanel) return 0;
+        const extras = extraAnchorsByPanel[activePanel.id] || [];
+        return extras.filter(a => String(a.id).includes('@m')).length;
+    }, [extraAnchorsByPanel, activePanel]);
+
+    // авто-выход из deleteVertex, когда ручных вершин нет
+    useEffect(() => {
+        if (mode !== 'deleteVertex') return;
+        if (manualLeftInActive === 0) {
+            setMode('insert');                     // ← включаем добавление вершин
+            setToast({ text: 'Все ручные вершины удалены — переключаюсь в «Вставить вершину»' });
+        }
+    }, [mode, manualLeftInActive]);
 
     const snapEnds = (pts, ax, ay, bx, by) => {
         if (!Array.isArray(pts) || pts.length < 2) return pts;
@@ -504,6 +519,27 @@ export default function CostumeEditor({ initialSVG }) {
             }
             const kept = arr.filter(c => !toDelete.has(c.id));
             return { ...prev, [panelId]: kept };
+        });
+    };
+
+    const eraseManualAnchor = (panelId, manualId) => {
+        const [curveId, tag] = String(manualId).split('@m');
+        const idx = Number(tag);
+        if (!curveId || !Number.isFinite(idx)) return;
+
+        setCurvesByPanel(prev => {
+            const list = [...(prev[panelId] || [])];
+            const i = list.findIndex(c => c.id === curveId);
+            if (i < 0) return prev;
+
+            const cur = list[i];
+            const stops = Array.isArray(cur.extraStops) ? cur.extraStops.slice() : [];
+            if (idx >= 0 && idx < stops.length) {
+                stops.splice(idx, 1);
+                list[i] = { ...cur, extraStops: stops };
+                return { ...prev, [panelId]: list };
+            }
+            return prev;
         });
     };
 
@@ -905,7 +941,7 @@ export default function CostumeEditor({ initialSVG }) {
                                                     onCurveClick(p.id, c.id, e);
                                                 }}
                                                 style={{ cursor: (mode === 'preview' || !isActive) ? 'default' : (mode === 'insert' ? 'copy' : 'pointer') }}
-                                                pointerEvents={(mode === 'preview' || !isActive) ? 'none' : 'auto'}
+                                                pointerEvents={(mode === 'preview' || !isActive || mode === 'deleteVertex') ? 'none' : 'auto'}
                                                 strokeLinecap="round"
                                             />
                                         );
@@ -944,6 +980,21 @@ export default function CostumeEditor({ initialSVG }) {
                                                 onClick={(e) => { e.stopPropagation(); onAnchorClickAddMode(mi); }}
                                                 onMouseEnter={() => setHoverAnchorIdx(mi)}
                                                 onMouseLeave={() => setHoverAnchorIdx(null)}
+                                            />
+                                        ));
+                                    })()}
+
+                                    {/* Только ручные вершинкы в режиме удаления вершин */}
+                                    {isActive && mode === 'deleteVertex' && (() => {
+                                        const extras = (extraAnchorsByPanel[p.id] || []).filter(ex => ex?.id?.includes('@m'));
+                                        return extras.map(ex => (
+                                            <circle
+                                                key={ex.id}
+                                                cx={ex.x}
+                                                cy={ex.y}
+                                                r={4}
+                                                className={styles.anchorManualDelete}
+                                                onClick={(e) => { e.stopPropagation(); eraseManualAnchor(p.id, ex.id); }}
                                             />
                                         ));
                                     })()}
@@ -1074,6 +1125,9 @@ export default function CostumeEditor({ initialSVG }) {
                                     onClick={() => { setMode('delete'); setSelectedCurveKey(null); setHoverCurveKey(null); }}>🗑 Удалить</button>
                                 <button className={`${styles.segBtn} ${mode === 'insert' ? styles.segActive : ''}`}
                                     onClick={() => { setMode('insert'); setSelectedCurveKey(null); setHoverCurveKey(null); setAddBuffer(null); }}>● Вставить вершину</button>
+                                <button
+                                    className={`${styles.segBtn} ${mode === 'deleteVertex' ? styles.segActive : ''}`}
+                                    onClick={() => { setMode('deleteVertex'); setSelectedCurveKey(null); setHoverCurveKey(null); setAddBuffer(null); }}>○ Удалить вершину</button>
                             </div>
 
                             <div className={styles.subRow} style={{ marginTop: 6 }}>
