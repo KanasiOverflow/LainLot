@@ -1141,11 +1141,27 @@ export default function CostumeEditor({ initialSVG }) {
                             <div className={styles.segmented}>
                                 <button
                                     className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
-                                    onClick={() => { setLineStyle('straight'); setSelectedCurveKey(null); setHoverCurveKey(null); }}
+                                    onClick={() => {
+                                        setLineStyle('straight');
+                                        setSelectedCurveKey(null);
+                                        setHoverCurveKey(null);
+                                        if (mode === 'delete' || mode === 'deleteVertex') { // если до этого был «удалить»
+                                            setMode('add');
+                                            setLastLineMode('add');
+                                        }
+                                    }}
                                 >Прямая</button>
                                 <button
                                     className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
-                                    onClick={() => { setLineStyle('wavy'); setSelectedCurveKey(null); setHoverCurveKey(null); }}
+                                    onClick={() => {
+                                        setLineStyle('wavy');
+                                        setSelectedCurveKey(null);
+                                        setHoverCurveKey(null);
+                                        if (mode === 'delete' || mode === 'deleteVertex') {
+                                            setMode('add');
+                                            setLastLineMode('add');
+                                        }
+                                    }}
                                 >Волнистая</button>
                             </div>
 
