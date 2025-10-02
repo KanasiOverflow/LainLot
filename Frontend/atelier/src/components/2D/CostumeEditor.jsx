@@ -4,7 +4,8 @@ import styles from "./CostumeEditor.module.css";
 import clsx from "clsx";
 import {
     area, getBounds, sampleBezier, sampleBezierPoints,
-    pointsToPairedPolyline, waveAlongPolyline, segsSignature, cumulativeLengths
+    pointsToPairedPolyline, waveAlongPolyline, segsSignature, cumulativeLengths,
+    nearestOnPolyline
 } from "../../utils/geometry.js";
 import {
     polylinesFromSegs, segmentsFromPolylines, splitSegsIntoSubpaths, polylineFromSubpath,
@@ -25,7 +26,10 @@ const PRESETS = [
 /* ================== компонент ================== */
 export default function CostumeEditor({ initialSVG }) {
     const scopeRef = useRef(null);
-
+    // минимальный зазор между вершинами (в мировых единицах SVG)
+    const [minGapWorld, setMinGapWorld] = useState(20); // подредактируете под «5 см» в своих единицах
+    // превью точки для вставки вершины
+    const [insertPreview, setInsertPreview] = useState(null); // { panelId, curveId, x, y, allowed }
     // state для «запоминания» последнего подрежима
     const [lastFillMode, setLastFillMode] = useState('paint');   // 'paint' | 'deleteFill'
     const [lastLineMode, setLastLineMode] = useState('add');     // 'add' | 'delete
@@ -90,6 +94,58 @@ export default function CostumeEditor({ initialSVG }) {
     const svgRef = useRef(null);
     const [scale, setScale] = useState({ k: 1 });
     const baseFacesCacheRef = useRef(new Map()); // panelId -> { sig, faces }
+
+    const closestPointOnCurve = (panel, curve, P) => {
+        // возвращает {x,y,t,total,poly,L} где t — доля 0..1
+        let poly = null;
+        if (curve.type === 'cubic') {
+            const a = panel.anchors?.[curve.aIdx] ?? (curve.ax != null ? { x: curve.ax, y: curve.ay } : null);
+            const b = panel.anchors?.[curve.bIdx] ?? (curve.bx != null ? { x: curve.bx, y: curve.by } : null);
+            if (!a || !b) return null;
+            poly = sampleBezierPoints(a.x, a.y, curve.c1.x, curve.c1.y, curve.c2.x, curve.c2.y, b.x, b.y, 128);
+        } else if (Array.isArray(curve.pts)) {
+            poly = curve.pts;
+        }
+        if (!poly || poly.length < 2 || !P) return null;
+        const near = nearestOnPolyline(poly, P);               // ✅ сюда передаём координату курсора
+        const L = cumulativeLengths(poly);
+        const total = L[L.length - 1] || 1;
+        const t = total > 0 ? near.s / total : 0;
+        return { x: near.x, y: near.y, t, total, poly, L };
+    };
+
+    const tooCloseToExistingAnchors = (panel, curve, testPt) => {
+        // берём все уже существующие «снимки» якорей для этой кривой:
+        const merged = mergedAnchorsOf(panel);
+        // кандидаты: концы линии + все extraAnchorsByPanel от этой кривой
+        const pts = [];
+        const a = merged[curve.aIdx] ?? (curve.ax != null ? { x: curve.ax, y: curve.ay } : null);
+        const b = merged[curve.bIdx] ?? (curve.bx != null ? { x: curve.bx, y: curve.by } : null);
+        if (a) pts.push(a);
+        if (b) pts.push(b);
+        const extras = extraAnchorsByPanel[panel.id] || [];
+        for (const e of extras) {
+            if ((e.id || '').startsWith(`${curve.id}:`) || (e.id || '').startsWith(`${curve.id}@m`)) {
+                pts.push({ x: e.x, y: e.y });
+            }
+        }
+        return pts.some(q => Math.hypot(q.x - testPt.x, q.y - testPt.y) < (minGapWorld || 0));
+    };
+
+    const onCurveMoveInsert = (panel, curve, evt) => {
+        if (mode !== 'insert') return;
+        // позицию мыши переводим в координаты SVG
+        const svgEl = svgRef.current;
+        if (!svgEl) return;
+        const pt = svgEl.createSVGPoint();
+        pt.x = evt.clientX; pt.y = evt.clientY;
+        const ctm = svgEl.getScreenCTM();
+        if (!ctm) return;
+        const inv = ctm.inverse();
+        const loc = pt.matrixTransform(inv);
+        const hit = closestPointOnCurve(panel, curve) ? closestPointOnCurve({ anchors: panel.anchors }, curve) : null;
+        // ↑ исправление: передаём panel в closestPointOnCurve
+    };
 
     /* -------- базовые faces и кольца контура -------- */
     const baseFacesByPanel = useMemo(() => {
@@ -225,6 +281,15 @@ export default function CostumeEditor({ initialSVG }) {
                     const pt = pointAtS(poly, L, s);
                     arr.push({ id: `${c.id}:${k}`, x: pt.x, y: pt.y });
                 }
+
+                // ручные точки (новое): extraStops — доли 0..1
+                if (Array.isArray(c.extraStops)) {
+                    c.extraStops.forEach((t, idx) => {
+                        const s = Math.max(0, Math.min(1, t)) * total;
+                        const pt = pointAtS(poly, L, s);
+                        arr.push({ id: `${c.id}@m${idx}`, x: pt.x, y: pt.y });
+                    });
+                }
             }
             map[p.id] = arr;
         }
@@ -268,8 +333,9 @@ export default function CostumeEditor({ initialSVG }) {
     }, [panels, curvesByPanel, mergedAnchorsOf]);
 
     const modeGroup =
-        (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
-            (mode === 'add' || mode === 'delete') ? 'line' : 'preview';
+        (mode === 'paint' || mode === 'deleteFill') ? 'fill'
+            : (mode === 'add' || mode === 'delete' || mode === 'insert') ? 'line'
+                : 'preview'
 
     const gridDef = useMemo(() => {
         const step = Math.max(1e-6, Math.min(worldBBox.w, worldBBox.h) / 20);
@@ -500,7 +566,11 @@ export default function CostumeEditor({ initialSVG }) {
 
     useEffect(() => {
         if (mode === 'paint' || mode === 'deleteFill') setLastFillMode(mode);
-        if (mode === 'add' || mode === 'delete') setLastLineMode(mode);
+        if (mode === 'add' || mode === 'delete' || mode === 'insert') setLastLineMode(mode);
+    }, [mode]);
+
+    useEffect(() => {
+        if (mode !== 'insert') setInsertPreview(null);
     }, [mode]);
 
     // --- PRESETS: начальная подгрузка и переключение
@@ -788,18 +858,73 @@ export default function CostumeEditor({ initialSVG }) {
                                                 key={c.id}
                                                 d={d}
                                                 className={cls}
-                                                onMouseLeave={() => onCurveLeave(p.id, c.id)}
-                                                onMouseEnter={() => isActive && onCurveEnter(p.id, c.id)}
-                                                onClick={(e) => { if (isActive) onCurveClick(p.id, c.id, e); }}
-                                                style={{ cursor: (mode === 'preview' || !isActive) ? 'default' : 'pointer' }}
+                                                onMouseEnter={() => { if (isActive) onCurveEnter(p.id, c.id); }}
+                                                onMouseLeave={(e) => {
+                                                    if (mode === 'insert') setInsertPreview(prev => (prev && prev.curveId === c.id ? null : prev));
+                                                    onCurveLeave(p.id, c.id);
+                                                }}
+                                                onMouseMove={(e) => {
+                                                    if (!isActive || mode !== 'insert') return;
+                                                    const svg = svgRef.current; if (!svg) return;
+                                                    const p2 = svg.createSVGPoint(); p2.x = e.clientX; p2.y = e.clientY;
+                                                    const loc = p2.matrixTransform(svg.getScreenCTM().inverse());
+                                                    // ближайшая точка
+                                                    const hit = closestPointOnCurve(p, c, loc);
+                                                    if (!hit) return;
+                                                    const allowed = !tooCloseToExistingAnchors(p, c, { x: hit.x, y: hit.y });
+                                                    setInsertPreview({ panelId: p.id, curveId: c.id, x: hit.x, y: hit.y, t: hit.t, allowed });
+                                                }}
+                                                onClick={(e) => {
+                                                    if (!isActive) return;
+                                                    if (mode === 'insert') {
+                                                        e.stopPropagation();
+                                                        if (!insertPreview || insertPreview.curveId !== c.id) return;
+                                                        if (!insertPreview.allowed) {
+                                                            setToast({ text: 'Слишком близко к существующей вершине' });
+                                                            return;
+                                                        }
+                                                        // добавляем ручную стоп-метку в кривую
+                                                        setCurvesByPanel(prev => {
+                                                            const list = [...(prev[p.id] || [])];
+                                                            const i = list.findIndex(x => x.id === c.id);
+                                                            if (i < 0) return prev;
+                                                            const cur = list[i];
+                                                            const stops = Array.isArray(cur.extraStops) ? [...cur.extraStops] : [];
+                                                            stops.push(Math.max(0, Math.min(1, insertPreview.t)));
+                                                            // небольшая дедупликация/сортировка
+                                                            const uniq = Array.from(new Set(stops.map(v => +v.toFixed(5)))).sort((a, b) => a - b);
+                                                            list[i] = { ...cur, extraStops: uniq };
+                                                            return { ...prev, [p.id]: list };
+                                                        });
+                                                        setInsertPreview(null);
+                                                        setMode('add');           // ← сразу показываем свободные вершины
+                                                        setLastLineMode('add');   // ← чтобы вкладка «Линии» запоминала 'add'
+                                                        return;
+                                                    }
+                                                    // прежняя логика выбора/удаления
+                                                    onCurveClick(p.id, c.id, e);
+                                                }}
+                                                style={{ cursor: (mode === 'preview' || !isActive) ? 'default' : (mode === 'insert' ? 'copy' : 'pointer') }}
                                                 pointerEvents={(mode === 'preview' || !isActive) ? 'none' : 'auto'}
                                                 strokeLinecap="round"
                                             />
                                         );
                                     })}
 
+                                    {isActive && mode === 'insert' && insertPreview && insertPreview.panelId === p.id && (
+                                        <circle
+                                            cx={insertPreview.x}
+                                            cy={insertPreview.y}
+                                            r={insertPreview.allowed ? 4 : 4}
+                                            fill={insertPreview.allowed ? '#22c55e' : '#ef4444'}
+                                            stroke={insertPreview.allowed ? '#166534' : '#991b1b'}
+                                            strokeWidth={1.5}
+                                            style={{ pointerEvents: 'none' }}
+                                        />
+                                    )}
+
                                     {/* ANCHORS (базовые + новые) — кликаем по merged-индексам */}
-                                    {isActive && (mode === 'add' || mode === 'delete') && (() => {
+                                    {isActive && (mode === 'add' || mode === 'delete' || mode === 'insert') && (() => {
                                         const base = p.anchors || [];
                                         const extras = extraAnchorsByPanel[p.id] || [];
                                         const merged = [...base, ...extras];
@@ -894,7 +1019,7 @@ export default function CostumeEditor({ initialSVG }) {
                         <div className={styles.section}>
                             <div className={styles.sectionTitle}>Цвет заливки</div>
 
-                            <div className={`${styles.segmented} ${styles.two}`} style={{ marginBottom: 8 }}>
+                            <div className={`${styles.segmented}`} style={{ marginBottom: 8, gap: 8 }}>
                                 <button className={`${styles.segBtn} ${mode === 'paint' ? styles.segActive : ''}`} onClick={() => setMode('paint')}>🪣 Залить</button>
                                 <button className={`${styles.segBtn} ${mode === 'deleteFill' ? styles.segActive : ''}`} onClick={() => setMode('deleteFill')}>✖ Стереть</button>
                             </div>
@@ -947,6 +1072,19 @@ export default function CostumeEditor({ initialSVG }) {
                                     onClick={() => { setMode('add'); setAddBuffer(null); setSelectedCurveKey(null); setHoverCurveKey(null); }}>＋ Добавить</button>
                                 <button className={`${styles.segBtn} ${mode === 'delete' ? styles.segActive : ''}`}
                                     onClick={() => { setMode('delete'); setSelectedCurveKey(null); setHoverCurveKey(null); }}>🗑 Удалить</button>
+                                <button className={`${styles.segBtn} ${mode === 'insert' ? styles.segActive : ''}`}
+                                    onClick={() => { setMode('insert'); setSelectedCurveKey(null); setHoverCurveKey(null); setAddBuffer(null); }}>● Вставить вершину</button>
+                            </div>
+
+                            <div className={styles.subRow} style={{ marginTop: 6 }}>
+                                <span className={styles.slimLabel}>Мин. расстояние между вершинами</span>
+                                <input
+                                    type="range" min={2} max={80} step={1}
+                                    value={minGapWorld}
+                                    onChange={e => setMinGapWorld(+e.target.value)}
+                                    className={styles.rangeCompact}
+                                />
+                                <span className={styles.value}>{minGapWorld}</span>
                             </div>
 
                             {/* Тип линии и параметры — как было */}
