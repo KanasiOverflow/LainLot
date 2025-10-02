@@ -284,10 +284,12 @@ export default function CostumeEditor({ initialSVG }) {
 
                 // ручные точки (новое): extraStops — доли 0..1
                 if (Array.isArray(c.extraStops)) {
-                    c.extraStops.forEach((t, idx) => {
+                    c.extraStops.forEach((stop, idx) => {
+                        const t = typeof stop === 'number' ? stop : (stop?.t ?? 0);
                         const s = Math.max(0, Math.min(1, t)) * total;
                         const pt = pointAtS(poly, L, s);
-                        arr.push({ id: `${c.id}@m${idx}`, x: pt.x, y: pt.y });
+                        // id можно оставить индексный — удалять будем по t:
+                        arr.push({ id: `${c.id}@m${idx}`, x: pt.x, y: pt.y, t });
                     });
                 }
             }
@@ -522,10 +524,11 @@ export default function CostumeEditor({ initialSVG }) {
         });
     };
 
-    const eraseManualAnchor = (panelId, manualId) => {
-        const [curveId, tag] = String(manualId).split('@m');
-        const idx = Number(tag);
-        if (!curveId || !Number.isFinite(idx)) return;
+    const eraseManualAnchor = (panelId, manual) => {
+        const manualId = String(manual?.id ?? '');
+        const manualT = Number(manual?.t ?? NaN);
+        const curveId = manualId.split('@m')[0];
+        if (!curveId) return;
 
         setCurvesByPanel(prev => {
             const list = [...(prev[panelId] || [])];
@@ -533,13 +536,28 @@ export default function CostumeEditor({ initialSVG }) {
             if (i < 0) return prev;
 
             const cur = list[i];
-            const stops = Array.isArray(cur.extraStops) ? cur.extraStops.slice() : [];
-            if (idx >= 0 && idx < stops.length) {
-                stops.splice(idx, 1);
-                list[i] = { ...cur, extraStops: stops };
-                return { ...prev, [panelId]: list };
+
+            let stops = Array.isArray(cur.extraStops) ? cur.extraStops.slice() : [];
+            if (stops.length === 0) return prev;
+            // поддержим оба формата: [number] и [{t,id?}]
+            if (typeof stops[0] === 'number') {
+                // удаляем ближайшее по t — индексы не важны
+                const idx = Number.isFinite(manualT)
+                    ? stops.reduce((best, v, j) =>
+                        Math.abs(v - manualT) < Math.abs(stops[best] - manualT) ? j : best, 0)
+                    : -1;
+                if (idx >= 0) stops.splice(idx, 1);
+            } else {
+                // объекты вида {t, id?}
+                const ts = stops.map(s => s?.t ?? 0);
+                let idx = Number.isFinite(manualT)
+                    ? ts.reduce((best, v, j) =>
+                        Math.abs(v - manualT) < Math.abs(ts[best] - manualT) ? j : best, 0)
+                    : -1;
+                if (idx >= 0) stops.splice(idx, 1);
             }
-            return prev;
+            list[i] = { ...cur, extraStops: stops };
+            return { ...prev, [panelId]: list };
         });
     };
 
@@ -927,14 +945,12 @@ export default function CostumeEditor({ initialSVG }) {
                                                             const cur = list[i];
                                                             const stops = Array.isArray(cur.extraStops) ? [...cur.extraStops] : [];
                                                             stops.push(Math.max(0, Math.min(1, insertPreview.t)));
-                                                            // небольшая дедупликация/сортировка
-                                                            const uniq = Array.from(new Set(stops.map(v => +v.toFixed(5)))).sort((a, b) => a - b);
+                                                            const uniq = Array.from(new Set(stops)); // без округления
+                                                            uniq.sort((a, b) => a - b);              // порядок по оси длины
                                                             list[i] = { ...cur, extraStops: uniq };
                                                             return { ...prev, [p.id]: list };
                                                         });
-                                                        setInsertPreview(null);
-                                                        setMode('add');           // ← сразу показываем свободные вершины
-                                                        setLastLineMode('add');   // ← чтобы вкладка «Линии» запоминала 'add'
+                                                        setInsertPreview(null);   // просто очищаем превью и продолжаем вставку
                                                         return;
                                                     }
                                                     // прежняя логика выбора/удаления
@@ -994,7 +1010,7 @@ export default function CostumeEditor({ initialSVG }) {
                                                 cy={ex.y}
                                                 r={4}
                                                 className={styles.anchorManualDelete}
-                                                onClick={(e) => { e.stopPropagation(); eraseManualAnchor(p.id, ex.id); }}
+                                                onClick={(e) => { e.stopPropagation(); eraseManualAnchor(p.id, ex); }}
                                             />
                                         ));
                                     })()}
