@@ -931,6 +931,9 @@ export default function CostumeEditor({ initialSVG }) {
                                                 onClick={(e) => {
                                                     if (!isActive) return;
                                                     if (mode === 'insert') {
+                                                        if (!selectedCurveKey)
+                                                            setSelectedCurveKey(`${p.id}:${c.id}`); // выделяем текущую линию
+
                                                         e.stopPropagation();
                                                         if (!insertPreview || insertPreview.curveId !== c.id) return;
                                                         if (!insertPreview.allowed) {
@@ -1183,8 +1186,15 @@ export default function CostumeEditor({ initialSVG }) {
                                     ? Math.max(2, Math.min(10, curve?.subCount ?? 2))
                                     : Math.max(2, Math.min(10, defaultSubCount));
 
+                                // РУЧНЫЕ вершины на выбранной линии
+                                const manualCount = hasSelection && Array.isArray(curve?.extraStops) ? curve.extraStops.length : 0;
+                                const manualLock = hasSelection && manualCount > 0;
+
                                 const changeSub = (n) => {
                                     if (hasSelection) {
+                                        if (manualLock)
+                                            return; // заблокировано ручными вершинами
+
                                         setCurvesByPanel(prev => {
                                             const arr = [...(prev[pid] || [])];
                                             const i = arr.findIndex(x => x.id === cid);
@@ -1235,9 +1245,36 @@ export default function CostumeEditor({ initialSVG }) {
                                                 value={currentSub}
                                                 onChange={e => changeSub(+e.target.value)}
                                                 className={styles.rangeCompact}
+                                                disabled={manualLock}
                                             />
                                             <span className={styles.value}>{currentSub}</span>
                                         </div>
+
+                                        {manualLock && (
+                                            <div className={styles.lockNote}>
+                                                На линии есть ручные вершины ({manualCount}). Автоматическое распределение отключено.
+                                                Чтобы снова редактировать количество вершин, удалите все ручные точки.
+                                                <div style={{ marginTop: 6 }}>
+                                                    <button
+                                                        type="button"
+                                                        className={styles.linkBtn}
+                                                        onClick={() => {
+                                                            if (!hasSelection) return;
+                                                            const [pp, cc] = selectedCurveKey.split(':');
+                                                            setCurvesByPanel(prev => {
+                                                                const list = [...(prev[pp] || [])];
+                                                                const i = list.findIndex(x => x.id === cc);
+                                                                if (i < 0) return prev;
+                                                                const cur = list[i];
+                                                                if (!Array.isArray(cur.extraStops) || cur.extraStops.length === 0) return prev;
+                                                                list[i] = { ...cur, extraStops: [] }; // удалить ВСЕ ручные вершины на выбранной линии
+                                                                return { ...prev, [pp]: list };
+                                                            });
+                                                        }}
+                                                    >Удалить все ручные вершины</button>
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {/* Амплитуда/Длина волны — показываем только в режиме волнистой линии */}
                                         {lineStyle === 'wavy' && (
@@ -1252,6 +1289,7 @@ export default function CostumeEditor({ initialSVG }) {
                                                         type="range" min={2} max={24} step={1}
                                                         value={currentAmp}
                                                         onChange={e => changeAmp(+e.target.value)}
+                                                        disabled={manualLock}
                                                         className={styles.rangeCompact}
                                                     />
                                                     <span className={styles.value}>{currentAmp}px</span>
@@ -1267,6 +1305,7 @@ export default function CostumeEditor({ initialSVG }) {
                                                         type="range" min={12} max={80} step={2}
                                                         value={currentLen}
                                                         onChange={e => changeLen(+e.target.value)}
+                                                        disabled={manualLock}
                                                         className={styles.rangeCompact}
                                                     />
                                                     <span className={styles.value}>{currentLen}px</span>

@@ -242,6 +242,28 @@
 .hint { margin: 12px 0 0 0; font-size: 13px; color: #666; }
 .hintSmall { font-size: 11px; opacity: .65; margin-top: 4px; line-height: 1.25; }
 
+/* Lock note under slider */
+.lockNote {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #7c2d12;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  padding: 6px 8px;
+}
+.linkBtn {
+  padding: 0;
+  border: none;
+  background: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 12px;
+  text-decoration: underline;
+}
+.linkBtn:hover { text-decoration: none; }
+
 /* ===== SVG anchors and curves ===== */
 .anchor { fill: #3b82f6; transition: .12s; }
 .anchorClickable { cursor: pointer; }
