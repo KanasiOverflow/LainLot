@@ -26,6 +26,10 @@ const PRESETS = [
 /* ================== компонент ================== */
 export default function CostumeEditor({ initialSVG }) {
     const scopeRef = useRef(null);
+    // кеш SVG по пресетам и сохранённые пользовательские состояния по пресетам
+    const [svgCache, setSvgCache] = useState({}); // { [presetId]: rawSVG }
+    const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
+    const currentPresetIdRef = useRef(PRESETS[0]?.id || "front");
     // минимальный зазор между вершинами (в мировых единицах SVG)
     const [minGapWorld, setMinGapWorld] = useState(20); // подредактируете под «5 см» в своих единицах
     // превью точки для вставки вершины
@@ -94,6 +98,21 @@ export default function CostumeEditor({ initialSVG }) {
     const svgRef = useRef(null);
     const [scale, setScale] = useState({ k: 1 });
     const baseFacesCacheRef = useRef(new Map()); // panelId -> { sig, faces }
+
+    const snapshotFor = useCallback(() => ({
+        curvesByPanel,
+        fills,
+        activePanelId,
+    }), [curvesByPanel, fills, activePanelId]);
+
+    const applySnapshot = useCallback((snap, panelsParsed) => {
+        // Если есть снимок — восстановим, иначе дефолты
+        setCurvesByPanel(snap?.curvesByPanel || {});
+        setFills(snap?.fills || []);
+        setActivePanelId(snap?.activePanelId || panelsParsed[0]?.id || null);
+        setMode("preview");
+    }, []);
+
 
     const closestPointOnCurve = (panel, curve, P) => {
         // возвращает {x,y,t,total,poly,L} где t — доля 0..1
@@ -370,15 +389,6 @@ export default function CostumeEditor({ initialSVG }) {
         return extras.filter(a => String(a.id).includes('@m')).length;
     }, [extraAnchorsByPanel, activePanel]);
 
-    // авто-выход из deleteVertex, когда ручных вершин нет
-    useEffect(() => {
-        if (mode !== 'deleteVertex') return;
-        if (manualLeftInActive === 0) {
-            setMode('insert');                     // ← включаем добавление вершин
-            setToast({ text: 'Все ручные вершины удалены — переключаюсь в «Вставить вершину»' });
-        }
-    }, [mode, manualLeftInActive]);
-
     const snapEnds = (pts, ax, ay, bx, by) => {
         if (!Array.isArray(pts) || pts.length < 2) return pts;
         const out = pts.slice();
@@ -596,6 +606,60 @@ export default function CostumeEditor({ initialSVG }) {
         setHoverFace(null);
     };
 
+    // авто-выход из deleteVertex, когда ручных вершин нет
+    useEffect(() => {
+        if (mode !== 'deleteVertex') return;
+        if (manualLeftInActive === 0) {
+            setMode('insert');                     // ← включаем добавление вершин
+            setToast({ text: 'Все ручные вершины удалены — переключаюсь в «Вставить вершину»' });
+        }
+    }, [mode, manualLeftInActive]);
+
+    useEffect(() => {
+        if (initialSVG) return;
+
+        const target = PRESETS[presetIdx];
+        if (!target) return;
+
+        // 1) Сохраняем снимок текущего пресета
+        const prevId = currentPresetIdRef.current;
+        setSavedByPreset(prev => ({
+            ...prev,
+            [prevId]: snapshotFor()
+        }));
+
+        // 2) Переключаем текущий id
+        currentPresetIdRef.current = target.id;
+
+        // 3) Берём из кэша или грузим
+        let alive = true;
+        setIsLoadingPreset(true);
+
+        const cached = svgCache[target.id];
+        const finalize = (txt) => {
+            if (!alive) return;
+            setRawSVG(txt);
+            setSvgMountKey(k => k + 1);
+            setIsLoadingPreset(false);
+        };
+
+        if (cached) {
+            finalize(cached);
+        } else {
+            fetch(`${SVG_BASE}/${target.file}`)
+                .then(r => r.text())
+                .then(txt => {
+                    if (!alive) return;
+                    setSvgCache(prev => ({ ...prev, [target.id]: txt }));
+                    finalize(txt);
+                })
+                .catch(() => { if (alive) { setRawSVG(""); setIsLoadingPreset(false); } });
+        }
+
+        return () => { alive = false; };
+    }, [presetIdx, initialSVG, snapshotFor, svgCache]);
+
+
     // Когда входим в preview — снимаем выбор/ховер и сбрасываем буфер добавления
     useEffect(() => {
         if (mode === 'preview') {
@@ -697,10 +761,12 @@ export default function CostumeEditor({ initialSVG }) {
         }
 
         setPanels(parts);
-        setActivePanelId(parts[0]?.id ?? null);
-        setCurvesByPanel({});
-        setFills([]);
-        setMode("preview");
+
+        // восстановление сохранённого состояния по текущему пресету
+        const presetId = currentPresetIdRef.current;
+        const snap = savedByPreset[presetId];
+        applySnapshot(snap, parts);
+
 
         if (!parts.length) {
             // Диагностика причин
@@ -1071,6 +1137,62 @@ export default function CostumeEditor({ initialSVG }) {
                             </button>
                         </div>
                     </div>
+
+                    <div className={styles.section}>
+                        <div className={styles.sectionTitle}>Сброс</div>
+                        <div className={styles.btnGroupV}>
+                            <button
+                                className={styles.btn}
+                                onClick={() => {
+                                    // Сбросим всё: снимки и текущие состояния
+                                    setSavedByPreset({});
+                                    setCurvesByPanel({});
+                                    setFills([]);
+                                    setActivePanelId(panels[0]?.id ?? null);
+                                    setMode("preview");
+                                }}
+                            >
+                                Сбросить всё
+                                <span className={styles.kbd}>Ctrl+R (перезагрузка)</span>
+                            </button>
+
+                            <button
+                                className={styles.btnGhost}
+                                onClick={() => {
+                                    const id = "front";
+                                    setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
+                                    if (currentPresetIdRef.current === id) {
+                                        setCurvesByPanel({});
+                                        setFills([]);
+                                        setActivePanelId(panels[0]?.id ?? null);
+                                        setMode("preview");
+                                    }
+                                }}
+                            >
+                                Сбросить перед
+                            </button>
+
+                            <button
+                                className={styles.btnGhost}
+                                onClick={() => {
+                                    const id = "back";
+                                    setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
+                                    if (currentPresetIdRef.current === id) {
+                                        setCurvesByPanel({});
+                                        setFills([]);
+                                        setActivePanelId(panels[0]?.id ?? null);
+                                        setMode("preview");
+                                    }
+                                }}
+                            >
+                                Сбросить спинку
+                            </button>
+                        </div>
+                        <div className={styles.hintSmall} style={{ marginTop: 6 }}>
+                            Переключение между «Перед» и «Спинка» сохраняет линии и заливки отдельно. Полный сброс — только по кнопке или обновлению страницы.
+                        </div>
+                    </div>
+
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Режим</div>
                         <div className={`${styles.segmented} ${styles.tabs3}`}>
