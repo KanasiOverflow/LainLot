@@ -223,3 +223,18 @@ export const segsSignature = (segs) => {
 
     return parts.join(";");
 }
+
+export const nearestOnPolyline = (pts, P) => {
+    if (!pts || pts.length < 2) return { idx: -1, x: P.x, y: P.y, s: 0, d2: Infinity };
+    const L = cumulativeLengths(pts);
+    let best = { idx: -1, x: P.x, y: P.y, s: 0, d2: Infinity };
+    let acc = 0;
+    for (let i = 0; i + 1 < pts.length; i++) {
+        const pr = projectPointToSegment(P, pts[i], pts[i + 1]); // уже есть
+        const segLen = Math.hypot(pts[i + 1].x - pts[i].x, pts[i + 1].y - pts[i].y);
+        const sHere = acc + pr.t * segLen;
+        if (pr.d2 < best.d2) best = { idx: i, x: pr.x, y: pr.y, s: sHere, d2: pr.d2 };
+        acc += segLen;
+    }
+    return best;
+};
