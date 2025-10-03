@@ -419,6 +419,16 @@
   box-shadow: 0 6px 18px rgba(0,0,0,.06); font-weight: 600;
 }
 
+/* Когда скрываем редактор (режим Просмотр) — остаётся одна колонка */
+.layoutPreview {
+  grid-template-columns: 1fr; /* без правой колонки */
+}
+
+/* На всякий случай: если кто-то оставит aside в DOM, прячем его */
+.layoutPreview .sidebar {
+  display: none;
+}
+
 /* приглушение неактивных деталей */
 .panelDimmed {
   opacity: .55;

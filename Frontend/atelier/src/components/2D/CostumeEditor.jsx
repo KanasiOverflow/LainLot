@@ -846,7 +846,9 @@ export default function CostumeEditor() {
     }, []);
 
     return (
-        <div ref={scopeRef} className={styles.layout} tabIndex={0}>
+        <div ref={scopeRef}
+            className={clsx(styles.layout, modeGroup === 'preview' && styles.layoutPreview)}
+            tabIndex={0}>
             {/* Левая область: канвас */}
             <div className={styles.canvasWrap} onMouseDown={() => scopeRef.current?.focus()}>
                 {toast && <div className={styles.toast}>{toast.text}</div>}
@@ -1185,48 +1187,43 @@ export default function CostumeEditor() {
                 </div>
             </div>
 
-            {/* Правая контекстная панель */}
-            <SidebarEditor
-                // базовое
-                presetIdx={presetIdx}
-                setPresetIdx={setPresetIdx}
-                panels={panels}
-                mode={mode}
-                setMode={setMode}
-                modeGroup={modeGroup}
-                lastLineMode={lastLineMode}
-                setLastLineMode={setLastLineMode}
-
-                // сброс
-                setSavedByPreset={setSavedByPreset}
-                setCurvesByPanel={setCurvesByPanel}
-                setFills={setFills}
-                setActivePanelId={setActivePanelId}
-
-                // заливка
-                paintColor={paintColor}
-                setPaintColor={setPaintColor}
-                paletteOpen={paletteOpen}
-                setPaletteOpen={setPaletteOpen}
-                paletteRef={paletteRef}
-
-                // линии
-                lineStyle={lineStyle}
-                setLineStyle={setLineStyle}
-                defaultSubCount={defaultSubCount}
-                setDefaultSubCount={setDefaultSubCount}
-                selectedCurveKey={selectedCurveKey}
-                setSelectedCurveKey={setSelectedCurveKey}
-                hoverCurveKey={hoverCurveKey}
-                setHoverCurveKey={setHoverCurveKey}
-                curvesByPanel={curvesByPanel}
-                setCurvesByPanelExtern={setCurvesByPanel}
-                recomputeWaveForCurve={recomputeWaveForCurve}
-                waveAmpPx={waveAmpPx}
-                setWaveAmpPx={setWaveAmpPx}
-                waveLenPx={waveLenPx}
-                setWaveLenPx={setWaveLenPx}
-            />
+            {/* Правая панель рендерится только вне preview */}
+            {modeGroup !== 'preview' && (
+                <SidebarEditor
+                    presetIdx={presetIdx}
+                    setPresetIdx={setPresetIdx}
+                    panels={panels}
+                    mode={mode}
+                    setMode={setMode}
+                    modeGroup={modeGroup}
+                    lastLineMode={lastLineMode}
+                    setLastLineMode={setLastLineMode}
+                    setSavedByPreset={setSavedByPreset}
+                    setCurvesByPanel={setCurvesByPanel}
+                    setFills={setFills}
+                    setActivePanelId={setActivePanelId}
+                    paintColor={paintColor}
+                    setPaintColor={setPaintColor}
+                    paletteOpen={paletteOpen}
+                    setPaletteOpen={setPaletteOpen}
+                    paletteRef={paletteRef}
+                    lineStyle={lineStyle}
+                    setLineStyle={setLineStyle}
+                    defaultSubCount={defaultSubCount}
+                    setDefaultSubCount={setDefaultSubCount}
+                    selectedCurveKey={selectedCurveKey}
+                    setSelectedCurveKey={setSelectedCurveKey}
+                    hoverCurveKey={hoverCurveKey}
+                    setHoverCurveKey={setHoverCurveKey}
+                    curvesByPanel={curvesByPanel}
+                    setCurvesByPanelExtern={setCurvesByPanel}
+                    recomputeWaveForCurve={recomputeWaveForCurve}
+                    waveAmpPx={waveAmpPx}
+                    setWaveAmpPx={setWaveAmpPx}
+                    waveLenPx={waveLenPx}
+                    setWaveLenPx={setWaveLenPx}
+                />
+            )}
 
         </div>
     );
