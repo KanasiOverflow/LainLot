@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="687"
+   height="588"
+   viewBox="0 0 687 588"
+   sodipodi:docname="Базовый макет свитшота втачной ПРАВАЯ МАНЖЕТА.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   inkscape:export-filename="Для работы\Макет свитшота передняя часть ЛЕВАЯ МАНЖЕТА.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.0642678"
+     inkscape:cx="183.69436"
+     inkscape:cy="244.76921"
+     inkscape:window-width="1920"
+     inkscape:window-height="1129"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="687"
+       height="588"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <g
+     inkscape:groupmode="layer"
+     id="layer7"
+     inkscape:label="НИЖНЯЯ МАНЖЕТА"
+     style="display:inline">
+    <path
+       d="m 478.41735,469.10183 c -90.80734,2.04517 -181.05403,4.03194 -271.89708,-0.21821 2.65303,11.41796 3.27377,26.12699 3.41446,40.69039 86.07583,3.26571 174.3441,3.08617 264.80479,-0.53861 1.13599,-13.11629 0.17285,-21.68446 3.67783,-39.93357 z"
+       style="display:inline;fill:none;stroke:#000000;stroke-opacity:1"
+       id="path1-27"
+       sodipodi:nodetypes="ccccc" />
+  </g>
+</svg>

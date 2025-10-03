@@ -14,30 +14,58 @@ import {
 import { splitByIntersections } from "../../utils/intersections.js";
 import { buildFacesFromSegments, extractPanels, pointInAnyFace } from "../../utils/panels.js";
 import { makeUserCurveBetween } from "../../utils/routes.js";
+import { applyMatrixToSegs } from "../../utils/transforms.js";
+import { collectAnchors } from "../../utils/anchors.js";
 
 // --- PRESETS: базовая папка с заранее подготовленными SVG
-const SVG_BASE = "/2d/svg";
+const SVG_BASE = "/2d/svg/Hoodie";
+// Каждый preset может быть single-file (file) или multi-file (sources[])
 const PRESETS = [
-    { id: "front", title: "Перед", file: "Front.svg" },
-    { id: "back", title: "Спинка", file: "Back.svg" },
-    // при желании добавь сюда "hood", "sleeve" и т. п.
+    {
+        id: "front",
+        title: "Перед",
+        sources: [
+            // Файлы из public/2d/svg/Hoodie/Front/*.svg
+            // dx/dy/scale — опциональны; начните с 0,0,1, а потом подправите позиции.
+            { file: "Front/body.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-B" },
+            { file: "Front/belt.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-Be" },
+            { file: "Front/sleeve_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-SL" },
+            { file: "Front/sleeve_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-SR" },
+            { file: "Front/cuff_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-CL" },
+            { file: "Front/cuff_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-CR" },
+        ]
+    },
+    {
+        id: "back",
+        title: "Спинка",
+        sources: [
+            // Файлы из public/2d/svg/Hoodie/Back/*.svg
+            { file: "Back/body.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-B" },
+            { file: "Back/belt.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-Be" },
+            { file: "Back/sleeve_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-SL" },
+            { file: "Back/sleeve_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-SR" },
+            { file: "Back/cuff_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-CL" },
+            { file: "Back/cuff_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-CR" },
+        ]
+    }
 ];
 
+
 /* ================== компонент ================== */
-export default function CostumeEditor({ initialSVG }) {
+export default function CostumeEditor() {
     const scopeRef = useRef(null);
+    const [composedPanels, setComposedPanels] = useState(null);
     // кеш SVG по пресетам и сохранённые пользовательские состояния по пресетам
+    const svgCacheRef = useRef({});
     const [svgCache, setSvgCache] = useState({}); // { [presetId]: rawSVG }
     const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
     const currentPresetIdRef = useRef(PRESETS[0]?.id || "front");
-    // минимальный зазор между вершинами (в мировых единицах SVG)
-    const [minGapWorld, setMinGapWorld] = useState(20); // подредактируете под «5 см» в своих единицах
+    // Минимальный зазор между вершинами (в мировых единицах SVG). Настраивается из кода.
+    const MIN_GAP_WORLD = 20; // TODO: подберите под ваши единицы (напр., «5 см»)
     // превью точки для вставки вершины
     const [insertPreview, setInsertPreview] = useState(null); // { panelId, curveId, x, y, allowed }
     // state для «запоминания» последнего подрежима
-    const [lastFillMode, setLastFillMode] = useState('paint');   // 'paint' | 'deleteFill'
     const [lastLineMode, setLastLineMode] = useState('add');     // 'add' | 'delete
-    const [rawSVG, setRawSVG] = useState(initialSVG || "");
     const [panels, setPanels] = useState([]);
     const [activePanelId, setActivePanelId] = useState(null);
     // для анимации "из-за спины"
@@ -71,6 +99,34 @@ export default function CostumeEditor({ initialSVG }) {
     const [waveLenPx, setWaveLenPx] = useState(36);
     const [paletteOpen, setPaletteOpen] = useState(false);
     const paletteRef = useRef(null);
+    const translateScaleMatrix = (dx = 0, dy = 0, s = 1) => ({ a: s, b: 0, c: 0, d: s, e: dx, f: dy });
+
+    // Загружает пресет: если sources[] — склеивает их в один набор панелей; если file — вернёт строку SVG (как раньше)
+    const loadPresetToPanels = async (preset) => {
+        if (Array.isArray(preset.sources) && preset.sources.length) {
+            const partsAll = [];
+            for (let i = 0; i < preset.sources.length; i++) {
+                const src = preset.sources[i];
+                const txt = await fetch(`${SVG_BASE}/${src.file}`).then(r => r.text());
+                const parts = extractPanels(txt); // парсим в панели (как обычно)
+                const M = translateScaleMatrix(src.dx || 0, src.dy || 0, src.scale || 1);
+
+                for (const p of parts) {
+                    const segsT = applyMatrixToSegs(p.segs, M);
+                    partsAll.push({
+                        id: `${src.idPrefix || (i + 1)}-${p.id}`,
+                        segs: segsT,
+                        anchors: collectAnchors(segsT),
+                    });
+                }
+            }
+            return partsAll;
+        }
+
+        console.warn('Preset without "sources" is not supported anymore:', preset);
+        return [];
+    };
+
     // --- PRESETS: кнопки/клавиши
     const prevPreset = () => setPresetIdx(i => (i - 1 + PRESETS.length) % PRESETS.length);
     const nextPreset = () => setPresetIdx(i => (i + 1) % PRESETS.length);
@@ -148,22 +204,7 @@ export default function CostumeEditor({ initialSVG }) {
                 pts.push({ x: e.x, y: e.y });
             }
         }
-        return pts.some(q => Math.hypot(q.x - testPt.x, q.y - testPt.y) < (minGapWorld || 0));
-    };
-
-    const onCurveMoveInsert = (panel, curve, evt) => {
-        if (mode !== 'insert') return;
-        // позицию мыши переводим в координаты SVG
-        const svgEl = svgRef.current;
-        if (!svgEl) return;
-        const pt = svgEl.createSVGPoint();
-        pt.x = evt.clientX; pt.y = evt.clientY;
-        const ctm = svgEl.getScreenCTM();
-        if (!ctm) return;
-        const inv = ctm.inverse();
-        const loc = pt.matrixTransform(inv);
-        const hit = closestPointOnCurve(panel, curve) ? closestPointOnCurve({ anchors: panel.anchors }, curve) : null;
-        // ↑ исправление: передаём panel в closestPointOnCurve
+        return pts.some(q => Math.hypot(q.x - testPt.x, q.y - testPt.y) < MIN_GAP_WORLD);
     };
 
     /* -------- базовые faces и кольца контура -------- */
@@ -606,6 +647,8 @@ export default function CostumeEditor({ initialSVG }) {
         setHoverFace(null);
     };
 
+    useEffect(() => { svgCacheRef.current = svgCache; }, [svgCache]);
+
     // авто-выход из deleteVertex, когда ручных вершин нет
     useEffect(() => {
         if (mode !== 'deleteVertex') return;
@@ -616,48 +659,53 @@ export default function CostumeEditor({ initialSVG }) {
     }, [mode, manualLeftInActive]);
 
     useEffect(() => {
-        if (initialSVG) return;
-
         const target = PRESETS[presetIdx];
         if (!target) return;
 
-        // 1) Сохраняем снимок текущего пресета
-        const prevId = currentPresetIdRef.current;
-        setSavedByPreset(prev => ({
-            ...prev,
-            [prevId]: snapshotFor()
-        }));
-
-        // 2) Переключаем текущий id
-        currentPresetIdRef.current = target.id;
-
-        // 3) Берём из кэша или грузим
         let alive = true;
         setIsLoadingPreset(true);
 
-        const cached = svgCache[target.id];
-        const finalize = (txt) => {
-            if (!alive) return;
-            setRawSVG(txt);
-            setSvgMountKey(k => k + 1);
-            setIsLoadingPreset(false);
-        };
+        // сохраним снапшот предыдущего пресета
+        const prevId = currentPresetIdRef.current;
+        setSavedByPreset(prev => ({ ...prev, [prevId]: snapshotFor() }));
+        currentPresetIdRef.current = target.id;
 
-        if (cached) {
-            finalize(cached);
-        } else {
-            fetch(`${SVG_BASE}/${target.file}`)
-                .then(r => r.text())
-                .then(txt => {
-                    if (!alive) return;
-                    setSvgCache(prev => ({ ...prev, [target.id]: txt }));
-                    finalize(txt);
-                })
-                .catch(() => { if (alive) { setRawSVG(""); setIsLoadingPreset(false); } });
-        }
+        (async () => {
+            try {
+
+                // 0) Кэш: если уже загружали этот пресет — не фетчим снова
+                const cached = svgCacheRef.current[target.id];
+                if (cached !== undefined) {
+                    if (Array.isArray(cached)) {
+                        setComposedPanels(cached);
+                    }
+                    else {
+                        setComposedPanels([]);
+                    }
+                    setSvgMountKey(k => k + 1);
+                    setIsLoadingPreset(false);
+                    return;
+                }
+
+                const loaded = await loadPresetToPanels(target);
+
+                if (!alive)
+                    return;
+
+                setComposedPanels(Array.isArray(loaded) ? loaded : []);
+                setSvgCache(prev => ({ ...prev, [target.id]: Array.isArray(loaded) ? loaded : [] }));
+                setSvgMountKey(k => k + 1);
+            }
+            catch (e) {
+                if (alive) { setComposedPanels([]); }
+            }
+            finally {
+                if (alive) setIsLoadingPreset(false);
+            }
+        })();
 
         return () => { alive = false; };
-    }, [presetIdx, initialSVG, snapshotFor, svgCache]);
+    }, [presetIdx]);
 
 
     // Когда входим в preview — снимаем выбор/ховер и сбрасываем буфер добавления
@@ -683,28 +731,12 @@ export default function CostumeEditor({ initialSVG }) {
     }, [paletteOpen]);
 
     useEffect(() => {
-        if (mode === 'paint' || mode === 'deleteFill') setLastFillMode(mode);
         if (mode === 'add' || mode === 'delete' || mode === 'insert') setLastLineMode(mode);
     }, [mode]);
 
     useEffect(() => {
         if (mode !== 'insert') setInsertPreview(null);
     }, [mode]);
-
-    // --- PRESETS: начальная подгрузка и переключение
-    useEffect(() => {
-        if (initialSVG) return; // если SVG уже пришёл сверху — не грузим пресеты
-        const p = PRESETS[presetIdx];
-        if (!p) return;
-        let alive = true;
-        setIsLoadingPreset(true);
-        fetch(`${SVG_BASE}/${p.file}`)
-            .then(r => r.text())
-            .then(txt => { if (alive) { setRawSVG(txt); setSvgMountKey(k => k + 1); } })
-            .catch(() => { if (alive) setRawSVG(""); })
-            .finally(() => { if (alive) setIsLoadingPreset(false); });
-        return () => { alive = false; };
-    }, [presetIdx, initialSVG]);
 
     useEffect(() => {
         const el = scopeRef.current;
@@ -739,19 +771,17 @@ export default function CostumeEditor({ initialSVG }) {
     }, [panels, activePanel]);
 
     useEffect(() => {
-        if (!rawSVG) return;
+        if (!composedPanels)
+            return;
 
-        const parts = extractPanels(rawSVG);
+        const parts = composedPanels;
 
-        // Снимок прежней сцены для анимации
+        // старая логика анимации/переключений
         const old = panelsRef.current;
         if (old && old.length) {
             didEverSwapRef.current = true;
-
             setPrevPanels(old);
             setIsSwapping(true);
-
-            // не допускаем наложения таймеров
             if (swapTimerRef.current) clearTimeout(swapTimerRef.current);
             swapTimerRef.current = setTimeout(() => {
                 setPrevPanels(null);
@@ -762,35 +792,13 @@ export default function CostumeEditor({ initialSVG }) {
 
         setPanels(parts);
 
-        // восстановление сохранённого состояния по текущему пресету
+        // восстановить сохранённый снапшот для текущего пресета
         const presetId = currentPresetIdRef.current;
         const snap = savedByPreset[presetId];
         applySnapshot(snap, parts);
 
-
-        if (!parts.length) {
-            // Диагностика причин
-            const hasImage = /<image\b[^>]+(?:href|xlink:href)=["']data:image\//i.test(rawSVG) ||
-                /<image\b[^>]+(?:href|xlink:href)=["'][^"']+\.(png|jpe?g|webp)/i.test(rawSVG);
-            const hasForeign = /<foreignObject\b/i.test(rawSVG);
-            const hasVectorTags = /<(path|polygon|polyline|rect|circle|ellipse|line)\b/i.test(rawSVG);
-
-            let msg =
-                "В SVG не найдено векторных контуров для деталей. " +
-                "Экспортируйте выкройку как вектор (path/polygon/polyline/rect/circle/ellipse/line).";
-
-            if (hasImage && !hasVectorTags) {
-                msg = "Похоже, это растровая картинка, встроенная в SVG (<image>). " +
-                    "Нужно экспортировать из исходной программы именно векторные контуры (path и др.).";
-            } else if (hasForeign && !hasVectorTags) {
-                msg = "Файл использует <foreignObject> (встроенный HTML/растровый контент). " +
-                    "Экспортируйте чистый векторный SVG без foreignObject.";
-            }
-
-            setToast({ text: msg });
-        } else {
-            if (toast) setToast(null);
-        }
+        if (toast)
+            setToast(null);
 
         return () => {
             if (swapTimerRef.current) {
@@ -798,7 +806,7 @@ export default function CostumeEditor({ initialSVG }) {
                 swapTimerRef.current = null;
             }
         };
-    }, [rawSVG]);
+    }, [composedPanels]);
 
     useLayoutEffect(() => {
         const update = () => {
@@ -1104,21 +1112,6 @@ export default function CostumeEditor({ initialSVG }) {
             <aside className={styles.sidebar}>
                 <div className={styles.panel}>
                     <h3 className={styles.panelTitle}>Редактор</h3>
-                    {/* Объект внутри заготовки */}
-                    <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Объект</div>
-                        <div className={styles.segmented} style={{ flexWrap: 'wrap' }}>
-                            {panels.map(p => (
-                                <button
-                                    key={p.id}
-                                    className={`${styles.segBtn} ${activePanel?.id === p.id ? styles.segActive : ''}`}
-                                    onClick={() => setActivePanelId(p.id)}
-                                >
-                                    {p.label || p.id}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
                     {/* Деталь: Перед/Спинка */}
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Деталь</div>
@@ -1199,7 +1192,7 @@ export default function CostumeEditor({ initialSVG }) {
                             <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'preview' ? styles.segActive : ''}`}
                                 onClick={() => setMode('preview')}>Просмотр</button>
                             <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'fill' ? styles.segActive : ''}`}
-                                onClick={() => setMode(lastFillMode)}>Заливка</button>
+                                onClick={() => setMode('paint')}>Заливка</button>
                             <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'line' ? styles.segActive : ''}`}
                                 onClick={() => { setAddBuffer(null); setMode(lastLineMode); }}>Линии</button>
                         </div>
@@ -1297,17 +1290,6 @@ export default function CostumeEditor({ initialSVG }) {
                                 <button
                                     className={`${styles.segBtn} ${mode === 'deleteVertex' ? styles.segActive : ''}`}
                                     onClick={() => { setMode('deleteVertex'); setSelectedCurveKey(null); setHoverCurveKey(null); setAddBuffer(null); }}>○ Удалить вершину</button>
-                            </div>
-
-                            <div className={styles.subRow} style={{ marginTop: 6 }}>
-                                <span className={styles.slimLabel}>Мин. расстояние между вершинами</span>
-                                <input
-                                    type="range" min={2} max={80} step={1}
-                                    value={minGapWorld}
-                                    onChange={e => setMinGapWorld(+e.target.value)}
-                                    className={styles.rangeCompact}
-                                />
-                                <span className={styles.value}>{minGapWorld}</span>
                             </div>
 
                             {/* === НАСТРОЙКИ ЛИНИИ: преднастройка или редактирование выбранной === */}
