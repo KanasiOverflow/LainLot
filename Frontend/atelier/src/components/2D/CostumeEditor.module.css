@@ -419,6 +419,12 @@
 }
 .hintClose:hover { color: #111827; }
 
+/* Курсоры для канвы */
+.cursorCrosshair { cursor: crosshair; }
+.cursorCopy { cursor: copy; }
+.cursorNotAllowed { cursor: not-allowed; }
+.cursorPointer { cursor: pointer; }
+
 .anchorManualDelete {
   fill: #ef4444;
   stroke: #991b1b;
