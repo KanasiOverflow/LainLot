@@ -852,6 +852,88 @@ export default function CostumeEditor() {
                 {toast && <div className={styles.toast}>{toast.text}</div>}
                 {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
 
+                {/* ВЕРХНЯЯ ПАНЕЛЬ: режимы, деталь, сброс */}
+                <div className={styles.topbar}>
+                    {/* Режимы (иконки) */}
+                    <div className={styles.topbarGroup}>
+                        <div className={styles.iconSeg} role="tablist" aria-label="Режимы">
+                            <button
+                                className={clsx(styles.iconBtn, mode === "preview" && styles.iconActive)}
+                                title="Просмотр (Esc)"
+                                onClick={() => setMode("preview")}
+                            >👁️</button>
+                            <button
+                                className={clsx(styles.iconBtn, (mode === "paint" || mode === "deleteFill") && styles.iconActive)}
+                                title="Заливка (F)"
+                                onClick={() => setMode("paint")}
+                            >🪣</button>
+                            <button
+                                className={clsx(styles.iconBtn, modeGroup === "line" && styles.iconActive)}
+                                title="Линии (A)"
+                                onClick={() => setMode(lastLineMode || "add")}
+                            >✏️</button>
+                        </div>
+                    </div>
+
+                    {/* Переключатель Перед/Спинка */}
+                    <div className={styles.topbarGroup}>
+                        <div className={styles.segmented} role="tablist" aria-label="Деталь">
+                            <button
+                                className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)}
+                                onClick={() => setPresetIdx(0)}
+                            >Перед</button>
+                            <button
+                                className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)}
+                                onClick={() => setPresetIdx(1)}
+                            >Спинка</button>
+                        </div>
+                    </div>
+
+                    {/* Сброс (dropdown) */}
+                    <div className={styles.topbarGroup}>
+                        <details className={styles.resetMenu}>
+                            <summary>Сброс ▾</summary>
+                            <div className={styles.resetList}>
+                                <button
+                                    className={styles.resetItem}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        const id = "front";
+                                        setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
+                                        if (currentPresetIdRef.current === id) {
+                                            setCurvesByPanel({}); setFills([]); setActivePanelId(panels[0]?.id ?? null); setMode("preview");
+                                        }
+                                    }}
+                                >Сбросить перед</button>
+
+                                <button
+                                    className={styles.resetItem}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        const id = "back";
+                                        setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
+                                        if (currentPresetIdRef.current === id) {
+                                            setCurvesByPanel({}); setFills([]); setActivePanelId(panels[0]?.id ?? null); setMode("preview");
+                                        }
+                                    }}
+                                >Сбросить спинку</button>
+
+                                <button
+                                    className={clsx(styles.resetItem, styles.resetDanger)}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях.")) return;
+                                        setSavedByPreset({});
+                                        setCurvesByPanel({}); setFills([]);
+                                        setActivePanelId(panels[0]?.id ?? null);
+                                        setMode("preview");
+                                    }}
+                                >⚠️ Сбросить всё</button>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
                 {/* Стек SVG: предыдущая сцена (для анимации) + текущая */}
                 <div className={styles.canvasStack}>
                     {/* нижний слой — пред. сцена, только контуры */}

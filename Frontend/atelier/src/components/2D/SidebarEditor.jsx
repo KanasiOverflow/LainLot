@@ -95,86 +95,82 @@ export default function SidebarEditor(props) {
             <div className={styles.panel}>
                 <h3 className={styles.panelTitle}>Редактор</h3>
 
-                {/* Деталь */}
-                <div className={styles.section}>
-                    <div className={styles.sectionTitle}>Деталь</div>
-                    <div className={styles.segmented}>
-                        <button className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)} onClick={() => setPresetIdx(0)}>Перед</button>
-                        <button className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)} onClick={() => setPresetIdx(1)}>Спинка</button>
-                    </div>
-                </div>
-
-                {/* Сброс */}
-                <div className={styles.section}>
-                    <div className={styles.sectionTitle}>Сброс</div>
-                    <div className={styles.btnGroupV}>
-                        <button className={styles.btn} onClick={onFullReset}>
-                            Сбросить всё <span className={styles.kbd}>Ctrl+R</span>
-                        </button>
-                        <button className={styles.btnGhost} onClick={() => onResetById("front")}>Сбросить перед</button>
-                        <button className={styles.btnGhost} onClick={() => onResetById("back")}>Сбросить спинку</button>
-                    </div>
-                    <div className={styles.hintSmall} style={{ marginTop: 6 }}>
-                        Переключение «Перед/Спинка» хранит линии и заливки отдельно.
-                    </div>
-                </div>
-
-                {/* Режим */}
-                <div className={styles.section}>
-                    <div className={styles.sectionTitle}>Режим</div>
-                    <div className={clsx(styles.segmented, styles.tabs3)}>
-                        <button className={clsx(styles.segBtn, styles.segBtnSmall, modeGroup === "preview" && styles.segActive)}
-                            onClick={() => setMode("preview")}>Просмотр
-                        </button>
-                        <button className={clsx(styles.segBtn, styles.segBtnSmall, modeGroup === "fill" && styles.segActive)}
-                            onClick={() => setMode("paint")}>Заливка
-                        </button>
-                        <button
-                            className={clsx(styles.segBtn, styles.segBtnSmall, modeGroup === "line" && styles.segActive)}
-                            onClick={() => { setMode(lastLineMode || "add"); }}>Линии
-                        </button>
-
-                    </div>
-                </div>
-
                 {/* Палитра */}
                 {modeGroup === "fill" && (
                     <div className={styles.section}>
                         <div className={styles.sectionTitle}>Цвет заливки</div>
+
+                        {/* Подрежимы */}
                         <div className={styles.segmented} style={{ gap: 8, marginBottom: 8 }}>
-                            <button className={clsx(styles.segBtn, mode === "paint" && styles.segActive)} onClick={() => setMode("paint")}>🪣 Залить</button>
-                            <button className={clsx(styles.segBtn, mode === "deleteFill" && styles.segActive)} onClick={() => setMode("deleteFill")}>✖ Стереть</button>
-                        </div>
-
-                        <div className={styles.colorRow}>
                             <button
-                                className={clsx(styles.colorChip, mode === "deleteFill" && styles.colorChipDisabled)}
-                                style={{ background: paintColor }}
-                                onClick={() => mode !== "deleteFill" && setPaletteOpen(v => !v)}
-                                aria-label="Открыть палитру"
-                                disabled={mode === "deleteFill"}
-                            />
-
-                            {paletteOpen && (
-                                <div className={styles.palettePopover}>
-                                    <div ref={paletteRef} className={styles.palette}>
-                                        <div className={styles.paletteGrid}>
-                                            {PALETTE.map(c => (
-                                                <button key={c} className={styles.swatchBtn} style={{ background: c }}
-                                                    onClick={() => { setPaintColor(c); setPaletteOpen(false); }} aria-label={c} />
-                                            ))}
-                                        </div>
-                                        <div className={styles.paletteFooter}>
-                                            <span className={styles.paletteLabel}>Произвольный</span>
-                                            <input type="color" className={styles.colorInline} value={paintColor}
-                                                onChange={(e) => setPaintColor(e.target.value)} />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+                                className={clsx(styles.segBtn, mode === "paint" && styles.segActive)}
+                                onClick={() => setMode("paint")}
+                            >🪣 Залить</button>
+                            <button
+                                className={clsx(styles.segBtn, mode === "deleteFill" && styles.segActive)}
+                                onClick={() => setMode("deleteFill")}
+                            >✖ Стереть</button>
                         </div>
+
+                        {mode === "paint" ? (
+                            <>
+                                {/* Текущий цвет + поповер */}
+                                <div className={styles.colorRow}>
+                                    <button
+                                        className={styles.colorChip}
+                                        style={{ background: paintColor }}
+                                        onClick={() => setPaletteOpen(v => !v)}
+                                        aria-label="Открыть палитру"
+                                    />
+                                    {paletteOpen && (
+                                        <div className={styles.palettePopover}>
+                                            <div ref={paletteRef} className={styles.palette}>
+                                                <div className={styles.paletteGrid}>
+                                                    {PALETTE.map(c => (
+                                                        <button
+                                                            key={c}
+                                                            className={styles.swatchBtn}
+                                                            style={{ background: c }}
+                                                            onClick={() => { setPaintColor(c); setPaletteOpen(false); }}
+                                                            aria-label={c}
+                                                        />
+                                                    ))}
+                                                </div>
+                                                <div className={styles.paletteFooter}>
+                                                    <span className={styles.paletteLabel}>Произвольный</span>
+                                                    <input
+                                                        type="color"
+                                                        className={styles.colorInline}
+                                                        value={paintColor}
+                                                        onChange={(e) => setPaintColor(e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Быстрые цвета */}
+                                <div className={styles.swatches} style={{ marginTop: 8 }}>
+                                    {PALETTE.map(c => (
+                                        <button
+                                            key={c}
+                                            className={styles.swatch}
+                                            style={{ background: c }}
+                                            title={c}
+                                            onClick={() => setPaintColor(c)}
+                                        />
+                                    ))}
+                                </div>
+                            </>
+                        ) : (
+                            <div className={styles.hintSmall} style={{ marginTop: 8 }}>
+                                Режим очистки: кликните по закрашенной области, чтобы удалить цвет. Горячая клавиша: <span className={styles.kbd}>X</span>.
+                            </div>
+                        )}
                     </div>
                 )}
+
 
                 {/* Линии */}
                 {modeGroup === "line" && (
