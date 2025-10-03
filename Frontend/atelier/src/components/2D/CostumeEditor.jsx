@@ -273,9 +273,13 @@ export default function CostumeEditor() {
     }, [mode]);
 
     const onPanelActivate = (panelId) => {
-        if (mode === 'preview') return;
+        if (mode === 'preview')
+            return;
+
         // В режиме заливки не мешаем покраске
-        if (mode === 'paint' || mode === 'deleteFill') return;
+        if (mode === 'paint' || mode === 'deleteFill')
+            return;
+
         setActivePanelId(panelId);
         setSelectedCurveKey(null);
         setHoverCurveKey(null);
@@ -1086,7 +1090,7 @@ export default function CostumeEditor() {
                                                     fill={hasFill ? fill : (mode === "paint" && isHover ? "#9ca3af" : "transparent")}
                                                     fillOpacity={hasFill ? 0.9 : (mode === "paint" && isHover ? 0.35 : 0.001)}
                                                     stroke="none"
-                                                    style={{ pointerEvents: canHit ? "all" : "none", cursor: canHit ? "pointer" : "default" }}
+                                                    style={{ pointerEvents: canHit ? 'all' : 'none', cursor: canHit ? 'crosshair' : 'default' }}
                                                     onMouseEnter={() => (hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly))}
                                                     onMouseLeave={() => (hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly))}
                                                     onClick={() => (hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly))}
@@ -1144,17 +1148,25 @@ export default function CostumeEditor() {
                                                     onCurveLeave(p.id, c.id);
                                                 }}
                                                 onMouseMove={(e) => {
-                                                    if (!isActive || mode !== "insert") return;
-                                                    const svg = svgRef.current; if (!svg) return;
+                                                    if (!isActive || mode !== "insert")
+                                                        return;
+                                                    const svg = svgRef.current; if (!svg)
+                                                        return;
+
                                                     const p2 = svg.createSVGPoint(); p2.x = e.clientX; p2.y = e.clientY;
                                                     const loc = p2.matrixTransform(svg.getScreenCTM().inverse());
                                                     const hit = closestPointOnCurve(p, c, loc);
-                                                    if (!hit) return;
+
+                                                    if (!hit)
+                                                        return;
+
                                                     const allowed = !tooCloseToExistingAnchors(p, c, { x: hit.x, y: hit.y });
                                                     setInsertPreview({ panelId: p.id, curveId: c.id, x: hit.x, y: hit.y, t: hit.t, allowed });
                                                 }}
                                                 onClick={(e) => {
-                                                    if (!isActive) return;
+                                                    if (!isActive)
+                                                        return;
+
                                                     if (mode === "insert") {
                                                         if (!selectedCurveKey) setSelectedCurveKey(`${p.id}:${c.id}`);
                                                         e.stopPropagation();
@@ -1176,7 +1188,16 @@ export default function CostumeEditor() {
                                                     }
                                                     onCurveClick(p.id, c.id, e);
                                                 }}
-                                                style={{ cursor: (mode === "preview" || !isActive) ? "default" : (mode === "insert" ? "copy" : "pointer") }}
+                                                style={{
+                                                    cursor:
+                                                        (mode === 'preview' || !isActive)
+                                                            ? 'default'
+                                                            : (mode === 'insert'
+                                                                ? ((insertPreview && insertPreview.curveId === c.id && insertPreview.allowed === false)
+                                                                    ? 'not-allowed'
+                                                                    : 'copy')
+                                                                : 'pointer')
+                                                }}
                                                 pointerEvents={(mode === "preview" || !isActive || mode === "deleteVertex") ? "none" : "auto"}
                                                 strokeLinecap="round"
                                             />
