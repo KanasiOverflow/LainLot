@@ -118,64 +118,6 @@ export default function SidebarEditor(props) {
             <div className={styles.panel}>
                 <h3 className={styles.panelTitle}>Редактор</h3>
 
-                {/* История (только не в preview — сам сайдбар скрыт в preview) */}
-                <div className={styles.section}>
-                    <div className={styles.historyHeader}>
-                        <div className={styles.sectionTitle}>История</div>
-
-                        <div className={styles.historyToggles}>
-                            <button
-                                className={styles.historyToggleBtn}
-                                aria-label={historyOpen ? "Свернуть историю" : "Развернуть историю"}
-                                aria-expanded={historyOpen}
-                                aria-controls="history-panel"
-                                title={historyOpen ? "Свернуть" : "Развернуть"}
-                                onClick={toggleHistory}
-                            >
-                                {historyOpen ? "▾" : "▸"}
-                            </button>
-
-                            <button
-                                className={styles.historyBtn}
-                                onClick={historyUndo}
-                                disabled={!canUndo}
-                                aria-label="Отменить (Ctrl+Z)"
-                                title="Отменить (Ctrl+Z)"
-                            >↶</button>
-
-                            <button
-                                className={styles.historyBtn}
-                                onClick={historyRedo}
-                                disabled={!canRedo}
-                                aria-label="Повторить (Ctrl+Y / Ctrl+Shift+Z)"
-                                title="Повторить (Ctrl+Y / Ctrl+Shift+Z)"
-                            >↷</button>
-                        </div>
-                    </div>
-
-                    {/* Только два состояния: открыт -> показываем всю ленту, закрыт -> ничего */}
-                    {historyOpen && (
-                        <div id="history-panel" className={styles.historyViewport}>
-                            <ol className={styles.historyList} aria-label="История действий">
-                                {historyItems.map((it, i) => (
-                                    <li
-                                        key={i}
-                                        className={[
-                                            styles.histItem,
-                                            i === historyIndex ? ' ' + styles.now : '',
-                                            i > historyIndex ? ' ' + styles.future : '',
-                                        ].join('')}
-                                        title={new Date(it.at).toLocaleTimeString()}
-                                    >
-                                        <span className={styles.histStep}>{i}</span>
-                                        <span className={styles.histLabel}>{it.label}</span>
-                                    </li>
-                                ))}
-                            </ol>
-                        </div>
-                    )}
-                </div>
-
                 {/* Палитра */}
                 {modeGroup === "fill" && (
                     <div className={styles.section}>
@@ -316,6 +258,66 @@ export default function SidebarEditor(props) {
                         )}
                     </div>
                 )}
+
+                {/* История (только не в preview — сам сайдбар скрыт в preview) */}
+                <div className={styles.section}>
+                    <div className={styles.historyHeader}>
+                        <div className={styles.sectionTitle}>История</div>
+
+                        <div className={styles.historyToggles}>
+                            <button
+                                className={styles.historyToggleBtn}
+                                aria-label={historyOpen ? "Свернуть историю" : "Развернуть историю"}
+                                aria-expanded={historyOpen}
+                                aria-controls="history-panel"
+                                title={historyOpen ? "Свернуть" : "Развернуть"}
+                                onClick={toggleHistory}
+                            >
+                                {historyOpen ? "▾" : "▸"}
+                            </button>
+
+                            <button
+                                className={styles.historyBtn}
+                                onClick={historyUndo}
+                                disabled={!canUndo}
+                                aria-label="Отменить (Ctrl+Z)"
+                                title="Отменить (Ctrl+Z)"
+                            >↶</button>
+
+                            <button
+                                className={styles.historyBtn}
+                                onClick={historyRedo}
+                                disabled={!canRedo}
+                                aria-label="Повторить (Ctrl+Y / Ctrl+Shift+Z)"
+                                title="Повторить (Ctrl+Y / Ctrl+Shift+Z)"
+                            >↷</button>
+                        </div>
+                    </div>
+
+                    {/* Только два состояния: открыт -> показываем всю ленту, закрыт -> ничего */}
+                    {historyOpen && (
+                        <div id="history-panel" className={styles.historyViewport}>
+                            <ol className={styles.historyList} aria-label="История действий">
+                                {historyItems.map((it, i) => (
+                                    <li
+                                        key={i}
+                                        className={[
+                                            styles.histItem,
+                                            i === historyIndex ? ' ' + styles.now : '',
+                                            i > historyIndex ? ' ' + styles.future : '',
+                                        ].join('')}
+                                        title={new Date(it.at).toLocaleTimeString()}
+                                    >
+                                        <span className={styles.histStep}>{i}</span>
+                                        <span className={styles.histLabel}>{it.label}</span>
+                                    </li>
+                                ))}
+                            </ol>
+                        </div>
+                    )}
+                </div>
+
+
             </div>
         </aside>
     );
