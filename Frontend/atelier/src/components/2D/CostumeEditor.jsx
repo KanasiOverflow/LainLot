@@ -18,6 +18,7 @@ import { applyMatrixToSegs } from "../../utils/transforms.js";
 import { collectAnchors } from "../../utils/anchors.js";
 
 import SidebarEditor from "./SidebarEditor.jsx";
+import Tooltip from "./Tooltip.jsx";
 
 // --- PRESETS: базовая папка с заранее подготовленными SVG
 const SVG_BASE = "/2d/svg/Hoodie";
@@ -56,6 +57,7 @@ const PRESETS = [
 /* ================== компонент ================== */
 export default function CostumeEditor() {
     const scopeRef = useRef(null);
+    const [showTopbarHint, setShowTopbarHint] = useState(false);
     const [composedPanels, setComposedPanels] = useState(null);
     // кеш SVG по пресетам и сохранённые пользовательские состояния по пресетам
     const svgCacheRef = useRef({});
@@ -102,6 +104,12 @@ export default function CostumeEditor() {
     const [paletteOpen, setPaletteOpen] = useState(false);
     const paletteRef = useRef(null);
     const translateScaleMatrix = (dx = 0, dy = 0, s = 1) => ({ a: s, b: 0, c: 0, d: s, e: dx, f: dy });
+
+    const dismissTopbarHint = useCallback(() => {
+        if (!showTopbarHint) return;
+        setShowTopbarHint(false);
+        try { localStorage.setItem("ce.topbarHint.v1", "1"); } catch (e) { }
+    }, [showTopbarHint]);
 
     // Загружает пресет: если sources[] — склеивает их в один набор панелей; если file — вернёт строку SVG (как раньше)
     const loadPresetToPanels = async (preset) => {
@@ -649,6 +657,26 @@ export default function CostumeEditor() {
         setHoverFace(null);
     };
 
+    useEffect(() => {
+        const onKey = (e) => {
+            if (e.key.toLowerCase() === 'h') {
+                e.preventDefault();
+                try { localStorage.removeItem('ce.topbarHint.v1'); } catch { }
+                setShowTopbarHint(true);
+            }
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, []);
+
+
+    useEffect(() => {
+        try {
+            const seen = localStorage.getItem("ce.topbarHint.v1");
+            setShowTopbarHint(seen !== "1");
+        } catch (e) { /* noop */ }
+    }, []);
+
     useEffect(() => { svgCacheRef.current = svgCache; }, [svgCache]);
 
     // авто-выход из deleteVertex, когда ручных вершин нет
@@ -857,25 +885,58 @@ export default function CostumeEditor() {
                 {/* ВЕРХНЯЯ ПАНЕЛЬ: режимы, деталь, сброс */}
                 <div className={styles.topbar}>
                     {/* Режимы (иконки) */}
-                    <div className={styles.topbarGroup}>
-                        <div className={styles.iconSeg} role="tablist" aria-label="Режимы">
+                    <div className={styles.iconSeg} role="tablist" aria-label="Режимы">
+                        <Tooltip label="Просмотр (Esc)">
                             <button
                                 className={clsx(styles.iconBtn, mode === "preview" && styles.iconActive)}
-                                title="Просмотр (Esc)"
-                                onClick={() => setMode("preview")}
+                                aria-label="Просмотр"
+                                onClick={() => { dismissTopbarHint(); setMode("preview"); }}
                             >👁️</button>
+                        </Tooltip>
+
+                        <Tooltip label="Заливка (F)">
                             <button
                                 className={clsx(styles.iconBtn, (mode === "paint" || mode === "deleteFill") && styles.iconActive)}
-                                title="Заливка (F)"
-                                onClick={() => setMode("paint")}
+                                aria-label="Заливка"
+                                onClick={() => { dismissTopbarHint(); setMode("paint"); }}
                             >🪣</button>
+                        </Tooltip>
+
+                        <Tooltip label="Линии (A)">
                             <button
                                 className={clsx(styles.iconBtn, modeGroup === "line" && styles.iconActive)}
-                                title="Линии (A)"
-                                onClick={() => setMode(lastLineMode || "add")}
+                                aria-label="Линии"
+                                onClick={() => { dismissTopbarHint(); setMode(lastLineMode || "add"); }}
                             >✏️</button>
-                        </div>
+                        </Tooltip>
+
+                        <Tooltip label="Показать подсказку (H)">
+                            <button
+                                className={styles.iconBtn}
+                                aria-label="Справка"
+                                onClick={() => {
+                                    try { localStorage.removeItem('ce.topbarHint.v1'); } catch { }
+                                    setShowTopbarHint(true);
+                                }}
+                            >?</button>
+                        </Tooltip>
+
                     </div>
+
+                    {showTopbarHint && (
+                        <div className={styles.topbarHint} role="dialog" aria-label="Подсказка по режимам">
+                            <div className={styles.hintClose} onClick={dismissTopbarHint} aria-label="Закрыть">×</div>
+                            <div className={styles.hintTitle}>Быстрый старт</div>
+                            <div className={styles.hintRow}>
+                                Нажмите <span className={styles.kbd}>F</span> — заливка,
+                                <span className={styles.kbd} style={{ marginLeft: 6 }}>A</span> — линии,
+                                <span className={styles.kbd} style={{ marginLeft: 6 }}>Esc</span> — просмотр.
+                            </div>
+                            <div className={styles.hintRow} style={{ marginTop: 6 }}>
+                                Или кликните по иконкам слева. Подсказка больше не появится.
+                            </div>
+                        </div>
+                    )}
 
                     {/* Переключатель Перед/Спинка */}
                     <div className={styles.topbarGroup}>
