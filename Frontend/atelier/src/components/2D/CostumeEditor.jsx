@@ -17,6 +17,8 @@ import { makeUserCurveBetween } from "../../utils/routes.js";
 import { applyMatrixToSegs } from "../../utils/transforms.js";
 import { collectAnchors } from "../../utils/anchors.js";
 
+import SidebarEditor from "./SidebarEditor.jsx";
+
 // --- PRESETS: базовая папка с заранее подготовленными SVG
 const SVG_BASE = "/2d/svg/Hoodie";
 // Каждый preset может быть single-file (file) или multi-file (sources[])
@@ -845,13 +847,14 @@ export default function CostumeEditor() {
 
     return (
         <div ref={scopeRef} className={styles.layout} tabIndex={0}>
+            {/* Левая область: канвас */}
             <div className={styles.canvasWrap} onMouseDown={() => scopeRef.current?.focus()}>
                 {toast && <div className={styles.toast}>{toast.text}</div>}
                 {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
 
-                {/* === два слоя поверх друг друга === */}
+                {/* Стек SVG: предыдущая сцена (для анимации) + текущая */}
                 <div className={styles.canvasStack}>
-                    {/* нижний: предыдущая сцена (только outline), без интерактивности */}
+                    {/* нижний слой — пред. сцена, только контуры */}
                     {prevPanels && (
                         <svg
                             className={`${styles.canvas} ${styles.stage} ${styles.swapOut}`}
@@ -874,9 +877,9 @@ export default function CostumeEditor() {
                         </svg>
                     )}
 
-                    {/* верхний: текущая (новая) сцена — полноценный интерактивный рендер */}
+                    {/* верхний слой — текущая интерактивная сцена */}
                     <svg
-                        key={svgMountKey} // у вас уже есть, оставляем — красиво монтирует svg
+                        key={svgMountKey}
                         ref={svgRef}
                         className={`${styles.canvas} ${styles.stage} ${isSwapping ? styles.swapIn : (!didEverSwapRef.current ? styles.svgEnter : "")}`}
                         viewBox={viewBox}
@@ -886,117 +889,120 @@ export default function CostumeEditor() {
                         {/* GRID */}
                         <defs>
                             <pattern id={`grid-${svgMountKey}`} width={gridDef.step} height={gridDef.step} patternUnits="userSpaceOnUse">
-                                <path d={`M ${gridDef.step} 0 L 0 0 0 ${gridDef.step}`} fill="none"
-                                    stroke="#000" strokeOpacity=".06" strokeWidth={0.6 * (scale.k || 1)} />
+                                <path
+                                    d={`M ${gridDef.step} 0 L 0 0 0 ${gridDef.step}`}
+                                    fill="none"
+                                    stroke="#000"
+                                    strokeOpacity=".06"
+                                    strokeWidth={0.6 * (scale.k || 1)}
+                                />
                             </pattern>
                         </defs>
-                        <rect x={gridDef.b.x} y={gridDef.b.y} width={gridDef.b.w} height={gridDef.b.h} fill={`url(#grid-${svgMountKey})`} />
+                        <rect
+                            x={gridDef.b.x}
+                            y={gridDef.b.y}
+                            width={gridDef.b.w}
+                            height={gridDef.b.h}
+                            fill={`url(#grid-${svgMountKey})`}
+                        />
 
-                        {/* FILLS + OUTLINES + CURVES + ANCHORS */}
+                        {/* FACES + OUTLINE + USER CURVES + ANCHORS */}
                         {panels.map(p => {
                             const faces = facesByPanel[p.id] || [];
                             const ring = outerRingByPanel[p.id];
                             const isActive = activePanel?.id === p.id;
-
                             const clickableFaces = faces.length ? faces : (ring ? [ring] : []);
-                            const dimInactive = mode !== 'preview' && !isActive;
+                            const dimInactive = mode !== "preview" && !isActive;
 
                             return (
                                 <g key={p.id} className={dimInactive ? styles.panelDimmed : undefined}>
-
-                                    {/* hit-target для выбора детали (только не заливка/preview) */}
-                                    {ring && (mode !== 'preview') && (mode !== 'paint') && (mode !== 'deleteFill') && (
+                                    {/* выбор детали (не мешаем заливке) */}
+                                    {ring && mode !== "preview" && mode !== "paint" && mode !== "deleteFill" && (
                                         <path
                                             d={facePath(ring)}
                                             fill="transparent"
-                                            style={{ cursor: 'pointer' }}
+                                            style={{ cursor: "pointer" }}
                                             onClick={() => onPanelActivate(p.id)}
                                         />
                                     )}
 
+                                    {/* грани для покраски / очистки */}
                                     {clickableFaces.map(poly => {
                                         const fk = faceKey(poly);
                                         const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
                                         const hasFill = fill !== "none";
                                         const isHover = !!hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk;
-                                        const canFaceHit = mode === 'paint' || mode === 'deleteFill';
+                                        const canHit = mode === "paint" || mode === "deleteFill";
 
                                         return (
                                             <g key={fk}>
                                                 <path
                                                     d={facePath(poly)}
-                                                    fill={hasFill ? fill : (mode === 'paint' && isHover ? '#9ca3af' : 'transparent')}
-                                                    fillOpacity={hasFill ? 0.9 : (mode === 'paint' && isHover ? 0.35 : 0.001)}
+                                                    fill={hasFill ? fill : (mode === "paint" && isHover ? "#9ca3af" : "transparent")}
+                                                    fillOpacity={hasFill ? 0.9 : (mode === "paint" && isHover ? 0.35 : 0.001)}
                                                     stroke="none"
-                                                    style={{ pointerEvents: canFaceHit ? 'all' : 'none', cursor: canFaceHit ? 'pointer' : 'default' }}
-                                                    onMouseEnter={() => hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly)}
-                                                    onMouseLeave={() => hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly)}
-                                                    onClick={() => hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly)}
+                                                    style={{ pointerEvents: canHit ? "all" : "none", cursor: canHit ? "pointer" : "default" }}
+                                                    onMouseEnter={() => (hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly))}
+                                                    onMouseLeave={() => (hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly))}
+                                                    onClick={() => (hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly))}
                                                 />
-                                                {/* оверлей для deleteFill: слегка затемняем уже залитую грань при ховере */}
-                                                {hasFill && mode === 'deleteFill' && isHover && (
-                                                    <path
-                                                        key={`${fk}-overlay`}
-                                                        d={facePath(poly)}
-                                                        fill="#000"
-                                                        fillOpacity={0.18}
-                                                        style={{ pointerEvents: 'none' }}
-                                                    />
+                                                {hasFill && mode === "deleteFill" && isHover && (
+                                                    <path d={facePath(poly)} fill="#000" fillOpacity={0.18} style={{ pointerEvents: "none" }} />
                                                 )}
                                             </g>
                                         );
                                     })}
 
-                                    {/* внешний контур — без событий, чтобы не перекрывал клики */}
+                                    {/* внешний контур */}
                                     {ring && (
                                         <path
                                             d={facePath(ring)}
                                             fill="none"
                                             stroke="#111"
                                             strokeWidth={1.8 * (scale.k || 1)}
-                                            style={{ pointerEvents: "none" }}   // важно
+                                            style={{ pointerEvents: "none" }}
                                         />
                                     )}
 
-                                    {/* USER CURVES (швы/линии пользователя) */}
+                                    {/* пользовательские линии */}
                                     {(curvesByPanel[p.id] || []).map(c => {
                                         const merged = mergedAnchorsOf(p);
                                         const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
                                         const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
-                                        if (!a || !b)
-                                            return null;
+                                        if (!a || !b) return null;
 
-                                        const d = c.type === 'cubic'
+                                        const d = c.type === "cubic"
                                             ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
-                                            : c.d; // 'routed'/'wavy'
+                                            : c.d;
 
                                         const key = `${p.id}:${c.id}`;
                                         const isHover = hoverCurveKey === key;
                                         const isSelected = selectedCurveKey === key;
                                         const isClicked = clickedCurveKey === key;
+
                                         const cls = clsx(
                                             styles.userCurve,
-                                            mode === 'preview' && styles.userCurvePreview,   // мягче в preview
-                                            (mode === 'delete' && isHover) && styles.userCurveDeleteHover, // красный в delete
-                                            isSelected && styles.userCurveSelected,          // выбранная линия (толще/подсветка)
-                                            isClicked && styles.userCurveClicked             // короткая вспышка при клике
+                                            mode === "preview" && styles.userCurvePreview,
+                                            mode === "delete" && isHover && styles.userCurveDeleteHover,
+                                            isSelected && styles.userCurveSelected,
+                                            isClicked && styles.userCurveClicked
                                         );
+
                                         return (
                                             <path
                                                 key={c.id}
                                                 d={d}
                                                 className={cls}
                                                 onMouseEnter={() => { if (isActive) onCurveEnter(p.id, c.id); }}
-                                                onMouseLeave={(e) => {
-                                                    if (mode === 'insert') setInsertPreview(prev => (prev && prev.curveId === c.id ? null : prev));
+                                                onMouseLeave={() => {
+                                                    if (mode === "insert") setInsertPreview(prev => (prev && prev.curveId === c.id ? null : prev));
                                                     onCurveLeave(p.id, c.id);
                                                 }}
                                                 onMouseMove={(e) => {
-                                                    if (!isActive || mode !== 'insert') return;
+                                                    if (!isActive || mode !== "insert") return;
                                                     const svg = svgRef.current; if (!svg) return;
                                                     const p2 = svg.createSVGPoint(); p2.x = e.clientX; p2.y = e.clientY;
                                                     const loc = p2.matrixTransform(svg.getScreenCTM().inverse());
-                                                    // ближайшая точка
                                                     const hit = closestPointOnCurve(p, c, loc);
                                                     if (!hit) return;
                                                     const allowed = !tooCloseToExistingAnchors(p, c, { x: hit.x, y: hit.y });
@@ -1004,17 +1010,11 @@ export default function CostumeEditor() {
                                                 }}
                                                 onClick={(e) => {
                                                     if (!isActive) return;
-                                                    if (mode === 'insert') {
-                                                        if (!selectedCurveKey)
-                                                            setSelectedCurveKey(`${p.id}:${c.id}`); // выделяем текущую линию
-
+                                                    if (mode === "insert") {
+                                                        if (!selectedCurveKey) setSelectedCurveKey(`${p.id}:${c.id}`);
                                                         e.stopPropagation();
                                                         if (!insertPreview || insertPreview.curveId !== c.id) return;
-                                                        if (!insertPreview.allowed) {
-                                                            setToast({ text: 'Слишком близко к существующей вершине' });
-                                                            return;
-                                                        }
-                                                        // добавляем ручную стоп-метку в кривую
+                                                        if (!insertPreview.allowed) { setToast({ text: "Слишком близко к существующей вершине" }); return; }
                                                         setCurvesByPanel(prev => {
                                                             const list = [...(prev[p.id] || [])];
                                                             const i = list.findIndex(x => x.id === c.id);
@@ -1022,42 +1022,40 @@ export default function CostumeEditor() {
                                                             const cur = list[i];
                                                             const stops = Array.isArray(cur.extraStops) ? [...cur.extraStops] : [];
                                                             stops.push(Math.max(0, Math.min(1, insertPreview.t)));
-                                                            const uniq = Array.from(new Set(stops)); // без округления
-                                                            uniq.sort((a, b) => a - b);              // порядок по оси длины
+                                                            const uniq = Array.from(new Set(stops)).sort((a, b) => a - b);
                                                             list[i] = { ...cur, extraStops: uniq };
                                                             return { ...prev, [p.id]: list };
                                                         });
-                                                        setInsertPreview(null);   // просто очищаем превью и продолжаем вставку
+                                                        setInsertPreview(null);
                                                         return;
                                                     }
-                                                    // прежняя логика выбора/удаления
                                                     onCurveClick(p.id, c.id, e);
                                                 }}
-                                                style={{ cursor: (mode === 'preview' || !isActive) ? 'default' : (mode === 'insert' ? 'copy' : 'pointer') }}
-                                                pointerEvents={(mode === 'preview' || !isActive || mode === 'deleteVertex') ? 'none' : 'auto'}
+                                                style={{ cursor: (mode === "preview" || !isActive) ? "default" : (mode === "insert" ? "copy" : "pointer") }}
+                                                pointerEvents={(mode === "preview" || !isActive || mode === "deleteVertex") ? "none" : "auto"}
                                                 strokeLinecap="round"
                                             />
                                         );
                                     })}
 
-                                    {isActive && mode === 'insert' && insertPreview && insertPreview.panelId === p.id && (
+                                    {/* превью точки вставки */}
+                                    {isActive && mode === "insert" && insertPreview && insertPreview.panelId === p.id && (
                                         <circle
                                             cx={insertPreview.x}
                                             cy={insertPreview.y}
-                                            r={insertPreview.allowed ? 4 : 4}
-                                            fill={insertPreview.allowed ? '#22c55e' : '#ef4444'}
-                                            stroke={insertPreview.allowed ? '#166534' : '#991b1b'}
+                                            r={4}
+                                            fill={insertPreview.allowed ? "#22c55e" : "#ef4444"}
+                                            stroke={insertPreview.allowed ? "#166534" : "#991b1b"}
                                             strokeWidth={1.5}
-                                            style={{ pointerEvents: 'none' }}
+                                            style={{ pointerEvents: "none" }}
                                         />
                                     )}
 
-                                    {/* ANCHORS (базовые + новые) — кликаем по merged-индексам */}
-                                    {isActive && (mode === 'add' || mode === 'delete' || mode === 'insert') && (() => {
+                                    {/* базовые + доп. якоря */}
+                                    {isActive && (mode === "add" || mode === "delete" || mode === "insert") && (() => {
                                         const base = p.anchors || [];
                                         const extras = extraAnchorsByPanel[p.id] || [];
                                         const merged = [...base, ...extras];
-
                                         return merged.map((pt, mi) => (
                                             <circle
                                                 key={`m-${mi}`}
@@ -1077,9 +1075,9 @@ export default function CostumeEditor() {
                                         ));
                                     })()}
 
-                                    {/* Только ручные вершинкы в режиме удаления вершин */}
-                                    {isActive && mode === 'deleteVertex' && (() => {
-                                        const extras = (extraAnchorsByPanel[p.id] || []).filter(ex => ex?.id?.includes('@m'));
+                                    {/* ручные вершины — для удаления */}
+                                    {isActive && mode === "deleteVertex" && (() => {
+                                        const extras = (extraAnchorsByPanel[p.id] || []).filter(ex => ex?.id?.includes("@m"));
                                         return extras.map(ex => (
                                             <circle
                                                 key={ex.id}
@@ -1091,16 +1089,13 @@ export default function CostumeEditor() {
                                             />
                                         ));
                                     })()}
-
                                 </g>
                             );
                         })}
-
-
                     </svg>
                 </div>
 
-                {/* — навигация пресетов снизу — */}
+                {/* навигация пресетов снизу */}
                 <div className={styles.presetNav}>
                     <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
                     <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
@@ -1108,340 +1103,50 @@ export default function CostumeEditor() {
                 </div>
             </div>
 
-            {/* sidebar */}
-            <aside className={styles.sidebar}>
-                <div className={styles.panel}>
-                    <h3 className={styles.panelTitle}>Редактор</h3>
-                    {/* Деталь: Перед/Спинка */}
-                    <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Деталь</div>
-                        <div className={styles.segmented}>
-                            <button
-                                className={`${styles.segBtn} ${presetIdx === 0 ? styles.segActive : ''}`}
-                                onClick={() => setPresetIdx(0)}
-                            >
-                                Перед
-                            </button>
-                            <button
-                                className={`${styles.segBtn} ${presetIdx === 1 ? styles.segActive : ''}`}
-                                onClick={() => setPresetIdx(1)}
-                            >
-                                Спинка
-                            </button>
-                        </div>
-                    </div>
+            {/* Правая контекстная панель */}
+            <SidebarEditor
+                // базовое
+                presetIdx={presetIdx}
+                setPresetIdx={setPresetIdx}
+                panels={panels}
+                mode={mode}
+                setMode={setMode}
+                modeGroup={modeGroup}
+                lastLineMode={lastLineMode}
+                setLastLineMode={setLastLineMode}
 
-                    <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Сброс</div>
-                        <div className={styles.btnGroupV}>
-                            <button
-                                className={styles.btn}
-                                onClick={() => {
-                                    // Сбросим всё: снимки и текущие состояния
-                                    setSavedByPreset({});
-                                    setCurvesByPanel({});
-                                    setFills([]);
-                                    setActivePanelId(panels[0]?.id ?? null);
-                                    setMode("preview");
-                                }}
-                            >
-                                Сбросить всё
-                                <span className={styles.kbd}>Ctrl+R (перезагрузка)</span>
-                            </button>
+                // сброс
+                setSavedByPreset={setSavedByPreset}
+                setCurvesByPanel={setCurvesByPanel}
+                setFills={setFills}
+                setActivePanelId={setActivePanelId}
 
-                            <button
-                                className={styles.btnGhost}
-                                onClick={() => {
-                                    const id = "front";
-                                    setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
-                                    if (currentPresetIdRef.current === id) {
-                                        setCurvesByPanel({});
-                                        setFills([]);
-                                        setActivePanelId(panels[0]?.id ?? null);
-                                        setMode("preview");
-                                    }
-                                }}
-                            >
-                                Сбросить перед
-                            </button>
+                // заливка
+                paintColor={paintColor}
+                setPaintColor={setPaintColor}
+                paletteOpen={paletteOpen}
+                setPaletteOpen={setPaletteOpen}
+                paletteRef={paletteRef}
 
-                            <button
-                                className={styles.btnGhost}
-                                onClick={() => {
-                                    const id = "back";
-                                    setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
-                                    if (currentPresetIdRef.current === id) {
-                                        setCurvesByPanel({});
-                                        setFills([]);
-                                        setActivePanelId(panels[0]?.id ?? null);
-                                        setMode("preview");
-                                    }
-                                }}
-                            >
-                                Сбросить спинку
-                            </button>
-                        </div>
-                        <div className={styles.hintSmall} style={{ marginTop: 6 }}>
-                            Переключение между «Перед» и «Спинка» сохраняет линии и заливки отдельно. Полный сброс — только по кнопке или обновлению страницы.
-                        </div>
-                    </div>
-
-                    <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Режим</div>
-                        <div className={`${styles.segmented} ${styles.tabs3}`}>
-                            <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'preview' ? styles.segActive : ''}`}
-                                onClick={() => setMode('preview')}>Просмотр</button>
-                            <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'fill' ? styles.segActive : ''}`}
-                                onClick={() => setMode('paint')}>Заливка</button>
-                            <button className={`${styles.segBtn} ${styles.segBtnSmall} ${modeGroup === 'line' ? styles.segActive : ''}`}
-                                onClick={() => { setAddBuffer(null); setMode(lastLineMode); }}>Линии</button>
-                        </div>
-                    </div>
-
-                    {/* Цвет заливки — видна только в режимах покраски */}
-
-                    {modeGroup === 'fill' && (
-                        <div className={styles.section}>
-                            <div className={styles.sectionTitle}>Цвет заливки</div>
-
-                            <div className={`${styles.segmented}`} style={{ marginBottom: 8, gap: 8 }}>
-                                <button className={`${styles.segBtn} ${mode === 'paint' ? styles.segActive : ''}`} onClick={() => setMode('paint')}>🪣 Залить</button>
-                                <button className={`${styles.segBtn} ${mode === 'deleteFill' ? styles.segActive : ''}`} onClick={() => setMode('deleteFill')}>✖ Стереть</button>
-                            </div>
-
-                            <div className={styles.colorRow}>
-                                <button className={`${styles.colorChip} ${mode === 'deleteFill' ? styles.colorChipDisabled : ''}`}
-                                    style={{ background: paintColor }}
-                                    onClick={() => mode !== 'deleteFill' && setPaletteOpen(v => !v)} />
-                                {paletteOpen && mode !== 'deleteFill' && (<div className={styles.palettePopover}>
-                                    {/* dropdown-палитра */}
-                                    {paletteOpen && (
-                                        <div ref={paletteRef} className={styles.palette}>
-                                            <div className={styles.paletteGrid}>
-                                                {[
-                                                    "#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe",
-                                                    "#ef4444", "#10b981", "#22c55e", "#0ea5e9", "#f59e0b", "#a855f7"
-                                                ].map(c => (
-                                                    <button
-                                                        key={c}
-                                                        className={styles.swatchBtn}
-                                                        style={{ background: c }}
-                                                        onClick={() => { setPaintColor(c); setPaletteOpen(false); }}
-                                                        aria-label={c}
-                                                    />
-                                                ))}
-                                            </div>
-                                            <div className={styles.paletteFooter}>
-                                                <span className={styles.paletteLabel}>Произвольный</span>
-                                                <input
-                                                    type="color"
-                                                    className={styles.colorInline}
-                                                    value={paintColor}
-                                                    onChange={(e) => setPaintColor(e.target.value)}
-                                                    aria-label="Произвольный цвет"
-                                                />
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>)}
-                            </div>
-                        </div>
-                    )}
-
-                    {modeGroup === 'line' && (
-                        <div className={styles.section}>
-                            <div className={styles.sectionTitle}>Линия</div>
-
-                            {/* Тип линии и параметры — как было */}
-                            <div className={styles.segmented}>
-                                <button
-                                    className={`${styles.segBtn} ${lineStyle === 'straight' ? styles.segActive : ''}`}
-                                    onClick={() => {
-                                        setLineStyle('straight');
-                                        setSelectedCurveKey(null);
-                                        setHoverCurveKey(null);
-                                        if (mode === 'delete' || mode === 'deleteVertex') { // если до этого был «удалить»
-                                            setMode('add');
-                                            setLastLineMode('add');
-                                        }
-                                    }}
-                                >Прямая</button>
-                                <button
-                                    className={`${styles.segBtn} ${lineStyle === 'wavy' ? styles.segActive : ''}`}
-                                    onClick={() => {
-                                        setLineStyle('wavy');
-                                        setSelectedCurveKey(null);
-                                        setHoverCurveKey(null);
-                                        if (mode === 'delete' || mode === 'deleteVertex') {
-                                            setMode('add');
-                                            setLastLineMode('add');
-                                        }
-                                    }}
-                                >Волнистая</button>
-                            </div>
-
-                            <div className={`${styles.segmented} ${styles.two}`} style={{ marginBottom: 8 }}>
-                                <button className={`${styles.segBtn} ${mode === 'add' ? styles.segActive : ''}`}
-                                    onClick={() => { setMode('add'); setAddBuffer(null); setSelectedCurveKey(null); setHoverCurveKey(null); }}>＋ Добавить</button>
-                                <button className={`${styles.segBtn} ${mode === 'delete' ? styles.segActive : ''}`}
-                                    onClick={() => { setMode('delete'); setSelectedCurveKey(null); setHoverCurveKey(null); }}>🗑 Удалить</button>
-                                <button className={`${styles.segBtn} ${mode === 'insert' ? styles.segActive : ''}`}
-                                    onClick={() => { setMode('insert'); setSelectedCurveKey(null); setHoverCurveKey(null); setAddBuffer(null); }}>● Вставить вершину</button>
-                                <button
-                                    className={`${styles.segBtn} ${mode === 'deleteVertex' ? styles.segActive : ''}`}
-                                    onClick={() => { setMode('deleteVertex'); setSelectedCurveKey(null); setHoverCurveKey(null); setAddBuffer(null); }}>○ Удалить вершину</button>
-                            </div>
-
-                            {/* === НАСТРОЙКИ ЛИНИИ: преднастройка или редактирование выбранной === */}
-                            {(() => {
-                                const hasSelection = !!selectedCurveKey;
-                                let curve = null, pid = null, cid = null;
-                                if (hasSelection) {
-                                    [pid, cid] = selectedCurveKey.split(':');
-                                    curve = (curvesByPanel[pid] || []).find(c => c.id === cid) || null;
-                                }
-
-                                // --- ВЕРШИНЫ (всегда видимы) ---
-                                const currentSub = hasSelection
-                                    ? Math.max(2, Math.min(10, curve?.subCount ?? 2))
-                                    : Math.max(2, Math.min(10, defaultSubCount));
-
-                                // РУЧНЫЕ вершины на выбранной линии
-                                const manualCount = hasSelection && Array.isArray(curve?.extraStops) ? curve.extraStops.length : 0;
-                                const manualLock = hasSelection && manualCount > 0;
-
-                                const changeSub = (n) => {
-                                    if (hasSelection) {
-                                        if (manualLock)
-                                            return; // заблокировано ручными вершинами
-
-                                        setCurvesByPanel(prev => {
-                                            const arr = [...(prev[pid] || [])];
-                                            const i = arr.findIndex(x => x.id === cid);
-                                            if (i >= 0) arr[i] = { ...arr[i], subCount: n };
-                                            return { ...prev, [pid]: arr };
-                                        });
-                                    } else {
-                                        setDefaultSubCount(n); // преднастройка для новой линии
-                                    }
-                                };
-
-                                // --- ВОЛНА (видна только когда lineStyle === 'wavy') ---
-                                const curveIsWavyCapable = !!(curve && curve.type === 'wavy' && curve.basePts);
-                                const currentAmp = hasSelection ? (curve?.waveAmpPx ?? waveAmpPx) : waveAmpPx;
-                                const currentLen = hasSelection ? (curve?.waveLenPx ?? waveLenPx) : waveLenPx;
-
-                                const changeAmp = (val) => {
-                                    if (hasSelection && curveIsWavyCapable) {
-                                        recomputeWaveForCurve(pid, cid, val, currentLen); // live-редактирование выбранной волнистой
-                                    } else {
-                                        setWaveAmpPx(val); // преднастройка для новой волнистой
-                                    }
-                                };
-                                const changeLen = (val) => {
-                                    if (hasSelection && curveIsWavyCapable) {
-                                        recomputeWaveForCurve(pid, cid, currentAmp, val);
-                                    } else {
-                                        setWaveLenPx(val); // преднастройка для новой волнистой
-                                    }
-                                };
-
-                                return (
-                                    <>
-                                        {/* индикатор */}
-                                        <div className={styles.hintSmall} style={{ marginTop: 6, marginBottom: 4 }}>
-                                            {hasSelection
-                                                ? 'Редактирование выбранной линии'
-                                                : `Преднастройка новой линии (${lineStyle === 'wavy' ? 'волнистая' : 'прямая'})`}
-                                        </div>
-
-                                        {/* Вершины — всегда */}
-                                        <div className={styles.subRow} style={{ marginTop: 6 }}>
-                                            <span className={styles.slimLabel}>
-                                                {hasSelection ? 'Вершины на линии' : 'Вершины (для новой)'}
-                                            </span>
-                                            <input
-                                                type="range" min={2} max={10} step={1}
-                                                value={currentSub}
-                                                onChange={e => changeSub(+e.target.value)}
-                                                className={styles.rangeCompact}
-                                                disabled={manualLock}
-                                            />
-                                            <span className={styles.value}>{currentSub}</span>
-                                        </div>
-
-                                        {manualLock && (
-                                            <div className={styles.lockNote}>
-                                                На линии есть ручные вершины ({manualCount}). Автоматическое распределение отключено.
-                                                Чтобы снова редактировать количество вершин, удалите все ручные точки.
-                                                <div style={{ marginTop: 6 }}>
-                                                    <button
-                                                        type="button"
-                                                        className={styles.linkBtn}
-                                                        onClick={() => {
-                                                            if (!hasSelection) return;
-                                                            const [pp, cc] = selectedCurveKey.split(':');
-                                                            setCurvesByPanel(prev => {
-                                                                const list = [...(prev[pp] || [])];
-                                                                const i = list.findIndex(x => x.id === cc);
-                                                                if (i < 0) return prev;
-                                                                const cur = list[i];
-                                                                if (!Array.isArray(cur.extraStops) || cur.extraStops.length === 0) return prev;
-                                                                list[i] = { ...cur, extraStops: [] }; // удалить ВСЕ ручные вершины на выбранной линии
-                                                                return { ...prev, [pp]: list };
-                                                            });
-                                                        }}
-                                                    >Удалить все ручные вершины</button>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Амплитуда/Длина волны — показываем только в режиме волнистой линии */}
-                                        {lineStyle === 'wavy' && (
-                                            <>
-                                                <div className={styles.subRow} style={{ marginTop: 8 }}>
-                                                    <span className={styles.slimLabel}>
-                                                        {hasSelection
-                                                            ? (curveIsWavyCapable ? 'Амплитуда на линии' : 'Амплитуда (шаблон)')
-                                                            : 'Амплитуда (для новой волнистой)'}
-                                                    </span>
-                                                    <input
-                                                        type="range" min={2} max={24} step={1}
-                                                        value={currentAmp}
-                                                        onChange={e => changeAmp(+e.target.value)}
-                                                        disabled={manualLock}
-                                                        className={styles.rangeCompact}
-                                                    />
-                                                    <span className={styles.value}>{currentAmp}px</span>
-                                                </div>
-
-                                                <div className={styles.subRow}>
-                                                    <span className={styles.slimLabel}>
-                                                        {hasSelection
-                                                            ? (curveIsWavyCapable ? 'Длина волны на линии' : 'Длина волны (шаблон)')
-                                                            : 'Длина волны (для новой)'}
-                                                    </span>
-                                                    <input
-                                                        type="range" min={12} max={80} step={2}
-                                                        value={currentLen}
-                                                        onChange={e => changeLen(+e.target.value)}
-                                                        disabled={manualLock}
-                                                        className={styles.rangeCompact}
-                                                    />
-                                                    <span className={styles.value}>{currentLen}px</span>
-                                                </div>
-                                            </>
-                                        )}
-                                    </>
-                                );
-                            })()}
-
-                        </div>
-                    )}
-
-                </div>
-            </aside>
+                // линии
+                lineStyle={lineStyle}
+                setLineStyle={setLineStyle}
+                defaultSubCount={defaultSubCount}
+                setDefaultSubCount={setDefaultSubCount}
+                selectedCurveKey={selectedCurveKey}
+                setSelectedCurveKey={setSelectedCurveKey}
+                hoverCurveKey={hoverCurveKey}
+                setHoverCurveKey={setHoverCurveKey}
+                curvesByPanel={curvesByPanel}
+                setCurvesByPanelExtern={setCurvesByPanel}
+                recomputeWaveForCurve={recomputeWaveForCurve}
+                waveAmpPx={waveAmpPx}
+                setWaveAmpPx={setWaveAmpPx}
+                waveLenPx={waveLenPx}
+                setWaveLenPx={setWaveLenPx}
+            />
 
         </div>
     );
+
 }
