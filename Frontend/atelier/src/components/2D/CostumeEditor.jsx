@@ -16,6 +16,7 @@ import { buildFacesFromSegments, extractPanels, pointInAnyFace } from "../../uti
 import { makeUserCurveBetween } from "../../utils/routes.js";
 import { applyMatrixToSegs } from "../../utils/transforms.js";
 import { collectAnchors } from "../../utils/anchors.js";
+import { useHistory } from "../../hooks/useHistory.jsx";
 
 import SidebarEditor from "./SidebarEditor.jsx";
 import Tooltip from "./Tooltip.jsx";
@@ -53,7 +54,6 @@ const PRESETS = [
     }
 ];
 
-
 /* ================== компонент ================== */
 export default function CostumeEditor() {
     const scopeRef = useRef(null);
@@ -90,6 +90,15 @@ export default function CostumeEditor() {
     const [fills, setFills] = useState([]);
     const [paintColor, setPaintColor] = useState("#f26522");
     const [mode, setMode] = useState("preview");
+
+    const { historyUndo, historyRedo, applyFillChange, applyCurvesChange } = useHistory({
+        fills,
+        curvesByPanel,
+        presetIdx,
+        setFills,
+        setCurvesByPanel,
+    });
+
     const [addBuffer, setAddBuffer] = useState(null);
     const [hoverAnchorIdx, setHoverAnchorIdx] = useState(null);
     const [hoverCurveKey, setHoverCurveKey] = useState(null);
@@ -287,7 +296,7 @@ export default function CostumeEditor() {
     };
 
     const recomputeWaveForCurve = (pid, cid, ampPx, lenPx) => {
-        setCurvesByPanel(prev => {
+        applyCurvesChange(prev => {
             const list = [...(prev[pid] || [])];
             const i = list.findIndex(x => x.id === cid);
             if (i < 0) return prev;
@@ -511,7 +520,7 @@ export default function CostumeEditor() {
         if (allInside) {
             if (lineStyle === "straight") {
                 // прежнее поведение: внутренняя ровная линия
-                setCurvesByPanel((map) => {
+                applyCurvesChange((map) => {
                     const arr = [...(map[activePanel.id] || [])];
                     arr.push({
                         ...draft,
@@ -536,7 +545,7 @@ export default function CostumeEditor() {
                 wpts = snapEnds(wpts, a.x, a.y, b.x, b.y); // ← фикс концов
                 const d = catmullRomToBezierPath(wpts);
 
-                setCurvesByPanel((map) => {
+                applyCurvesChange((map) => {
                     const arr = [...(map[activePanel.id] || [])];
                     arr.push({
                         id: draft.id,
@@ -566,7 +575,7 @@ export default function CostumeEditor() {
     };
 
     const cascadeDeleteCurve = (panelId, rootCurveId) => {
-        setCurvesByPanel(prev => {
+        applyCurvesChange(prev => {
             const arr = [...(prev[panelId] || [])];
             const toDelete = new Set([rootCurveId]);
             let changed = true;
@@ -595,7 +604,7 @@ export default function CostumeEditor() {
         const curveId = manualId.split('@m')[0];
         if (!curveId) return;
 
-        setCurvesByPanel(prev => {
+        applyCurvesChange(prev => {
             const list = [...(prev[panelId] || [])];
             const i = list.findIndex(c => c.id === curveId);
             if (i < 0) return prev;
@@ -647,19 +656,38 @@ export default function CostumeEditor() {
     const onFaceClick = (panelId, poly) => {
         if (mode !== "paint") return;
         const fk = faceKey(poly);
-        setFills(fs => {
+        applyFillChange(fs => {
             const i = fs.findIndex(f => f.panelId === panelId && f.faceKey === fk);
             if (i >= 0) { const cp = fs.slice(); cp[i] = { ...cp[i], color: paintColor }; return cp; }
             return [...fs, { id: crypto.randomUUID(), panelId, faceKey: fk, color: paintColor }];
         });
+
     };
     const onFilledEnter = (panelId, fk) => { if (mode === "deleteFill") setHoverFace({ panelId, faceKey: fk }); };
     const onFilledLeave = (panelId, fk) => { if (mode === "deleteFill") setHoverFace(h => (h && h.panelId === panelId && h.faceKey === fk ? null : h)); };
     const onFilledClick = (panelId, fk) => {
         if (mode !== "deleteFill") return;
-        setFills(fs => fs.filter(f => !(f.panelId === panelId && f.faceKey === fk)));
+        applyFillChange(fs => fs.filter(f => !(f.panelId === panelId && f.faceKey === fk)));
         setHoverFace(null);
     };
+
+    useEffect(() => {
+        const onKey = (e) => {
+            const ctrl = e.ctrlKey || e.metaKey;
+            if (!ctrl) return;
+            const k = e.key.toLowerCase();
+            if (k === 'z') {
+                e.preventDefault();
+                if (e.shiftKey) historyRedo(); else historyUndo();
+            } else if (k === 'y') {
+                e.preventDefault();
+                historyRedo();
+            }
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [historyUndo, historyRedo]);
+
 
     useEffect(() => {
         const onKey = (e) => {
@@ -1172,7 +1200,7 @@ export default function CostumeEditor() {
                                                         e.stopPropagation();
                                                         if (!insertPreview || insertPreview.curveId !== c.id) return;
                                                         if (!insertPreview.allowed) { setToast({ text: "Слишком близко к существующей вершине" }); return; }
-                                                        setCurvesByPanel(prev => {
+                                                        applyCurvesChange(prev => {
                                                             const list = [...(prev[p.id] || [])];
                                                             const i = list.findIndex(x => x.id === c.id);
                                                             if (i < 0) return prev;
@@ -1298,7 +1326,7 @@ export default function CostumeEditor() {
                     hoverCurveKey={hoverCurveKey}
                     setHoverCurveKey={setHoverCurveKey}
                     curvesByPanel={curvesByPanel}
-                    setCurvesByPanelExtern={setCurvesByPanel}
+                    setCurvesByPanelExtern={applyCurvesChange}
                     recomputeWaveForCurve={recomputeWaveForCurve}
                     waveAmpPx={waveAmpPx}
                     setWaveAmpPx={setWaveAmpPx}
