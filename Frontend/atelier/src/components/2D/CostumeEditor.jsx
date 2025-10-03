@@ -91,13 +91,16 @@ export default function CostumeEditor() {
     const [paintColor, setPaintColor] = useState("#f26522");
     const [mode, setMode] = useState("preview");
 
-    const { historyUndo, historyRedo, applyFillChange, applyCurvesChange } = useHistory({
-        fills,
-        curvesByPanel,
-        presetIdx,
-        setFills,
-        setCurvesByPanel,
+    const {
+        historyUndo, historyRedo, canUndo, canRedo,
+        applyFillChange, applyCurvesChange,
+        historyItems, historyIndex,
+    } = useHistory({
+        fills, curvesByPanel, presetIdx,
+        setFills, setCurvesByPanel,
+        max: 50, // можно поменять
     });
+
 
     const [addBuffer, setAddBuffer] = useState(null);
     const [hoverAnchorIdx, setHoverAnchorIdx] = useState(null);
@@ -314,7 +317,7 @@ export default function CostumeEditor() {
             }
 
             return prev;
-        });
+        }, label);
     };
 
     // линейная интерполяция точки на полилинии по «дуговой длине»
@@ -534,7 +537,7 @@ export default function CostumeEditor() {
                         subCount: defaultSubCount
                     });
                     return { ...map, [activePanel.id]: arr };
-                });
+                }, `Добавить линию прямая`);
             }
             else {
                 // внутренняя волнистая линия
@@ -560,7 +563,7 @@ export default function CostumeEditor() {
                         subCount: defaultSubCount
                     });
                     return { ...map, [activePanel.id]: arr };
-                });
+                }, `Добавить линию волнистая`);
             }
 
             //  внутренняя линия добавлена — выходим из обработчика
@@ -595,7 +598,7 @@ export default function CostumeEditor() {
             }
             const kept = arr.filter(c => !toDelete.has(c.id));
             return { ...prev, [panelId]: kept };
-        });
+        }, "Удалить линию");
     };
 
     const eraseManualAnchor = (panelId, manual) => {
@@ -632,7 +635,7 @@ export default function CostumeEditor() {
             }
             list[i] = { ...cur, extraStops: stops };
             return { ...prev, [panelId]: list };
-        });
+        }, "Удалить вершину");
     };
 
     const onCurveEnter = (panelId, id) => {
@@ -660,14 +663,15 @@ export default function CostumeEditor() {
             const i = fs.findIndex(f => f.panelId === panelId && f.faceKey === fk);
             if (i >= 0) { const cp = fs.slice(); cp[i] = { ...cp[i], color: paintColor }; return cp; }
             return [...fs, { id: crypto.randomUUID(), panelId, faceKey: fk, color: paintColor }];
-        });
+        }, `Заливка (${presetIdx === 0 ? 'Перед' : 'Спинка'})`);
 
     };
     const onFilledEnter = (panelId, fk) => { if (mode === "deleteFill") setHoverFace({ panelId, faceKey: fk }); };
     const onFilledLeave = (panelId, fk) => { if (mode === "deleteFill") setHoverFace(h => (h && h.panelId === panelId && h.faceKey === fk ? null : h)); };
     const onFilledClick = (panelId, fk) => {
         if (mode !== "deleteFill") return;
-        applyFillChange(fs => fs.filter(f => !(f.panelId === panelId && f.faceKey === fk)));
+        applyFillChange(fs => fs.filter(f => !(f.panelId === panelId && f.faceKey === fk)),
+            `Очистка заливки (${presetIdx === 0 ? 'Перед' : 'Спинка'})`);
         setHoverFace(null);
     };
 
@@ -1295,6 +1299,7 @@ export default function CostumeEditor() {
                     <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
                     <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
                 </div>
+
             </div>
 
             {/* Правая панель рендерится только вне preview */}
@@ -1332,6 +1337,12 @@ export default function CostumeEditor() {
                     setWaveAmpPx={setWaveAmpPx}
                     waveLenPx={waveLenPx}
                     setWaveLenPx={setWaveLenPx}
+                    historyItems={historyItems}
+                    historyIndex={historyIndex}
+                    historyUndo={historyUndo}
+                    historyRedo={historyRedo}
+                    canUndo={canUndo}
+                    canRedo={canRedo}
                 />
             )}
 
