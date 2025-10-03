@@ -5,6 +5,36 @@
    - Sections grouped with headers
    ========================= */
 
+/* ===== Topbar over canvas ===== */
+.topbar {
+  position: absolute;
+  left: 12px; right: 12px; top: 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; z-index: 4;
+}
+.topbarGroup { display: flex; align-items: center; gap: 8px; }
+
+/* Reset dropdown (native <details>) */
+.resetMenu { position: relative; }
+.resetMenu > summary {
+  list-style: none; cursor: pointer; user-select: none;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border: 1px solid #e6e6e6; border-radius: 10px; background: #fff;
+}
+.resetMenu[open] > summary { border-color: #f26522; box-shadow: 0 0 0 2px rgba(242,101,34,.10) inset; }
+
+.resetList {
+  position: absolute; right: 0; top: 40px; z-index: 10;
+  background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
+  padding: 8px; box-shadow: 0 12px 28px rgba(0,0,0,.14); min-width: 210px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.resetItem {
+  text-align: left; padding: 8px 10px; border-radius: 8px; border: 1px solid #e6e6e6; background: #fff; cursor: pointer;
+}
+.resetItem:hover { border-color: #c7d2fe; background: #eef2ff; }
+.resetDanger { background: #fee2e2; border-color: #fecaca; color: #991b1b; }
+
 /* ===== Layout: canvas + sidebar ===== */
 .layout {
   width: 100%;
@@ -387,6 +417,16 @@
   min-width: 110px; padding: 10px 14px; text-align: center;
   border: 1px solid #e6e6e6; border-radius: 12px; background: #fff; color: #30302e;
   box-shadow: 0 6px 18px rgba(0,0,0,.06); font-weight: 600;
+}
+
+/* Когда скрываем редактор (режим Просмотр) — остаётся одна колонка */
+.layoutPreview {
+  grid-template-columns: 1fr; /* без правой колонки */
+}
+
+/* На всякий случай: если кто-то оставит aside в DOM, прячем его */
+.layoutPreview .sidebar {
+  display: none;
 }
 
 /* приглушение неактивных деталей */
