@@ -706,7 +706,15 @@ export default function CostumeEditor() {
 
     // ===== Order flow state (persist to LS)
     const [bodyParams, setBodyParams] = useState(() => {
-        try { return JSON.parse(localStorage.getItem("ce.bodyParams.v1") || "null"); } catch { return null; }
+        try {
+            const fromLS = JSON.parse(localStorage.getItem("ce.bodyParams.v1") || "null");
+            if (fromLS) return fromLS;
+        } catch { }
+        // дефолтная форма — чтобы инпуты были контролируемыми с первого рендера
+        return {
+            hoodie: { chest: "", waist: "", hips: "", height: "", sleeve: "", back: "" },
+            pants: { waist: "", hips: "", outseam: "", inseam: "", thigh: "", ankle: "" }
+        };
     });
 
     const [orderInfo, setOrderInfo] = useState(() => {

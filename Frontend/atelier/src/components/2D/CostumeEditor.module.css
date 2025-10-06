@@ -57,13 +57,35 @@
   position: relative;
 }
 
+/* Всплывающая подсказка — оверлей над топбаром */
 .topbarHint {
   position: absolute;
-  top: 8px;
-  left: 12px;        /* если нужно по центру: left:50%; transform:translateX(-50%); */
-  z-index: 50;
-  max-width: min(520px, calc(100% - 24px));
+  top: 56px;
+  left: 12px;                       /* если нужно по центру: left:50%; transform:translateX(-50%); */
+  z-index: 60;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(17,24,39,.14);
+  padding: 10px 12px;
+  width: max-content;
+  max-width: min(420px, calc(100% - 24px));
+  line-height: 1.35;
+  pointer-events: auto;              /* чтобы можно было нажать × */
 }
+
+.hintClose {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 700;
+  opacity: .5;
+}
+.hintClose:hover { opacity: .9; }
+.hintTitle { font-weight: 700; margin: 0 18px 6px 0; font-size: 14px; color:#111827; }
+.hintRow   { font-size: 13px; color:#111827; }
 
 .topbarGroup { display: flex; align-items: center; gap: 8px; }
 
@@ -504,8 +526,17 @@
 .ctaNote { font-size: 13px; color: #6b7280; }
 
 /* === базовые формы (если ещё не добавлены) === */
-.formLabel { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px; font-size: 13px; color: #111; opacity:.9; margin: 6px 0 4px; }
-.formUnit { font-size: 12px; opacity: .6; }
+.formLabel{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  color:#111;
+  opacity:.9;
+  margin:6px 0 4px;
+}
+.formLabel input{ flex:1; }          /* поле растягивается, текст рядом */
+.formUnit{ font-size:12px; opacity:.6; white-space:nowrap; }
 .input, .textarea { width: 100%; padding: 9px 10px; border: 1px solid #e6e6e6; border-radius: 8px; background: #fff; font-size: 14px; color: #30302e; }
 .input:focus, .textarea:focus { outline: 2px solid #c7d2fe; outline-offset: 2px; }
 .textarea { resize: vertical; }
