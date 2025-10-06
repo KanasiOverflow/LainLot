@@ -1,7 +1,7 @@
 // BodyParams.jsx
 import { useId, useState } from "react";
 import clsx from "clsx";
-import styles from "./CostumeEditor.module.css";
+import styles from "../styles/CostumeEditor.module.css";
 
 const DEF = {
     hoodie: { chest: "", waist: "", hips: "", height: "", sleeve: "", back: "" },

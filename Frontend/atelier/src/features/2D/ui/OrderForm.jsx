@@ -1,6 +1,6 @@
 // OrderForm.jsx
 import { useId } from "react";
-import styles from "./CostumeEditor.module.css";
+import styles from "../styles/CostumeEditor.module.css";
 
 const DEF = {
     fullName: "", email: "", phone: "",

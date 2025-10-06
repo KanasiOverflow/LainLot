@@ -1,7 +1,7 @@
 import { useId } from "react";
 import clsx from "clsx";
 // используем тот же модуль стилей, чтобы слайдер выглядел как остальные элементы панели
-import styles from "./CostumeEditor.module.css";
+import styles from "../styles/CostumeEditor.module.css";
 
 /**
  * Универсальный ряд со слайдером для правой панели.

@@ -1,6 +1,6 @@
 // CostumeEditor.jsx
 import { useEffect, useMemo, useRef, useState, useLayoutEffect, useCallback } from "react";
-import styles from "./CostumeEditor.module.css";
+import styles from "../styles/CostumeEditor.module.css";
 import clsx from "clsx";
 import { sampleBezier, sampleBezierPoints, segsSignature } from "../../../core/geometry/geometry.js";
 import { area, getBounds } from "../../../core/geometry/bounds.js";
