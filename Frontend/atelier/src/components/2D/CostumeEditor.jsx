@@ -994,22 +994,34 @@ export default function CostumeEditor() {
     }, []);
 
     return (
-        <div ref={scopeRef}
+        <div
+            ref={scopeRef}
             className={clsx(styles.layout, modeGroup === 'preview' && styles.layoutPreview)}
-            tabIndex={0}>
+            tabIndex={0}
+            role="region"
+            aria-label="Редактор костюма"
+        >
             {/* Левая область: канвас */}
             <div className={styles.canvasWrap} onMouseDown={() => scopeRef.current?.focus()}>
-                {toast && <div className={styles.toast}>{toast.text}</div>}
+                {toast && (
+                    <div className={styles.toast} role="status" aria-live="polite">
+                        {toast.text}
+                    </div>
+                )}
+
                 {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
 
                 {/* ВЕРХНЯЯ ПАНЕЛЬ: режимы, деталь, сброс */}
                 <div className={styles.topbar}>
                     {/* Режимы (иконки) */}
-                    <div className={styles.tbLeft} role="tablist" aria-label="Режимы">
+                    <div className={styles.tbLeft} role="radiogroup" aria-label="Режимы">
                         <Tooltip label="Просмотр (Esc)">
                             <button
                                 className={clsx(styles.iconBtn, mode === "preview" && styles.iconActive)}
                                 aria-label="Просмотр"
+                                role="radio"
+                                aria-checked={mode === "preview"}
+                                aria-keyshortcuts="Esc"
                                 onClick={() => { dismissTopbarHint(); setMode("preview"); }}
                             >👁️</button>
                         </Tooltip>
@@ -1018,6 +1030,9 @@ export default function CostumeEditor() {
                             <button
                                 className={clsx(styles.iconBtn, (mode === "paint" || mode === "deleteFill") && styles.iconActive)}
                                 aria-label="Заливка"
+                                role="radio"
+                                aria-checked={mode === "paint" || mode === "deleteFill"}
+                                aria-keyshortcuts="F"
                                 onClick={() => { dismissTopbarHint(); setMode("paint"); }}
                             >🪣</button>
                         </Tooltip>
@@ -1026,6 +1041,9 @@ export default function CostumeEditor() {
                             <button
                                 className={clsx(styles.iconBtn, modeGroup === "line" && styles.iconActive)}
                                 aria-label="Линии"
+                                role="radio"
+                                aria-checked={modeGroup === "line"}
+                                aria-keyshortcuts="A"
                                 onClick={() => { dismissTopbarHint(); setMode(lastLineMode || "add"); }}
                             >✏️</button>
                         </Tooltip>
@@ -1034,13 +1052,12 @@ export default function CostumeEditor() {
                             <button
                                 className={styles.iconBtn}
                                 aria-label="Справка"
-                                onClick={() => {
-                                    try { localStorage.removeItem('ce.topbarHint.v1'); } catch { }
-                                    setShowTopbarHint(true);
-                                }}
+                                aria-keyshortcuts="H"
+                                onClick={() => { try { localStorage.removeItem('ce.topbarHint.v1'); } catch { }; setShowTopbarHint(true); }}
                             >?</button>
                         </Tooltip>
                     </div>
+
 
                     {showTopbarHint && (
                         <div className={styles.topbarHint} role="dialog" aria-label="Подсказка по режимам">
@@ -1058,23 +1075,27 @@ export default function CostumeEditor() {
                     )}
 
                     {/* Переключатель Перед/Спинка */}
-                    <div className={styles.tbCenter}>
-                        <div className={styles.segmented} role="tablist" aria-label="Деталь">
-                            <button
-                                className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)}
-                                onClick={() => setPresetIdx(0)}
-                            >Перед</button>
-                            <button
-                                className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)}
-                                onClick={() => setPresetIdx(1)}
-                            >Спинка</button>
-                        </div>
+                    <div className={styles.segmented} role="tablist" aria-label="Деталь">
+                        <button
+                            role="tab"
+                            aria-selected={presetIdx === 0}
+                            className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)}
+                            onClick={() => setPresetIdx(0)}
+                        >Перед</button>
+
+                        <button
+                            role="tab"
+                            aria-selected={presetIdx === 1}
+                            className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)}
+                            onClick={() => setPresetIdx(1)}
+                        >Спинка</button>
                     </div>
+
 
                     {/* Сброс (dropdown) */}
                     <div className={styles.tbRight}>
                         <details className={styles.resetDetails}>
-                            <summary className={styles.resetBtn}>
+                            <summary className={styles.resetBtn} aria-haspopup="menu">
                                 Сброс <span aria-hidden>▾</span>
                             </summary>
 
@@ -1082,6 +1103,7 @@ export default function CostumeEditor() {
                                 <div className={styles.resetList}>
                                     <button
                                         className={styles.resetItem}
+                                        role="menuitem"
                                         onClick={(e) => {
                                             e.preventDefault();
                                             const id = "front";
@@ -1095,6 +1117,7 @@ export default function CostumeEditor() {
 
                                     <button
                                         className={styles.resetItem}
+                                        role="menuitem"
                                         onClick={(e) => {
                                             e.preventDefault();
                                             const id = "back";
@@ -1110,6 +1133,7 @@ export default function CostumeEditor() {
 
                                     <button
                                         className={clsx(styles.resetItem, styles.resetDanger)}
+                                        role="menuitem"
                                         onClick={(e) => {
                                             e.preventDefault();
                                             if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях.")) return;
@@ -1159,7 +1183,10 @@ export default function CostumeEditor() {
                         viewBox={viewBox}
                         preserveAspectRatio="xMidYMid meet"
                         onClick={onCanvasClick}
+                        role="img"
+                        aria-label={`Деталь: ${PRESETS[presetIdx]?.title || "—"}`}
                     >
+                        <title>Деталь: {PRESETS[presetIdx]?.title || "—"}</title>
                         {/* GRID */}
                         <defs>
                             <pattern id={`grid-${svgMountKey}`} width={gridDef.step} height={gridDef.step} patternUnits="userSpaceOnUse">

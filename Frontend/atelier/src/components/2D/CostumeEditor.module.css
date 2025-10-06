@@ -315,6 +315,41 @@
 .tbCenter { justify-self: center; }
 .tbRight  { justify-self: end; }
 
+/* ===== Canvas helpers & transitions (missing) ===== */
+.canvas {               /* чтобы классы из JSX не были undefined */
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.swapIn {               /* вход нового слоя */
+  animation: ce-swap-in 420ms ease both;
+  will-change: opacity, transform;
+}
+
+.swapOut {              /* затухание предыдущего слоя */
+  animation: ce-swap-out 420ms ease both;
+  will-change: opacity, transform;
+  pointer-events: none; /* на всякий */
+}
+
+.svgEnter {             /* первый показ сцены без «старого» слоя */
+  animation: ce-fade-in 240ms ease both;
+}
+
+@keyframes ce-swap-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes ce-swap-out {
+  from { opacity: .65; transform: none; }
+  to   { opacity: 0;    transform: translateY(-6px); }
+}
+@keyframes ce-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* На узких экранах — две строки:
    ┌ left ─────── right ┐
    └────── center ──────┘
