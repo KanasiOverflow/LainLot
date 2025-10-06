@@ -1,139 +1,8 @@
 /* =========================
-   CostumeEditor.module.css (cleaned & grouped)
-   - Duplicate rules merged
-   - Consistent sizing & spacing
-   - Sections grouped with headers
+   CostumeEditor.module.css — cleaned
    ========================= */
 
-/* ===== History bar ===== */
-.historyBar {
-  position: absolute;
-  left: 12px; right: 12px; top: 60px;
-  background: rgba(255,255,255,.9);
-  backdrop-filter: blur(4px);
-  border: 1px solid #e6e6e6;
-  border-radius: 12px;
-  padding: 6px 10px;
-  z-index: 5;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 10px;
-  align-items: center;
-}
-
-.historyCtrl { display: inline-flex; gap: 6px; }
-.historyBtn {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; border: 1px solid #e6e6e6; border-radius: 8px; background: #fff;
-  cursor: pointer;
-}
-.historyBtn[disabled] { opacity: .45; cursor: default; }
-
-.historyList {
-  display: flex; gap: 8px; overflow: auto; scrollbar-width: thin;
-}
-.histItem {
-  display: inline-flex; align-items: center; gap: 6px;
-  border: 1px solid #e6e6e6; border-radius: 10px; padding: 4px 8px; background: #fff;
-  white-space: nowrap; font-size: 12px; color: #374151;
-  opacity: .65;
-}
-.histItem.now { opacity: 1; border-color: #c7d2fe; box-shadow: 0 0 0 2px rgba(199,210,254,.35) inset; }
-.histItem.future { opacity: .35; }
-.histStep { font-weight: 600; color: #111827; }
-
-/* ===== History — vertical in sidebar ===== */
-.historyViewport {
-  /* окно истории */
-  min-height: 200px;          /* ваш минимум */
-  max-height: 320px;          /* можно поменять при желании */
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 4px;         /* место под вертикальный скролл */
-}
-
-/* ===== History in sidebar ===== */
-.historyHeader {
-  display: flex; align-items: center; justify-content: space-between;
-}
-.historyToggles { display: inline-flex; gap: 6px; align-items: center; }
-
-.historyToggleBtn {
-  width: 32px; height: 32px;
-  display: inline-flex; align-items: center; justify-content: center;
-  border: 1px solid #e6e6e6; border-radius: 8px; background: #fff; cursor: pointer;
-}
-.historyToggleBtn:hover { border-color: #c7d2fe; background: #eef2ff; }
-
-.historyViewport { min-height: 200px; max-height: 320px; overflow-y: auto; padding-right: 4px; }
-
-.sidebar .historyList { display: flex; flex-direction: column; gap: 6px; }
-.sidebar .histItem { width: 100%; justify-content: flex-start; }
-.histLabel { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
-
-/* ===== Mobile/preview fixes ===== */
-.canvasWrap { min-width: 0; }        /* чтобы grid-элемент не тянулся */
-.canvasStack { min-height: 60vh; }   /* канва не схлопывается на мобиле */
-.stage { width: 100%; height: 100%; display: block; }
-
-@media (max-width: 960px) {
-  .layout { grid-template-columns: 1fr; }
-  .layoutPreview { grid-template-columns: 1fr; }
-  .canvasStack { min-height: 65vh; } /* побольше на телефонах */
-}
-
-.sidebar .historyList {
-  display: flex;
-  flex-direction: column;     /* вертикально */
-  gap: 6px;
-}
-
-.sidebar .histItem {
-  width: 100%;
-  justify-content: flex-start;
-}
-
-.histLabel {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* (опционально) компактнее внутри правой колонки */
-.sidebar .historyList { gap: 6px; }
-.sidebar .histItem { padding: 3px 6px; font-size: 11.5px; }
-
-/* ===== Topbar over canvas ===== */
-.topbar {
-  position: absolute;
-  left: 12px; right: 12px; top: 10px;
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; z-index: 4;
-}
-.topbarGroup { display: flex; align-items: center; gap: 8px; }
-
-/* Reset dropdown (native <details>) */
-.resetMenu { position: relative; }
-.resetMenu > summary {
-  list-style: none; cursor: pointer; user-select: none;
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 12px; border: 1px solid #e6e6e6; border-radius: 10px; background: #fff;
-}
-.resetMenu[open] > summary { border-color: #f26522; box-shadow: 0 0 0 2px rgba(242,101,34,.10) inset; }
-
-.resetList {
-  position: absolute; right: 0; top: 40px; z-index: 10;
-  background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
-  padding: 8px; box-shadow: 0 12px 28px rgba(0,0,0,.14); min-width: 210px;
-  display: flex; flex-direction: column; gap: 6px;
-}
-.resetItem {
-  text-align: left; padding: 8px 10px; border-radius: 8px; border: 1px solid #e6e6e6; background: #fff; cursor: pointer;
-}
-.resetItem:hover { border-color: #c7d2fe; background: #eef2ff; }
-.resetDanger { background: #fee2e2; border-color: #fecaca; color: #991b1b; }
-
-/* ===== Layout: canvas + sidebar ===== */
+/* ===== Layout (canvas + sidebar) ===== */
 .layout {
   width: 100%;
   height: calc(100dvh - 180px);
@@ -145,23 +14,48 @@
   box-sizing: border-box;
 }
 
-/* Canvas */
+/* Когда скрываем редактор (режим Просмотр) — одна колонка */
+.layoutPreview { grid-template-columns: 1fr; }
+.layoutPreview .sidebar { display: none; }
+
+/* ===== Canvas ===== */
 .canvasWrap {
   position: relative;
+  min-width: 0;                   /* важно для grid */
   background: #fafafa;
   border: 1px solid #eee;
   border-radius: 12px;
   box-shadow: 0 0 30px 10px #f0f0f0;
   overflow: hidden;
 }
-.canvas {
+.canvasStack {
+  position: relative;
+  min-height: 62vh;               /* чтобы в preview не схлопывалось */
+}
+.stage {
+  position: absolute;
+  inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
-  display: block;
   touch-action: none;
 }
 
-/* Sidebar & panels */
+/* === Topbar grid (чтобы "Сброс" не уезжал на узких экранах) === */
+.topbar {
+  position: sticky;
+  top: 8px;
+  z-index: 6;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* лево — центр — право */
+  align-items: center;
+  gap: 8px;
+}
+
+.topbarGroup { display: flex; align-items: center; gap: 8px; }
+
+/* ===== Sidebar & sections ===== */
 .sidebar {
   height: 100%;
   overflow-y: auto;
@@ -193,158 +87,87 @@
   opacity: .8;
 }
 
-/* ===== Buttons ===== */
+/* ===== History (only in sidebar) ===== */
+.historyHeader {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.historyToggles { display: inline-flex; gap: 6px; align-items: center; }
+.historyToggleBtn,
+.historyBtn {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid #e6e6e6; border-radius: 8px; background: #fff; cursor: pointer;
+}
+.historyBtn[disabled] { opacity: .45; cursor: default; }
+.historyToggleBtn:hover { border-color: #c7d2fe; background: #eef2ff; }
+
+.historyViewport {
+  min-height: 200px;              /* окно истории */
+  max-height: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+}
+.historyList { display: flex; flex-direction: column; gap: 6px; }
+.histItem {
+  display: inline-flex; align-items: center; gap: 6px;
+  width: 100%; justify-content: flex-start;
+  border: 1px solid #e6e6e6; border-radius: 10px;
+  padding: 4px 8px; background: #fff;
+  font-size: 12px; color: #374151; opacity: .65;
+}
+.histItem.now { opacity: 1; border-color: #c7d2fe; box-shadow: 0 0 0 2px rgba(199,210,254,.35) inset; }
+.histItem.future { opacity: .35; }
+.histStep { font-weight: 600; color: #111827; }
+.histLabel { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+
+/* ===== Buttons / segmented ===== */
 .btn {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  background: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all .2s ease;
-  color: #30302e;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 10px 12px;
+  border: 1px solid #ddd; background: #fff; border-radius: 8px;
+  cursor: pointer; transition: all .2s ease; color: #30302e;
 }
-.btn:hover {
-  border-color: #f26522;
-  color: #f26522;
-}
-.btnActive {
-  border-color: #f26522;
-  box-shadow: 0 0 0 2px rgba(242,101,34,.15) inset;
-}
-.btnDangerActive {
-  border-color: #ef4444;
-  box-shadow: 0 0 0 2px rgba(239,68,68,.15) inset;
-}
-.btnGhost {
-  width: 100%;
-  margin-top: 8px;
-  padding: 10px 12px;
-  border: 1px dashed #ddd;
-  border-radius: 8px;
-  background: #fff;
-  color: #30302e;
-}
-.btnGhost:hover {
-  border-color: #30302e;
-  color: #30302e;
-}
-.btnGroupV {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-/* links inside buttons */
-.btn:hover a,
-.btnGhost:hover a {
-  color: #f26522;
-  text-decoration: underline;
-}
+.btn:hover { border-color: #f26522; color: #f26522; }
+.btnActive { border-color: #f26522; box-shadow: 0 0 0 2px rgba(242,101,34,.15) inset; }
+.btnDangerActive { border-color: #ef4444; box-shadow: 0 0 0 2px rgba(239,68,68,.15) inset; }
+.btnGhost { width: 100%; margin-top: 8px; padding: 10px 12px; border: 1px dashed #ddd; border-radius: 8px; background: #fff; color: #30302e; }
+.btnGhost:hover { border-color: #30302e; color: #30302e; }
+.btnGroupV { display: flex; flex-direction: column; gap: 8px; }
 
-/* Keyboard hint */
-.kbd {
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  color: #111827;
-}
-
-/* ===== Generic layout helpers ===== */
-.row {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.subRow {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-}
-.slimLabel { font-size: 12px; opacity: .75; }
-.value { width: 44px; text-align: right; font-variant-numeric: tabular-nums; opacity: .8; }
-
-/* Segmented controls, tabs */
 .segmented { display: flex; gap: 6px; padding-top: 5px; }
 .segBtn { flex: 1; padding: 6px 8px; border: 1px solid #e6e6e6; border-radius: 10px; background: #fff; }
 .segActive { background: #eef2ff; border-color: #c7d2fe; }
 .segDangerActive { background: #fee2e2; border-color: #fecaca; }
 .tabs3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.two { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.two  { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .segBtnSmall { padding: 8px 10px; font-size: 14px; white-space: nowrap; }
 
-/* ===== Color & palette ===== */
-.paintRow { display: flex; gap: 8px; align-items: center; }
-.color { width: 40px; height: 36px; padding: 0; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; }
-.colorSmall { width: 28px; height: 28px; padding: 0; border: none; background: transparent; }
-.colorChipDisabled { opacity: .45; pointer-events: none; }
-
-/* Swatches */
-.swatches { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-.swatch { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,.08); cursor: pointer; }
-.swatchesPopover { position: relative; }
-.swatchesPopover summary {
-  cursor: pointer; line-height: 28px; width: 28px; height: 28px;
-  text-align: center; border: 1px solid #e6e6e6; border-radius: 8px; user-select: none;
-}
-.swatchesGrid {
-  position: absolute; top: 34px; right: 0;
-  background: #fff; border: 1px solid #e6e6e6; border-radius: 10px;
-  padding: 8px; display: grid; grid-template-columns: repeat(6, 18px);
-  gap: 6px; box-shadow: 0 8px 24px rgba(0,0,0,.12); z-index: 5;
-}
-.swatchTiny { width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(0,0,0,.08); }
-
-/* Color trigger + inline input */
-.colorTrigger {
-  width: 28px; height: 28px; border-radius: 8px; border: 1px solid #e6e6e6;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.04);
-  cursor: pointer;
-}
-.colorInline { width: 24px; height: 24px; border: none; padding: 0; background: transparent; }
-
-/* Color chip with caret */
-.colorRow { position: relative; display: flex; align-items: center; gap: 8px; }
-.colorChip {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 32px; height: 32px; padding: 0;
-  border: 1px solid #e6e6e6; border-radius: 10px;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.04);
-  cursor: pointer;
-}
-.caret {
-  width: 0; height: 0; margin-left: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 6px solid rgba(0,0,0,.35);
-}
-
-/* Icon pill */
+/* Icon group (view/fill/line) */
 .iconSeg { display: flex; }
 .iconBtn {
   width: 32px; height: 32px; line-height: 32px;
   border: 1px solid #e6e6e6; background: #fff; cursor: pointer;
 }
 .iconBtn:first-child { border-radius: 10px 0 0 10px; }
-.iconBtn:last-child { border-radius: 0 10px 10px 0; border-left: none; }
+.iconBtn:last-child  { border-radius: 0 10px 10px 0; border-left: none; }
 .iconActive { background: #eef2ff; border-color: #c7d2fe; }
 .iconDangerActive { background: #fee2e2; border-color: #fecaca; }
 
-/* Palette popover (single version) */
+/* ===== Color / palette ===== */
+.paintRow { display: flex; gap: 8px; align-items: center; }
+.color { width: 40px; height: 36px; padding: 0; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; }
+.colorSmall { width: 28px; height: 28px; padding: 0; border: none; background: transparent; }
+.colorChipDisabled { opacity: .45; pointer-events: none; }
+
+.swatches { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.swatch { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,.08); cursor: pointer; }
+
 .palette {
   position: absolute; top: 38px; left: 0; z-index: 10;
   background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
-  padding: 8px; box-shadow: 0 12px 28px rgba(0,0,0,.14);
-  min-width: 190px;
+  padding: 8px; box-shadow: 0 12px 28px rgba(0,0,0,.14); min-width: 190px;
 }
 .palette::before {
   content: ""; position: absolute; top: -6px; left: 12px;
@@ -353,187 +176,41 @@
   transform: rotate(45deg);
 }
 .paletteGrid { display: grid; grid-template-columns: repeat(6, 22px); gap: 8px; padding: 2px; }
-.palettePopover { position: relative; }
-
-.swatchBtn {
-  width: 22px; height: 22px; border-radius: 50%;
-  border: 1px solid rgba(0,0,0,.08); cursor: pointer;
-}
+.swatchBtn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,.08); cursor: pointer; }
 .swatchBtn:focus { outline: 2px solid #c7d2fe; outline-offset: 2px; }
-.paletteFooter {
-  display: flex; align-items: center; gap: 8px;
-  margin-top: 8px; border-top: 1px dashed #eee; padding-top: 8px;
-}
-.paletteLabel { font-size: 12px; opacity: .7; }
 
-/* ===== Text hints ===== */
-.hint { margin: 12px 0 0 0; font-size: 13px; color: #666; }
-.hintSmall { font-size: 11px; opacity: .65; margin-top: 4px; line-height: 1.25; }
-
-/* Lock note under slider */
-.lockNote {
-  margin-top: 6px;
-  font-size: 12px;
-  line-height: 1.35;
-  color: #7c2d12;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  border-radius: 8px;
-  padding: 6px 8px;
+/* ===== Helpers / text ===== */
+.kbd {
+  font-size: 11px; padding: 2px 6px; border-radius: 6px;
+  border: 1px solid #e5e7eb; background: #f9fafb;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  color: #111827;
 }
-.linkBtn {
-  padding: 0;
-  border: none;
-  background: none;
-  color: #2563eb;
-  cursor: pointer;
-  font-size: 12px;
-  text-decoration: underline;
-}
-.linkBtn:hover { text-decoration: none; }
+.slimLabel { font-size: 12px; opacity: .75; }
+.value { width: 44px; text-align: right; font-variant-numeric: tabular-nums; opacity: .8; }
+.row { position: relative; display: flex; align-items: center; gap: 10px; }
+.subRow { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; margin-top: 6px; }
 
-/* ===== SVG anchors and curves ===== */
+/* ===== SVG anchors & curves ===== */
 .anchor { fill: #3b82f6; transition: .12s; }
 .anchorClickable { cursor: pointer; }
 .anchorSelectedA { fill: #fde047; stroke: #a16207; stroke-width: 1.5; }
 .anchorSelectedB { fill: #86efac; stroke: #166534; stroke-width: 1.5; }
+.anchorHovered { fill: #f97316; stroke: #ea580c; stroke-width: 1.5; r: 5; }
 
-.anchorHovered {
-  fill: #f97316; /* оранжевый при наведении */
-  stroke: #ea580c;
-  stroke-width: 1.5;
-  r: 5; /* чуть крупнее при наведении */
-}
+.userCurve { stroke: #1f2937; stroke-width: 2px; fill: none; vector-effect: non-scaling-stroke; }
+.userCurvePreview { stroke-opacity: 0.6; }
+.userCurveHover { stroke-opacity: 1; stroke-width: 2.6px; filter: drop-shadow(0 0 2px rgba(59,130,246,.45)); }
+.userCurveDeleteHover { stroke: #ef4444; stroke-width: 2.8px; filter: drop-shadow(0 0 2px rgba(239,68,68,.5)); }
+.userCurveSelected { stroke-width: 3px; filter: drop-shadow(0 0 3px rgba(59,130,246,.55)); }
 
-/* базовая линия пользователя */
-.userCurve {
-  stroke: #1f2937;
-  stroke-width: 2px;
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-
-/* ослабленная в preview */
-.userCurvePreview {
-  stroke-opacity: 0.6;
-}
-
-/* ховер в обычных режимах (синий подсвет) */
-.userCurveHover {
-  stroke-opacity: 1;
-  stroke-width: 2.6px;
-  filter: drop-shadow(0 0 2px rgba(59,130,246,.45));
-}
-
-/* ховер в delete-режиме (красный — уже у тебя есть; если нет, то:) */
-.userCurveDeleteHover {
-  stroke: #ef4444;
-  stroke-width: 2.8px;
-  filter: drop-shadow(0 0 2px rgba(239,68,68,.5));
-}
-
-/* выбранная линия (постоянная подсветка) */
-.userCurveSelected {
-  stroke-width: 3px;
-  filter: drop-shadow(0 0 3px rgba(59,130,246,.55));
-}
-
-/* короткая вспышка при клике */
-@keyframes curveFlash {
-  0%   { stroke-width: 4px; filter: drop-shadow(0 0 6px rgba(59,130,246,.8)); }
-  100% { stroke-width: 3px; filter: drop-shadow(0 0 3px rgba(59,130,246,.55)); }
-}
-.userCurveClicked {
-  animation: curveFlash 200ms ease-out;
-}
-
-/* ===== Inputs ===== */
-.rangeCompact { width: 100%; }
-.selectCompact { width: 100%; padding: 6px 10px; border: 1px solid #e6e6e6; border-radius: 8px; }
-
-/* ===== Canvas stack & swap animations ===== */
-.canvasStack { position: absolute; inset: 0; }
-.stage { position: absolute; inset: 0; }
-
-@keyframes fadeUpIn {
-  0%   { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-.svgEnter { animation: fadeUpIn .28s ease-out both; }
-
-@keyframes swapIn {
-  0%   { opacity: 0; transform: translateY(12px) scale(0.98); filter: brightness(0.96); }
-  100% { opacity: 1; transform: translateY(0) scale(1); filter: none; }
-}
-@keyframes swapOut {
-  0%   { opacity: 1; transform: translateY(0) scale(1); filter: none; }
-  100% { opacity: 0; transform: translateY(-10px) scale(1.02); filter: blur(0.3px); }
-}
-.swapIn  { animation: swapIn  .42s cubic-bezier(.22,.61,.36,1) both; z-index: 2; will-change: transform, opacity, filter; }
-.swapOut { animation: swapOut .42s cubic-bezier(.22,.61,.36,1) both; z-index: 1; will-change: transform, opacity, filter; }
-
-/* ===== Toast & loader ===== */
-.toast {
-  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-  background: #30302e; color: #fff; padding: 8px 12px;
-  border-radius: 8px; font-size: 13px; box-shadow: 0 8px 24px rgba(0,0,0,.15); z-index: 3;
-}
-.loader {
-  position: absolute; inset: auto 12px 12px auto; z-index: 4;
-  background: #ffffffcc; backdrop-filter: blur(2px);
-  border: 1px solid #eee; border-radius: 10px; padding: 8px 10px; font-size: 13px; color: #30302e;
-  box-shadow: 0 8px 24px rgba(0,0,0,.08);
-}
-
-/* Подсказка (one-time hint) под иконками режимов */
-.topbarHint {
-  position: absolute;
-  left: 8px;
-  top: 46px;
-  z-index: 6;
-  background: #fff;
-  border: 1px solid #e6e6e6;
-  border-radius: 12px;
-  padding: 10px 12px;
-  max-width: 280px;
-  box-shadow: 0 12px 28px rgba(0,0,0,.14);
-}
-.topbarHint:before {
-  content: "";
-  position: absolute;
-  top: -6px; left: 20px;
-  width: 10px; height: 10px;
-  background: #fff;
-  border-left: 1px solid #e6e6e6;
-  border-top: 1px solid #e6e6e6;
-  transform: rotate(45deg);
-}
-.hintTitle { font-weight: 600; color: #111827; margin-bottom: 6px; }
-.hintRow { font-size: 12px; color: #4b5563; line-height: 18px; }
-.hintClose {
-  position: absolute; top: 6px; right: 8px;
-  font-size: 16px; line-height: 1; cursor: pointer;
-  color: #6b7280;
-}
-.hintClose:hover { color: #111827; }
-
-/* Курсоры для канвы */
-.cursorCrosshair { cursor: crosshair; }
-.cursorCopy { cursor: copy; }
-.cursorNotAllowed { cursor: not-allowed; }
-.cursorPointer { cursor: pointer; }
+@keyframes curveFlash { 0% { stroke-width: 4px; filter: drop-shadow(0 0 6px rgba(59,130,246,.8)); } 100% { stroke-width: 3px; filter: drop-shadow(0 0 3px rgba(59,130,246,.55)); } }
+.userCurveClicked { animation: curveFlash 200ms ease-out; }
 
 .anchorManualDelete {
-  fill: #ef4444;
-  stroke: #991b1b;
-  stroke-width: 1.5;
+  fill: #ef4444; stroke: #991b1b; stroke-width: 1.5;
   filter: drop-shadow(0 0 6px rgba(239, 68, 68, .45));
-  cursor: pointer;
-  transform-box: fill-box;    /* центрируём систему координат на самом кружке */
-  transform-origin: center;   /* масштабируем от центра */
-}
-.anchorManualDelete:hover {
-  transform: scale(1.12);
+  cursor: pointer; transform-box: fill-box; transform-origin: center;
 }
 
 /* ===== Preset navigation ===== */
@@ -555,22 +232,126 @@
   box-shadow: 0 6px 18px rgba(0,0,0,.06); font-weight: 600;
 }
 
-/* Когда скрываем редактор (режим Просмотр) — остаётся одна колонка */
-.layoutPreview {
-  grid-template-columns: 1fr; /* без правой колонки */
+/* ===== Toast / loader ===== */
+.toast {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  background: #30302e; color: #fff; padding: 8px 12px;
+  border-radius: 8px; font-size: 13px; box-shadow: 0 8px 24px rgba(0,0,0,.15); z-index: 3;
+}
+.loader {
+  position: absolute; inset: auto 12px 12px auto; z-index: 4;
+  background: #ffffffcc; backdrop-filter: blur(2px);
+  border: 1px solid #eee; border-radius: 10px; padding: 8px 10px; font-size: 13px; color: #30302e;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
 }
 
-/* На всякий случай: если кто-то оставит aside в DOM, прячем его */
-.layoutPreview .sidebar {
-  display: none;
+/* ===== Cursors ===== */
+.cursorCrosshair { cursor: crosshair; }
+.cursorCopy { cursor: copy; }
+.cursorNotAllowed { cursor: not-allowed; }
+.cursorPointer { cursor: pointer; }
+
+/* ===== Reset dropdown (topbar) ===== */
+.resetWrap { position: relative; display: inline-block; }
+
+/* Кнопка */
+.resetBtn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 12px; border: 1px solid #e6e6e6; border-radius: 10px;
+  background:#fff; cursor:pointer;
+}
+.resetBtn:hover { border-color:#c7d2fe; background:#eef2ff; }
+
+/* Меню: по умолчанию скрыто */
+.resetMenu {
+  position: absolute; right: 0; top: calc(100% + 8px);
+  min-width: 220px;
+  background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0,0,0,.12);
+  padding: 6px; z-index: 20;
 }
 
-/* приглушение неактивных деталей */
-.panelDimmed {
-  opacity: .55;
+/* Выпадающее меню — именно на div внутри details */
+.resetMenu {
+  position: absolute; right: 0; top: calc(100% + 8px);
+  min-width: 220px;
+  background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0,0,0,.12);
+  padding: 6px; z-index: 20;
+}
+
+/* Список пунктов */
+.resetList { display: flex; flex-direction: column; gap: 4px; }
+
+/* «клювик» у меню (стрелочка) */
+.resetMenu::before {
+  content:""; position:absolute; top:-6px; right:16px;
+  width:10px; height:10px; background:#fff;
+  border-left:1px solid #e6e6e6; border-top:1px solid #e6e6e6;
+  transform: rotate(45deg);
+}
+
+/* Пункты меню */
+.resetItem {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 10px 10px; border-radius: 8px;
+  border: 0; background: transparent; cursor: pointer;
+  white-space: nowrap; text-align: left; color:#30302e;
+}
+.resetItem:hover { background:#f5f7ff; }
+.resetSep { height:1px; background:#efefef; margin:6px 4px; }
+.resetDanger { color:#b91c1c; }
+.resetDanger:hover { background:#fff1f1; }
+
+/* Контейнер details */
+.resetDetails { position: relative; display: inline-block; }
+
+/* У summary убираем дефолтный маркер */
+.resetDetails > summary { list-style: none; }
+.resetDetails > summary::-webkit-details-marker { display: none; }
+
+/* выравнивания */
+.tbLeft   { justify-self: start; }
+.tbCenter { justify-self: center; }
+.tbRight  { justify-self: end; }
+
+/* На узких экранах — две строки:
+   ┌ left ─────── right ┐
+   └────── center ──────┘
+*/
+@media (max-width: 460px) {
+  .topbar {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "left  right"
+      "center center";
+    row-gap: 6px;
+  }
+  .tbLeft   { grid-area: left; }
+  .tbRight  { grid-area: right; }
+  .tbCenter { grid-area: center; }
+}
+
+/* Чуть ужмём кнопку "Сброс" и сегменты на узких */
+@media (max-width: 460px) {
+  .resetBtn { padding: 6px 10px; }
+  .segBtnSmall { padding: 6px 10px; font-size: 14px; }
 }
 
 /* ===== Responsive ===== */
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: calc(100dvh - 140px);
+    gap: 12px;
+  }
+  .sidebar { order: -1; margin-top: 12px; }  /* редактор над канвой */
+  .canvasStack { min-height: 68vh; }
+  .panel { border-radius: 10px; padding: 12px; }
+  .btnGroupV { flex-direction: row; flex-wrap: wrap; }
+  .btn { width: auto; }
+}
 @media (max-height: 900px) {
   .layout { height: calc(100dvh - 140px); }
   .panel { padding: 12px; }
@@ -583,18 +364,6 @@
   .layout { height: calc(100dvh - 120px); }
   .btn { padding: 7px 9px; }
   .swatch { width: 18px; height: 18px; }
-}
-@media (max-width: 960px) {
-  .layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    height: calc(100dvh - 140px);
-    gap: 12px;
-  }
-  .sidebar { order: -1; }
-  .panel { border-radius: 10px; padding: 12px; }
-  .btnGroupV { flex-direction: row; flex-wrap: wrap; }
-  .btn { width: auto; }
 }
 @media (max-width: 360px) {
   .segBtnSmall { padding: 6px 8px; font-size: 12px; }

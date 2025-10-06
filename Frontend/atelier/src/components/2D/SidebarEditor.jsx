@@ -126,13 +126,10 @@ export default function SidebarEditor(props) {
 
                         {/* Подрежимы */}
                         <div className={styles.segmented} style={{ gap: 8, marginBottom: 8 }}>
-                            <Tooltip label="Заливка (F)">
-                                <button
-                                    className={clsx(styles.iconBtn, isFill && styles.iconActive)}
-                                    role="tab" aria-selected={isFill} aria-label="Заливка" title="Заливка (F)"
-                                    onClick={() => { dismissTopbarHint(); setMode("paint"); }}
-                                >🪣</button>
-                            </Tooltip>
+                            <button
+                                className={clsx(styles.segBtn, mode === "paint" && styles.segActive)}
+                                onClick={() => setMode("paint")}
+                            >🪣 Залить</button>
 
                             <button
                                 className={clsx(styles.segBtn, mode === "deleteFill" && styles.segActive)}
