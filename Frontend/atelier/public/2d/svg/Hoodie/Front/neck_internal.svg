@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="687"
+   height="588"
+   viewBox="0 0 687 588"
+   sodipodi:docname="Макет свитшота передняя часть ПОЛОЧКА.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   inkscape:export-filename="Для работы\Макет свитшота передняя часть ГОРЛОВИНА 2.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.505102"
+     inkscape:cx="271.41018"
+     inkscape:cy="147.83051"
+     inkscape:window-width="1920"
+     inkscape:window-height="1129"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer3">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="687"
+       height="588"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="ГОРЛОВИНА">
+    <path
+       style="display:inline;fill:none;stroke:#000000"
+       d="m 408.14443,57.433848 c -25.37861,28.197423 -109.30787,25.473226 -131.36201,0.174941 3.01127,10.340224 6.758,19.533624 11.24019,27.580201 32.76365,13.288136 69.29228,13.288136 109.58588,0 4.71599,-8.907585 8.22797,-18.159299 10.53594,-27.755142 z"
+       id="path2"
+       sodipodi:nodetypes="ccccc" />
+  </g>
+</svg>

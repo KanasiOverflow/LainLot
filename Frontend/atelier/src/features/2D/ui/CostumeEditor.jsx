@@ -41,6 +41,8 @@ const PRESETS = [
             { file: "Front/sleeve_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-SR" },
             { file: "Front/cuff_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-CL" },
             { file: "Front/cuff_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-CR" },
+            { file: "Front/neck.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-Ne" },
+            { file: "Front/neck_internal.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-NI" }
         ]
     },
     {
@@ -53,7 +55,7 @@ const PRESETS = [
             { file: "Back/sleeve_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-SL" },
             { file: "Back/sleeve_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-SR" },
             { file: "Back/cuff_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-CL" },
-            { file: "Back/cuff_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-CR" },
+            { file: "Back/cuff_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-CR" }
         ]
     }
 ];

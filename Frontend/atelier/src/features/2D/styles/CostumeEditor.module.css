@@ -399,9 +399,42 @@
   padding:8px 12px; border:1px solid #e6e6e6; border-radius:10px;
   background:#fff; cursor:pointer;
   margin-left: 10px;
+  margin-right: 10px;
 }
 .exportBtn:hover{ border-color:#34d399; background:#ecfdf5; }
 .exportBtn:disabled{ opacity:.6; cursor:default; }
+
+/* Контейнер строки с текущим цветом и поповером палитры */
+.colorRow{
+  position: relative;             /* чтобы .palette позиционировалась от этой строки */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Кнопка-плашка текущего цвета (открывает палитру) */
+.colorChip{
+  width: 36px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  background: transparent;        /* цвет приходит инлайном через style={{background:paintColor}} */
+  cursor: pointer;
+}
+
+/* (опционально) обёртка поповера — не обязательна, но пусть будет */
+.palettePopover{ position: relative; }
+
+/* Инпут кастомного цвета внутри поповера */
+.colorInline{
+  width: 100%;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  background: transparent;
+}
 
 
 @keyframes ce-swap-in {
