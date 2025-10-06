@@ -3,34 +3,23 @@ import { useId } from "react";
 import styles from "./CostumeEditor.module.css";
 
 const DEF = {
-    fullName: "",
-    email: "",
-    phone: "",
-    country: "",
-    region: "",
-    city: "",
-    district: "",
-    street: "",
-    house: "",
-    apt: "",
-    postal: "",
-    notes: ""
+    fullName: "", email: "", phone: "",
+    country: "", region: "", city: "", district: "",
+    street: "", house: "", apt: "", postal: "", notes: ""
 };
 
 export default function OrderForm({ value, onChange }) {
-
-    const form = value || DEF;
+    const form = value ?? DEF;
     const set = (k, v) => onChange?.({ ...form, [k]: v });
+
+    const ID = (name) => useId() + "-" + name;
+    const emailId = ID("email");
+    const phoneId = ID("phone");
+    const fullId = ID("fullName");
 
     const L = ({ htmlFor, children }) => (
         <label htmlFor={htmlFor} className={styles.formLabel}>{children}</label>
     );
-
-    const ID = (name) => useId() + "-" + name;
-
-    const emailId = ID("email");
-    const phoneId = ID("phone");
-    const fullId = ID("fullName");
 
     return (
         <div className={styles.section}>

@@ -704,21 +704,21 @@ export default function CostumeEditor() {
         }
     };
 
-    // ===== Order flow state (persist to LS)
-    const [bodyParams, setBodyParams] = useState(() => {
-        try {
-            const fromLS = JSON.parse(localStorage.getItem("ce.bodyParams.v1") || "null");
-            if (fromLS) return fromLS;
-        } catch { }
-        // дефолтная форма — чтобы инпуты были контролируемыми с первого рендера
-        return {
-            hoodie: { chest: "", waist: "", hips: "", height: "", sleeve: "", back: "" },
-            pants: { waist: "", hips: "", outseam: "", inseam: "", thigh: "", ankle: "" }
-        };
-    });
+    const BP_DEF = {
+        hoodie: { chest: "", waist: "", hips: "", height: "", sleeve: "", back: "" },
+        pants: { waist: "", hips: "", outseam: "", inseam: "", thigh: "", ankle: "" }
+    };
 
+    const OF_DEF = {
+        fullName: "", email: "", phone: "", country: "", region: "", city: "",
+        district: "", street: "", house: "", apt: "", postal: "", notes: ""
+    };
+
+    const [bodyParams, setBodyParams] = useState(() => {
+        try { return JSON.parse(localStorage.getItem("ce.bodyParams.v1")) || BP_DEF; } catch { return BP_DEF; }
+    });
     const [orderInfo, setOrderInfo] = useState(() => {
-        try { return JSON.parse(localStorage.getItem("ce.orderInfo.v1") || "null"); } catch { return null; }
+        try { return JSON.parse(localStorage.getItem("ce.orderInfo.v1")) || OF_DEF; } catch { return OF_DEF; }
     });
 
     const isOrderValid = (() => {
@@ -730,14 +730,14 @@ export default function CostumeEditor() {
 
     useEffect(() => {
         try {
-            localStorage.setItem("ce.bodyParams.v1", JSON.stringify(bodyParams || {}));
+            localStorage.setItem("ce.bodyParams.v1", JSON.stringify(bodyParams));
         }
         catch { }
     }, [bodyParams]);
 
     useEffect(() => {
         try {
-            localStorage.setItem("ce.orderInfo.v1", JSON.stringify(orderInfo || {}));
+            localStorage.setItem("ce.orderInfo.v1", JSON.stringify(orderInfo));
         }
         catch { }
     }, [orderInfo]);
