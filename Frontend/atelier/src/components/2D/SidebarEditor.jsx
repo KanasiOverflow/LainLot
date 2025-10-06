@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import styles from "./CostumeEditor.module.css";
 import SectionSlider from "./SectionSlider.jsx";
+import Tooltip from "./Tooltip.jsx";
 
 const PALETTE = [
     "#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe",
@@ -125,10 +126,14 @@ export default function SidebarEditor(props) {
 
                         {/* Подрежимы */}
                         <div className={styles.segmented} style={{ gap: 8, marginBottom: 8 }}>
-                            <button
-                                className={clsx(styles.segBtn, mode === "paint" && styles.segActive)}
-                                onClick={() => setMode("paint")}
-                            >🪣 Залить</button>
+                            <Tooltip label="Заливка (F)">
+                                <button
+                                    className={clsx(styles.iconBtn, isFill && styles.iconActive)}
+                                    role="tab" aria-selected={isFill} aria-label="Заливка" title="Заливка (F)"
+                                    onClick={() => { dismissTopbarHint(); setMode("paint"); }}
+                                >🪣</button>
+                            </Tooltip>
+
                             <button
                                 className={clsx(styles.segBtn, mode === "deleteFill" && styles.segActive)}
                                 onClick={() => setMode("deleteFill")}
