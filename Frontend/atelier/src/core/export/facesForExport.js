@@ -1,7 +1,7 @@
 import { sampleBezier } from "../geometry/geometry.js";
 import { pointsToPairedPolyline } from "../geometry/polylineOps.js";
-import { polylinesFromSegs, segmentsFromPolylines } from "../svg/svgParse.js";
-import { buildFacesFromSegments } from "../svg/panels.js";
+import { polylinesFromSegs, segmentsFromPolylines } from "../svg/polylineOps.js";
+import { buildFacesFromSegments } from "../svg/buildFaces.js";
 import { splitByIntersections } from "../geometry/intersections.js";
 
 const shortId = (id) => {

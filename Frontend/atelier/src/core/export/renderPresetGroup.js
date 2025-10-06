@@ -1,9 +1,7 @@
 import { area } from "../geometry/bounds.js";
 import { waveAlongPolyline } from "../geometry/polylineOps.js";
-import {
-    splitSegsIntoSubpaths, polylineFromSubpath,
-    facePath, faceKey, segsToD, catmullRomToBezierPath
-} from "../svg/svgParse.js";
+import { facePath, faceKey, segsToD } from "../svg/faceUtils.js";
+import { splitSegsIntoSubpaths, polylineFromSubpath, catmullRomToBezierPath } from "../svg/polylineOps.js";
 import { buildFacesForExport } from "./facesForExport.js";
 
 const shortId = (id) => {

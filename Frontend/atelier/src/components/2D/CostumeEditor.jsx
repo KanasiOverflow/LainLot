@@ -5,12 +5,14 @@ import clsx from "clsx";
 import { sampleBezier, sampleBezierPoints, segsSignature } from "../../core/geometry/geometry.js";
 import { area, getBounds } from "../../core/geometry/bounds.js";
 import { cumulativeLengths, nearestOnPolyline, pointsToPairedPolyline, waveAlongPolyline } from "../../core/geometry/polylineOps.js";
+import { facePath, faceKey, segsToD } from "../../core/svg/faceUtils.js";
 import {
     polylinesFromSegs, segmentsFromPolylines, splitSegsIntoSubpaths, polylineFromSubpath,
-    catmullRomToBezierPath, facePath, faceKey, segsToD
-} from "../../core/svg/svgParse.js";
+    catmullRomToBezierPath
+} from "../../core/svg/polylineOps.js";
 import { splitByIntersections } from "../../core/geometry/intersections.js";
-import { buildFacesFromSegments, extractPanels, pointInAnyFace } from "../../core/svg/panels.js";
+import { buildFacesFromSegments, pointInAnyFace } from "../../core/svg/buildFaces.js";
+import { extractPanels } from "../../core/svg/extractPanels.js";
 import { makeUserCurveBetween } from "../../core/svg/curves.js";
 import { applyMatrixToSegs } from "../../core/geometry/matrix.js";
 import { collectAnchors } from "../../core/svg/anchors.js";
