@@ -1,6 +1,5 @@
-import {
-    area, waveAlongPolyline
-} from "../geometry/geometry.js";
+import { area } from "../geometry/bounds.js";
+import { waveAlongPolyline } from "../geometry/polylineOps.js";
 import {
     splitSegsIntoSubpaths, polylineFromSubpath,
     facePath, faceKey, segsToD, catmullRomToBezierPath

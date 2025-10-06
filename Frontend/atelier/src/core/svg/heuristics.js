@@ -1,5 +1,5 @@
 import { polylineFromSubpath, splitSegsIntoSubpaths } from "../svg/svgParse.js";
-import { area } from "../geometry/geometry.js";
+import { area } from "../geometry/bounds.js";
 
 /** эвристика «фон/рамка» — выкидываем только когда кандидатов больше одного */
 // cand: {segs,bbox,rawTag}, root: {w,h}

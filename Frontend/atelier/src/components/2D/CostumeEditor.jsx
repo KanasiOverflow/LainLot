@@ -2,11 +2,9 @@
 import { useEffect, useMemo, useRef, useState, useLayoutEffect, useCallback } from "react";
 import styles from "./CostumeEditor.module.css";
 import clsx from "clsx";
-import {
-    area, getBounds, sampleBezier, sampleBezierPoints,
-    pointsToPairedPolyline, waveAlongPolyline, segsSignature, cumulativeLengths,
-    nearestOnPolyline
-} from "../../core/geometry/geometry.js";
+import { sampleBezier, sampleBezierPoints, segsSignature } from "../../core/geometry/geometry.js";
+import { area, getBounds } from "../../core/geometry/bounds.js";
+import { cumulativeLengths, nearestOnPolyline, pointsToPairedPolyline, waveAlongPolyline } from "../../core/geometry/polylineOps.js";
 import {
     polylinesFromSegs, segmentsFromPolylines, splitSegsIntoSubpaths, polylineFromSubpath,
     catmullRomToBezierPath, facePath, faceKey, segsToD

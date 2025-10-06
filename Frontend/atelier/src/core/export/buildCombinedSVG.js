@@ -1,4 +1,4 @@
-import { getBounds } from "../geometry/geometry.js";
+import { getBounds } from "../geometry/bounds.js";
 import { renderPresetGroup } from "./renderPresetGroup.js";
 
 /* ============ helpers ============ */

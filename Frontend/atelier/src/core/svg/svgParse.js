@@ -1,4 +1,5 @@
-import { sampleLine, sampleBezier } from "../../core/geometry/geometry.js";
+import { sampleBezier } from "../../core/geometry/geometry.js";
+import { sampleLine } from "../../core/geometry/polylineOps.js";
 
 /* ========== парсер d: M/L/C/Z + H/V/S/Q/T, A->L ========== */
 export const parsePathD = (d) => {

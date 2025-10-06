@@ -1,7 +1,6 @@
-import {
-    area, getBounds, pointInPolygon, bboxIoU,
-    segsSignature
-} from "../geometry/geometry.js";
+import { bboxIoU, segsSignature } from "../geometry/geometry.js";
+import { pointInPolygon } from "../geometry/polygonOps.js";
+import { area, getBounds } from "../geometry/bounds.js";
 import { splitClosedSubpaths, parsePathD, segsFromPoints, ensureClosed } from "../svg/svgParse.js";
 import { looksLikeBackground } from "../svg/heuristics.js";
 import { parseViewBox, parseMatrix, applyMatrixToSegs } from "../geometry/matrix.js";
