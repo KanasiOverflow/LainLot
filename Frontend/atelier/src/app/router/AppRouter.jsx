@@ -1,13 +1,13 @@
 import { useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { publicRoutes, privateRoutes } from '../app/router/index.jsx';
-import { AuthContext } from '../app/providers/context/AuthProvider.jsx';
-import Loader from './UI/loader/Loader';
-import Profile from '../pages/Profile';
-import Login from '../pages/Auth/Login';
-import EmailConfirmed from '../pages/Auth/EmailConfirmed';
-import Registration from '../pages/Auth/Registration';
-import ForgotPassword from '../pages/Auth/ForgotPassword';
+import { publicRoutes, privateRoutes } from './AppRoutes.jsx';
+import { AuthContext } from '../providers/context/AuthProvider.jsx';
+import Loader from '../../components/UI/loader/Loader.jsx';
+import Profile from '../../pages/Profile.jsx';
+import Login from '../../pages/Auth/Login.jsx';
+import EmailConfirmed from '../../pages/Auth/EmailConfirmed.jsx';
+import Registration from '../../pages/Auth/Registration.jsx';
+import ForgotPassword from '../../pages/Auth/ForgotPassword.jsx';
 
 export default function AppRouter() {
   const { isAuth, isLoading, loggedOut } = useContext(AuthContext);
