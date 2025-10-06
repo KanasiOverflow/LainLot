@@ -1,5 +1,3 @@
-// utils/export.js  (полная замена)
-
 import {
     area, getBounds, sampleBezier, pointsToPairedPolyline, waveAlongPolyline
 } from "./geometry.js";

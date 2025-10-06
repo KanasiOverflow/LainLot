@@ -13,11 +13,11 @@ import {
 } from "../../utils/svgParse.js";
 import { splitByIntersections } from "../../utils/intersections.js";
 import { buildFacesFromSegments, extractPanels, pointInAnyFace } from "../../utils/panels.js";
-import { makeUserCurveBetween } from "../../utils/routes.js";
-import { applyMatrixToSegs } from "../../utils/transforms.js";
+import { makeUserCurveBetween } from "../../utils/curves.js";
+import { applyMatrixToSegs } from "../../utils/matrix.js";
 import { collectAnchors } from "../../utils/anchors.js";
 import { useHistory } from "../../hooks/useHistory.jsx";
-import { buildCombinedSVG, downloadText } from "../../utils/export.js";
+import { buildCombinedSVG, downloadText } from "../../core/export/export.js";
 
 import SidebarEditor from "./SidebarEditor.jsx";
 import Tooltip from "./Tooltip.jsx";

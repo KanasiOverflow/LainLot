@@ -4,7 +4,7 @@ import {
 } from "./geometry.js";
 import { splitClosedSubpaths, parsePathD, segsFromPoints, ensureClosed } from "./svgParse.js";
 import { looksLikeBackground } from "./heuristics.js";
-import { parseViewBox, parseMatrix, applyMatrixToSegs } from "./transforms.js";
+import { parseViewBox, parseMatrix, applyMatrixToSegs } from "./matrix.js";
 import { collectAnchors } from "./anchors.js";
 
 /* ================== настройки ================== */
