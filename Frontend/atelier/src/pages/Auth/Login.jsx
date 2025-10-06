@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import secureLocalStorage from 'react-secure-storage';
 import { useTranslation } from 'react-i18next';
 import Loader from '../../components/UI/loader/Loader.jsx';
 import CheckCredentialsService from 'api/CheckCredentialsService.js';
-import { AuthContext } from '../../provider/context/AuthProvider.jsx';
+import { AuthContext } from '../../app/providers/context/AuthProvider.jsx';
 
 export default function Login() {
   const navigate = useNavigate();

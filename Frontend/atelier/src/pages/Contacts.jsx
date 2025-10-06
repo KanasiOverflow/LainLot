@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ContactsPageService from 'api/Atelier/ContactsPageService.js';
-import { useFetching } from '../hooks/useFetching.jsx';
+import { useFetching } from '../shared/hooks/useFetching.jsx';
 import Loader from '../components/UI/loader/Loader.jsx';
 
 export default function Contacts() {

@@ -16,7 +16,7 @@ import { extractPanels } from "../../core/svg/extractPanels.js";
 import { makeUserCurveBetween } from "../../core/svg/curves.js";
 import { applyMatrixToSegs } from "../../core/geometry/matrix.js";
 import { collectAnchors } from "../../core/svg/anchors.js";
-import { useHistory } from "../../hooks/useHistory.jsx";
+import { useHistory } from "../../shared/hooks/useHistory.jsx";
 import { downloadText } from "../../core/export/export.js";
 import { buildCombinedSVG } from "../../core/export/buildCombinedSVG.js";
 

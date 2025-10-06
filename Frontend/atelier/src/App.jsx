@@ -2,9 +2,9 @@ import Header from './components/UI/header/Header.jsx';
 import AppRouter from './components/AppRouter.jsx';
 import Footer from './components/UI/footer/Footer.jsx';
 import { BrowserRouter } from 'react-router-dom';
-import { AppProvider } from './provider/AppProvider.jsx';
+import { AppProvider } from './app/providers/AppProvider.jsx';
 import { Helmet } from 'react-helmet';
-import './styles/App.css';
+import './shared/styles/App.css';
 // rfc - create template component
 
 function App() {

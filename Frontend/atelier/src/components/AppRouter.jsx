@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { publicRoutes, privateRoutes } from '../router';
-import { AuthContext } from '../provider/context/AuthProvider';
+import { publicRoutes, privateRoutes } from '../app/router/index.jsx';
+import { AuthContext } from '../app/providers/context/AuthProvider.jsx';
 import Loader from './UI/loader/Loader';
 import Profile from '../pages/Profile';
 import Login from '../pages/Auth/Login';
