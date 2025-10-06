@@ -17,7 +17,8 @@ import { makeUserCurveBetween } from "../../core/svg/curves.js";
 import { applyMatrixToSegs } from "../../core/geometry/matrix.js";
 import { collectAnchors } from "../../core/svg/anchors.js";
 import { useHistory } from "../../hooks/useHistory.jsx";
-import { buildCombinedSVG, downloadText } from "../../core/export/export.js";
+import { downloadText } from "../../core/export/export.js";
+import { buildCombinedSVG } from "../../core/export/buildCombinedSVG.js";
 
 import SidebarEditor from "./SidebarEditor.jsx";
 import Tooltip from "./Tooltip.jsx";
