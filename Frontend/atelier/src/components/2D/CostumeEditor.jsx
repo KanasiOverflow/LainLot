@@ -21,6 +21,8 @@ import { useHistory } from "../../hooks/useHistory.jsx";
 import SidebarEditor from "./SidebarEditor.jsx";
 import Tooltip from "./Tooltip.jsx";
 
+import { buildCombinedSVG, downloadText } from "../../utils/export.js";
+
 // --- PRESETS: базовая папка с заранее подготовленными SVG
 const SVG_BASE = "/2d/svg/Hoodie";
 // Каждый preset может быть single-file (file) или multi-file (sources[])
@@ -681,6 +683,26 @@ export default function CostumeEditor() {
         setHoverFace(null);
     };
 
+    const [isExporting, setIsExporting] = useState(false);
+
+    const doExportSVG = async () => {
+        if (isExporting) return;
+        try {
+            setIsExporting(true);
+            const svgText = await buildCombinedSVG({
+                svgCache: svgCacheRef.current,
+                loadPresetToPanels,
+                currentPresetId: PRESETS[presetIdx]?.id || "front",
+                currentCurves: curvesByPanel,
+                currentFills: fills,
+                savedByPreset
+            });
+            downloadText("costume.svg", svgText);
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     // загрузка prefs
     useEffect(() => {
         try {
@@ -1143,6 +1165,16 @@ export default function CostumeEditor() {
                                 </div>
                             </div>
                         </details>
+
+                        <button
+                            className={styles.exportBtn}
+                            onClick={doExportSVG}
+                            disabled={isExporting}
+                            aria-label="Выгрузить в SVG"
+                            title="Выгрузить в SVG"
+                        >
+                            {isExporting ? "Экспорт…" : "Экспорт SVG"}
+                        </button>
                     </div>
 
                 </div>

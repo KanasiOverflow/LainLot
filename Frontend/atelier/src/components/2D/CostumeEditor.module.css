@@ -369,6 +369,16 @@
   border-radius: 8px;
 }
 
+.exportBtn{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 12px; border:1px solid #e6e6e6; border-radius:10px;
+  background:#fff; cursor:pointer;
+  margin-left: 10px;
+}
+.exportBtn:hover{ border-color:#34d399; background:#ecfdf5; }
+.exportBtn:disabled{ opacity:.6; cursor:default; }
+
+
 @keyframes ce-swap-in {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: none; }
