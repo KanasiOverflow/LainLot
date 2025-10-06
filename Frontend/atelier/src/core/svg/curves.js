@@ -1,8 +1,8 @@
 import {
     arcOnRing, nearestOnRing, offsetArcInside, waveAlongPolyline,
     lerpPt
-} from "./geometry.js";
-import { catmullRomToBezierPath, splitSegsIntoSubpaths, polylineFromSubpath } from "./svgParse.js";
+} from "../geometry/geometry.js";
+import { catmullRomToBezierPath, splitSegsIntoSubpaths, polylineFromSubpath } from "../svg/svgParse.js";
 
 export const makeUserCurveBetween = (a, b) => {
     const k = 1 / 3;

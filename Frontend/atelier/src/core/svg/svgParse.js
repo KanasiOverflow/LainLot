@@ -1,4 +1,4 @@
-import { sampleLine, sampleBezier } from "./geometry.js";
+import { sampleLine, sampleBezier } from "../../core/geometry/geometry.js";
 
 /* ========== парсер d: M/L/C/Z + H/V/S/Q/T, A->L ========== */
 export const parsePathD = (d) => {

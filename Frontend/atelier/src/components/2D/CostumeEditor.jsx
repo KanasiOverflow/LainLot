@@ -6,16 +6,16 @@ import {
     area, getBounds, sampleBezier, sampleBezierPoints,
     pointsToPairedPolyline, waveAlongPolyline, segsSignature, cumulativeLengths,
     nearestOnPolyline
-} from "../../utils/geometry.js";
+} from "../../core/geometry/geometry.js";
 import {
     polylinesFromSegs, segmentsFromPolylines, splitSegsIntoSubpaths, polylineFromSubpath,
     catmullRomToBezierPath, facePath, faceKey, segsToD
-} from "../../utils/svgParse.js";
-import { splitByIntersections } from "../../utils/intersections.js";
-import { buildFacesFromSegments, extractPanels, pointInAnyFace } from "../../utils/panels.js";
-import { makeUserCurveBetween } from "../../utils/curves.js";
-import { applyMatrixToSegs } from "../../utils/matrix.js";
-import { collectAnchors } from "../../utils/anchors.js";
+} from "../../core/svg/svgParse.js";
+import { splitByIntersections } from "../../core/geometry/intersections.js";
+import { buildFacesFromSegments, extractPanels, pointInAnyFace } from "../../core/svg/panels.js";
+import { makeUserCurveBetween } from "../../core/svg/curves.js";
+import { applyMatrixToSegs } from "../../core/geometry/matrix.js";
+import { collectAnchors } from "../../core/svg/anchors.js";
 import { useHistory } from "../../hooks/useHistory.jsx";
 import { buildCombinedSVG, downloadText } from "../../core/export/export.js";
 

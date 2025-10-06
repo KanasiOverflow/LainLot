@@ -1,12 +1,12 @@
 import {
     area, getBounds, sampleBezier, pointsToPairedPolyline, waveAlongPolyline
-} from "./geometry.js";
+} from "../geometry/geometry.js";
 import {
     polylinesFromSegs, segmentsFromPolylines, splitSegsIntoSubpaths, polylineFromSubpath,
     facePath, faceKey, segsToD, catmullRomToBezierPath
-} from "./svgParse.js";
-import { buildFacesFromSegments } from "./panels.js";
-import { splitByIntersections } from "./intersections.js";
+} from "../svg/svgParse.js";
+import { buildFacesFromSegments } from "../svg/panels.js";
+import { splitByIntersections } from "../geometry/intersections.js";
 
 /* ============ helpers ============ */
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

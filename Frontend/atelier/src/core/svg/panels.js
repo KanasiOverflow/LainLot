@@ -1,11 +1,11 @@
 import {
     area, getBounds, pointInPolygon, bboxIoU,
     segsSignature
-} from "./geometry.js";
-import { splitClosedSubpaths, parsePathD, segsFromPoints, ensureClosed } from "./svgParse.js";
-import { looksLikeBackground } from "./heuristics.js";
-import { parseViewBox, parseMatrix, applyMatrixToSegs } from "./matrix.js";
-import { collectAnchors } from "./anchors.js";
+} from "../geometry/geometry.js";
+import { splitClosedSubpaths, parsePathD, segsFromPoints, ensureClosed } from "../svg/svgParse.js";
+import { looksLikeBackground } from "../svg/heuristics.js";
+import { parseViewBox, parseMatrix, applyMatrixToSegs } from "../geometry/matrix.js";
+import { collectAnchors } from "../svg/anchors.js";
 
 /* ================== настройки ================== */
 const PANEL_MAX_COUNT = 12;
