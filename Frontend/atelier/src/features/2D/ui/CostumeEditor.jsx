@@ -2,23 +2,23 @@
 import { useEffect, useMemo, useRef, useState, useLayoutEffect, useCallback } from "react";
 import styles from "./CostumeEditor.module.css";
 import clsx from "clsx";
-import { sampleBezier, sampleBezierPoints, segsSignature } from "../../core/geometry/geometry.js";
-import { area, getBounds } from "../../core/geometry/bounds.js";
-import { cumulativeLengths, nearestOnPolyline, pointsToPairedPolyline, waveAlongPolyline } from "../../core/geometry/polylineOps.js";
-import { facePath, faceKey, segsToD } from "../../core/svg/faceUtils.js";
+import { sampleBezier, sampleBezierPoints, segsSignature } from "../../../core/geometry/geometry.js";
+import { area, getBounds } from "../../../core/geometry/bounds.js";
+import { cumulativeLengths, nearestOnPolyline, pointsToPairedPolyline, waveAlongPolyline } from "../../../core/geometry/polylineOps.js";
+import { facePath, faceKey, segsToD } from "../../../core/svg/faceUtils.js";
 import {
     polylinesFromSegs, segmentsFromPolylines, splitSegsIntoSubpaths, polylineFromSubpath,
     catmullRomToBezierPath
-} from "../../core/svg/polylineOps.js";
-import { splitByIntersections } from "../../core/geometry/intersections.js";
-import { buildFacesFromSegments, pointInAnyFace } from "../../core/svg/buildFaces.js";
-import { extractPanels } from "../../core/svg/extractPanels.js";
-import { makeUserCurveBetween } from "../../core/svg/curves.js";
-import { applyMatrixToSegs } from "../../core/geometry/matrix.js";
-import { collectAnchors } from "../../core/svg/anchors.js";
-import { useHistory } from "../../shared/hooks/useHistory.jsx";
-import { downloadText } from "../../core/export/export.js";
-import { buildCombinedSVG } from "../../core/export/buildCombinedSVG.js";
+} from "../../../core/svg/polylineOps.js";
+import { splitByIntersections } from "../../../core/geometry/intersections.js";
+import { buildFacesFromSegments, pointInAnyFace } from "../../../core/svg/buildFaces.js";
+import { extractPanels } from "../../../core/svg/extractPanels.js";
+import { makeUserCurveBetween } from "../../../core/svg/curves.js";
+import { applyMatrixToSegs } from "../../../core/geometry/matrix.js";
+import { collectAnchors } from "../../../core/svg/anchors.js";
+import { useHistory } from "../../../shared/hooks/useHistory.jsx";
+import { downloadText } from "../../../core/export/export.js";
+import { buildCombinedSVG } from "../../../core/export/buildCombinedSVG.js";
 
 import SidebarEditor from "./SidebarEditor.jsx";
 import Tooltip from "./Tooltip.jsx";
