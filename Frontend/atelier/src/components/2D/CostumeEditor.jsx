@@ -82,6 +82,9 @@ export default function CostumeEditor() {
     const panelsRef = useRef(panels);
     // --- PRESETS state
     const [presetIdx, setPresetIdx] = useState(0);   // 0: Перед, 1: Спинка
+    // === Prefs per detail (persist in LS) ===
+    const [prefs, setPrefs] = useState({ front: {}, back: {} });
+    const activeId = presetIdx === 0 ? "front" : "back";
     const [isLoadingPreset, setIsLoadingPreset] = useState(false);
     // красивый ре-монтаж svg при смене пресета (для анимации появления)
     const [svgMountKey, setSvgMountKey] = useState(0);
@@ -90,6 +93,10 @@ export default function CostumeEditor() {
     const [fills, setFills] = useState([]);
     const [paintColor, setPaintColor] = useState("#f26522");
     const [mode, setMode] = useState("preview");
+
+    // ↓ внутри CostumeEditor(), рядом с остальными useState/useRef
+    const applyingPrefsRef = useRef(false);   // сейчас применяем prefs -> не писать их обратно
+    const [prefsLoaded, setPrefsLoaded] = useState(false); // prefs из LS уже загружены
 
     const {
         historyUndo, historyRedo, canUndo, canRedo,
@@ -188,7 +195,6 @@ export default function CostumeEditor() {
         setCurvesByPanel(snap?.curvesByPanel || {});
         setFills(snap?.fills || []);
         setActivePanelId(snap?.activePanelId || panelsParsed[0]?.id || null);
-        setMode("preview");
     }, []);
 
 
@@ -278,7 +284,7 @@ export default function CostumeEditor() {
 
     // Клик по пустому месту канвы — снимаем выделение
     const onCanvasClick = useCallback(() => {
-        if (mode === "preview") return;      // в preview ничего не делаем
+        if (mode === "preview" || applyingPrefsRef.current) return;      // в preview ничего не делаем
         if (mode !== "delete") {
             setSelectedCurveKey(null);
         }
@@ -317,7 +323,7 @@ export default function CostumeEditor() {
             }
 
             return prev;
-        }, label);
+        }, "Параметры волны");
     };
 
     // линейная интерполяция точки на полилинии по «дуговой длине»
@@ -675,6 +681,55 @@ export default function CostumeEditor() {
         setHoverFace(null);
     };
 
+    // загрузка prefs
+    useEffect(() => {
+        try {
+            const v = JSON.parse(localStorage.getItem("ce.prefs.v1") || "{}");
+            setPrefs({ front: {}, back: {}, ...v });
+            setPrefsLoaded(true);
+        } catch { }
+    }, []);
+
+    useEffect(() => {
+        if (!prefsLoaded) return;       // ещё не загрузили из LS — ничего не делать
+
+        const p = prefs[activeId] || {};
+
+        // Включаем "фазу применения" — остальные эффекты записей не должны срабатывать
+        applyingPrefsRef.current = true;
+
+        if (p.paintColor && p.paintColor !== paintColor) setPaintColor(p.paintColor);
+        if (p.lineStyle && p.lineStyle !== lineStyle) setLineStyle(p.lineStyle);
+        if (Number.isFinite(p.defaultSubCount) && p.defaultSubCount !== defaultSubCount) setDefaultSubCount(p.defaultSubCount);
+        if (Number.isFinite(p.waveAmpPx) && p.waveAmpPx !== waveAmpPx) setWaveAmpPx(p.waveAmpPx);
+        if (Number.isFinite(p.waveLenPx) && p.waveLenPx !== waveLenPx) setWaveLenPx(p.waveLenPx);
+        if (p.lastLineMode && p.lastLineMode !== lastLineMode) setLastLineMode(p.lastLineMode);
+
+        // применяем сохранённый режим (preview допускается)
+        const desired = p.lastMode ?? "preview";                // можно оставить без фоллбэка, но так предсказуемей
+        const safe = desired === "deleteFill" ? "paint" : desired;
+        if (safe !== mode) setMode(safe);
+
+        Promise.resolve().then(() => { applyingPrefsRef.current = false; });
+    }, [presetIdx, prefsLoaded]);  // зависимости — только смена детали/загрузка prefs
+
+    useEffect(() => {
+        // во время применения prefs не пишем обратно
+        if (applyingPrefsRef.current) return;
+
+        // единственная “правка безопасности”: не возвращаемся в deleteFill
+        const safe = mode === "deleteFill" ? "paint" : mode;
+
+        setPrefs(prev => {
+            const cur = prev[activeId] || {};
+            if (cur.lastMode === safe) return prev;            // ничего не меняется
+            const next = { ...prev, [activeId]: { ...cur, lastMode: safe } };
+            try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
+            return next;
+        });
+    }, [mode, activeId]);
+
+
     useEffect(() => {
         const onKey = (e) => {
             const ctrl = e.ctrlKey || e.metaKey;
@@ -689,8 +744,37 @@ export default function CostumeEditor() {
             }
         };
         window.addEventListener('keydown', onKey);
+
         return () => window.removeEventListener('keydown', onKey);
     }, [historyUndo, historyRedo]);
+
+    useEffect(() => {
+        if (applyingPrefsRef.current) return;    // во время применения ничего не пишем
+        setPrefs(prev => {
+            const cur = prev[activeId] || {};
+            const nextDetail = {
+                ...cur,
+                paintColor, lineStyle, defaultSubCount, waveAmpPx, waveLenPx, lastLineMode,
+            };
+
+            // shallow-equal: если ничего не поменялось — не дергаем setPrefs, чтобы не раскручивать эффекты
+            const same =
+                cur.paintColor === nextDetail.paintColor &&
+                cur.lineStyle === nextDetail.lineStyle &&
+                cur.defaultSubCount === nextDetail.defaultSubCount &&
+                cur.waveAmpPx === nextDetail.waveAmpPx &&
+                cur.waveLenPx === nextDetail.waveLenPx &&
+                cur.lastLineMode === nextDetail.lastLineMode;
+
+            if (same)
+                return prev;
+
+            const next = { ...prev, [activeId]: nextDetail };
+            try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
+
+            return next;
+        });
+    }, [activeId, paintColor, lineStyle, defaultSubCount, waveAmpPx, waveLenPx, lastLineMode]);
 
 
     useEffect(() => {
@@ -910,22 +994,33 @@ export default function CostumeEditor() {
     }, []);
 
     return (
-        <div ref={scopeRef}
+        <div
+            ref={scopeRef}
             className={clsx(styles.layout, modeGroup === 'preview' && styles.layoutPreview)}
-            tabIndex={0}>
+            tabIndex={0}
+            role="region"
+            aria-label="Редактор костюма"
+        >
             {/* Левая область: канвас */}
             <div className={styles.canvasWrap} onMouseDown={() => scopeRef.current?.focus()}>
-                {toast && <div className={styles.toast}>{toast.text}</div>}
+                {toast && (
+                    <div className={styles.toast} role="status" aria-live="polite">
+                        {toast.text}
+                    </div>
+                )}
+
                 {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
 
                 {/* ВЕРХНЯЯ ПАНЕЛЬ: режимы, деталь, сброс */}
                 <div className={styles.topbar}>
                     {/* Режимы (иконки) */}
-                    <div className={styles.iconSeg} role="tablist" aria-label="Режимы">
+                    <div className={styles.tbLeft} role="toolbar" aria-label="Режимы">
                         <Tooltip label="Просмотр (Esc)">
                             <button
                                 className={clsx(styles.iconBtn, mode === "preview" && styles.iconActive)}
                                 aria-label="Просмотр"
+                                aria-keyshortcuts="Esc"
+                                aria-pressed={mode === "preview"}
                                 onClick={() => { dismissTopbarHint(); setMode("preview"); }}
                             >👁️</button>
                         </Tooltip>
@@ -934,6 +1029,8 @@ export default function CostumeEditor() {
                             <button
                                 className={clsx(styles.iconBtn, (mode === "paint" || mode === "deleteFill") && styles.iconActive)}
                                 aria-label="Заливка"
+                                aria-keyshortcuts="F"
+                                aria-pressed={mode === "paint" || mode === "deleteFill"}
                                 onClick={() => { dismissTopbarHint(); setMode("paint"); }}
                             >🪣</button>
                         </Tooltip>
@@ -942,6 +1039,8 @@ export default function CostumeEditor() {
                             <button
                                 className={clsx(styles.iconBtn, modeGroup === "line" && styles.iconActive)}
                                 aria-label="Линии"
+                                aria-keyshortcuts="A"
+                                aria-pressed={modeGroup === "line"}
                                 onClick={() => { dismissTopbarHint(); setMode(lastLineMode || "add"); }}
                             >✏️</button>
                         </Tooltip>
@@ -950,14 +1049,12 @@ export default function CostumeEditor() {
                             <button
                                 className={styles.iconBtn}
                                 aria-label="Справка"
-                                onClick={() => {
-                                    try { localStorage.removeItem('ce.topbarHint.v1'); } catch { }
-                                    setShowTopbarHint(true);
-                                }}
+                                aria-keyshortcuts="H"
+                                onClick={() => { try { localStorage.removeItem('ce.topbarHint.v1'); } catch { }; setShowTopbarHint(true); }}
                             >?</button>
                         </Tooltip>
-
                     </div>
+
 
                     {showTopbarHint && (
                         <div className={styles.topbarHint} role="dialog" aria-label="Подсказка по режимам">
@@ -974,63 +1071,80 @@ export default function CostumeEditor() {
                         </div>
                     )}
 
-                    {/* Переключатель Перед/Спинка */}
-                    <div className={styles.topbarGroup}>
-                        <div className={styles.segmented} role="tablist" aria-label="Деталь">
-                            <button
-                                className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)}
-                                onClick={() => setPresetIdx(0)}
-                            >Перед</button>
-                            <button
-                                className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)}
-                                onClick={() => setPresetIdx(1)}
-                            >Спинка</button>
-                        </div>
+                    {/* контейнер табов */}
+                    <div className={clsx(styles.topbarGroup, styles.tbCenter)} role="tablist" aria-label="Деталь">
+                        <button
+                            role="tab"
+                            id="tab-front"
+                            aria-selected={presetIdx === 0}
+                            aria-controls="panel-front"
+                            className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)}
+                            onClick={() => setPresetIdx(0)}
+                        >Перед</button>
+
+                        <button
+                            role="tab"
+                            id="tab-back"
+                            aria-selected={presetIdx === 1}
+                            aria-controls="panel-back"
+                            className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)}
+                            onClick={() => setPresetIdx(1)}
+                        >Спинка</button>
                     </div>
 
                     {/* Сброс (dropdown) */}
-                    <div className={styles.topbarGroup}>
-                        <details className={styles.resetMenu}>
-                            <summary>Сброс ▾</summary>
-                            <div className={styles.resetList}>
-                                <button
-                                    className={styles.resetItem}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        const id = "front";
-                                        setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
-                                        if (currentPresetIdRef.current === id) {
-                                            setCurvesByPanel({}); setFills([]); setActivePanelId(panels[0]?.id ?? null); setMode("preview");
-                                        }
-                                    }}
-                                >Сбросить перед</button>
+                    <div className={styles.tbRight}>
+                        <details className={styles.resetDetails}>
+                            <summary className={styles.resetBtn}>
+                                Сброс <span aria-hidden>▾</span>
+                            </summary>
 
-                                <button
-                                    className={styles.resetItem}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        const id = "back";
-                                        setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
-                                        if (currentPresetIdRef.current === id) {
-                                            setCurvesByPanel({}); setFills([]); setActivePanelId(panels[0]?.id ?? null); setMode("preview");
-                                        }
-                                    }}
-                                >Сбросить спинку</button>
+                            <div className={styles.resetMenu}>
+                                <div className={styles.resetList}>
+                                    <button
+                                        className={styles.resetItem}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            const id = "front";
+                                            setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
+                                            if (currentPresetIdRef.current === id) {
+                                                setCurvesByPanel({}); setFills([]);
+                                                setActivePanelId(panels[0]?.id ?? null); setMode("preview");
+                                            }
+                                        }}
+                                    >Сбросить перед</button>
 
-                                <button
-                                    className={clsx(styles.resetItem, styles.resetDanger)}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях.")) return;
-                                        setSavedByPreset({});
-                                        setCurvesByPanel({}); setFills([]);
-                                        setActivePanelId(panels[0]?.id ?? null);
-                                        setMode("preview");
-                                    }}
-                                >⚠️ Сбросить всё</button>
+                                    <button
+                                        className={styles.resetItem}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            const id = "back";
+                                            setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
+                                            if (currentPresetIdRef.current === id) {
+                                                setCurvesByPanel({}); setFills([]);
+                                                setActivePanelId(panels[0]?.id ?? null); setMode("preview");
+                                            }
+                                        }}
+                                    >Сбросить спинку</button>
+
+                                    <div className={styles.resetSep} />
+
+                                    <button
+                                        className={clsx(styles.resetItem, styles.resetDanger)}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях.")) return;
+                                            setSavedByPreset({});
+                                            setCurvesByPanel({}); setFills([]);
+                                            setActivePanelId(panels[0]?.id ?? null);
+                                            setMode("preview");
+                                        }}
+                                    >⚠️ Сбросить всё</button>
+                                </div>
                             </div>
                         </details>
                     </div>
+
                 </div>
 
                 {/* Стек SVG: предыдущая сцена (для анимации) + текущая */}
@@ -1042,6 +1156,7 @@ export default function CostumeEditor() {
                             viewBox={viewBox}
                             preserveAspectRatio="xMidYMid meet"
                             style={{ pointerEvents: "none" }}
+                            aria-hidden="true"
                         >
                             <g>
                                 {prevPanels.map(p => (
@@ -1066,7 +1181,11 @@ export default function CostumeEditor() {
                         viewBox={viewBox}
                         preserveAspectRatio="xMidYMid meet"
                         onClick={onCanvasClick}
+                        role="tabpanel"
+                        id={presetIdx === 0 ? "panel-front" : "panel-back"}
+                        aria-labelledby={presetIdx === 0 ? "tab-front" : "tab-back"}
                     >
+                        <title>Деталь: {PRESETS[presetIdx]?.title || "—"}</title>
                         {/* GRID */}
                         <defs>
                             <pattern id={`grid-${svgMountKey}`} width={gridDef.step} height={gridDef.step} patternUnits="userSpaceOnUse">
