@@ -1014,14 +1014,13 @@ export default function CostumeEditor() {
                 {/* ВЕРХНЯЯ ПАНЕЛЬ: режимы, деталь, сброс */}
                 <div className={styles.topbar}>
                     {/* Режимы (иконки) */}
-                    <div className={styles.tbLeft} role="radiogroup" aria-label="Режимы">
+                    <div className={styles.tbLeft} role="toolbar" aria-label="Режимы">
                         <Tooltip label="Просмотр (Esc)">
                             <button
                                 className={clsx(styles.iconBtn, mode === "preview" && styles.iconActive)}
                                 aria-label="Просмотр"
-                                role="radio"
-                                aria-checked={mode === "preview"}
                                 aria-keyshortcuts="Esc"
+                                aria-pressed={mode === "preview"}
                                 onClick={() => { dismissTopbarHint(); setMode("preview"); }}
                             >👁️</button>
                         </Tooltip>
@@ -1030,9 +1029,8 @@ export default function CostumeEditor() {
                             <button
                                 className={clsx(styles.iconBtn, (mode === "paint" || mode === "deleteFill") && styles.iconActive)}
                                 aria-label="Заливка"
-                                role="radio"
-                                aria-checked={mode === "paint" || mode === "deleteFill"}
                                 aria-keyshortcuts="F"
+                                aria-pressed={mode === "paint" || mode === "deleteFill"}
                                 onClick={() => { dismissTopbarHint(); setMode("paint"); }}
                             >🪣</button>
                         </Tooltip>
@@ -1041,9 +1039,8 @@ export default function CostumeEditor() {
                             <button
                                 className={clsx(styles.iconBtn, modeGroup === "line" && styles.iconActive)}
                                 aria-label="Линии"
-                                role="radio"
-                                aria-checked={modeGroup === "line"}
                                 aria-keyshortcuts="A"
+                                aria-pressed={modeGroup === "line"}
                                 onClick={() => { dismissTopbarHint(); setMode(lastLineMode || "add"); }}
                             >✏️</button>
                         </Tooltip>
@@ -1074,36 +1071,38 @@ export default function CostumeEditor() {
                         </div>
                     )}
 
-                    {/* Переключатель Перед/Спинка */}
-                    <div className={styles.segmented} role="tablist" aria-label="Деталь">
+                    {/* контейнер табов */}
+                    <div className={clsx(styles.topbarGroup, styles.tbCenter)} role="tablist" aria-label="Деталь">
                         <button
                             role="tab"
+                            id="tab-front"
                             aria-selected={presetIdx === 0}
+                            aria-controls="panel-front"
                             className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)}
                             onClick={() => setPresetIdx(0)}
                         >Перед</button>
 
                         <button
                             role="tab"
+                            id="tab-back"
                             aria-selected={presetIdx === 1}
+                            aria-controls="panel-back"
                             className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)}
                             onClick={() => setPresetIdx(1)}
                         >Спинка</button>
                     </div>
 
-
                     {/* Сброс (dropdown) */}
                     <div className={styles.tbRight}>
                         <details className={styles.resetDetails}>
-                            <summary className={styles.resetBtn} aria-haspopup="menu">
+                            <summary className={styles.resetBtn}>
                                 Сброс <span aria-hidden>▾</span>
                             </summary>
 
-                            <div className={styles.resetMenu} role="menu">
+                            <div className={styles.resetMenu}>
                                 <div className={styles.resetList}>
                                     <button
                                         className={styles.resetItem}
-                                        role="menuitem"
                                         onClick={(e) => {
                                             e.preventDefault();
                                             const id = "front";
@@ -1117,7 +1116,6 @@ export default function CostumeEditor() {
 
                                     <button
                                         className={styles.resetItem}
-                                        role="menuitem"
                                         onClick={(e) => {
                                             e.preventDefault();
                                             const id = "back";
@@ -1133,7 +1131,6 @@ export default function CostumeEditor() {
 
                                     <button
                                         className={clsx(styles.resetItem, styles.resetDanger)}
-                                        role="menuitem"
                                         onClick={(e) => {
                                             e.preventDefault();
                                             if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях.")) return;
@@ -1159,6 +1156,7 @@ export default function CostumeEditor() {
                             viewBox={viewBox}
                             preserveAspectRatio="xMidYMid meet"
                             style={{ pointerEvents: "none" }}
+                            aria-hidden="true"
                         >
                             <g>
                                 {prevPanels.map(p => (
@@ -1183,8 +1181,9 @@ export default function CostumeEditor() {
                         viewBox={viewBox}
                         preserveAspectRatio="xMidYMid meet"
                         onClick={onCanvasClick}
-                        role="img"
-                        aria-label={`Деталь: ${PRESETS[presetIdx]?.title || "—"}`}
+                        role="tabpanel"
+                        id={presetIdx === 0 ? "panel-front" : "panel-back"}
+                        aria-labelledby={presetIdx === 0 ? "tab-front" : "tab-back"}
                     >
                         <title>Деталь: {PRESETS[presetIdx]?.title || "—"}</title>
                         {/* GRID */}

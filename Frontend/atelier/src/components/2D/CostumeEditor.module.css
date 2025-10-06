@@ -27,6 +27,12 @@
   border-radius: 12px;
   box-shadow: 0 0 30px 10px #f0f0f0;
   overflow: hidden;
+  padding-bottom: 72px;                      /* место под нижнюю навигацию */
+  padding-top: 6px;                          /* чтобы топбар не прилипал */
+    /* запас под нижнюю плавающую навигацию */
+  --canvas-bottom-ui: 64px;
+  padding-bottom: var(--canvas-bottom-ui);
+  padding-top: 6px;
 }
 .canvasStack {
   position: relative;
@@ -43,14 +49,12 @@
 
 /* === Topbar grid (чтобы "Сброс" не уезжал на узких экранах) === */
 .topbar {
-  position: sticky;
-  top: 8px;
-  z-index: 6;
-
   display: grid;
-  grid-template-columns: 1fr auto 1fr; /* лево — центр — право */
+  grid-template-columns: 1fr auto 1fr; /* лево - центр - право */
   align-items: center;
   gap: 8px;
+  width: 100%;
+  position: relative;
 }
 
 .topbarGroup { display: flex; align-items: center; gap: 8px; }
@@ -310,10 +314,25 @@
 .resetDetails > summary { list-style: none; }
 .resetDetails > summary::-webkit-details-marker { display: none; }
 
-/* выравнивания */
-.tbLeft   { justify-self: start; }
-.tbCenter { justify-self: center; }
-.tbRight  { justify-self: end; }
+/* выравнивания + фиксированное размещение в колонках грида */
+/* выравнивание контента по колонкам */
+.tbLeft,
+.tbCenter,
+.tbRight {
+  padding-top: 6px;        /* общий верхний отступ */
+  padding-bottom: 6px;     /* симметрия */
+  align-self: center;      /* гарантируем центрирование по вертикали */
+}
+
+.tbLeft   { grid-column: 1; justify-self: start; }
+.tbCenter { grid-column: 2; justify-self: center; }
+.tbRight  { grid-column: 3; justify-self: end; }
+
+/* подсказка не должна ломать сетку */
+.topbarHint {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
 
 /* ===== Canvas helpers & transitions (missing) ===== */
 .canvas {               /* чтобы классы из JSX не были undefined */
@@ -335,6 +354,19 @@
 
 .svgEnter {             /* первый показ сцены без «старого» слоя */
   animation: ce-fade-in 240ms ease both;
+}
+
+/* Видимый фокус для кликабельных */
+.iconBtn:focus-visible,
+.segBtn:focus-visible,
+.resetBtn:focus-visible,
+.resetItem:focus-visible,
+.historyBtn:focus-visible,
+.historyToggleBtn:focus-visible,
+.navBtn:focus-visible {
+  outline: 2px solid #c7d2fe;
+  outline-offset: 2px;
+  border-radius: 8px;
 }
 
 @keyframes ce-swap-in {
@@ -377,29 +409,29 @@
 @media (max-width: 960px) {
   .layout {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    height: calc(100dvh - 140px);
+    grid-auto-rows: auto;      /* строки по контенту */
+    height: auto;              /* ВАЖНО: позволяем расти */
+    min-height: 100dvh;        /* но не меньше вьюпорта */
     gap: 12px;
   }
-  .sidebar { order: -1; margin-top: 12px; }  /* редактор над канвой */
-  .canvasStack { min-height: 68vh; }
+
+  /* редактор над канвой, как и было */
+  .sidebar { order: -1; margin-top: 12px; }
+
+  /* канва выше на мобиле, но без ломания лэйаута */
+  .canvasStack {
+    min-height: clamp(560px, 72vh, 840px);
+  }
+
+  /* запас под нижние кнопки + подбородок iOS */
+  .canvasWrap {
+    padding-bottom: calc(var(--canvas-bottom-ui, 64px) + env(safe-area-inset-bottom));
+  }
+
+  /* сам плавающий блок чуть выше от края */
+  .presetNav { bottom: 16px; }
+
   .panel { border-radius: 10px; padding: 12px; }
   .btnGroupV { flex-direction: row; flex-wrap: wrap; }
   .btn { width: auto; }
-}
-@media (max-height: 900px) {
-  .layout { height: calc(100dvh - 140px); }
-  .panel { padding: 12px; }
-  .btn { padding: 8px 10px; }
-  .panelTitle { font-size: 20px; }
-  .section { margin-top: 10px; padding-top: 8px; }
-  .color { height: 32px; width: 36px; }
-}
-@media (max-height: 760px) {
-  .layout { height: calc(100dvh - 120px); }
-  .btn { padding: 7px 9px; }
-  .swatch { width: 18px; height: 18px; }
-}
-@media (max-width: 360px) {
-  .segBtnSmall { padding: 6px 8px; font-size: 12px; }
 }
