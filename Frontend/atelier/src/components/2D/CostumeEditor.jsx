@@ -82,6 +82,9 @@ export default function CostumeEditor() {
     const panelsRef = useRef(panels);
     // --- PRESETS state
     const [presetIdx, setPresetIdx] = useState(0);   // 0: Перед, 1: Спинка
+    // === Prefs per detail (persist in LS) ===
+    const [prefs, setPrefs] = useState({ front: {}, back: {} });
+    const activeId = presetIdx === 0 ? "front" : "back";
     const [isLoadingPreset, setIsLoadingPreset] = useState(false);
     // красивый ре-монтаж svg при смене пресета (для анимации появления)
     const [svgMountKey, setSvgMountKey] = useState(0);
@@ -90,6 +93,10 @@ export default function CostumeEditor() {
     const [fills, setFills] = useState([]);
     const [paintColor, setPaintColor] = useState("#f26522");
     const [mode, setMode] = useState("preview");
+
+    // ↓ внутри CostumeEditor(), рядом с остальными useState/useRef
+    const applyingPrefsRef = useRef(false);   // сейчас применяем prefs -> не писать их обратно
+    const [prefsLoaded, setPrefsLoaded] = useState(false); // prefs из LS уже загружены
 
     const {
         historyUndo, historyRedo, canUndo, canRedo,
@@ -188,7 +195,6 @@ export default function CostumeEditor() {
         setCurvesByPanel(snap?.curvesByPanel || {});
         setFills(snap?.fills || []);
         setActivePanelId(snap?.activePanelId || panelsParsed[0]?.id || null);
-        setMode("preview");
     }, []);
 
 
@@ -278,7 +284,7 @@ export default function CostumeEditor() {
 
     // Клик по пустому месту канвы — снимаем выделение
     const onCanvasClick = useCallback(() => {
-        if (mode === "preview") return;      // в preview ничего не делаем
+        if (mode === "preview" || applyingPrefsRef.current) return;      // в preview ничего не делаем
         if (mode !== "delete") {
             setSelectedCurveKey(null);
         }
@@ -317,7 +323,7 @@ export default function CostumeEditor() {
             }
 
             return prev;
-        }, label);
+        }, "Параметры волны");
     };
 
     // линейная интерполяция точки на полилинии по «дуговой длине»
@@ -675,6 +681,55 @@ export default function CostumeEditor() {
         setHoverFace(null);
     };
 
+    // загрузка prefs
+    useEffect(() => {
+        try {
+            const v = JSON.parse(localStorage.getItem("ce.prefs.v1") || "{}");
+            setPrefs({ front: {}, back: {}, ...v });
+            setPrefsLoaded(true);
+        } catch { }
+    }, []);
+
+    useEffect(() => {
+        if (!prefsLoaded) return;       // ещё не загрузили из LS — ничего не делать
+
+        const p = prefs[activeId] || {};
+
+        // Включаем "фазу применения" — остальные эффекты записей не должны срабатывать
+        applyingPrefsRef.current = true;
+
+        if (p.paintColor && p.paintColor !== paintColor) setPaintColor(p.paintColor);
+        if (p.lineStyle && p.lineStyle !== lineStyle) setLineStyle(p.lineStyle);
+        if (Number.isFinite(p.defaultSubCount) && p.defaultSubCount !== defaultSubCount) setDefaultSubCount(p.defaultSubCount);
+        if (Number.isFinite(p.waveAmpPx) && p.waveAmpPx !== waveAmpPx) setWaveAmpPx(p.waveAmpPx);
+        if (Number.isFinite(p.waveLenPx) && p.waveLenPx !== waveLenPx) setWaveLenPx(p.waveLenPx);
+        if (p.lastLineMode && p.lastLineMode !== lastLineMode) setLastLineMode(p.lastLineMode);
+
+        // применяем сохранённый режим (preview допускается)
+        const desired = p.lastMode ?? "preview";                // можно оставить без фоллбэка, но так предсказуемей
+        const safe = desired === "deleteFill" ? "paint" : desired;
+        if (safe !== mode) setMode(safe);
+
+        Promise.resolve().then(() => { applyingPrefsRef.current = false; });
+    }, [presetIdx, prefsLoaded]);  // зависимости — только смена детали/загрузка prefs
+
+    useEffect(() => {
+        // во время применения prefs не пишем обратно
+        if (applyingPrefsRef.current) return;
+
+        // единственная “правка безопасности”: не возвращаемся в deleteFill
+        const safe = mode === "deleteFill" ? "paint" : mode;
+
+        setPrefs(prev => {
+            const cur = prev[activeId] || {};
+            if (cur.lastMode === safe) return prev;            // ничего не меняется
+            const next = { ...prev, [activeId]: { ...cur, lastMode: safe } };
+            try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
+            return next;
+        });
+    }, [mode, activeId]);
+
+
     useEffect(() => {
         const onKey = (e) => {
             const ctrl = e.ctrlKey || e.metaKey;
@@ -689,8 +744,37 @@ export default function CostumeEditor() {
             }
         };
         window.addEventListener('keydown', onKey);
+
         return () => window.removeEventListener('keydown', onKey);
     }, [historyUndo, historyRedo]);
+
+    useEffect(() => {
+        if (applyingPrefsRef.current) return;    // во время применения ничего не пишем
+        setPrefs(prev => {
+            const cur = prev[activeId] || {};
+            const nextDetail = {
+                ...cur,
+                paintColor, lineStyle, defaultSubCount, waveAmpPx, waveLenPx, lastLineMode,
+            };
+
+            // shallow-equal: если ничего не поменялось — не дергаем setPrefs, чтобы не раскручивать эффекты
+            const same =
+                cur.paintColor === nextDetail.paintColor &&
+                cur.lineStyle === nextDetail.lineStyle &&
+                cur.defaultSubCount === nextDetail.defaultSubCount &&
+                cur.waveAmpPx === nextDetail.waveAmpPx &&
+                cur.waveLenPx === nextDetail.waveLenPx &&
+                cur.lastLineMode === nextDetail.lastLineMode;
+
+            if (same)
+                return prev;
+
+            const next = { ...prev, [activeId]: nextDetail };
+            try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
+
+            return next;
+        });
+    }, [activeId, paintColor, lineStyle, defaultSubCount, waveAmpPx, waveLenPx, lastLineMode]);
 
 
     useEffect(() => {
