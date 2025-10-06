@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from "react";
+
 import clsx from "clsx";
 import styles from "./CostumeEditor.module.css";
 import SectionSlider from "./SectionSlider.jsx";
@@ -24,7 +26,24 @@ export default function SidebarEditor(props) {
         selectedCurveKey, setSelectedCurveKey, hoverCurveKey, setHoverCurveKey,
         curvesByPanel, setCurvesByPanelExtern, // см. использование ниже
         recomputeWaveForCurve, waveAmpPx, setWaveAmpPx, waveLenPx, setWaveLenPx,
+
+        // история
+        historyItems, historyIndex, historyUndo, historyRedo, canUndo, canRedo
     } = props;
+
+    const [historyOpen, setHistoryOpen] = useState(false);
+
+    useEffect(() => {
+        try { setHistoryOpen(localStorage.getItem("ce.history.open") === "1"); } catch { }
+    }, []);
+    const toggleHistory = () => {
+        setHistoryOpen(v => {
+            const nv = !v;
+            try { localStorage.setItem("ce.history.open", nv ? "1" : "0"); } catch { }
+            return nv;
+        });
+    };
+
 
     // какой пресет сейчас активен
     const currentPresetId = (presetIdx === 0 ? "front" : "back");
@@ -72,7 +91,7 @@ export default function SidebarEditor(props) {
                 const i = arr.findIndex(x => x.id === cid);
                 if (i >= 0) arr[i] = { ...arr[i], subCount: n };
                 return { ...prev, [pid]: arr };
-            });
+            }, `Вершины: ${n}`);
         } else {
             setDefaultSubCount(n);
         }
@@ -82,12 +101,16 @@ export default function SidebarEditor(props) {
     const currentAmp = hasSelection ? (curve?.waveAmpPx ?? waveAmpPx) : waveAmpPx;
     const currentLen = hasSelection ? (curve?.waveLenPx ?? waveLenPx) : waveLenPx;
     const changeAmp = (val) => {
-        if (hasSelection && curveIsWavyCapable) recomputeWaveForCurve(pid, cid, val, currentLen);
-        else setWaveAmpPx(val);
+        if (hasSelection && curveIsWavyCapable)
+            recomputeWaveForCurve(pid, cid, val, currentLen, `Амплитуда: ${val}px`);
+        else
+            setWaveAmpPx(val);
     };
     const changeLen = (val) => {
-        if (hasSelection && curveIsWavyCapable) recomputeWaveForCurve(pid, cid, currentAmp, val);
-        else setWaveLenPx(val);
+        if (hasSelection && curveIsWavyCapable)
+            recomputeWaveForCurve(pid, cid, currentAmp, val, `Длина волны: ${val}px`);
+        else
+            setWaveLenPx(val);
     };
 
     return (
@@ -171,7 +194,6 @@ export default function SidebarEditor(props) {
                     </div>
                 )}
 
-
                 {/* Линии */}
                 {modeGroup === "line" && (
                     <div className={styles.section}>
@@ -236,6 +258,66 @@ export default function SidebarEditor(props) {
                         )}
                     </div>
                 )}
+
+                {/* История (только не в preview — сам сайдбар скрыт в preview) */}
+                <div className={styles.section}>
+                    <div className={styles.historyHeader}>
+                        <div className={styles.sectionTitle}>История</div>
+
+                        <div className={styles.historyToggles}>
+                            <button
+                                className={styles.historyToggleBtn}
+                                aria-label={historyOpen ? "Свернуть историю" : "Развернуть историю"}
+                                aria-expanded={historyOpen}
+                                aria-controls="history-panel"
+                                title={historyOpen ? "Свернуть" : "Развернуть"}
+                                onClick={toggleHistory}
+                            >
+                                {historyOpen ? "▾" : "▸"}
+                            </button>
+
+                            <button
+                                className={styles.historyBtn}
+                                onClick={historyUndo}
+                                disabled={!canUndo}
+                                aria-label="Отменить (Ctrl+Z)"
+                                title="Отменить (Ctrl+Z)"
+                            >↶</button>
+
+                            <button
+                                className={styles.historyBtn}
+                                onClick={historyRedo}
+                                disabled={!canRedo}
+                                aria-label="Повторить (Ctrl+Y / Ctrl+Shift+Z)"
+                                title="Повторить (Ctrl+Y / Ctrl+Shift+Z)"
+                            >↷</button>
+                        </div>
+                    </div>
+
+                    {/* Только два состояния: открыт -> показываем всю ленту, закрыт -> ничего */}
+                    {historyOpen && (
+                        <div id="history-panel" className={styles.historyViewport}>
+                            <ol className={styles.historyList} aria-label="История действий">
+                                {historyItems.map((it, i) => (
+                                    <li
+                                        key={i}
+                                        className={[
+                                            styles.histItem,
+                                            i === historyIndex ? ' ' + styles.now : '',
+                                            i > historyIndex ? ' ' + styles.future : '',
+                                        ].join('')}
+                                        title={new Date(it.at).toLocaleTimeString()}
+                                    >
+                                        <span className={styles.histStep}>{i}</span>
+                                        <span className={styles.histLabel}>{it.label}</span>
+                                    </li>
+                                ))}
+                            </ol>
+                        </div>
+                    )}
+                </div>
+
+
             </div>
         </aside>
     );
