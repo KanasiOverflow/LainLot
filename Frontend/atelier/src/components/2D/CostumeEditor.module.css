@@ -57,6 +57,14 @@
   position: relative;
 }
 
+.topbarHint {
+  position: absolute;
+  top: 8px;
+  left: 12px;        /* если нужно по центру: left:50%; transform:translateX(-50%); */
+  z-index: 50;
+  max-width: min(520px, calc(100% - 24px));
+}
+
 .topbarGroup { display: flex; align-items: center; gap: 8px; }
 
 /* ===== Sidebar & sections ===== */
@@ -329,11 +337,6 @@
 .tbRight  { grid-column: 3; justify-self: end; }
 
 /* подсказка не должна ломать сетку */
-.topbarHint {
-  grid-column: 1 / -1;
-  justify-self: center;
-}
-
 /* ===== Canvas helpers & transitions (missing) ===== */
 .canvas {               /* чтобы классы из JSX не были undefined */
   display: block;
@@ -444,4 +447,73 @@
   .panel { border-radius: 10px; padding: 12px; }
   .btnGroupV { flex-direction: row; flex-wrap: wrap; }
   .btn { width: auto; }
+}
+
+/* ===== Order flow (under editor) ===== */
+.flow {
+  grid-column: 1 / -1;        /* отдельная строка на всю ширину грида */
+  padding: 20px 12px 40px;
+}
+.flowContainer {
+  max-width: 880px;
+  margin: 0 auto;
+}
+.flowHeader { text-align: center; margin-bottom: 10px; }
+.flowTitle { font-size: 26px; margin: 0; font-weight: 700; color: #111; }
+.flowSub { margin: 6px 0 0; color: #6b7280; }
+
+.stepCard {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  box-shadow: 0 4px 28px rgba(17,24,39,.06);
+  padding: 16px;
+  margin-top: 14px;
+}
+.stepTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 8px;
+}
+.stepBadge {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #111827; color: #fff; font-size: 14px; font-weight: 700;
+}
+
+/* CTA */
+.ctaBar {
+  display: grid; gap: 8px;
+  justify-items: center;
+  margin-top: 16px;
+}
+.ctaButton {
+  appearance: none;
+  border: 0;
+  border-radius: 9999px;
+  padding: 14px 22px;
+  font-size: 16px; font-weight: 700;
+  background: #111827; color: #fff;
+  box-shadow: 0 10px 20px rgba(17,24,39,.18);
+  cursor: pointer;
+}
+.ctaButton:hover { filter: brightness(1.05); }
+.ctaButton:disabled { opacity: .5; cursor: not-allowed; box-shadow: none; }
+.ctaNote { font-size: 13px; color: #6b7280; }
+
+/* === базовые формы (если ещё не добавлены) === */
+.formLabel { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px; font-size: 13px; color: #111; opacity:.9; margin: 6px 0 4px; }
+.formUnit { font-size: 12px; opacity: .6; }
+.input, .textarea { width: 100%; padding: 9px 10px; border: 1px solid #e6e6e6; border-radius: 8px; background: #fff; font-size: 14px; color: #30302e; }
+.input:focus, .textarea:focus { outline: 2px solid #c7d2fe; outline-offset: 2px; }
+.textarea { resize: vertical; }
+.grid1 { display: grid; grid-template-columns: 1fr; gap: 6px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tabs2 { display: grid; grid-template-columns: 1fr 1fr; }
+.mb8 { margin-bottom: 8px; }
+
+@media (max-width: 640px) {
+  .grid2 { grid-template-columns: 1fr; }
 }

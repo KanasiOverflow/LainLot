@@ -17,11 +17,12 @@ import { makeUserCurveBetween } from "../../utils/routes.js";
 import { applyMatrixToSegs } from "../../utils/transforms.js";
 import { collectAnchors } from "../../utils/anchors.js";
 import { useHistory } from "../../hooks/useHistory.jsx";
+import { buildCombinedSVG, downloadText } from "../../utils/export.js";
 
 import SidebarEditor from "./SidebarEditor.jsx";
 import Tooltip from "./Tooltip.jsx";
-
-import { buildCombinedSVG, downloadText } from "../../utils/export.js";
+import BodyParams from "./BodyParams.jsx";
+import OrderForm from "./OrderForm.jsx";
 
 // --- PRESETS: базовая папка с заранее подготовленными SVG
 const SVG_BASE = "/2d/svg/Hoodie";
@@ -703,6 +704,36 @@ export default function CostumeEditor() {
         }
     };
 
+    // ===== Order flow state (persist to LS)
+    const [bodyParams, setBodyParams] = useState(() => {
+        try { return JSON.parse(localStorage.getItem("ce.bodyParams.v1") || "null"); } catch { return null; }
+    });
+
+    const [orderInfo, setOrderInfo] = useState(() => {
+        try { return JSON.parse(localStorage.getItem("ce.orderInfo.v1") || "null"); } catch { return null; }
+    });
+
+    const isOrderValid = (() => {
+        const e = orderInfo?.email?.trim?.() || "";
+        const p = orderInfo?.phone?.trim?.() || "";
+        const n = orderInfo?.fullName?.trim?.() || "";
+        return n.length > 1 && /.+@.+\..+/.test(e) && p.length >= 6;
+    })();
+
+    useEffect(() => {
+        try {
+            localStorage.setItem("ce.bodyParams.v1", JSON.stringify(bodyParams || {}));
+        }
+        catch { }
+    }, [bodyParams]);
+
+    useEffect(() => {
+        try {
+            localStorage.setItem("ce.orderInfo.v1", JSON.stringify(orderInfo || {}));
+        }
+        catch { }
+    }, [orderInfo]);
+
     // загрузка prefs
     useEffect(() => {
         try {
@@ -1016,488 +1047,529 @@ export default function CostumeEditor() {
     }, []);
 
     return (
-        <div
-            ref={scopeRef}
-            className={clsx(styles.layout, modeGroup === 'preview' && styles.layoutPreview)}
-            tabIndex={0}
-            role="region"
-            aria-label="Редактор костюма"
-        >
-            {/* Левая область: канвас */}
-            <div className={styles.canvasWrap} onMouseDown={() => scopeRef.current?.focus()}>
-                {toast && (
-                    <div className={styles.toast} role="status" aria-live="polite">
-                        {toast.text}
-                    </div>
-                )}
-
-                {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
-
-                {/* ВЕРХНЯЯ ПАНЕЛЬ: режимы, деталь, сброс */}
-                <div className={styles.topbar}>
-                    {/* Режимы (иконки) */}
-                    <div className={styles.tbLeft} role="toolbar" aria-label="Режимы">
-                        <Tooltip label="Просмотр (Esc)">
-                            <button
-                                className={clsx(styles.iconBtn, mode === "preview" && styles.iconActive)}
-                                aria-label="Просмотр"
-                                aria-keyshortcuts="Esc"
-                                aria-pressed={mode === "preview"}
-                                onClick={() => { dismissTopbarHint(); setMode("preview"); }}
-                            >👁️</button>
-                        </Tooltip>
-
-                        <Tooltip label="Заливка (F)">
-                            <button
-                                className={clsx(styles.iconBtn, (mode === "paint" || mode === "deleteFill") && styles.iconActive)}
-                                aria-label="Заливка"
-                                aria-keyshortcuts="F"
-                                aria-pressed={mode === "paint" || mode === "deleteFill"}
-                                onClick={() => { dismissTopbarHint(); setMode("paint"); }}
-                            >🪣</button>
-                        </Tooltip>
-
-                        <Tooltip label="Линии (A)">
-                            <button
-                                className={clsx(styles.iconBtn, modeGroup === "line" && styles.iconActive)}
-                                aria-label="Линии"
-                                aria-keyshortcuts="A"
-                                aria-pressed={modeGroup === "line"}
-                                onClick={() => { dismissTopbarHint(); setMode(lastLineMode || "add"); }}
-                            >✏️</button>
-                        </Tooltip>
-
-                        <Tooltip label="Показать подсказку (H)">
-                            <button
-                                className={styles.iconBtn}
-                                aria-label="Справка"
-                                aria-keyshortcuts="H"
-                                onClick={() => { try { localStorage.removeItem('ce.topbarHint.v1'); } catch { }; setShowTopbarHint(true); }}
-                            >?</button>
-                        </Tooltip>
-                    </div>
-
-
-                    {showTopbarHint && (
-                        <div className={styles.topbarHint} role="dialog" aria-label="Подсказка по режимам">
-                            <div className={styles.hintClose} onClick={dismissTopbarHint} aria-label="Закрыть">×</div>
-                            <div className={styles.hintTitle}>Быстрый старт</div>
-                            <div className={styles.hintRow}>
-                                Нажмите <span className={styles.kbd}>F</span> — заливка,
-                                <span className={styles.kbd} style={{ marginLeft: 6 }}>A</span> — линии,
-                                <span className={styles.kbd} style={{ marginLeft: 6 }}>Esc</span> — просмотр.
-                            </div>
-                            <div className={styles.hintRow} style={{ marginTop: 6 }}>
-                                Или кликните по иконкам слева. Подсказка больше не появится.
-                            </div>
+        <div>
+            <div
+                ref={scopeRef}
+                className={clsx(styles.layout, modeGroup === 'preview' && styles.layoutPreview)}
+                tabIndex={0}
+                role="region"
+                aria-label="Редактор костюма"
+            >
+                {/* Левая область: канвас */}
+                <div className={styles.canvasWrap} onMouseDown={() => scopeRef.current?.focus()}>
+                    {toast && (
+                        <div className={styles.toast} role="status" aria-live="polite">
+                            {toast.text}
                         </div>
                     )}
 
-                    {/* контейнер табов */}
-                    <div className={clsx(styles.topbarGroup, styles.tbCenter)} role="tablist" aria-label="Деталь">
-                        <button
-                            role="tab"
-                            id="tab-front"
-                            aria-selected={presetIdx === 0}
-                            aria-controls="panel-front"
-                            className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)}
-                            onClick={() => setPresetIdx(0)}
-                        >Перед</button>
+                    {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
 
-                        <button
-                            role="tab"
-                            id="tab-back"
-                            aria-selected={presetIdx === 1}
-                            aria-controls="panel-back"
-                            className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)}
-                            onClick={() => setPresetIdx(1)}
-                        >Спинка</button>
-                    </div>
+                    {/* ВЕРХНЯЯ ПАНЕЛЬ: режимы, деталь, сброс */}
+                    <div className={styles.topbar}>
+                        {/* Режимы (иконки) */}
+                        <div className={styles.tbLeft} role="toolbar" aria-label="Режимы">
+                            <Tooltip label="Просмотр (Esc)">
+                                <button
+                                    className={clsx(styles.iconBtn, mode === "preview" && styles.iconActive)}
+                                    aria-label="Просмотр"
+                                    aria-keyshortcuts="Esc"
+                                    aria-pressed={mode === "preview"}
+                                    onClick={() => { dismissTopbarHint(); setMode("preview"); }}
+                                >👁️</button>
+                            </Tooltip>
 
-                    {/* Сброс (dropdown) */}
-                    <div className={styles.tbRight}>
-                        <details className={styles.resetDetails}>
-                            <summary className={styles.resetBtn}>
-                                Сброс <span aria-hidden>▾</span>
-                            </summary>
+                            <Tooltip label="Заливка (F)">
+                                <button
+                                    className={clsx(styles.iconBtn, (mode === "paint" || mode === "deleteFill") && styles.iconActive)}
+                                    aria-label="Заливка"
+                                    aria-keyshortcuts="F"
+                                    aria-pressed={mode === "paint" || mode === "deleteFill"}
+                                    onClick={() => { dismissTopbarHint(); setMode("paint"); }}
+                                >🪣</button>
+                            </Tooltip>
 
-                            <div className={styles.resetMenu}>
-                                <div className={styles.resetList}>
-                                    <button
-                                        className={styles.resetItem}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            const id = "front";
-                                            setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
-                                            if (currentPresetIdRef.current === id) {
-                                                setCurvesByPanel({}); setFills([]);
-                                                setActivePanelId(panels[0]?.id ?? null); setMode("preview");
-                                            }
-                                        }}
-                                    >Сбросить перед</button>
+                            <Tooltip label="Линии (A)">
+                                <button
+                                    className={clsx(styles.iconBtn, modeGroup === "line" && styles.iconActive)}
+                                    aria-label="Линии"
+                                    aria-keyshortcuts="A"
+                                    aria-pressed={modeGroup === "line"}
+                                    onClick={() => { dismissTopbarHint(); setMode(lastLineMode || "add"); }}
+                                >✏️</button>
+                            </Tooltip>
 
-                                    <button
-                                        className={styles.resetItem}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            const id = "back";
-                                            setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
-                                            if (currentPresetIdRef.current === id) {
-                                                setCurvesByPanel({}); setFills([]);
-                                                setActivePanelId(panels[0]?.id ?? null); setMode("preview");
-                                            }
-                                        }}
-                                    >Сбросить спинку</button>
+                            <Tooltip label="Показать подсказку (H)">
+                                <button
+                                    className={styles.iconBtn}
+                                    aria-label="Справка"
+                                    aria-keyshortcuts="H"
+                                    onClick={() => { try { localStorage.removeItem('ce.topbarHint.v1'); } catch { }; setShowTopbarHint(true); }}
+                                >?</button>
+                            </Tooltip>
+                        </div>
 
-                                    <div className={styles.resetSep} />
 
-                                    <button
-                                        className={clsx(styles.resetItem, styles.resetDanger)}
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях.")) return;
-                                            setSavedByPreset({});
-                                            setCurvesByPanel({}); setFills([]);
-                                            setActivePanelId(panels[0]?.id ?? null);
-                                            setMode("preview");
-                                        }}
-                                    >⚠️ Сбросить всё</button>
+                        {showTopbarHint && (
+                            <div className={styles.topbarHint} role="dialog" aria-label="Подсказка по режимам">
+                                <div className={styles.hintClose} onClick={dismissTopbarHint} aria-label="Закрыть">×</div>
+                                <div className={styles.hintTitle}>Быстрый старт</div>
+                                <div className={styles.hintRow}>
+                                    Нажмите <span className={styles.kbd}>F</span> — заливка,
+                                    <span className={styles.kbd} style={{ marginLeft: 6 }}>A</span> — линии,
+                                    <span className={styles.kbd} style={{ marginLeft: 6 }}>Esc</span> — просмотр.
+                                </div>
+                                <div className={styles.hintRow} style={{ marginTop: 6 }}>
+                                    Или кликните по иконкам слева. Подсказка больше не появится.
                                 </div>
                             </div>
-                        </details>
+                        )}
 
-                        <button
-                            className={styles.exportBtn}
-                            onClick={doExportSVG}
-                            disabled={isExporting}
-                            aria-label="Выгрузить в SVG"
-                            title="Выгрузить в SVG"
+                        {/* контейнер табов */}
+                        <div className={clsx(styles.topbarGroup, styles.tbCenter)} role="tablist" aria-label="Деталь">
+                            <button
+                                role="tab"
+                                id="tab-front"
+                                aria-selected={presetIdx === 0}
+                                aria-controls="panel-front"
+                                className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)}
+                                onClick={() => setPresetIdx(0)}
+                            >Перед</button>
+
+                            <button
+                                role="tab"
+                                id="tab-back"
+                                aria-selected={presetIdx === 1}
+                                aria-controls="panel-back"
+                                className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)}
+                                onClick={() => setPresetIdx(1)}
+                            >Спинка</button>
+                        </div>
+
+                        {/* Сброс (dropdown) */}
+                        <div className={styles.tbRight}>
+                            <details className={styles.resetDetails}>
+                                <summary className={styles.resetBtn}>
+                                    Сброс <span aria-hidden>▾</span>
+                                </summary>
+
+                                <div className={styles.resetMenu}>
+                                    <div className={styles.resetList}>
+                                        <button
+                                            className={styles.resetItem}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                const id = "front";
+                                                setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
+                                                if (currentPresetIdRef.current === id) {
+                                                    setCurvesByPanel({}); setFills([]);
+                                                    setActivePanelId(panels[0]?.id ?? null); setMode("preview");
+                                                }
+                                            }}
+                                        >Сбросить перед</button>
+
+                                        <button
+                                            className={styles.resetItem}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                const id = "back";
+                                                setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
+                                                if (currentPresetIdRef.current === id) {
+                                                    setCurvesByPanel({}); setFills([]);
+                                                    setActivePanelId(panels[0]?.id ?? null); setMode("preview");
+                                                }
+                                            }}
+                                        >Сбросить спинку</button>
+
+                                        <div className={styles.resetSep} />
+
+                                        <button
+                                            className={clsx(styles.resetItem, styles.resetDanger)}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях.")) return;
+                                                setSavedByPreset({});
+                                                setCurvesByPanel({}); setFills([]);
+                                                setActivePanelId(panels[0]?.id ?? null);
+                                                setMode("preview");
+                                            }}
+                                        >⚠️ Сбросить всё</button>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <button
+                                className={styles.exportBtn}
+                                onClick={doExportSVG}
+                                disabled={isExporting}
+                                aria-label="Выгрузить в SVG"
+                                title="Выгрузить в SVG"
+                            >
+                                {isExporting ? "Экспорт…" : "Экспорт SVG"}
+                            </button>
+                        </div>
+
+                    </div>
+
+                    {/* Стек SVG: предыдущая сцена (для анимации) + текущая */}
+                    <div className={styles.canvasStack}>
+                        {/* нижний слой — пред. сцена, только контуры */}
+                        {prevPanels && (
+                            <svg
+                                className={`${styles.canvas} ${styles.stage} ${styles.swapOut}`}
+                                viewBox={viewBox}
+                                preserveAspectRatio="xMidYMid meet"
+                                style={{ pointerEvents: "none" }}
+                                aria-hidden="true"
+                            >
+                                <g>
+                                    {prevPanels.map(p => (
+                                        <path
+                                            key={`prev-${p.id}`}
+                                            d={segsToD(p.segs)}
+                                            fill="none"
+                                            stroke="#c9ced6"
+                                            strokeWidth={1.2}
+                                            vectorEffect="non-scaling-stroke"
+                                        />
+                                    ))}
+                                </g>
+                            </svg>
+                        )}
+
+                        {/* верхний слой — текущая интерактивная сцена */}
+                        <svg
+                            key={svgMountKey}
+                            ref={svgRef}
+                            className={`${styles.canvas} ${styles.stage} ${isSwapping ? styles.swapIn : (!didEverSwapRef.current ? styles.svgEnter : "")}`}
+                            viewBox={viewBox}
+                            preserveAspectRatio="xMidYMid meet"
+                            onClick={onCanvasClick}
+                            role="tabpanel"
+                            id={presetIdx === 0 ? "panel-front" : "panel-back"}
+                            aria-labelledby={presetIdx === 0 ? "tab-front" : "tab-back"}
                         >
-                            {isExporting ? "Экспорт…" : "Экспорт SVG"}
-                        </button>
+                            <title>Деталь: {PRESETS[presetIdx]?.title || "—"}</title>
+                            {/* GRID */}
+                            <defs>
+                                <pattern id={`grid-${svgMountKey}`} width={gridDef.step} height={gridDef.step} patternUnits="userSpaceOnUse">
+                                    <path
+                                        d={`M ${gridDef.step} 0 L 0 0 0 ${gridDef.step}`}
+                                        fill="none"
+                                        stroke="#000"
+                                        strokeOpacity=".06"
+                                        strokeWidth={0.6 * (scale.k || 1)}
+                                    />
+                                </pattern>
+                            </defs>
+                            <rect
+                                x={gridDef.b.x}
+                                y={gridDef.b.y}
+                                width={gridDef.b.w}
+                                height={gridDef.b.h}
+                                fill={`url(#grid-${svgMountKey})`}
+                            />
+
+                            {/* FACES + OUTLINE + USER CURVES + ANCHORS */}
+                            {panels.map(p => {
+                                const faces = facesByPanel[p.id] || [];
+                                const ring = outerRingByPanel[p.id];
+                                const isActive = activePanel?.id === p.id;
+                                const clickableFaces = faces.length ? faces : (ring ? [ring] : []);
+                                const dimInactive = mode !== "preview" && !isActive;
+
+                                return (
+                                    <g key={p.id} className={dimInactive ? styles.panelDimmed : undefined}>
+                                        {/* выбор детали (не мешаем заливке) */}
+                                        {ring && mode !== "preview" && mode !== "paint" && mode !== "deleteFill" && (
+                                            <path
+                                                d={facePath(ring)}
+                                                fill="transparent"
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() => onPanelActivate(p.id)}
+                                            />
+                                        )}
+
+                                        {/* грани для покраски / очистки */}
+                                        {clickableFaces.map(poly => {
+                                            const fk = faceKey(poly);
+                                            const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
+                                            const hasFill = fill !== "none";
+                                            const isHover = !!hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk;
+                                            const canHit = mode === "paint" || mode === "deleteFill";
+
+                                            return (
+                                                <g key={fk}>
+                                                    <path
+                                                        d={facePath(poly)}
+                                                        fill={hasFill ? fill : (mode === "paint" && isHover ? "#9ca3af" : "transparent")}
+                                                        fillOpacity={hasFill ? 0.9 : (mode === "paint" && isHover ? 0.35 : 0.001)}
+                                                        stroke="none"
+                                                        style={{ pointerEvents: canHit ? 'all' : 'none', cursor: canHit ? 'crosshair' : 'default' }}
+                                                        onMouseEnter={() => (hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly))}
+                                                        onMouseLeave={() => (hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly))}
+                                                        onClick={() => (hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly))}
+                                                    />
+                                                    {hasFill && mode === "deleteFill" && isHover && (
+                                                        <path d={facePath(poly)} fill="#000" fillOpacity={0.18} style={{ pointerEvents: "none" }} />
+                                                    )}
+                                                </g>
+                                            );
+                                        })}
+
+                                        {/* внешний контур */}
+                                        {ring && (
+                                            <path
+                                                d={facePath(ring)}
+                                                fill="none"
+                                                stroke="#111"
+                                                strokeWidth={1.8 * (scale.k || 1)}
+                                                style={{ pointerEvents: "none" }}
+                                            />
+                                        )}
+
+                                        {/* пользовательские линии */}
+                                        {(curvesByPanel[p.id] || []).map(c => {
+                                            const merged = mergedAnchorsOf(p);
+                                            const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
+                                            const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
+                                            if (!a || !b) return null;
+
+                                            const d = c.type === "cubic"
+                                                ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
+                                                : c.d;
+
+                                            const key = `${p.id}:${c.id}`;
+                                            const isHover = hoverCurveKey === key;
+                                            const isSelected = selectedCurveKey === key;
+                                            const isClicked = clickedCurveKey === key;
+
+                                            const cls = clsx(
+                                                styles.userCurve,
+                                                mode === "preview" && styles.userCurvePreview,
+                                                mode === "delete" && isHover && styles.userCurveDeleteHover,
+                                                isSelected && styles.userCurveSelected,
+                                                isClicked && styles.userCurveClicked
+                                            );
+
+                                            return (
+                                                <path
+                                                    key={c.id}
+                                                    d={d}
+                                                    className={cls}
+                                                    onMouseEnter={() => { if (isActive) onCurveEnter(p.id, c.id); }}
+                                                    onMouseLeave={() => {
+                                                        if (mode === "insert") setInsertPreview(prev => (prev && prev.curveId === c.id ? null : prev));
+                                                        onCurveLeave(p.id, c.id);
+                                                    }}
+                                                    onMouseMove={(e) => {
+                                                        if (!isActive || mode !== "insert")
+                                                            return;
+                                                        const svg = svgRef.current; if (!svg)
+                                                            return;
+
+                                                        const p2 = svg.createSVGPoint(); p2.x = e.clientX; p2.y = e.clientY;
+                                                        const loc = p2.matrixTransform(svg.getScreenCTM().inverse());
+                                                        const hit = closestPointOnCurve(p, c, loc);
+
+                                                        if (!hit)
+                                                            return;
+
+                                                        const allowed = !tooCloseToExistingAnchors(p, c, { x: hit.x, y: hit.y });
+                                                        setInsertPreview({ panelId: p.id, curveId: c.id, x: hit.x, y: hit.y, t: hit.t, allowed });
+                                                    }}
+                                                    onClick={(e) => {
+                                                        if (!isActive)
+                                                            return;
+
+                                                        if (mode === "insert") {
+                                                            if (!selectedCurveKey) setSelectedCurveKey(`${p.id}:${c.id}`);
+                                                            e.stopPropagation();
+                                                            if (!insertPreview || insertPreview.curveId !== c.id) return;
+                                                            if (!insertPreview.allowed) { setToast({ text: "Слишком близко к существующей вершине" }); return; }
+                                                            applyCurvesChange(prev => {
+                                                                const list = [...(prev[p.id] || [])];
+                                                                const i = list.findIndex(x => x.id === c.id);
+                                                                if (i < 0) return prev;
+                                                                const cur = list[i];
+                                                                const stops = Array.isArray(cur.extraStops) ? [...cur.extraStops] : [];
+                                                                stops.push(Math.max(0, Math.min(1, insertPreview.t)));
+                                                                const uniq = Array.from(new Set(stops)).sort((a, b) => a - b);
+                                                                list[i] = { ...cur, extraStops: uniq };
+                                                                return { ...prev, [p.id]: list };
+                                                            });
+                                                            setInsertPreview(null);
+                                                            return;
+                                                        }
+                                                        onCurveClick(p.id, c.id, e);
+                                                    }}
+                                                    style={{
+                                                        cursor:
+                                                            (mode === 'preview' || !isActive)
+                                                                ? 'default'
+                                                                : (mode === 'insert'
+                                                                    ? ((insertPreview && insertPreview.curveId === c.id && insertPreview.allowed === false)
+                                                                        ? 'not-allowed'
+                                                                        : 'copy')
+                                                                    : 'pointer')
+                                                    }}
+                                                    pointerEvents={(mode === "preview" || !isActive || mode === "deleteVertex") ? "none" : "auto"}
+                                                    strokeLinecap="round"
+                                                />
+                                            );
+                                        })}
+
+                                        {/* превью точки вставки */}
+                                        {isActive && mode === "insert" && insertPreview && insertPreview.panelId === p.id && (
+                                            <circle
+                                                cx={insertPreview.x}
+                                                cy={insertPreview.y}
+                                                r={4}
+                                                fill={insertPreview.allowed ? "#22c55e" : "#ef4444"}
+                                                stroke={insertPreview.allowed ? "#166534" : "#991b1b"}
+                                                strokeWidth={1.5}
+                                                style={{ pointerEvents: "none" }}
+                                            />
+                                        )}
+
+                                        {/* базовые + доп. якоря */}
+                                        {isActive && (mode === "add" || mode === "delete" || mode === "insert") && (() => {
+                                            const base = p.anchors || [];
+                                            const extras = extraAnchorsByPanel[p.id] || [];
+                                            const merged = [...base, ...extras];
+                                            return merged.map((pt, mi) => (
+                                                <circle
+                                                    key={`m-${mi}`}
+                                                    cx={pt.x}
+                                                    cy={pt.y}
+                                                    r={3.5}
+                                                    className={clsx(
+                                                        styles.anchor,
+                                                        styles.anchorClickable,
+                                                        mi === hoverAnchorIdx && styles.anchorHovered,
+                                                        mi === addBuffer && styles.anchorSelectedA
+                                                    )}
+                                                    onClick={(e) => { e.stopPropagation(); onAnchorClickAddMode(mi); }}
+                                                    onMouseEnter={() => setHoverAnchorIdx(mi)}
+                                                    onMouseLeave={() => setHoverAnchorIdx(null)}
+                                                />
+                                            ));
+                                        })()}
+
+                                        {/* ручные вершины — для удаления */}
+                                        {isActive && mode === "deleteVertex" && (() => {
+                                            const extras = (extraAnchorsByPanel[p.id] || []).filter(ex => ex?.id?.includes("@m"));
+                                            return extras.map(ex => (
+                                                <circle
+                                                    key={ex.id}
+                                                    cx={ex.x}
+                                                    cy={ex.y}
+                                                    r={4}
+                                                    className={styles.anchorManualDelete}
+                                                    onClick={(e) => { e.stopPropagation(); eraseManualAnchor(p.id, ex); }}
+                                                />
+                                            ));
+                                        })()}
+                                    </g>
+                                );
+                            })}
+                        </svg>
+                    </div>
+
+                    {/* навигация пресетов снизу */}
+                    <div className={styles.presetNav}>
+                        <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
+                        <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
+                        <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
                     </div>
 
                 </div>
 
-                {/* Стек SVG: предыдущая сцена (для анимации) + текущая */}
-                <div className={styles.canvasStack}>
-                    {/* нижний слой — пред. сцена, только контуры */}
-                    {prevPanels && (
-                        <svg
-                            className={`${styles.canvas} ${styles.stage} ${styles.swapOut}`}
-                            viewBox={viewBox}
-                            preserveAspectRatio="xMidYMid meet"
-                            style={{ pointerEvents: "none" }}
-                            aria-hidden="true"
-                        >
-                            <g>
-                                {prevPanels.map(p => (
-                                    <path
-                                        key={`prev-${p.id}`}
-                                        d={segsToD(p.segs)}
-                                        fill="none"
-                                        stroke="#c9ced6"
-                                        strokeWidth={1.2}
-                                        vectorEffect="non-scaling-stroke"
-                                    />
-                                ))}
-                            </g>
-                        </svg>
-                    )}
-
-                    {/* верхний слой — текущая интерактивная сцена */}
-                    <svg
-                        key={svgMountKey}
-                        ref={svgRef}
-                        className={`${styles.canvas} ${styles.stage} ${isSwapping ? styles.swapIn : (!didEverSwapRef.current ? styles.svgEnter : "")}`}
-                        viewBox={viewBox}
-                        preserveAspectRatio="xMidYMid meet"
-                        onClick={onCanvasClick}
-                        role="tabpanel"
-                        id={presetIdx === 0 ? "panel-front" : "panel-back"}
-                        aria-labelledby={presetIdx === 0 ? "tab-front" : "tab-back"}
-                    >
-                        <title>Деталь: {PRESETS[presetIdx]?.title || "—"}</title>
-                        {/* GRID */}
-                        <defs>
-                            <pattern id={`grid-${svgMountKey}`} width={gridDef.step} height={gridDef.step} patternUnits="userSpaceOnUse">
-                                <path
-                                    d={`M ${gridDef.step} 0 L 0 0 0 ${gridDef.step}`}
-                                    fill="none"
-                                    stroke="#000"
-                                    strokeOpacity=".06"
-                                    strokeWidth={0.6 * (scale.k || 1)}
-                                />
-                            </pattern>
-                        </defs>
-                        <rect
-                            x={gridDef.b.x}
-                            y={gridDef.b.y}
-                            width={gridDef.b.w}
-                            height={gridDef.b.h}
-                            fill={`url(#grid-${svgMountKey})`}
-                        />
-
-                        {/* FACES + OUTLINE + USER CURVES + ANCHORS */}
-                        {panels.map(p => {
-                            const faces = facesByPanel[p.id] || [];
-                            const ring = outerRingByPanel[p.id];
-                            const isActive = activePanel?.id === p.id;
-                            const clickableFaces = faces.length ? faces : (ring ? [ring] : []);
-                            const dimInactive = mode !== "preview" && !isActive;
-
-                            return (
-                                <g key={p.id} className={dimInactive ? styles.panelDimmed : undefined}>
-                                    {/* выбор детали (не мешаем заливке) */}
-                                    {ring && mode !== "preview" && mode !== "paint" && mode !== "deleteFill" && (
-                                        <path
-                                            d={facePath(ring)}
-                                            fill="transparent"
-                                            style={{ cursor: "pointer" }}
-                                            onClick={() => onPanelActivate(p.id)}
-                                        />
-                                    )}
-
-                                    {/* грани для покраски / очистки */}
-                                    {clickableFaces.map(poly => {
-                                        const fk = faceKey(poly);
-                                        const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
-                                        const hasFill = fill !== "none";
-                                        const isHover = !!hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk;
-                                        const canHit = mode === "paint" || mode === "deleteFill";
-
-                                        return (
-                                            <g key={fk}>
-                                                <path
-                                                    d={facePath(poly)}
-                                                    fill={hasFill ? fill : (mode === "paint" && isHover ? "#9ca3af" : "transparent")}
-                                                    fillOpacity={hasFill ? 0.9 : (mode === "paint" && isHover ? 0.35 : 0.001)}
-                                                    stroke="none"
-                                                    style={{ pointerEvents: canHit ? 'all' : 'none', cursor: canHit ? 'crosshair' : 'default' }}
-                                                    onMouseEnter={() => (hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly))}
-                                                    onMouseLeave={() => (hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly))}
-                                                    onClick={() => (hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly))}
-                                                />
-                                                {hasFill && mode === "deleteFill" && isHover && (
-                                                    <path d={facePath(poly)} fill="#000" fillOpacity={0.18} style={{ pointerEvents: "none" }} />
-                                                )}
-                                            </g>
-                                        );
-                                    })}
-
-                                    {/* внешний контур */}
-                                    {ring && (
-                                        <path
-                                            d={facePath(ring)}
-                                            fill="none"
-                                            stroke="#111"
-                                            strokeWidth={1.8 * (scale.k || 1)}
-                                            style={{ pointerEvents: "none" }}
-                                        />
-                                    )}
-
-                                    {/* пользовательские линии */}
-                                    {(curvesByPanel[p.id] || []).map(c => {
-                                        const merged = mergedAnchorsOf(p);
-                                        const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
-                                        const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
-                                        if (!a || !b) return null;
-
-                                        const d = c.type === "cubic"
-                                            ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
-                                            : c.d;
-
-                                        const key = `${p.id}:${c.id}`;
-                                        const isHover = hoverCurveKey === key;
-                                        const isSelected = selectedCurveKey === key;
-                                        const isClicked = clickedCurveKey === key;
-
-                                        const cls = clsx(
-                                            styles.userCurve,
-                                            mode === "preview" && styles.userCurvePreview,
-                                            mode === "delete" && isHover && styles.userCurveDeleteHover,
-                                            isSelected && styles.userCurveSelected,
-                                            isClicked && styles.userCurveClicked
-                                        );
-
-                                        return (
-                                            <path
-                                                key={c.id}
-                                                d={d}
-                                                className={cls}
-                                                onMouseEnter={() => { if (isActive) onCurveEnter(p.id, c.id); }}
-                                                onMouseLeave={() => {
-                                                    if (mode === "insert") setInsertPreview(prev => (prev && prev.curveId === c.id ? null : prev));
-                                                    onCurveLeave(p.id, c.id);
-                                                }}
-                                                onMouseMove={(e) => {
-                                                    if (!isActive || mode !== "insert")
-                                                        return;
-                                                    const svg = svgRef.current; if (!svg)
-                                                        return;
-
-                                                    const p2 = svg.createSVGPoint(); p2.x = e.clientX; p2.y = e.clientY;
-                                                    const loc = p2.matrixTransform(svg.getScreenCTM().inverse());
-                                                    const hit = closestPointOnCurve(p, c, loc);
-
-                                                    if (!hit)
-                                                        return;
-
-                                                    const allowed = !tooCloseToExistingAnchors(p, c, { x: hit.x, y: hit.y });
-                                                    setInsertPreview({ panelId: p.id, curveId: c.id, x: hit.x, y: hit.y, t: hit.t, allowed });
-                                                }}
-                                                onClick={(e) => {
-                                                    if (!isActive)
-                                                        return;
-
-                                                    if (mode === "insert") {
-                                                        if (!selectedCurveKey) setSelectedCurveKey(`${p.id}:${c.id}`);
-                                                        e.stopPropagation();
-                                                        if (!insertPreview || insertPreview.curveId !== c.id) return;
-                                                        if (!insertPreview.allowed) { setToast({ text: "Слишком близко к существующей вершине" }); return; }
-                                                        applyCurvesChange(prev => {
-                                                            const list = [...(prev[p.id] || [])];
-                                                            const i = list.findIndex(x => x.id === c.id);
-                                                            if (i < 0) return prev;
-                                                            const cur = list[i];
-                                                            const stops = Array.isArray(cur.extraStops) ? [...cur.extraStops] : [];
-                                                            stops.push(Math.max(0, Math.min(1, insertPreview.t)));
-                                                            const uniq = Array.from(new Set(stops)).sort((a, b) => a - b);
-                                                            list[i] = { ...cur, extraStops: uniq };
-                                                            return { ...prev, [p.id]: list };
-                                                        });
-                                                        setInsertPreview(null);
-                                                        return;
-                                                    }
-                                                    onCurveClick(p.id, c.id, e);
-                                                }}
-                                                style={{
-                                                    cursor:
-                                                        (mode === 'preview' || !isActive)
-                                                            ? 'default'
-                                                            : (mode === 'insert'
-                                                                ? ((insertPreview && insertPreview.curveId === c.id && insertPreview.allowed === false)
-                                                                    ? 'not-allowed'
-                                                                    : 'copy')
-                                                                : 'pointer')
-                                                }}
-                                                pointerEvents={(mode === "preview" || !isActive || mode === "deleteVertex") ? "none" : "auto"}
-                                                strokeLinecap="round"
-                                            />
-                                        );
-                                    })}
-
-                                    {/* превью точки вставки */}
-                                    {isActive && mode === "insert" && insertPreview && insertPreview.panelId === p.id && (
-                                        <circle
-                                            cx={insertPreview.x}
-                                            cy={insertPreview.y}
-                                            r={4}
-                                            fill={insertPreview.allowed ? "#22c55e" : "#ef4444"}
-                                            stroke={insertPreview.allowed ? "#166534" : "#991b1b"}
-                                            strokeWidth={1.5}
-                                            style={{ pointerEvents: "none" }}
-                                        />
-                                    )}
-
-                                    {/* базовые + доп. якоря */}
-                                    {isActive && (mode === "add" || mode === "delete" || mode === "insert") && (() => {
-                                        const base = p.anchors || [];
-                                        const extras = extraAnchorsByPanel[p.id] || [];
-                                        const merged = [...base, ...extras];
-                                        return merged.map((pt, mi) => (
-                                            <circle
-                                                key={`m-${mi}`}
-                                                cx={pt.x}
-                                                cy={pt.y}
-                                                r={3.5}
-                                                className={clsx(
-                                                    styles.anchor,
-                                                    styles.anchorClickable,
-                                                    mi === hoverAnchorIdx && styles.anchorHovered,
-                                                    mi === addBuffer && styles.anchorSelectedA
-                                                )}
-                                                onClick={(e) => { e.stopPropagation(); onAnchorClickAddMode(mi); }}
-                                                onMouseEnter={() => setHoverAnchorIdx(mi)}
-                                                onMouseLeave={() => setHoverAnchorIdx(null)}
-                                            />
-                                        ));
-                                    })()}
-
-                                    {/* ручные вершины — для удаления */}
-                                    {isActive && mode === "deleteVertex" && (() => {
-                                        const extras = (extraAnchorsByPanel[p.id] || []).filter(ex => ex?.id?.includes("@m"));
-                                        return extras.map(ex => (
-                                            <circle
-                                                key={ex.id}
-                                                cx={ex.x}
-                                                cy={ex.y}
-                                                r={4}
-                                                className={styles.anchorManualDelete}
-                                                onClick={(e) => { e.stopPropagation(); eraseManualAnchor(p.id, ex); }}
-                                            />
-                                        ));
-                                    })()}
-                                </g>
-                            );
-                        })}
-                    </svg>
-                </div>
-
-                {/* навигация пресетов снизу */}
-                <div className={styles.presetNav}>
-                    <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
-                    <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
-                    <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
-                </div>
-
+                {/* Правая панель рендерится только вне preview */}
+                {modeGroup !== 'preview' && (
+                    <SidebarEditor
+                        presetIdx={presetIdx}
+                        setPresetIdx={setPresetIdx}
+                        panels={panels}
+                        mode={mode}
+                        setMode={setMode}
+                        modeGroup={modeGroup}
+                        lastLineMode={lastLineMode}
+                        setLastLineMode={setLastLineMode}
+                        setSavedByPreset={setSavedByPreset}
+                        setCurvesByPanel={setCurvesByPanel}
+                        setFills={setFills}
+                        setActivePanelId={setActivePanelId}
+                        paintColor={paintColor}
+                        setPaintColor={setPaintColor}
+                        paletteOpen={paletteOpen}
+                        setPaletteOpen={setPaletteOpen}
+                        paletteRef={paletteRef}
+                        lineStyle={lineStyle}
+                        setLineStyle={setLineStyle}
+                        defaultSubCount={defaultSubCount}
+                        setDefaultSubCount={setDefaultSubCount}
+                        selectedCurveKey={selectedCurveKey}
+                        setSelectedCurveKey={setSelectedCurveKey}
+                        hoverCurveKey={hoverCurveKey}
+                        setHoverCurveKey={setHoverCurveKey}
+                        curvesByPanel={curvesByPanel}
+                        setCurvesByPanelExtern={applyCurvesChange}
+                        recomputeWaveForCurve={recomputeWaveForCurve}
+                        waveAmpPx={waveAmpPx}
+                        setWaveAmpPx={setWaveAmpPx}
+                        waveLenPx={waveLenPx}
+                        setWaveLenPx={setWaveLenPx}
+                        historyItems={historyItems}
+                        historyIndex={historyIndex}
+                        historyUndo={historyUndo}
+                        historyRedo={historyRedo}
+                        canUndo={canUndo}
+                        canRedo={canRedo}
+                    />
+                )}
             </div>
 
-            {/* Правая панель рендерится только вне preview */}
-            {modeGroup !== 'preview' && (
-                <SidebarEditor
-                    presetIdx={presetIdx}
-                    setPresetIdx={setPresetIdx}
-                    panels={panels}
-                    mode={mode}
-                    setMode={setMode}
-                    modeGroup={modeGroup}
-                    lastLineMode={lastLineMode}
-                    setLastLineMode={setLastLineMode}
-                    setSavedByPreset={setSavedByPreset}
-                    setCurvesByPanel={setCurvesByPanel}
-                    setFills={setFills}
-                    setActivePanelId={setActivePanelId}
-                    paintColor={paintColor}
-                    setPaintColor={setPaintColor}
-                    paletteOpen={paletteOpen}
-                    setPaletteOpen={setPaletteOpen}
-                    paletteRef={paletteRef}
-                    lineStyle={lineStyle}
-                    setLineStyle={setLineStyle}
-                    defaultSubCount={defaultSubCount}
-                    setDefaultSubCount={setDefaultSubCount}
-                    selectedCurveKey={selectedCurveKey}
-                    setSelectedCurveKey={setSelectedCurveKey}
-                    hoverCurveKey={hoverCurveKey}
-                    setHoverCurveKey={setHoverCurveKey}
-                    curvesByPanel={curvesByPanel}
-                    setCurvesByPanelExtern={applyCurvesChange}
-                    recomputeWaveForCurve={recomputeWaveForCurve}
-                    waveAmpPx={waveAmpPx}
-                    setWaveAmpPx={setWaveAmpPx}
-                    waveLenPx={waveLenPx}
-                    setWaveLenPx={setWaveLenPx}
-                    historyItems={historyItems}
-                    historyIndex={historyIndex}
-                    historyUndo={historyUndo}
-                    historyRedo={historyRedo}
-                    canUndo={canUndo}
-                    canRedo={canRedo}
-                />
-            )}
+            {/* ====== FLOW UNDER THE EDITOR (mini-landing) ====== */}
+            <section className={styles.flow} aria-label="Оформление заказа">
+                <div className={styles.flowContainer}>
+                    <header className={styles.flowHeader}>
+                        <h2 className={styles.flowTitle}>Оформление заказа</h2>
+                        <p className={styles.flowSub}>Шаг за шагом: параметры → адрес → финализация</p>
+                    </header>
+
+                    {/* Шаг 1 */}
+                    <div className={styles.stepCard} id="step-body">
+                        <div className={styles.stepTitle}><span className={styles.stepBadge}>1</span> Параметры тела</div>
+                        <BodyParams value={bodyParams} onChange={setBodyParams} />
+                    </div>
+
+                    {/* Шаг 2 */}
+                    <div className={styles.stepCard} id="step-order">
+                        <div className={styles.stepTitle}><span className={styles.stepBadge}>2</span> Данные и адрес доставки</div>
+                        <OrderForm value={orderInfo} onChange={setOrderInfo} />
+                    </div>
+
+                    {/* CTA */}
+                    <div className={styles.ctaBar}>
+                        <button
+                            type="button"
+                            className={styles.ctaButton}
+                            disabled={!isOrderValid}
+                            onClick={() => {
+                                // временно: просто подсветим недостающие поля/сохраним
+                                if (!isOrderValid) { alert("Заполни ФИО, email и телефон — и поехали!"); return; }
+                                // тут позже: переход на страницу финализации с превью
+                                console.log("Finalize payload", { bodyParams, orderInfo, fills, curvesByPanel });
+                            }}
+                        >
+                            Перейти к финализации
+                        </button>
+                        {!isOrderValid && <div className={styles.ctaNote}>Чтобы активировать кнопку, заполни ФИО, email и телефон.</div>}
+                    </div>
+                </div>
+            </section>
 
         </div>
     );
-
 }
