@@ -1,11 +1,11 @@
 import React from 'react';
-import Navbar from './navbar/Navbar.jsx';
-import Logo from './logo/Logo.jsx';
-import Sidebar from './sidebar/Sidebar.jsx';
+import Navbar from '../../components/UI/header/navbar/Navbar.jsx';
+import Logo from '../../components/UI/header/logo/Logo.jsx';
+import Sidebar from '../../components/UI/header/sidebar/Sidebar.jsx';
 import Dropdown from './dropdown/Dropdown.jsx';
-import Search from './search/Search.jsx';
-import Language from './language/Language.jsx';
-import Login from './login/Login.jsx';
+import Search from '../../components/UI/header/search/Search.jsx';
+import Language from '../../components/UI/header/language/Language.jsx';
+import Login from '../../components/UI/header/login/Login.jsx';
 import Slider from './slider/Slider.jsx';
 import mcss from './Header.module.css';
 
