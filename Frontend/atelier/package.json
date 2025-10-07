@@ -37,7 +37,8 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "lint:format": "npx eslint . --fix && npx prettier --write ."
+    "lint:format": "npx eslint . --fix && npx prettier --write .",
+    "build:svg-manifest": "node ./scripts/buildSvgManifest.mjs"
   },
   "browserslist": {
     "production": [

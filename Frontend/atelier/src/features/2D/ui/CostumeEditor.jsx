@@ -25,40 +25,9 @@ import Tooltip from "./Tooltip.jsx";
 import BodyParams from "./BodyParams.jsx";
 import OrderForm from "./OrderForm.jsx";
 
-// --- PRESETS: базовая папка с заранее подготовленными SVG
-const SVG_BASE = "/2d/svg/Hoodie";
-// Каждый preset может быть single-file (file) или multi-file (sources[])
-const PRESETS = [
-    {
-        id: "front",
-        title: "Перед",
-        sources: [
-            // Файлы из public/2d/svg/Hoodie/Front/*.svg
-            // dx/dy/scale — опциональны; начните с 0,0,1, а потом подправите позиции.
-            { file: "Front/body.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-B" },
-            { file: "Front/belt.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-Be" },
-            { file: "Front/sleeve_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-SL" },
-            { file: "Front/sleeve_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-SR" },
-            { file: "Front/cuff_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-CL" },
-            { file: "Front/cuff_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-CR" },
-            { file: "Front/neck.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-Ne" },
-            { file: "Front/neck_internal.svg", dx: 0, dy: 0, scale: 1, idPrefix: "F-NI" }
-        ]
-    },
-    {
-        id: "back",
-        title: "Спинка",
-        sources: [
-            // Файлы из public/2d/svg/Hoodie/Back/*.svg
-            { file: "Back/body.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-B" },
-            { file: "Back/belt.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-Be" },
-            { file: "Back/sleeve_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-SL" },
-            { file: "Back/sleeve_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-SR" },
-            { file: "Back/cuff_left.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-CL" },
-            { file: "Back/cuff_right.svg", dx: 0, dy: 0, scale: 1, idPrefix: "B-CR" }
-        ]
-    }
-];
+import { PRESETS } from "../../../core/variables/presets.js";
+import { SVG_BASE, MANIFEST_URL } from "../../../core/variables/svgPath.js";
+import { getBaseSources, getVariantsForSlot, loadSvgManifest } from "../../../core/variables/variants.js";
 
 /* ================== компонент ================== */
 export default function CostumeEditor() {
@@ -136,13 +105,25 @@ export default function CostumeEditor() {
         try { localStorage.setItem("ce.topbarHint.v1", "1"); } catch (e) { }
     }, [showTopbarHint]);
 
+    // рядом с loadPresetToPanels
+    const urlForSrcFile = (p) => {
+        if (!p) return "";
+        const clean = p.replace(/^\/+/, "");                 // убрали ведущие слэши
+        // если уже начинается с "2d/" — значит путь от корня public, берём его как есть
+        if (clean.startsWith("2d/")) return `/${clean}`;
+        // иначе это относительный путь (типа "Front/xxx.svg") — достраиваем от SVG_BASE
+        return `${SVG_BASE}/${clean}`;
+    };
+
     // Загружает пресет: если sources[] — склеивает их в один набор панелей; если file — вернёт строку SVG (как раньше)
     const loadPresetToPanels = async (preset) => {
         if (Array.isArray(preset.sources) && preset.sources.length) {
             const partsAll = [];
             for (let i = 0; i < preset.sources.length; i++) {
                 const src = preset.sources[i];
-                const txt = await fetch(`${SVG_BASE}/${src.file}`).then(r => r.text());
+                const fileResolved = src.file; // (или твой resolveSourceFile, если используешь)
+                const url = urlForSrcFile(fileResolved);
+                const txt = await fetch(url).then(r => r.text())
                 const parts = extractPanels(txt); // парсим в панели (как обычно)
                 const M = translateScaleMatrix(src.dx || 0, src.dy || 0, src.scale || 1);
 
@@ -290,7 +271,8 @@ export default function CostumeEditor() {
 
     // Клик по пустому месту канвы — снимаем выделение
     const onCanvasClick = useCallback(() => {
-        if (mode === "preview" || applyingPrefsRef.current) return;      // в preview ничего не делаем
+        if (mode === "preview" || applyingPrefsRef.current)
+            return;      // в preview ничего не делаем
         if (mode !== "delete") {
             setSelectedCurveKey(null);
         }
@@ -434,7 +416,9 @@ export default function CostumeEditor() {
 
     const modeGroup =
         (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
-            (mode === 'add' || mode === 'delete' || mode === 'insert' || mode === 'deleteVertex') ? 'line' : 'preview';
+            (mode === 'add' || mode === 'delete' || mode === 'insert' || mode === 'deleteVertex') ? 'line' :
+                (mode === 'variants' ? 'variants' : 'preview');
+
 
     const gridDef = useMemo(() => {
         const step = Math.max(1e-6, Math.min(worldBBox.w, worldBBox.h) / 20);
@@ -731,6 +715,65 @@ export default function CostumeEditor() {
         return n.length > 1 && /.+@.+\..+/.test(e) && p.length >= 6;
     })();
 
+    const activeDetailId = (presetIdx === 0 ? "front" : "back");
+    const [manifest, setManifest] = useState(null);
+    const [details, setDetails] = useState({ front: { cuff: "base" }, back: { cuff: "base" } }); // пока работаем только с манжетами
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const m = await loadSvgManifest();
+                setManifest(m);
+            } catch (e) {
+                console.error(e);
+                // опционально: показать в UI подсказку
+                // toast.error("Не найден manifest.json. Запусти npm run build:svg-manifest");
+            }
+        })();
+    }, []);
+
+    useEffect(() => {
+        if (!manifest) return;        // ⬅️ без манифеста ничего не делаем
+        let alive = true;
+        (async () => {
+            const preset = PRESETS[presetIdx];
+            if (!preset) return;
+
+            const baseSources = await getBaseSources(preset.id);
+            const cuffVariantId = details[preset.id]?.cuff || "base";
+            const sources = baseSources.map(src => {
+                if (src.slot !== "cuff") return src;
+                if (cuffVariantId === "base") return src;
+                const v = manifest?.variants?.cuff?.find(x => x.id === cuffVariantId);
+                if (!v) return src;
+                const map = v.files?.[preset.id] || {};
+                if (src.side === "left" && map.left) return { ...src, file: map.left };
+                if (src.side === "right" && map.right) return { ...src, file: map.right };
+                return src;
+            });
+
+            const compiled = await loadPresetToPanels({ ...preset, sources });
+            if (!alive) return;
+            setComposedPanels(Array.isArray(compiled) ? compiled : []);
+            setSvgCache(prev => ({ ...prev, [preset.id]: Array.isArray(compiled) ? compiled : [] }));
+            setSvgMountKey(k => k + 1);
+        })().catch(() => {
+            if (alive)
+                setComposedPanels([]);
+        }).finally(() => {
+            if (alive)
+                setIsLoadingPreset(false);
+        });
+        return () => { alive = false; };
+    }, [presetIdx, manifest, details.front?.cuff, details.back?.cuff]);
+
+    useEffect(() => {
+        const target = PRESETS[presetIdx];
+        if (!target) return;
+        setSavedByPreset(prev => ({ ...prev, [currentPresetIdRef.current]: snapshotFor() }));
+        currentPresetIdRef.current = target.id;
+    }, [presetIdx]);
+
     useEffect(() => {
         try {
             localStorage.setItem("ce.bodyParams.v1", JSON.stringify(bodyParams));
@@ -797,12 +840,17 @@ export default function CostumeEditor() {
     useEffect(() => {
         const onKey = (e) => {
             const ctrl = e.ctrlKey || e.metaKey;
-            if (!ctrl) return;
+            if (!ctrl)
+                return;
+
             const k = e.key.toLowerCase();
             if (k === 'z') {
                 e.preventDefault();
-                if (e.shiftKey) historyRedo(); else historyUndo();
-            } else if (k === 'y') {
+                if (e.shiftKey)
+                    historyRedo();
+                else historyUndo();
+            }
+            else if (k === 'y') {
                 e.preventDefault();
                 historyRedo();
             }
@@ -871,56 +919,6 @@ export default function CostumeEditor() {
             setToast({ text: 'Все ручные вершины удалены — переключаюсь в «Вставить вершину»' });
         }
     }, [mode, manualLeftInActive]);
-
-    useEffect(() => {
-        const target = PRESETS[presetIdx];
-        if (!target) return;
-
-        let alive = true;
-        setIsLoadingPreset(true);
-
-        // сохраним снапшот предыдущего пресета
-        const prevId = currentPresetIdRef.current;
-        setSavedByPreset(prev => ({ ...prev, [prevId]: snapshotFor() }));
-        currentPresetIdRef.current = target.id;
-
-        (async () => {
-            try {
-
-                // 0) Кэш: если уже загружали этот пресет — не фетчим снова
-                const cached = svgCacheRef.current[target.id];
-                if (cached !== undefined) {
-                    if (Array.isArray(cached)) {
-                        setComposedPanels(cached);
-                    }
-                    else {
-                        setComposedPanels([]);
-                    }
-                    setSvgMountKey(k => k + 1);
-                    setIsLoadingPreset(false);
-                    return;
-                }
-
-                const loaded = await loadPresetToPanels(target);
-
-                if (!alive)
-                    return;
-
-                setComposedPanels(Array.isArray(loaded) ? loaded : []);
-                setSvgCache(prev => ({ ...prev, [target.id]: Array.isArray(loaded) ? loaded : [] }));
-                setSvgMountKey(k => k + 1);
-            }
-            catch (e) {
-                if (alive) { setComposedPanels([]); }
-            }
-            finally {
-                if (alive) setIsLoadingPreset(false);
-            }
-        })();
-
-        return () => { alive = false; };
-    }, [presetIdx]);
-
 
     // Когда входим в preview — снимаем выбор/ховер и сбрасываем буфер добавления
     useEffect(() => {
@@ -1038,6 +1036,7 @@ export default function CostumeEditor() {
         setFills(fs => fs.filter(f => (facesByPanel[f.panelId] || []).some(poly => faceKey(poly) === f.faceKey)));
     }, [facesByPanel]);
 
+    // Keyboard checker
     useEffect(() => {
         const el = scopeRef.current;
         if (!el) return;
@@ -1046,11 +1045,31 @@ export default function CostumeEditor() {
             // работаем только когда фокус внутри редактора
             if (document.activeElement !== el) return;
 
-            if (e.key === 'Escape') { setMode('preview'); setAddBuffer(null); e.preventDefault(); }
-            else if (e.key === 'a' || e.key === 'A') { setMode('add'); setAddBuffer(null); e.preventDefault(); }
-            else if (e.key === 'd' || e.key === 'D') { setMode('delete'); e.preventDefault(); }
-            else if (e.key === 'f' || e.key === 'F') { setMode('paint'); e.preventDefault(); }
-            else if (e.key === 'x' || e.key === 'X') { setMode('deleteFill'); e.preventDefault(); }
+            if (e.key === 'Escape') {
+                setMode('preview');
+                setAddBuffer(null); e.preventDefault();
+            }
+            else if (e.key === 'a' || e.key === 'A') {
+                setMode('add');
+                setAddBuffer(null);
+                e.preventDefault();
+            }
+            else if (e.key === 'd' || e.key === 'D') {
+                setMode('delete');
+                e.preventDefault();
+            }
+            else if (e.key === 'f' || e.key === 'F') {
+                setMode('paint');
+                e.preventDefault();
+            }
+            else if (e.key === 'x' || e.key === 'X') {
+                setMode('deleteFill');
+                e.preventDefault();
+            }
+            else if (e.key === 'v' || e.key === 'V') {
+                setMode('variants');
+                e.preventDefault();
+            }
         };
 
         el.addEventListener('keydown', onKey);
@@ -1110,6 +1129,17 @@ export default function CostumeEditor() {
                                 >✏️</button>
                             </Tooltip>
 
+                            <Tooltip label="Варианты (V)">
+                                <button
+                                    className={clsx(styles.iconBtn, mode === "variants" && styles.iconActive)}
+                                    aria-label="Варианты деталей одежды"
+                                    aria-keyshortcuts="V"
+                                    aria-pressed={mode === "variants"}
+                                    onClick={() => { dismissTopbarHint(); setMode("variants"); }}
+                                >🧩</button>
+                            </Tooltip>
+
+
                             <Tooltip label="Показать подсказку (H)">
                                 <button
                                     className={styles.iconBtn}
@@ -1128,6 +1158,7 @@ export default function CostumeEditor() {
                                 <div className={styles.hintRow}>
                                     Нажмите <span className={styles.kbd}>F</span> — заливка,
                                     <span className={styles.kbd} style={{ marginLeft: 6 }}>A</span> — линии,
+                                    <span className={styles.kbd} style={{ marginLeft: 6 }}>V</span> — варианты деталей одежды,
                                     <span className={styles.kbd} style={{ marginLeft: 6 }}>Esc</span> — просмотр.
                                 </div>
                                 <div className={styles.hintRow} style={{ marginTop: 6 }}>
@@ -1173,8 +1204,11 @@ export default function CostumeEditor() {
                                                 const id = "front";
                                                 setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
                                                 if (currentPresetIdRef.current === id) {
-                                                    setCurvesByPanel({}); setFills([]);
-                                                    setActivePanelId(panels[0]?.id ?? null); setMode("preview");
+                                                    setCurvesByPanel({});
+                                                    setFills([]);
+                                                    setActivePanelId(panels[0]?.id ?? null);
+                                                    setDetails({ front: { cuff: "base" }, back: { cuff: "base" } });
+                                                    setMode("preview");
                                                 }
                                             }}
                                         >Сбросить перед</button>
@@ -1186,8 +1220,11 @@ export default function CostumeEditor() {
                                                 const id = "back";
                                                 setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
                                                 if (currentPresetIdRef.current === id) {
-                                                    setCurvesByPanel({}); setFills([]);
-                                                    setActivePanelId(panels[0]?.id ?? null); setMode("preview");
+                                                    setCurvesByPanel({});
+                                                    setFills([]);
+                                                    setActivePanelId(panels[0]?.id ?? null);
+                                                    setDetails({ front: { cuff: "base" }, back: { cuff: "base" } });
+                                                    setMode("preview");
                                                 }
                                             }}
                                         >Сбросить спинку</button>
@@ -1198,10 +1235,14 @@ export default function CostumeEditor() {
                                             className={clsx(styles.resetItem, styles.resetDanger)}
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях.")) return;
+                                                if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях."))
+                                                    return;
+
                                                 setSavedByPreset({});
-                                                setCurvesByPanel({}); setFills([]);
+                                                setCurvesByPanel({});
+                                                setFills([]);
                                                 setActivePanelId(panels[0]?.id ?? null);
+                                                setDetails({ front: { cuff: "base" }, back: { cuff: "base" } });
                                                 setMode("preview");
                                             }}
                                         >⚠️ Сбросить всё</button>
@@ -1499,18 +1540,9 @@ export default function CostumeEditor() {
                 {/* Правая панель рендерится только вне preview */}
                 {modeGroup !== 'preview' && (
                     <SidebarEditor
-                        presetIdx={presetIdx}
-                        setPresetIdx={setPresetIdx}
-                        panels={panels}
                         mode={mode}
                         setMode={setMode}
                         modeGroup={modeGroup}
-                        lastLineMode={lastLineMode}
-                        setLastLineMode={setLastLineMode}
-                        setSavedByPreset={setSavedByPreset}
-                        setCurvesByPanel={setCurvesByPanel}
-                        setFills={setFills}
-                        setActivePanelId={setActivePanelId}
                         paintColor={paintColor}
                         setPaintColor={setPaintColor}
                         paletteOpen={paletteOpen}
@@ -1537,6 +1569,9 @@ export default function CostumeEditor() {
                         historyRedo={historyRedo}
                         canUndo={canUndo}
                         canRedo={canRedo}
+                        details={details}
+                        setDetails={setDetails}
+                        activeDetailId={activeDetailId}
                     />
                 )}
             </div>

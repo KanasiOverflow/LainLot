@@ -1,0 +1,164 @@
+{
+  "version": 1,
+  "base": {
+    "front": [
+      {
+        "file": "2d/svg/hoodie/front/belt.svg",
+        "slot": "belt",
+        "side": null,
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/front/body.svg",
+        "slot": "body",
+        "side": null,
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/front/cuff_left.svg",
+        "slot": "cuff",
+        "side": "left",
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/front/cuff_right.svg",
+        "slot": "cuff",
+        "side": "right",
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/front/neck.svg",
+        "slot": "neck",
+        "side": null,
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/front/neck_internal.svg",
+        "slot": "neck",
+        "side": null,
+        "which": "inner"
+      },
+      {
+        "file": "2d/svg/hoodie/front/sleeve_left.svg",
+        "slot": "sleeve",
+        "side": "left",
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/front/sleeve_right.svg",
+        "slot": "sleeve",
+        "side": "right",
+        "which": null
+      }
+    ],
+    "back": [
+      {
+        "file": "2d/svg/hoodie/back/belt.svg",
+        "slot": "belt",
+        "side": null,
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/back/body.svg",
+        "slot": "body",
+        "side": null,
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/back/cuff_left.svg",
+        "slot": "cuff",
+        "side": "left",
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/back/cuff_right.svg",
+        "slot": "cuff",
+        "side": "right",
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/back/sleeve_left.svg",
+        "slot": "sleeve",
+        "side": "left",
+        "which": null
+      },
+      {
+        "file": "2d/svg/hoodie/back/sleeve_right.svg",
+        "slot": "sleeve",
+        "side": "right",
+        "which": null
+      }
+    ],
+    "previews": {
+      "front": {},
+      "back": {}
+    }
+  },
+  "variants": {
+    "body": [],
+    "belt": [],
+    "sleeve": [],
+    "cuff": [
+      {
+        "id": "cuff2",
+        "name": "cuff2",
+        "preview": null,
+        "files": {
+          "front": {
+            "left": "2d/svg/hoodie/front/variants/cuff/cuff_left2.svg",
+            "right": "2d/svg/hoodie/front/variants/cuff/cuff_right2.svg"
+          },
+          "back": {}
+        }
+      }
+    ],
+    "neck": []
+  },
+  "baseVariantBySlot": {
+    "body": {
+      "id": "base",
+      "name": "Базовая",
+      "preview": null,
+      "files": {
+        "front": {},
+        "back": {}
+      }
+    },
+    "belt": {
+      "id": "base",
+      "name": "Базовая",
+      "preview": null,
+      "files": {
+        "front": {},
+        "back": {}
+      }
+    },
+    "sleeve": {
+      "id": "base",
+      "name": "Базовая",
+      "preview": null,
+      "files": {
+        "front": {},
+        "back": {}
+      }
+    },
+    "cuff": {
+      "id": "base",
+      "name": "Базовая",
+      "preview": null,
+      "files": {
+        "front": {},
+        "back": {}
+      }
+    },
+    "neck": {
+      "id": "base",
+      "name": "Базовая",
+      "preview": null,
+      "files": {
+        "front": {},
+        "back": {}
+      }
+    }
+  }
+}
