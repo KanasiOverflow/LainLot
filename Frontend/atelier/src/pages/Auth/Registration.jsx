@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ApiService from 'api/ApiService';
-import Loader from '../../components/UI/loader/Loader.jsx';
+import Loader from '../../shared/ui/loader/Loader.jsx';
 
 export default function Registration() {
   const { t } = useTranslation();

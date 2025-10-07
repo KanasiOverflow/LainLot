@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { publicRoutes, privateRoutes } from './RoutesConfig.jsx';
 import { AuthContext } from '../providers/context/AuthProvider.jsx';
-import Loader from '../../components/UI/loader/Loader.jsx';
+import Loader from '../../shared/ui/loader/Loader.jsx';
 import Profile from '../../pages/Profile.jsx';
 import Login from '../../pages/Auth/Login.jsx';
 import EmailConfirmed from '../../pages/Auth/EmailConfirmed.jsx';

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import AboutPageService from 'api/Atelier/AboutPageService.js';
-import { useFetching } from '../shared/hooks/useFetching.jsx';
-import Loader from '../components/UI/loader/Loader.jsx';
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import AboutPageService from "api/Atelier/AboutPageService.js";
+import { useFetching } from "../shared/hooks/useFetching.jsx";
+import Loader from "../shared/ui/loader/Loader.jsx";
 
 export default function About() {
   const { t, i18n } = useTranslation();
@@ -10,7 +10,7 @@ export default function About() {
 
   const [fetchAbout, isLoading, error] = useFetching(async () => {
     const response = await AboutPageService.GetAbout(
-      i18n.resolvedLanguage?.split('-')[0].toLowerCase()
+      i18n.resolvedLanguage?.split("-")[0].toLowerCase()
     );
     if (response && Array.isArray(response.data)) {
       setAboutTexts(response.data);
@@ -24,12 +24,12 @@ export default function About() {
 
   return (
     <div>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       {isLoading ? (
         <Loader />
       ) : (
         <div>
-          <h3>{t('About')}</h3>
+          <h3>{t("About")}</h3>
           <ul>
             {aboutTexts.map((item) => (
               <li key={item.id}>

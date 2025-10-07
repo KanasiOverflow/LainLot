@@ -1,13 +1,12 @@
-import React from 'react';
-import Navbar from '../../components/UI/header/navbar/Navbar.jsx';
-import Logo from '../../components/UI/header/logo/Logo.jsx';
-import Sidebar from '../../components/UI/header/sidebar/Sidebar.jsx';
-import Dropdown from './dropdown/Dropdown.jsx';
-import Search from '../../components/UI/header/search/Search.jsx';
-import Language from '../../components/UI/header/language/Language.jsx';
-import Login from '../../components/UI/header/login/Login.jsx';
-import Slider from './slider/Slider.jsx';
-import mcss from './Header.module.css';
+import Navbar from "../header/navbar/Navbar.jsx";
+import Logo from "../header/logo/Logo.jsx";
+import Sidebar from "../header/sidebar/Sidebar.jsx";
+import Dropdown from "../../../shared/ui/dropdown/Dropdown.jsx";
+import Search from "../header/search/Search.jsx";
+import Language from "../header/language/Language.jsx";
+import Login from "../header/login/Login.jsx";
+import Slider from "../../../shared/ui/slider/Slider.jsx";
+import mcss from "./Header.module.css";
 
 export default function Header() {
   return (

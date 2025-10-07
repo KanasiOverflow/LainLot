@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import secureLocalStorage from 'react-secure-storage';
 import { useTranslation } from 'react-i18next';
-import Loader from '../../components/UI/loader/Loader.jsx';
+import Loader from '../../shared/ui/loader/Loader.jsx';
 import CheckCredentialsService from 'api/CheckCredentialsService.js';
 import { AuthContext } from '../../app/providers/context/AuthProvider.jsx';
 
