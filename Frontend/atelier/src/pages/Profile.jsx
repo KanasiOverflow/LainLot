@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import secureLocalStorage from 'react-secure-storage';
 import { useTranslation } from 'react-i18next';
-import { AuthContext } from '../provider/context/AuthProvider.jsx';
-import { useFetching } from '../hooks/useFetching.jsx';
-import Loader from '../components/UI/loader/Loader.jsx';
+import { AuthContext } from '../app/providers/context/AuthProvider.jsx';
+import { useFetching } from '../shared/hooks/useFetching.jsx';
+import Loader from '../shared/ui/loader/Loader.jsx';
 import ProfilePageService from 'api/Atelier/ProfilePageService.js';
 
 export default function Profile() {

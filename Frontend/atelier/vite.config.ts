@@ -8,7 +8,11 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': '/src',
+      "@": "/src",
+      "@app": "/src/app",
+      "@core": "/src/core",
+      "@shared": "/src/shared",
+      "@features": "/src/features"
     },
   },
 });

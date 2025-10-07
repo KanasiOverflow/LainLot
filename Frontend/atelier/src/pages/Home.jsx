@@ -1,4 +1,4 @@
-import DDCostumeEditor from "../components/2D/CostumeEditor";
+import DDCostumeEditor from "../features/2D/ui/CostumeEditor.jsx";
 
 export default function About() {
   return (
