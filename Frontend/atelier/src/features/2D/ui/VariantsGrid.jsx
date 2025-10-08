@@ -3,38 +3,42 @@ import styles from "../styles/CostumeEditor.module.css";
 import { getVariantsForSlot } from "../../../core/variables/variants.js";
 import { SVG_BASE } from "../../../core/variables/svgPath.js"
 
-export default function VariantsGrid({ face, value, onChange }) {
+export default function VariantsGrid({ slot, face, value, onChange }) {
     const [items, setItems] = React.useState([]);
     const abs = (p) => (p ? (p.startsWith("/") ? p : `/${p}`) : null);
+    const FALLBACK = {
+        cuff: "cuff_right.svg",
+        sleeve: "sleeve_right.svg",
+        neck: "neck.svg",
+        belt: "belt.svg",
+        body: "body.svg"
+    };
 
     React.useEffect(() => {
         let alive = true;
         (async () => {
 
-            const raw = await getVariantsForSlot("cuff"); // base + из папки
-
-            // дополним превью там, где его нет
+            const raw = await getVariantsForSlot(slot);
             const withPreviews = raw.map((v, i) => {
-                let preview = v.preview || null;
+                let preview = v?.preview || null;
                 if (!preview) {
-                    if (v.id === "base") {
+                    if (v?.id === "base") {
                         const dir = face === "front" ? "front" : "back";
-                        preview = `${SVG_BASE}/${dir}/cuff_right.svg`;
+                        const fname = FALLBACK[slot] || "body.svg";
+                        preview = `${SVG_BASE}/${dir}/${fname}`;
                     } else {
-                        const map = (v.files && v.files[face]) || {};
-                        // предпочтём правую/общую/левую, иначе любой первый файл
+                        const map = (v?.files && v.files[face]) || {};
                         const cand = map.right || map.file || map.left || Object.values(map)[0] || null;
                         preview = cand || null;
                     }
                 }
                 return { ...v, preview: abs(preview) };
             });
-
             if (alive) setItems(withPreviews);
 
         })();
         return () => { alive = false; };
-    }, [face]);
+    }, [face, slot]);
 
     return (
         <div className={styles.pickerGrid}>
@@ -50,7 +54,7 @@ export default function VariantsGrid({ face, value, onChange }) {
                         <img
                             className={styles.pickerImg}
                             alt={it.name || it.id}
-                            src={it.preview}               // уже с ведущим слешом
+                            src={it.preview}
                             onError={(e) => { e.currentTarget.style.opacity = 0; }}
                         />
                     ) : (

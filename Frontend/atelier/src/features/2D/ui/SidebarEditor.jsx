@@ -234,16 +234,29 @@ export default function SidebarEditor(props) {
                 )}
 
                 {mode === "variants" && (
-                    <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Манжета</div>
-                        <VariantsGrid
-                            face={activeDetailId}                 // 'front' | 'back'
-                            value={details[activeDetailId]?.cuff} // 'base' | <id>
-                            onChange={(id) => setDetails(prev => ({
-                                ...prev, [activeDetailId]: { ...(prev[activeDetailId] || {}), cuff: id }
-                            }))}
-                        />
-                    </div>
+                    <>
+                        {[
+                            { slot: "cuff", title: "Манжета" },
+                            { slot: "sleeve", title: "Рукав" },
+                            { slot: "neck", title: "Шея" },
+                            { slot: "belt", title: "Пояс" },
+                            { slot: "body", title: "Тело" },
+                            // можно добавлять дальше: { slot: "shoulder", title: "Плечо" }, { slot: "pocket", title: "Карман" }, …
+                        ].map(sec => (
+                            <div className={styles.section} key={sec.slot}>
+                                <div className={styles.sectionTitle}>{sec.title}</div>
+                                <VariantsGrid
+                                    slot={sec.slot}
+                                    face={activeDetailId} // 'front' | 'back'
+                                    value={details[activeDetailId]?.[sec.slot] || "base"}
+                                    onChange={(id) => setDetails(prev => ({
+                                        ...prev,
+                                        [activeDetailId]: { ...(prev[activeDetailId] || {}), [sec.slot]: id }
+                                    }))}
+                                />
+                            </div>
+                        ))}
+                    </>
                 )}
 
                 {/* История (только не в preview — сам сайдбар скрыт в preview) */}
