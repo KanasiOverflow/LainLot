@@ -1,6 +1,9 @@
 import fs from "fs/promises";
 import path from "path";
 
+// ДОБАВЬ рядом с импортами
+const IMG_EXT_RE = /\.(svg|png|jpe?g)$/i;
+
 const ROOT = process.cwd();
 // найдём реальную папку (hoodie/Hoodie), но URL всегда запишем в lower-case
 async function firstExisting(...candidates) {
@@ -52,45 +55,35 @@ function detectBaseFileMeta(filename) {
     return meta;
 }
 
-async function readFlatSvgs(dir) {
-    const all = await fs.readdir(dir, { withFileTypes: true });
-    return all.filter(d => d.isFile() && d.name.endsWith(".svg"));
-}
-
 async function buildBase() {
-    const frontFiles = await readFlatSvgs(FRONT_DIR);
-    const backFiles = await readFlatSvgs(BACK_DIR);
-
     const base = { front: [], back: [], previews: { front: {}, back: {} } };
 
-    for (const d of frontFiles) {
-        if (/_base_preview\.svg$/i.test(d.name)) {
-            const name = d.name.toLowerCase().replace("_base_preview.svg", "");
-            // попробуем определить слот из префикса
-            let slot = SLOT_ORDER.find(s => name.includes(s)) || "misc";
-            base.previews.front[slot] = urlOf(path.join(FRONT_DIR, d.name));
-            continue;
+    for (const [faceDir, faceKey] of [[FRONT_DIR, "front"], [BACK_DIR, "back"]]) {
+        const entries = await fs.readdir(faceDir, { withFileTypes: true });
+
+        for (const d of entries) {
+            if (!d.isFile()) continue;
+            const lower = d.name.toLowerCase();
+            const abs = path.join(faceDir, d.name);
+
+            // 4.1 базовые превью: *_preview.(svg|png|jpg)
+            if (/_preview\.(svg|png|jpe?g)$/.test(lower)) {
+                const name = lower.replace(/_preview\.(svg|png|jpe?g)$/, "");
+                // определяем слот (belt/body/sleeve/cuff/neck)
+                const slot = SLOT_ORDER.find(s => name === s) || SLOT_ORDER.find(s => name.includes(s));
+                if (slot && !base.previews[faceKey][slot]) {
+                    base.previews[faceKey][slot] = urlOf(abs);
+                }
+                continue;
+            }
+
+            // 4.2 базовые детали одежды: только .svg
+            if (lower.endsWith(".svg")) {
+                const meta = detectBaseFileMeta(d.name);
+                if (!meta) continue;
+                base[faceKey].push({ file: urlOf(abs), ...meta });
+            }
         }
-        const meta = detectBaseFileMeta(d.name);
-        if (!meta) continue;
-        base.front.push({
-            file: urlOf(path.join(FRONT_DIR, d.name)),
-            ...meta
-        });
-    }
-    for (const d of backFiles) {
-        if (/_base_preview\.svg$/i.test(d.name)) {
-            const name = d.name.toLowerCase().replace("_base_preview.svg", "");
-            let slot = SLOT_ORDER.find(s => name.includes(s)) || "misc";
-            base.previews.back[slot] = urlOf(path.join(BACK_DIR, d.name));
-            continue;
-        }
-        const meta = detectBaseFileMeta(d.name);
-        if (!meta) continue;
-        base.back.push({
-            file: urlOf(path.join(BACK_DIR, d.name)),
-            ...meta
-        });
     }
     return base;
 }
@@ -98,14 +91,13 @@ async function buildBase() {
 // Разбор имени варианта: поддерживает
 // - префиксы front_/back_ (или определяем face из структуры каталогов)
 // - cuff/sleeve с _left/_right и необязательным суффиксом числа (cuff_left2.svg)
-// - neck_internal.svg -> which = "inner"
 // - *_preview.svg — отдельная превьюшка варианта
 function parseVariantName(file, slot, faceHint = null) {
-    const name = path.basename(file).toLowerCase().replace(/\.svg$/, "");
-    const isPreview = name.endsWith("_preview");
-    if (isPreview) {
-        return { preview: true, id: name.replace(/_preview$/, "") };
-    }
+    // имя без расширения, но с возможным _preview
+    const raw = path.basename(file).toLowerCase().replace(IMG_EXT_RE, "");
+    const isPreview = raw.endsWith("_preview");
+    // убираем только _preview, чтобы дальше разобрать как обычный вариант
+    const name = isPreview ? raw.replace(/_preview$/, "") : raw;
 
     let face = null, side = null, which = null, id = null;
 
@@ -128,9 +120,8 @@ function parseVariantName(file, slot, faceHint = null) {
         id = rest;
     }
 
-    return { face, side, which, id, preview: false };
+    return { face, side, which, id, preview: isPreview };
 }
-
 
 // Собирает варианты из трёх возможных мест:
 // 1) /hoodie/variants/<slot>/...
@@ -153,7 +144,7 @@ async function buildVariants() {
             try {
                 const dir = path.join(root, slot);
                 const list = (await fs.readdir(dir, { withFileTypes: true }))
-                    .filter(d => d.isFile() && d.name.toLowerCase().endsWith(".svg"))
+                    .filter(d => d.isFile() && IMG_EXT_RE.test(d.name.toLowerCase()))
                     .map(d => ({
                         name: d.name,
                         abs: path.join(dir, d.name),
@@ -220,8 +211,9 @@ async function buildVariants() {
         baseVariantBySlot[slot] = {
             id: "base",
             name: "Базовая",
-            preview: base.previews.front[slot] || base.previews.back[slot] || null,
-            files: { front: {}, back: {} } // пусто — будем брать реальные базы
+            // важнo: у базового варианта превью не указываем — берём по стороне в UI
+            preview: null,
+            files: { front: {}, back: {} }
         };
     }
 

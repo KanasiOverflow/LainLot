@@ -1031,6 +1031,11 @@ export default function CostumeEditor() {
             const k = e.key.toLowerCase?.();
             if (k === "arrowleft") prevPreset();
             if (k === "arrowright") nextPreset();
+
+            // Быстрый выбор стороны: Q — Перед, W — Спинка
+            if (k === "Q" || k === "q") { setPresetIdx(0); e.preventDefault(); }
+            if (k === "E" || k === "e") { setPresetIdx(1); e.preventDefault(); }
+
             if (k === '[') {
                 if (panels.length) {
                     const i = Math.max(0, panels.findIndex(p => p.id === activePanel?.id));
@@ -1290,7 +1295,11 @@ export default function CostumeEditor() {
                                     Нажмите <span className={styles.kbd}>F</span> — заливка,
                                     <span className={styles.kbd} style={{ marginLeft: 6 }}>A</span> — линии,
                                     <span className={styles.kbd} style={{ marginLeft: 6 }}>V</span> — варианты деталей одежды,
-                                    <span className={styles.kbd} style={{ marginLeft: 6 }}>Esc</span> — просмотр.
+                                    <span className={styles.kbd} style={{ marginLeft: 6 }}>Esc</span> — просмотр,
+                                    <span className={styles.kbd} style={{ marginLeft: 6 }}>←</span> или
+                                    <span className={styles.kbd} style={{ marginLeft: 6 }}>→</span> — поменять сторону,
+                                    <span className={styles.kbd} style={{ marginLeft: 6 }}>Q</span> или
+                                    <span className={styles.kbd} style={{ marginLeft: 6 }}>E</span> — поменять сторону.
                                 </div>
                                 <div className={styles.hintRow} style={{ marginTop: 6 }}>
                                     Или кликните по иконкам слева. Подсказка больше не появится.
@@ -1307,6 +1316,8 @@ export default function CostumeEditor() {
                                 aria-controls="panel-front"
                                 className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)}
                                 onClick={() => setPresetIdx(0)}
+                                aria-keyshortcuts="Q"
+                                title="Перед (Q)"
                             >Перед</button>
 
                             <button
@@ -1316,6 +1327,8 @@ export default function CostumeEditor() {
                                 aria-controls="panel-back"
                                 className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)}
                                 onClick={() => setPresetIdx(1)}
+                                aria-keyshortcuts="E"
+                                title="Спинка (E)"
                             >Спинка</button>
                         </div>
 

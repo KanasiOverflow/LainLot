@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../styles/CostumeEditor.module.css";
-import { getVariantsForSlot } from "../../../core/variables/variants.js";
+import { getVariantsForSlot, getBasePreview } from "../../../core/variables/variants.js";
 import { SVG_BASE } from "../../../core/variables/svgPath.js"
 
 export default function VariantsGrid({ slot, face, value, onChange }) {
@@ -19,8 +19,13 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
         (async () => {
 
             const raw = await getVariantsForSlot(slot);
-            const withPreviews = raw.map((v, i) => {
+            const withPreviews = await Promise.all(raw.map(async (v) => {
                 let preview = v?.preview || null;
+                if (v?.id === "base") {
+                    // Сначала — «правильная» превью из манифеста для текущей стороны:
+                    preview = (await getBasePreview(slot, face)) || preview;
+                }
+                // Если всё ещё нет — стандартный фоллбэк.
                 if (!preview) {
                     if (v?.id === "base") {
                         const dir = face === "front" ? "front" : "back";
@@ -33,7 +38,8 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
                     }
                 }
                 return { ...v, preview: abs(preview) };
-            });
+            }));
+
             if (alive) setItems(withPreviews);
 
         })();

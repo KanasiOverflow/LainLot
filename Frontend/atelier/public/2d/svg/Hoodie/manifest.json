@@ -33,12 +33,6 @@
         "which": null
       },
       {
-        "file": "2d/svg/hoodie/front/neck_internal.svg",
-        "slot": "neck",
-        "side": null,
-        "which": "inner"
-      },
-      {
         "file": "2d/svg/hoodie/front/sleeve_left.svg",
         "slot": "sleeve",
         "side": "left",
@@ -90,8 +84,19 @@
       }
     ],
     "previews": {
-      "front": {},
-      "back": {}
+      "front": {
+        "belt": "2d/svg/hoodie/front/belt_preview.svg",
+        "body": "2d/svg/hoodie/front/body_preview.svg",
+        "cuff": "2d/svg/hoodie/front/cuff_preview.svg",
+        "neck": "2d/svg/hoodie/front/neck_preview.svg",
+        "sleeve": "2d/svg/hoodie/front/sleeve_preview.svg"
+      },
+      "back": {
+        "belt": "2d/svg/hoodie/back/belt_preview.svg",
+        "body": "2d/svg/hoodie/back/body_preview.svg",
+        "cuff": "2d/svg/hoodie/back/cuff_preview.svg",
+        "sleeve": "2d/svg/hoodie/back/sleeve_preview.svg"
+      }
     }
   },
   "variants": {
@@ -102,7 +107,7 @@
       {
         "id": "cuff2",
         "name": "cuff2",
-        "preview": null,
+        "preview": "2d/svg/hoodie/front/variants/cuff/cuff2_preview.svg",
         "files": {
           "front": {
             "left": "2d/svg/hoodie/front/variants/cuff/cuff_left2.svg",
@@ -118,7 +123,7 @@
     "body": {
       "id": "base",
       "name": "Базовая",
-      "preview": null,
+      "preview": "2d/svg/hoodie/front/body_preview.svg",
       "files": {
         "front": {},
         "back": {}
@@ -127,7 +132,7 @@
     "belt": {
       "id": "base",
       "name": "Базовая",
-      "preview": null,
+      "preview": "2d/svg/hoodie/front/belt_preview.svg",
       "files": {
         "front": {},
         "back": {}
@@ -136,7 +141,7 @@
     "sleeve": {
       "id": "base",
       "name": "Базовая",
-      "preview": null,
+      "preview": "2d/svg/hoodie/front/sleeve_preview.svg",
       "files": {
         "front": {},
         "back": {}
@@ -145,7 +150,7 @@
     "cuff": {
       "id": "base",
       "name": "Базовая",
-      "preview": null,
+      "preview": "2d/svg/hoodie/front/cuff_preview.svg",
       "files": {
         "front": {},
         "back": {}
@@ -154,7 +159,7 @@
     "neck": {
       "id": "base",
       "name": "Базовая",
-      "preview": null,
+      "preview": "2d/svg/hoodie/front/neck_preview.svg",
       "files": {
         "front": {},
         "back": {}
