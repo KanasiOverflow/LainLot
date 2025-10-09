@@ -37,7 +37,6 @@ export default function CostumeEditor() {
     // кеш SVG по пресетам и сохранённые пользовательские состояния по пресетам
     const svgCacheRef = useRef({});
     const [svgCache, setSvgCache] = useState({}); // { [presetId]: rawSVG }
-    const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
     const currentPresetIdRef = useRef(PRESETS[0]?.id || "front");
     // Минимальный зазор между вершинами (в мировых единицах SVG). Настраивается из кода.
     const MIN_GAP_WORLD = 20; // TODO: подберите под ваши единицы (напр., «5 см»)
@@ -127,12 +126,21 @@ export default function CostumeEditor() {
                 const parts = extractPanels(txt); // парсим в панели (как обычно)
                 const M = translateScaleMatrix(src.dx || 0, src.dy || 0, src.scale || 1);
 
+                // детерминированный префикс по слоту/стороне/варианту:
+                const prefix = (src.idPrefix ||
+                    // включаем ИД пресета (front/back), чтобы у спинки и переда НЕ совпадали panelId
+                    [String(preset?.id || 'part'), src.slot || 'part', src.side || 'both', src.which || 'main'].join('_'))
+                    .toLowerCase();
+
+                let localIdx = 0;
                 for (const p of parts) {
                     const segsT = applyMatrixToSegs(p.segs, M);
                     partsAll.push({
-                        id: `${src.idPrefix || (i + 1)}-${p.id}`,
+                        // стаб. id: НЕ зависит от внутренних id в svg-файле
+                        id: `${prefix}__${localIdx++}`,
                         segs: segsT,
                         anchors: collectAnchors(segsT),
+                        meta: { slot: src.slot || null, side: src.side || null, which: src.which || null }
                     });
                 }
             }
@@ -178,12 +186,17 @@ export default function CostumeEditor() {
     }), [curvesByPanel, fills, activePanelId]);
 
     const applySnapshot = useCallback((snap, panelsParsed) => {
-        // Если есть снимок — восстановим, иначе дефолты
-        setCurvesByPanel(snap?.curvesByPanel || {});
-        setFills(snap?.fills || []);
-        setActivePanelId(snap?.activePanelId || panelsParsed[0]?.id || null);
+        if (!snap) return; // нет снимка — ничего не трогаем
+        const allowed = new Set((panelsParsed || []).map(p => p.id));
+        const curvesIn = snap.curvesByPanel || {};
+        const curves = Object.fromEntries(Object.entries(curvesIn).filter(([pid]) => allowed.has(pid)));
+        const fills = (snap.fills || []).filter(f => allowed.has(f.panelId));
+        // активная панель — если нет в текущих parts, берём первую
+        const active = allowed.has(snap.activePanelId) ? snap.activePanelId : (panelsParsed[0]?.id || null);
+        setCurvesByPanel(curves);
+        setFills(fills);
+        setActivePanelId(active);
     }, []);
-
 
     const closestPointOnCurve = (panel, curve, P) => {
         // возвращает {x,y,t,total,poly,L} где t — доля 0..1
@@ -718,6 +731,50 @@ export default function CostumeEditor() {
     const activeDetailId = (presetIdx === 0 ? "front" : "back");
     const [manifest, setManifest] = useState(null);
     const [details, setDetails] = useState({ front: { cuff: "base" }, back: { cuff: "base" } }); // пока работаем только с манжетами
+    const panelSlotMapRef = useRef(new Map()); // panelId -> slot
+    const changeKindRef = useRef(null); // 'preset' | 'slot' | null
+
+    const detailsRef = useRef(details);
+    const lastChangedSlotRef = useRef(null); // { presetId: 'front'|'back', slot: 'cuff'|... } | null
+    const restoringPresetRef = useRef(false); // true — пока восстанавливаем снапшот пресета
+
+    const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
+    const savedByPresetRef = useRef({});
+
+    useEffect(() => {
+        try { localStorage.setItem("ce.activeFace", presetIdx === 0 ? "front" : "back"); } catch { }
+    }, [presetIdx]);
+
+    useEffect(() => { savedByPresetRef.current = savedByPreset; }, [savedByPreset]);
+
+    useEffect(() => {
+        const prev = detailsRef.current;
+        const cur = details;
+        let changed = null;
+        for (const face of ['front', 'back']) {
+            const p = prev[face] || {}, c = cur[face] || {};
+            for (const slot of Object.keys({ ...p, ...c })) {
+                if (p[slot] !== c[slot]) changed = { presetId: face, slot };
+            }
+        }
+        if (changed) {
+            changeKindRef.current = 'slot';
+            lastChangedSlotRef.current = changed;
+        }
+        detailsRef.current = cur;
+    }, [details]);
+
+    useEffect(() => {
+        // на время восстановления/переключения пресета — ничего не сохраняем
+        if (restoringPresetRef.current) return;
+        if (changeKindRef.current === 'preset') return;
+
+        const id = currentPresetIdRef.current;
+        const snap = snapshotFor();
+        // <-- важное: обновляем ref синхронно, чтобы не было "окна"
+        savedByPresetRef.current = { ...savedByPresetRef.current, [id]: snap };
+        setSavedByPreset(prev => ({ ...prev, [id]: snap }));
+    }, [fills, curvesByPanel, activePanelId]);
 
     useEffect(() => {
         (async () => {
@@ -769,8 +826,19 @@ export default function CostumeEditor() {
 
     useEffect(() => {
         const target = PRESETS[presetIdx];
-        if (!target) return;
-        setSavedByPreset(prev => ({ ...prev, [currentPresetIdRef.current]: snapshotFor() }));
+        if (!target)
+            return;
+
+        // Это именно смена пресета: сразу включаем «замок»,
+        // чтобы никакие автосохранения не стреляли не в ту сторону.
+        changeKindRef.current = 'preset';
+        restoringPresetRef.current = true;               // ← NEW
+        // сначала сохраняем СТАРУЮ сторону под её id (и синхронно обновляем ref)
+        const oldId = currentPresetIdRef.current;
+        const snap = snapshotFor();
+        savedByPresetRef.current = { ...savedByPresetRef.current, [oldId]: snap };
+        setSavedByPreset(prev => ({ ...prev, [oldId]: snap }));
+        // переключаем текущий id на новую сторону
         currentPresetIdRef.current = target.id;
     }, [presetIdx]);
 
@@ -986,6 +1054,11 @@ export default function CostumeEditor() {
         if (!composedPanels)
             return;
 
+        // предотвращаем раннюю чистку fills пока восстанавливаем снапшот пресета
+        const kind = changeKindRef.current;
+        if (kind === 'preset')
+            restoringPresetRef.current = true;
+
         const parts = composedPanels;
 
         // старая логика анимации/переключений
@@ -1004,13 +1077,52 @@ export default function CostumeEditor() {
 
         setPanels(parts);
 
-        // восстановить сохранённый снапшот для текущего пресета
+        // обновим карту принадлежности панелей слотам
+        const map = new Map();
+        for (const p of parts) {
+            const slot = p.meta?.slot || null;
+            map.set(p.id, slot);
+        }
+        panelSlotMapRef.current = map;
+
+        // --- основная логика восстановления/сохранения состояния ---
         const presetId = currentPresetIdRef.current;
-        const snap = savedByPreset[presetId];
-        applySnapshot(snap, parts);
+        const changed = lastChangedSlotRef.current;
+
+        if (kind === 'preset') {
+            // 🔹 ТОЛЬКО при смене пресета — восстановить снапшот
+            const snap = savedByPresetRef.current[presetId];
+            applySnapshot(snap, parts);
+        } else if (changed) {
+            // 🔹 Смена варианта слота — чистим только затронутые панели
+            const { presetId: chPreset, slot: chSlot } = changed;
+            if (chPreset === presetId && chSlot) {
+                const panelSlotMap = panelSlotMapRef.current;
+                setFills(fs => fs.filter(f => panelSlotMap.get(f.panelId) !== chSlot));
+                setCurvesByPanel(prev => {
+                    const next = { ...prev };
+                    for (const pid of Object.keys(next)) {
+                        if (panelSlotMap.get(pid) === chSlot) {
+                            delete next[pid];
+                        }
+                    }
+                    return next;
+                });
+            }
+        }
+
+        // сбрасываем маркеры после обработки
+        changeKindRef.current = null;
+        lastChangedSlotRef.current = null;
 
         if (toast)
             setToast(null);
+
+        // разблокировать чистильщик заливок — следующей микротаской,
+        // чтобы успели пересчитаться faces по восстановленным curves/fills
+        if (restoringPresetRef.current) {
+            setTimeout(() => { restoringPresetRef.current = false; }, 0);
+        }
 
         return () => {
             if (swapTimerRef.current) {
@@ -1019,6 +1131,7 @@ export default function CostumeEditor() {
             }
         };
     }, [composedPanels]);
+
 
     useLayoutEffect(() => {
         const update = () => {
@@ -1032,8 +1145,25 @@ export default function CostumeEditor() {
         return () => { ro.disconnect(); window.removeEventListener("resize", update); };
     }, [panels.length]);
 
+    // стало — чистим только то, что относится к ТЕКУЩИМ панелям
     useEffect(() => {
-        setFills(fs => fs.filter(f => (facesByPanel[f.panelId] || []).some(poly => faceKey(poly) === f.faceKey)));
+        if (restoringPresetRef.current) return;
+
+        // список видимых сейчас панелей (активный пресет)
+        const visibleIds = new Set(Object.keys(facesByPanel).map(String));
+
+        setFills(fs =>
+            fs.filter(f => {
+                const pid = String(f.panelId);
+
+                // если панель не из текущего пресета — ничего не трогаем
+                if (!visibleIds.has(pid)) return true;
+
+                // иначе проверяем валидность faceKey внутри этой панели
+                const polys = facesByPanel[pid] || [];
+                return polys.some(poly => faceKey(poly) === f.faceKey);
+            })
+        );
     }, [facesByPanel]);
 
     // Keyboard checker

@@ -45,10 +45,30 @@ export async function getVariantsForSlot(slot) {
     const baseV = m.baseVariantBySlot?.[slot]
         ? [m.baseVariantBySlot[slot]]
         : [{ id: "base", name: "Базовая", preview: null, files: { front: {}, back: {} } }];
-    const list = resolveVariantList(m, slot);
+    let list = resolveVariantList(m, slot);
+
+    // Фильтр по активной стороне (front/back) — берём только те варианты,
+    // у которых реально есть файлы для текущей стороны.
+    let face = null;
+    try { face = (localStorage.getItem("ce.activeFace") || "").toLowerCase(); } catch { }
+    if (face === "front" || face === "back") {
+        list = list.filter(v => {
+            if (!v || !v.files) return false;
+            const map = v.files[face] || {};
+            // Есть хотя бы один файл (left/right/any)
+            return Object.keys(map).length > 0;
+        });
+    }
+
     // убрать дубли по id, если внезапно пришли из нескольких мест
     const seen = new Set();
-    const uniq = [...list].filter(v => v?.id && !seen.has(v.id) && seen.add(v.id) === undefined);
+    const uniq = [];
+    for (const v of list) {
+        if (v && v.id && !seen.has(v.id)) {
+            seen.add(v.id);
+            uniq.push(v);
+        }
+    }
     return [...baseV, ...uniq];
 }
 
