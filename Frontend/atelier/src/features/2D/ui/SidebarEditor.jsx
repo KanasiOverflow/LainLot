@@ -3,6 +3,7 @@ import clsx from "clsx";
 import styles from "../styles/CostumeEditor.module.css";
 import SectionSlider from "./SectionSlider.jsx";
 import VariantsGrid from "./VariantsGrid.jsx";
+import { getVisibleSlotsForFace } from "../../../core/variables/variants.js";
 
 const PALETTE = [
     "#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe",
@@ -26,6 +27,18 @@ export default function SidebarEditor(props) {
 
         details, setDetails, activeDetailId
     } = props;
+
+    // какие слоты доступны на текущей стороне
+    const [visibleSlots, setVisibleSlots] = useState(new Set());
+    useEffect(() => {
+        let alive = true;
+        (async () => {
+            const arr = await getVisibleSlotsForFace(activeDetailId); // 'front' | 'back'
+            if (!alive) return;
+            setVisibleSlots(new Set(arr.map(s => String(s).toLowerCase())));
+        })();
+        return () => { alive = false; };
+    }, [activeDetailId]);
 
     const [historyOpen, setHistoryOpen] = useState(false);
 
@@ -241,21 +254,23 @@ export default function SidebarEditor(props) {
                             { slot: "neck", title: "Шея" },
                             { slot: "belt", title: "Пояс" },
                             { slot: "body", title: "Тело" },
-                            // можно добавлять дальше: { slot: "shoulder", title: "Плечо" }, { slot: "pocket", title: "Карман" }, …
-                        ].map(sec => (
-                            <div className={styles.section} key={sec.slot}>
-                                <div className={styles.sectionTitle}>{sec.title}</div>
-                                <VariantsGrid
-                                    slot={sec.slot}
-                                    face={activeDetailId} // 'front' | 'back'
-                                    value={details[activeDetailId]?.[sec.slot] || "base"}
-                                    onChange={(id) => setDetails(prev => ({
-                                        ...prev,
-                                        [activeDetailId]: { ...(prev[activeDetailId] || {}), [sec.slot]: id }
-                                    }))}
-                                />
-                            </div>
-                        ))}
+                            // можешь добавлять: { slot: "hood", title: "Капюшон" }, { slot: "pocket", title: "Карман" }, ...
+                        ]
+                            .filter(sec => visibleSlots.has(sec.slot)) // ← показываем только те, что реально есть на стороне
+                            .map(sec => (
+                                <div className={styles.section} key={sec.slot}>
+                                    <div className={styles.sectionTitle}>{sec.title}</div>
+                                    <VariantsGrid
+                                        slot={sec.slot}
+                                        face={activeDetailId}
+                                        value={details[activeDetailId]?.[sec.slot] || "base"}
+                                        onChange={(id) => setDetails(prev => ({
+                                            ...prev,
+                                            [activeDetailId]: { ...(prev[activeDetailId] || {}), [sec.slot]: id }
+                                        }))}
+                                    />
+                                </div>
+                            ))}
                     </>
                 )}
 

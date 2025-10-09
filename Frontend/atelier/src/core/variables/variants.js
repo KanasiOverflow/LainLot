@@ -77,3 +77,46 @@ export async function getBaseSources(face /* 'front'|'back' */) {
     const m = await loadSvgManifest();
     return (m.base?.[face] || []).slice(); // [{file, slot, side?, which?}]
 }
+
+// Вернуть путь превью базового слота для заданной стороны
+export async function getBasePreview(slot, face /* 'front' | 'back' */) {
+    const m = await loadSvgManifest();
+    const f = (face === 'back') ? 'back' : 'front';
+    return m?.base?.previews?.[f]?.[slot] || null;
+}
+
+export async function hasSlotForFace(slot, face) {
+    const m = await loadSvgManifest();
+    const arr = (m?.base && m.base[face]) || [];
+    const hasBase = arr.some(x => x.slot === slot);
+    const hasBackPreview = !!m?.base?.previews?.[face]?.[slot];
+    const hasAnyVariantFiles =
+        (m?.variants?.[slot] || []).some(v => {
+            const side = v?.files?.[face] || {};
+            return !!(side.file || side.left || side.right || side.inner);
+        });
+    return hasBase || hasBackPreview || hasAnyVariantFiles;
+}
+
+// 🔹 Универсально: какие детали вообще существуют на этой стороне (front/back)
+export async function getVisibleSlotsForFace(face /* 'front' | 'back' */) {
+    const m = await loadSvgManifest();
+    const f = face === 'back' ? 'back' : 'front';
+    const set = new Set();
+
+    // базовые SVG для стороны
+    for (const e of (m?.base?.[f] || [])) {
+        if (e?.slot) set.add(e.slot);
+    }
+    // базовые превью для стороны
+    Object.keys(m?.base?.previews?.[f] || {}).forEach(s => set.add(s));
+    // варианты, у которых есть файлы на стороне
+    for (const [slot, list] of Object.entries(m?.variants || {})) {
+        const ok = (list || []).some(v => {
+            const map = v?.files?.[f] || {};
+            return !!(map.file || map.left || map.right || map.inner);
+        });
+        if (ok) set.add(slot);
+    }
+    return Array.from(set);
+}

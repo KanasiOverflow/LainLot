@@ -211,8 +211,9 @@ async function buildVariants() {
         baseVariantBySlot[slot] = {
             id: "base",
             name: "Базовая",
-            preview: base.previews.front[slot] || base.previews.back[slot] || null,
-            files: { front: {}, back: {} } // пусто — будем брать реальные базы
+            // важнo: у базового варианта превью не указываем — берём по стороне в UI
+            preview: null,
+            files: { front: {}, back: {} }
         };
     }
 
