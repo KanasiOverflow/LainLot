@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import styles from "../styles/CostumeEditor.module.css";
 import SectionSlider from "./SectionSlider.jsx";
+import VariantsGrid from "./VariantsGrid.jsx";
 
 const PALETTE = [
     "#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe",
@@ -11,24 +11,20 @@ const PALETTE = [
 
 export default function SidebarEditor(props) {
     const {
-        // базовое
-        presetIdx, setPresetIdx, panels,
-        mode, setMode, modeGroup, lastLineMode, setLastLineMode,
-
-        // сброс
-        setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId,
-
+        mode, setMode, modeGroup,
         // заливка
         paintColor, setPaintColor, paletteOpen, setPaletteOpen, paletteRef,
 
         // линии
         lineStyle, setLineStyle, defaultSubCount, setDefaultSubCount,
-        selectedCurveKey, setSelectedCurveKey, hoverCurveKey, setHoverCurveKey,
+        selectedCurveKey, setSelectedCurveKey, setHoverCurveKey,
         curvesByPanel, setCurvesByPanelExtern, // см. использование ниже
         recomputeWaveForCurve, waveAmpPx, setWaveAmpPx, waveLenPx, setWaveLenPx,
 
         // история
-        historyItems, historyIndex, historyUndo, historyRedo, canUndo, canRedo
+        historyItems, historyIndex, historyUndo, historyRedo, canUndo, canRedo,
+
+        details, setDetails, activeDetailId
     } = props;
 
     const [historyOpen, setHistoryOpen] = useState(false);
@@ -36,6 +32,7 @@ export default function SidebarEditor(props) {
     useEffect(() => {
         try { setHistoryOpen(localStorage.getItem("ce.history.open") === "1"); } catch { }
     }, []);
+
     const toggleHistory = () => {
         setHistoryOpen(v => {
             const nv = !v;
@@ -44,31 +41,7 @@ export default function SidebarEditor(props) {
         });
     };
 
-
     // какой пресет сейчас активен
-    const currentPresetId = (presetIdx === 0 ? "front" : "back");
-
-    const onFullReset = () => {
-        setSavedByPreset({});
-        setCurvesByPanel({});
-        setFills([]);
-        setActivePanelId(panels[0]?.id ?? null);
-        setMode("preview");
-    };
-
-    const onResetById = (id) => {
-        // чистим снапшот конкретного пресета
-        setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
-
-        // если сбрасываем тот, что сейчас на экране — чистим и текущее состояние
-        if (id === currentPresetId) {
-            setCurvesByPanel({});
-            setFills([]);
-            setActivePanelId(panels[0]?.id ?? null);
-            setMode("preview");
-        }
-    };
-
 
     const hasSelection = !!selectedCurveKey;
     let curve = null, pid = null, cid = null;
@@ -258,6 +231,32 @@ export default function SidebarEditor(props) {
                             </>
                         )}
                     </div>
+                )}
+
+                {mode === "variants" && (
+                    <>
+                        {[
+                            { slot: "cuff", title: "Манжета" },
+                            { slot: "sleeve", title: "Рукав" },
+                            { slot: "neck", title: "Шея" },
+                            { slot: "belt", title: "Пояс" },
+                            { slot: "body", title: "Тело" },
+                            // можно добавлять дальше: { slot: "shoulder", title: "Плечо" }, { slot: "pocket", title: "Карман" }, …
+                        ].map(sec => (
+                            <div className={styles.section} key={sec.slot}>
+                                <div className={styles.sectionTitle}>{sec.title}</div>
+                                <VariantsGrid
+                                    slot={sec.slot}
+                                    face={activeDetailId} // 'front' | 'back'
+                                    value={details[activeDetailId]?.[sec.slot] || "base"}
+                                    onChange={(id) => setDetails(prev => ({
+                                        ...prev,
+                                        [activeDetailId]: { ...(prev[activeDetailId] || {}), [sec.slot]: id }
+                                    }))}
+                                />
+                            </div>
+                        ))}
+                    </>
                 )}
 
                 {/* История (только не в preview — сам сайдбар скрыт в preview) */}
