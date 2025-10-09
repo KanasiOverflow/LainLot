@@ -55,11 +55,6 @@ function detectBaseFileMeta(filename) {
     return meta;
 }
 
-async function readFlatSvgs(dir) {
-    const all = await fs.readdir(dir, { withFileTypes: true });
-    return all.filter(d => d.isFile() && d.name.endsWith(".svg"));
-}
-
 async function buildBase() {
     const base = { front: [], back: [], previews: { front: {}, back: {} } };
 
@@ -96,14 +91,13 @@ async function buildBase() {
 // Разбор имени варианта: поддерживает
 // - префиксы front_/back_ (или определяем face из структуры каталогов)
 // - cuff/sleeve с _left/_right и необязательным суффиксом числа (cuff_left2.svg)
-// - neck_internal.svg -> which = "inner"
 // - *_preview.svg — отдельная превьюшка варианта
 function parseVariantName(file, slot, faceHint = null) {
-    const name = path.basename(file).toLowerCase().replace(IMG_EXT_RE, "");
-    const isPreview = name.endsWith("_preview");
-    if (isPreview) {
-        return { preview: true, id: name.replace(/_preview$/, "") };
-    }
+    // имя без расширения, но с возможным _preview
+    const raw = path.basename(file).toLowerCase().replace(IMG_EXT_RE, "");
+    const isPreview = raw.endsWith("_preview");
+    // убираем только _preview, чтобы дальше разобрать как обычный вариант
+    const name = isPreview ? raw.replace(/_preview$/, "") : raw;
 
     let face = null, side = null, which = null, id = null;
 
@@ -126,9 +120,8 @@ function parseVariantName(file, slot, faceHint = null) {
         id = rest;
     }
 
-    return { face, side, which, id, preview: false };
+    return { face, side, which, id, preview: isPreview };
 }
-
 
 // Собирает варианты из трёх возможных мест:
 // 1) /hoodie/variants/<slot>/...

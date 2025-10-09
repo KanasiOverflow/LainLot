@@ -7,9 +7,9 @@
    width="687"
    height="588"
    viewBox="0 0 687 588"
-   sodipodi:docname="Макет свитшота передняя часть ПОЛОЧКА.svg"
+   sodipodi:docname="cuff2_preview.svg"
    inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
-   inkscape:export-filename="Для работы\Макет свитшота передняя часть ГОРЛОВИНА 2.svg"
+   inkscape:export-filename="Для работы\ТЕСТ.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,14 +28,14 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="1.505102"
-     inkscape:cx="271.41018"
-     inkscape:cy="147.83051"
-     inkscape:window-width="1920"
-     inkscape:window-height="1129"
+     inkscape:cx="271.74238"
+     inkscape:cy="360.44069"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer3">
+     inkscape:current-layer="layer8">
     <inkscape:page
        x="0"
        y="0"
@@ -47,12 +47,15 @@
   </sodipodi:namedview>
   <g
      inkscape:groupmode="layer"
-     id="layer3"
-     inkscape:label="ГОРЛОВИНА">
+     id="layer8"
+     inkscape:label="ТЕСТ">
     <path
-       style="display:inline;fill:none;stroke:#000000"
-       d="m 408.14443,57.433848 c -25.37861,28.197423 -109.30787,25.473226 -131.36201,0.174941 3.01127,10.340224 6.758,19.533624 11.24019,27.580201 32.76365,13.288136 69.29228,13.288136 109.58588,0 4.71599,-8.907585 8.22797,-18.159299 10.53594,-27.755142 z"
-       id="path2"
-       sodipodi:nodetypes="ccccc" />
+       style="fill:none;stroke:#000000;stroke-width:8.38671"
+       d="M 78.698835,359.17143 123.04147,524.66044 578.46844,499.78546 594.46408,330.32542 Z"
+       id="path3" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:8.86005"
+       d="M 633.24369,108.96605 586.39838,283.79516 105.26736,257.51624 88.368938,78.491991 Z"
+       id="path3-7" />
   </g>
 </svg>

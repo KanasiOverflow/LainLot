@@ -33,12 +33,6 @@
         "which": null
       },
       {
-        "file": "2d/svg/hoodie/front/neck_internal.svg",
-        "slot": "neck",
-        "side": null,
-        "which": "inner"
-      },
-      {
         "file": "2d/svg/hoodie/front/sleeve_left.svg",
         "slot": "sleeve",
         "side": "left",
@@ -113,7 +107,7 @@
       {
         "id": "cuff2",
         "name": "cuff2",
-        "preview": null,
+        "preview": "2d/svg/hoodie/front/variants/cuff/cuff2_preview.svg",
         "files": {
           "front": {
             "left": "2d/svg/hoodie/front/variants/cuff/cuff_left2.svg",

@@ -7,7 +7,7 @@
    width="687"
    height="588"
    viewBox="0 0 687 588"
-   sodipodi:docname="Макет свитшота передняя часть ПОЛОЧКА.svg"
+   sodipodi:docname="neck.svg"
    inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
    inkscape:export-filename="Для работы\Макет свитшота передняя часть ГОРЛОВИНА.svg"
    inkscape:export-xdpi="96"
@@ -27,11 +27,11 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="6.020408"
-     inkscape:cx="329.96103"
-     inkscape:cy="97.75085"
-     inkscape:window-width="1920"
-     inkscape:window-height="1129"
+     inkscape:zoom="1.505102"
+     inkscape:cx="263.10509"
+     inkscape:cy="252.80679"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -54,5 +54,10 @@
        style="display:inline;fill:none;stroke:#000000;stroke-opacity:1"
        id="path1-82"
        sodipodi:nodetypes="ccccccc" />
+    <path
+       style="display:inline;fill:none;stroke:#000000"
+       d="m 408.14443,57.433847 c -25.37861,28.19742 -109.30787,25.47322 -131.36201,0.17494 3.01127,10.34022 6.758,19.53362 11.24019,27.5802 32.76365,13.28814 69.29228,13.28814 109.58588,0 4.71599,-8.90758 8.22797,-18.1593 10.53594,-27.75514 z"
+       id="path2"
+       sodipodi:nodetypes="ccccc" />
   </g>
 </svg>
