@@ -49,7 +49,7 @@ export default function CostumeEditor() {
     // для анимации "из-за спины"
     const [prevPanels, setPrevPanels] = useState(null);
     const [isSwapping, setIsSwapping] = useState(false);
-    const SWAP_MS = 420;
+    const SWAP_MS = 180; // синхрон с .swapIn/.swapOut (180ms)
     const didEverSwapRef = useRef(false);
     const swapTimerRef = useRef(null);
     // чтобы поймать "старые" панели до перезаписи
@@ -795,6 +795,7 @@ export default function CostumeEditor() {
         (async () => {
             const preset = PRESETS[presetIdx];
             if (!preset) return;
+            setIsLoadingPreset(true);
 
             const baseSources = await getBaseSources(preset.id);
             const cuffVariantId = details[preset.id]?.cuff || "base";
@@ -1328,36 +1329,77 @@ export default function CostumeEditor() {
                                 <div className={styles.resetMenu}>
                                     <div className={styles.resetList}>
                                         <button
-                                            className={styles.resetItem}
+                                            className={clsx(styles.resetItem, activeId !== "front" && styles.resetItemDisabled)}
+                                            disabled={activeId !== "front"}
+                                            aria-disabled={activeId !== "front"}
+                                            title={activeId !== "front" ? "Откройте «Перед», чтобы сбросить его" : undefined}
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 const id = "front";
-                                                setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
-                                                if (currentPresetIdRef.current === id) {
-                                                    setCurvesByPanel({});
-                                                    setFills([]);
-                                                    setActivePanelId(panels[0]?.id ?? null);
-                                                    setDetails({ front: { cuff: "base" }, back: { cuff: "base" } });
-                                                    setMode("preview");
-                                                }
+
+                                                if (currentPresetIdRef.current !== id) return; // на всякий случай
+                                                // аккуратно удалить снапшот только этой стороны (и из ref, и из state)
+                                                { const ref = { ...savedByPresetRef.current }; delete ref[id]; savedByPresetRef.current = ref; }
+                                                setSavedByPreset(prev => { const cp = { ...prev }; delete cp[id]; return cp; });
+
+                                                // видимые панели текущей стороны
+                                                const visible = new Set(panels.map(p => p.id));
+                                                // чистим только линии этой стороны
+                                                setCurvesByPanel(prev => {
+                                                    const next = { ...prev };
+                                                    for (const pid of Object.keys(next)) if (visible.has(pid)) delete next[pid];
+                                                    return next;
+                                                });
+                                                // чистим только заливки этой стороны
+                                                setFills(fs => fs.filter(f => !visible.has(f.panelId)));
+                                                setActivePanelId(panels[0]?.id ?? null);
+                                                // сбрасываем ВАРИАНТЫ только этой стороны
+                                                setDetails(d => ({ ...d, [id]: { cuff: "base" } }));
+                                                // уходим в превью
+                                                setMode("preview");
+                                                // фиксируем превью как последний режим для этой стороны (и в LS)
+                                                setPrefs(prev => {
+                                                    const next = { ...prev, [id]: { ...(prev[id] || {}), lastMode: "preview" } };
+                                                    try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
+                                                    return next;
+                                                });
                                             }}
-                                        >Сбросить перед</button>
+                                        ><span className={styles.resetItemText}>Сбросить перед</span>
+                                            {activeId !== "front" && <span className={styles.resetLock} aria-hidden>🔒</span>}
+                                        </button>
 
                                         <button
-                                            className={styles.resetItem}
+                                            className={clsx(styles.resetItem, activeId !== "back" && styles.resetItemDisabled)}
+                                            disabled={activeId !== "back"}
+                                            aria-disabled={activeId !== "back"}
+                                            title={activeId !== "back" ? "Откройте «Спинку», чтобы сбросить её" : undefined}
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 const id = "back";
-                                                setSavedByPreset(prev => ({ ...prev, [id]: undefined }));
-                                                if (currentPresetIdRef.current === id) {
-                                                    setCurvesByPanel({});
-                                                    setFills([]);
-                                                    setActivePanelId(panels[0]?.id ?? null);
-                                                    setDetails({ front: { cuff: "base" }, back: { cuff: "base" } });
-                                                    setMode("preview");
-                                                }
+
+                                                if (currentPresetIdRef.current !== id) return;
+                                                { const ref = { ...savedByPresetRef.current }; delete ref[id]; savedByPresetRef.current = ref; }
+                                                setSavedByPreset(prev => { const cp = { ...prev }; delete cp[id]; return cp; });
+
+                                                const visible = new Set(panels.map(p => p.id));
+                                                setCurvesByPanel(prev => {
+                                                    const next = { ...prev };
+                                                    for (const pid of Object.keys(next)) if (visible.has(pid)) delete next[pid];
+                                                    return next;
+                                                });
+                                                setFills(fs => fs.filter(f => !visible.has(f.panelId)));
+                                                setActivePanelId(panels[0]?.id ?? null);
+                                                setDetails(d => ({ ...d, [id]: { cuff: "base" } }));
+                                                setMode("preview");
+                                                setPrefs(prev => {
+                                                    const next = { ...prev, [id]: { ...(prev[id] || {}), lastMode: "preview" } };
+                                                    try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
+                                                    return next;
+                                                });
                                             }}
-                                        >Сбросить спинку</button>
+                                        ><span className={styles.resetItemText}>Сбросить спинку</span>
+                                            {activeId !== "back" && <span className={styles.resetLock} aria-hidden>🔒</span>}
+                                        </button>
 
                                         <div className={styles.resetSep} />
 
@@ -1454,6 +1496,8 @@ export default function CostumeEditor() {
                                         stroke="#000"
                                         strokeOpacity=".06"
                                         strokeWidth={0.6 * (scale.k || 1)}
+                                        vectorEffect="non-scaling-stroke"
+                                        shapeRendering="crispEdges"
                                     />
                                 </pattern>
                             </defs>
@@ -1462,7 +1506,7 @@ export default function CostumeEditor() {
                                 y={gridDef.b.y}
                                 width={gridDef.b.w}
                                 height={gridDef.b.h}
-                                fill={`url(#grid-${svgMountKey})`}
+                                fill={`url(#grid-${svgMountKey})`} pointerEvents="none"
                             />
 
                             {/* FACES + OUTLINE + USER CURVES + ANCHORS */}
@@ -1681,46 +1725,48 @@ export default function CostumeEditor() {
                 </div>
 
                 {/* Правая панель рендерится только вне preview */}
-                {modeGroup !== 'preview' && (
-                    <SidebarEditor
-                        mode={mode}
-                        setMode={setMode}
-                        modeGroup={modeGroup}
-                        paintColor={paintColor}
-                        setPaintColor={setPaintColor}
-                        paletteOpen={paletteOpen}
-                        setPaletteOpen={setPaletteOpen}
-                        paletteRef={paletteRef}
-                        lineStyle={lineStyle}
-                        setLineStyle={setLineStyle}
-                        defaultSubCount={defaultSubCount}
-                        setDefaultSubCount={setDefaultSubCount}
-                        selectedCurveKey={selectedCurveKey}
-                        setSelectedCurveKey={setSelectedCurveKey}
-                        hoverCurveKey={hoverCurveKey}
-                        setHoverCurveKey={setHoverCurveKey}
-                        curvesByPanel={curvesByPanel}
-                        setCurvesByPanelExtern={applyCurvesChange}
-                        recomputeWaveForCurve={recomputeWaveForCurve}
-                        waveAmpPx={waveAmpPx}
-                        setWaveAmpPx={setWaveAmpPx}
-                        waveLenPx={waveLenPx}
-                        setWaveLenPx={setWaveLenPx}
-                        historyItems={historyItems}
-                        historyIndex={historyIndex}
-                        historyUndo={historyUndo}
-                        historyRedo={historyRedo}
-                        canUndo={canUndo}
-                        canRedo={canRedo}
-                        details={details}
-                        setDetails={setDetails}
-                        activeDetailId={activeDetailId}
-                    />
-                )}
-            </div>
+                {
+                    modeGroup !== 'preview' && (
+                        <SidebarEditor
+                            mode={mode}
+                            setMode={setMode}
+                            modeGroup={modeGroup}
+                            paintColor={paintColor}
+                            setPaintColor={setPaintColor}
+                            paletteOpen={paletteOpen}
+                            setPaletteOpen={setPaletteOpen}
+                            paletteRef={paletteRef}
+                            lineStyle={lineStyle}
+                            setLineStyle={setLineStyle}
+                            defaultSubCount={defaultSubCount}
+                            setDefaultSubCount={setDefaultSubCount}
+                            selectedCurveKey={selectedCurveKey}
+                            setSelectedCurveKey={setSelectedCurveKey}
+                            hoverCurveKey={hoverCurveKey}
+                            setHoverCurveKey={setHoverCurveKey}
+                            curvesByPanel={curvesByPanel}
+                            setCurvesByPanelExtern={applyCurvesChange}
+                            recomputeWaveForCurve={recomputeWaveForCurve}
+                            waveAmpPx={waveAmpPx}
+                            setWaveAmpPx={setWaveAmpPx}
+                            waveLenPx={waveLenPx}
+                            setWaveLenPx={setWaveLenPx}
+                            historyItems={historyItems}
+                            historyIndex={historyIndex}
+                            historyUndo={historyUndo}
+                            historyRedo={historyRedo}
+                            canUndo={canUndo}
+                            canRedo={canRedo}
+                            details={details}
+                            setDetails={setDetails}
+                            activeDetailId={activeDetailId}
+                        />
+                    )
+                }
+            </div >
 
             {/* ====== FLOW UNDER THE EDITOR (mini-landing) ====== */}
-            <section className={styles.flow} aria-label="Оформление заказа">
+            < section className={styles.flow} aria-label="Оформление заказа" >
                 <div className={styles.flowContainer}>
                     <header className={styles.flowHeader}>
                         <h2 className={styles.flowTitle}>Оформление заказа</h2>
@@ -1757,8 +1803,8 @@ export default function CostumeEditor() {
                         {!isOrderValid && <div className={styles.ctaNote}>Чтобы активировать кнопку, заполни ФИО, email и телефон.</div>}
                     </div>
                 </div>
-            </section>
+            </section >
 
-        </div>
+        </div >
     );
 }
