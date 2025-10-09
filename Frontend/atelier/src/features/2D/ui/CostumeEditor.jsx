@@ -1368,12 +1368,25 @@ export default function CostumeEditor() {
                                                 if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях."))
                                                     return;
 
+                                                // 1) полностью чистим snapshots и ref
+                                                savedByPresetRef.current = {};
                                                 setSavedByPreset({});
                                                 setCurvesByPanel({});
                                                 setFills([]);
                                                 setActivePanelId(panels[0]?.id ?? null);
                                                 setDetails({ front: { cuff: "base" }, back: { cuff: "base" } });
                                                 setMode("preview");
+
+                                                // 2) фиксируем «preview» как последний режим для обеих сторон
+                                                setPrefs(prev => {
+                                                    const next = {
+                                                        ...prev,
+                                                        front: { ...(prev.front || {}), lastMode: "preview" },
+                                                        back: { ...(prev.back || {}), lastMode: "preview" }
+                                                    };
+                                                    try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
+                                                    return next;
+                                                });
                                             }}
                                         >⚠️ Сбросить всё</button>
                                     </div>
