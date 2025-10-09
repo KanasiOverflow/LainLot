@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="687"
+   height="588"
+   viewBox="0 0 687 588"
+   sodipodi:docname="sleeve_preview.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   inkscape:export-filename="Для работы\Макет свитшота передняя часть ПРАВЫЙ РУКАВ.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.0642678"
+     inkscape:cx="184.16417"
+     inkscape:cy="244.76922"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="687"
+       height="588"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="ЛЕВЫЙ РУКАВ"
+     style="display:inline">
+    <path
+       d="M 438.03341,298.8014 C 434.28598,270.2377 427.80298,199.16469 431.03786,146.29867 432.2353,126.72951 429.39827,49.727124 455.76187,0 c 41.82057,32.124513 137.86796,351.06719 130.03984,554.38585 -0.80592,11.50199 -2.27139,20.36579 -4.39642,26.5914 l -91.57194,5.12149 c -4.72082,-12.86554 -8.28167,-27.69547 -11.3195,-42.67964 -7.27094,-34.50812 -19.70519,-152.20648 -40.48044,-244.6177 z"
+       style="display:inline;fill:none;stroke:#000000;stroke-width:1.48903;stroke-opacity:1"
+       id="path1-2-8"
+       sodipodi:nodetypes="cscccccc" />
+    <path
+       d="M 225.2575,299.35964 C 229.01193,270.74259 235.50703,199.53679 232.2661,146.572 231.06642,126.96627 233.90875,49.82003 207.4959,0 165.59721,32.184529 69.370362,351.72309 77.213112,555.42159 c 0.80744,11.52349 2.27564,20.40384 4.40464,26.64109 l 91.743038,5.13106 c 4.72963,-12.88957 8.29713,-27.74721 11.34063,-42.75937 7.28452,-34.5726 19.742,-152.49085 40.55608,-245.07473 z"
+       style="display:inline;fill:none;stroke:#000000;stroke-width:1.49181;stroke-opacity:1"
+       id="path1-2"
+       sodipodi:nodetypes="cscccccc" />
+  </g>
+</svg>
