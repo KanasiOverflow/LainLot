@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "../styles/CostumeEditor.module.css";
-import { getVariantsForSlot, getBasePreview } from "../../../core/variables/variants.js";
-import { SVG_BASE } from "../../../core/variables/svgPath.js"
+import { getVariantsForSlot, getBasePreview, baseHasSlot, isForcedSlot } from "../../../core/variables/variants.js";
+import { EMPTY_PREVIEW, SVG_BASE } from "../../../core/variables/svgPath.js"
 
 export default function VariantsGrid({ slot, face, value, onChange }) {
     const [items, setItems] = React.useState([]);
@@ -21,6 +21,7 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
             const raw = await getVariantsForSlot(slot);
             const withPreviews = await Promise.all(raw.map(async (v) => {
                 let preview = v?.preview || null;
+                let name = v?.name;
                 if (v?.id === "base") {
                     // Сначала — «правильная» превью из манифеста для текущей стороны:
                     preview = (await getBasePreview(slot, face)) || preview;
@@ -28,16 +29,29 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
                 // Если всё ещё нет — стандартный фоллбэк.
                 if (!preview) {
                     if (v?.id === "base") {
-                        const dir = face === "front" ? "front" : "back";
-                        const fname = FALLBACK[slot] || "body.svg";
-                        preview = `${SVG_BASE}/${dir}/${fname}`;
-                    } else {
+                        const hasBase = await baseHasSlot(face, slot);
+                        const forced = isForcedSlot(face, slot);
+                        if (hasBase) {
+                            const dir = face === "front" ? "front" : "back";
+                            const fname = FALLBACK[slot] || "body.svg";
+                            preview = `${SVG_BASE}/${dir}/${fname}`;
+                        }
+                        else if (forced) {
+                            // базового слота нет, но слот должен отображаться → “Отсутствует”
+                            preview = EMPTY_PREVIEW;
+                            name = "Отсутствует";
+                        }
+                        else {
+                            preview = null;
+                        }
+                    }
+                    else {
                         const map = (v?.files && v.files[face]) || {};
                         const cand = map.right || map.file || map.left || Object.values(map)[0] || null;
                         preview = cand || null;
                     }
                 }
-                return { ...v, preview: abs(preview) };
+                return { ...v, name: name || v?.name, preview: abs(preview) };
             }));
 
             if (alive) setItems(withPreviews);

@@ -254,7 +254,8 @@ export default function SidebarEditor(props) {
                             { slot: "neck", title: "Шея" },
                             { slot: "belt", title: "Пояс" },
                             { slot: "body", title: "Тело" },
-                            // можешь добавлять: { slot: "hood", title: "Капюшон" }, { slot: "pocket", title: "Карман" }, ...
+                            { slot: "hood", title: "Капюшон" },
+                            { slot: "pocket", title: "Карман" }
                         ]
                             .filter(sec => visibleSlots.has(sec.slot)) // ← показываем только те, что реально есть на стороне
                             .map(sec => (

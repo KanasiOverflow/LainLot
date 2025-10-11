@@ -798,17 +798,42 @@ export default function CostumeEditor() {
             setIsLoadingPreset(true);
 
             const baseSources = await getBaseSources(preset.id);
-            const cuffVariantId = details[preset.id]?.cuff || "base";
-            const sources = baseSources.map(src => {
-                if (src.slot !== "cuff") return src;
-                if (cuffVariantId === "base") return src;
-                const v = manifest?.variants?.cuff?.find(x => x.id === cuffVariantId);
-                if (!v) return src;
-                const map = v.files?.[preset.id] || {};
-                if (src.side === "left" && map.left) return { ...src, file: map.left };
-                if (src.side === "right" && map.right) return { ...src, file: map.right };
-                return src;
-            });
+            // индекс базовых частей по (slot,side,which)
+            const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
+            const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
+
+            // находим, какие слоты у нас вообще выбраны на этой стороне (details[preset.id])
+            const chosen = details[preset.id] || {};
+
+            // начнём с копии базы
+            const sources = baseSources.slice();
+
+            // для каждого выбранного слота подставляем/добавляем файлы из варианта
+            for (const [slot, variantId] of Object.entries(chosen)) {
+                if (!variantId || variantId === "base") continue; // база: ничего не меняем
+                const list = manifest?.variants?.[slot] || [];
+                const v = list.find(x => x.id === variantId);
+                if (!v) continue;
+
+                const fmap = v.files?.[preset.id] || {}; // files для текущей стороны
+                const entries = [];
+                if (fmap.file) entries.push({ file: fmap.file, side: null, which: null });
+                if (fmap.left) entries.push({ file: fmap.left, side: "left", which: null });
+                if (fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
+                if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
+
+                for (const e of entries) {
+                    const k = [slot, e.side || "", e.which || ""].join("|");
+                    const baseHit = baseIdx.get(k);
+                    if (baseHit) {
+                        // заменяем файл в уже существующем базовом источнике
+                        baseHit.file = e.file;
+                    } else {
+                        // базы нет — добавляем новый кусок
+                        sources.push({ file: e.file, slot, side: e.side || null, which: e.which || null });
+                    }
+                }
+            }
 
             const compiled = await loadPresetToPanels({ ...preset, sources });
             if (!alive) return;
@@ -823,7 +848,7 @@ export default function CostumeEditor() {
                 setIsLoadingPreset(false);
         });
         return () => { alive = false; };
-    }, [presetIdx, manifest, details.front?.cuff, details.back?.cuff]);
+    }, [presetIdx, manifest, details]);
 
     useEffect(() => {
         const target = PRESETS[presetIdx];
@@ -1367,7 +1392,7 @@ export default function CostumeEditor() {
                                                 setFills(fs => fs.filter(f => !visible.has(f.panelId)));
                                                 setActivePanelId(panels[0]?.id ?? null);
                                                 // сбрасываем ВАРИАНТЫ только этой стороны
-                                                setDetails(d => ({ ...d, [id]: { cuff: "base" } }));
+                                                setDetails(d => ({ ...d, [id]: {} }));
                                                 // уходим в превью
                                                 setMode("preview");
                                                 // фиксируем превью как последний режим для этой стороны (и в LS)
@@ -1402,7 +1427,7 @@ export default function CostumeEditor() {
                                                 });
                                                 setFills(fs => fs.filter(f => !visible.has(f.panelId)));
                                                 setActivePanelId(panels[0]?.id ?? null);
-                                                setDetails(d => ({ ...d, [id]: { cuff: "base" } }));
+                                                setDetails(d => ({ ...d, [id]: {} }));
                                                 setMode("preview");
                                                 setPrefs(prev => {
                                                     const next = { ...prev, [id]: { ...(prev[id] || {}), lastMode: "preview" } };
@@ -1429,7 +1454,7 @@ export default function CostumeEditor() {
                                                 setCurvesByPanel({});
                                                 setFills([]);
                                                 setActivePanelId(panels[0]?.id ?? null);
-                                                setDetails({ front: { cuff: "base" }, back: { cuff: "base" } });
+                                                setDetails({ front: {}, back: {} });
                                                 setMode("preview");
 
                                                 // 2) фиксируем «preview» как последний режим для обеих сторон
