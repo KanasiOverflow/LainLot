@@ -741,6 +741,32 @@ export default function CostumeEditor() {
     const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
     const savedByPresetRef = useRef({});
 
+    // единая кнопка "Сбросить всё"
+    const resetAll = useCallback(() => {
+        if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях."))
+            return;
+
+        // 1) чистим snapshots и состояния
+        savedByPresetRef.current = {};
+        setSavedByPreset({});
+        setCurvesByPanel({});
+        setFills([]);
+        setActivePanelId(panels[0]?.id ?? null);
+        setDetails({ front: {}, back: {} });
+        setMode("preview");
+
+        // 2) фиксируем «preview» как последний режим для обеих сторон
+        setPrefs(prev => {
+            const next = {
+                ...prev,
+                front: { ...(prev.front || {}), lastMode: "preview" },
+                back: { ...(prev.back || {}), lastMode: "preview" }
+            };
+            try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
+            return next;
+        });
+    }, [panels, setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId, setDetails, setMode, setPrefs]);
+
     useEffect(() => {
         try { localStorage.setItem("ce.activeFace", presetIdx === 0 ? "front" : "back"); } catch { }
     }, [presetIdx]);
@@ -1357,121 +1383,16 @@ export default function CostumeEditor() {
                             >Спинка</button>
                         </div>
 
-                        {/* Сброс (dropdown) */}
+                        {/* Сброс — одна кнопка */}
                         <div className={styles.tbRight}>
-                            <details className={styles.resetDetails}>
-                                <summary className={styles.resetBtn}>
-                                    Сброс <span aria-hidden>▾</span>
-                                </summary>
-
-                                <div className={styles.resetMenu}>
-                                    <div className={styles.resetList}>
-                                        <button
-                                            className={clsx(styles.resetItem, activeId !== "front" && styles.resetItemDisabled)}
-                                            disabled={activeId !== "front"}
-                                            aria-disabled={activeId !== "front"}
-                                            title={activeId !== "front" ? "Откройте «Перед», чтобы сбросить его" : undefined}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                const id = "front";
-
-                                                if (currentPresetIdRef.current !== id) return; // на всякий случай
-                                                // аккуратно удалить снапшот только этой стороны (и из ref, и из state)
-                                                { const ref = { ...savedByPresetRef.current }; delete ref[id]; savedByPresetRef.current = ref; }
-                                                setSavedByPreset(prev => { const cp = { ...prev }; delete cp[id]; return cp; });
-
-                                                // видимые панели текущей стороны
-                                                const visible = new Set(panels.map(p => p.id));
-                                                // чистим только линии этой стороны
-                                                setCurvesByPanel(prev => {
-                                                    const next = { ...prev };
-                                                    for (const pid of Object.keys(next)) if (visible.has(pid)) delete next[pid];
-                                                    return next;
-                                                });
-                                                // чистим только заливки этой стороны
-                                                setFills(fs => fs.filter(f => !visible.has(f.panelId)));
-                                                setActivePanelId(panels[0]?.id ?? null);
-                                                // сбрасываем ВАРИАНТЫ только этой стороны
-                                                setDetails(d => ({ ...d, [id]: {} }));
-                                                // уходим в превью
-                                                setMode("preview");
-                                                // фиксируем превью как последний режим для этой стороны (и в LS)
-                                                setPrefs(prev => {
-                                                    const next = { ...prev, [id]: { ...(prev[id] || {}), lastMode: "preview" } };
-                                                    try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
-                                                    return next;
-                                                });
-                                            }}
-                                        ><span className={styles.resetItemText}>Сбросить перед</span>
-                                            {activeId !== "front" && <span className={styles.resetLock} aria-hidden>🔒</span>}
-                                        </button>
-
-                                        <button
-                                            className={clsx(styles.resetItem, activeId !== "back" && styles.resetItemDisabled)}
-                                            disabled={activeId !== "back"}
-                                            aria-disabled={activeId !== "back"}
-                                            title={activeId !== "back" ? "Откройте «Спинку», чтобы сбросить её" : undefined}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                const id = "back";
-
-                                                if (currentPresetIdRef.current !== id) return;
-                                                { const ref = { ...savedByPresetRef.current }; delete ref[id]; savedByPresetRef.current = ref; }
-                                                setSavedByPreset(prev => { const cp = { ...prev }; delete cp[id]; return cp; });
-
-                                                const visible = new Set(panels.map(p => p.id));
-                                                setCurvesByPanel(prev => {
-                                                    const next = { ...prev };
-                                                    for (const pid of Object.keys(next)) if (visible.has(pid)) delete next[pid];
-                                                    return next;
-                                                });
-                                                setFills(fs => fs.filter(f => !visible.has(f.panelId)));
-                                                setActivePanelId(panels[0]?.id ?? null);
-                                                setDetails(d => ({ ...d, [id]: {} }));
-                                                setMode("preview");
-                                                setPrefs(prev => {
-                                                    const next = { ...prev, [id]: { ...(prev[id] || {}), lastMode: "preview" } };
-                                                    try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
-                                                    return next;
-                                                });
-                                            }}
-                                        ><span className={styles.resetItemText}>Сбросить спинку</span>
-                                            {activeId !== "back" && <span className={styles.resetLock} aria-hidden>🔒</span>}
-                                        </button>
-
-                                        <div className={styles.resetSep} />
-
-                                        <button
-                                            className={clsx(styles.resetItem, styles.resetDanger)}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях."))
-                                                    return;
-
-                                                // 1) полностью чистим snapshots и ref
-                                                savedByPresetRef.current = {};
-                                                setSavedByPreset({});
-                                                setCurvesByPanel({});
-                                                setFills([]);
-                                                setActivePanelId(panels[0]?.id ?? null);
-                                                setDetails({ front: {}, back: {} });
-                                                setMode("preview");
-
-                                                // 2) фиксируем «preview» как последний режим для обеих сторон
-                                                setPrefs(prev => {
-                                                    const next = {
-                                                        ...prev,
-                                                        front: { ...(prev.front || {}), lastMode: "preview" },
-                                                        back: { ...(prev.back || {}), lastMode: "preview" }
-                                                    };
-                                                    try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
-                                                    return next;
-                                                });
-                                            }}
-                                        >⚠️ Сбросить всё</button>
-                                    </div>
-                                </div>
-                            </details>
+                            <button
+                                className={styles.resetBtn}
+                                onClick={resetAll}
+                                aria-label="Сбросить всё"
+                                title="Сбросить всё"
+                            >
+                                ⚠️ Сбросить всё
+                            </button>
 
                             <button
                                 className={styles.exportBtn}
