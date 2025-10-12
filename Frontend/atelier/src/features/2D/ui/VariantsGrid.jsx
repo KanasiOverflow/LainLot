@@ -65,6 +65,9 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
     const unavailableSelected =
         !!value && value !== "base" && !new Set(items.map(it => it.id)).has(value);
 
+    // внутри VariantsGrid.jsx, рядом с unavailableSelected
+    const isGhostBase = unavailableSelected;
+
     return (
         <div className={styles.pickerGrid}>
             {unavailableSelected && (

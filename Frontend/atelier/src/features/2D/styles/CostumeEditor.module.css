@@ -449,5 +449,7 @@
   .segBtnSmall { padding: 6px 10px; font-size: 14px; }
 }
 
-/* tiny lock icon for disabled reset buttons */
+/* .pickerBtnGhost — лёгкая пунктирная рамка/иконка */
+.pickerBtnGhost { outline: 1px dashed #8a8a8a; opacity: .9; }
 
+/* tiny lock icon for disabled reset buttons */
