@@ -105,15 +105,27 @@
     "sleeve": [],
     "cuff": [
       {
+        "id": "cuff",
+        "name": "cuff",
+        "preview": "2d/svg/hoodie/back/variants/cuff/cuff_preview.svg",
+        "files": {
+          "front": {},
+          "back": {}
+        }
+      },
+      {
         "id": "cuff2",
         "name": "cuff2",
         "preview": "2d/svg/hoodie/front/variants/cuff/cuff2_preview.svg",
         "files": {
           "front": {
-            "left": "2d/svg/hoodie/front/variants/cuff/cuff_left2.svg",
-            "right": "2d/svg/hoodie/front/variants/cuff/cuff_right2.svg"
+            "left": "2d/svg/hoodie/front/variants/cuff/cuff2_left.svg",
+            "right": "2d/svg/hoodie/front/variants/cuff/cuff2_right.svg"
           },
-          "back": {}
+          "back": {
+            "left": "2d/svg/hoodie/back/variants/cuff/cuff2_left.svg",
+            "right": "2d/svg/hoodie/back/variants/cuff/cuff2_right.svg"
+          }
         }
       }
     ],

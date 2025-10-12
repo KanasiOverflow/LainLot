@@ -90,11 +90,20 @@ export async function getVariantsForSlot(slot) {
     return [...baseV, ...uniq];
 }
 
-// Базовые источники (все файлы из Front/Back, без подпапок)
+// Базовые источники (все файлы из front/back, без подпапок)
 export async function getBaseSources(face /* 'front'|'back' */) {
-    const m = await loadSvgManifest();
-    return (m.base?.[face] || []).slice(); // [{file, slot, side?, which?}]
+    const m = await loadSvgManifest();           // ← берём манифест
+    const f = (face === 'back') ? 'back' : 'front';
+    const src = m.base?.[f] || [];
+    // ВАЖНО: возвращаем ГЛУБОКУЮ копию объектов, чтобы не мутировать m.base[*]
+    return src.map(e => ({
+        file: e.file,
+        slot: e.slot ?? null,
+        side: e.side ?? null,
+        which: e.which ?? null
+    }));
 }
+
 
 // Вернуть путь превью базового слота для заданной стороны
 export async function getBasePreview(slot, face /* 'front' | 'back' */) {
@@ -126,7 +135,7 @@ export async function getVisibleSlotsForFace(face /* 'front' | 'back' */) {
     for (const e of (m?.base?.[f] || [])) {
         if (e?.slot) set.add(e.slot);
     }
-    // базовые превью для стороны
+    // базовые превью для стороныа
     Object.keys(m?.base?.previews?.[f] || {}).forEach(s => set.add(s));
     // варианты, у которых есть файлы на стороне
     for (const [slot, list] of Object.entries(m?.variants || {})) {

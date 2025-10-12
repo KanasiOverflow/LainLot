@@ -60,8 +60,32 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
         return () => { alive = false; };
     }, [face, slot]);
 
+    // Если синхронизация проставила value с другой стороны,
+    // а на текущей стороне у этого варианта нет файлов — он не попадёт в items.
+    const unavailableSelected =
+        !!value && value !== "base" && !new Set(items.map(it => it.id)).has(value);
+
     return (
         <div className={styles.pickerGrid}>
+            {unavailableSelected && (
+                <div
+                    className={styles.noteUnavailable}
+                    title="Этот вариант выбран на другой стороне, но здесь файлов нет"
+                    style={{
+                        gridColumn: "1 / -1",
+                        fontSize: "12px",
+                        lineHeight: 1.3,
+                        padding: "6px 8px",
+                        border: "1px dashed #999",
+                        borderRadius: "8px",
+                        opacity: 0.8,
+                        marginBottom: "6px"
+                    }}
+                >
+                    Недоступно на этой стороне — выбран вариант на другой стороне.
+                    Выберите «Базовая», чтобы отключить здесь, или другой доступный вариант.
+                </div>
+            )}
             {items.map(it => (
                 <button
                     key={it.id}

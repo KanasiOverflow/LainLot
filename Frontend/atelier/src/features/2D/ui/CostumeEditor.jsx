@@ -731,6 +731,31 @@ export default function CostumeEditor() {
     const activeDetailId = (presetIdx === 0 ? "front" : "back");
     const [manifest, setManifest] = useState(null);
     const [details, setDetails] = useState({ front: { cuff: "base" }, back: { cuff: "base" } }); // пока работаем только с манжетами
+
+    // слоты, которые должны быть синхронизированы между передом и спинкой
+    const shouldSyncSlot = (slot) => slot && slot.toLowerCase() !== "pocket";
+
+    // централизованный апдейтер варианта слота с зеркалированием на вторую сторону
+    const setSlotVariant = (face /* 'front'|'back' */, slot, variantId) => {
+        setDetails(prev => {
+            const other = face === "front" ? "back" : "front";
+            const curFace = { ...(prev[face] || {}) };
+            const curOther = { ...(prev[other] || {}) };
+
+            if (variantId === "base" || variantId == null) {
+                // «Базовая» = нет оверлея → удаляем ключ слота
+                delete curFace[slot];
+                if (shouldSyncSlot(slot)) delete curOther[slot];
+            } else {
+                // Устанавливаем выбранный вариант на обе стороны (если слот синхронизируемый)
+                curFace[slot] = variantId;
+                if (shouldSyncSlot(slot)) curOther[slot] = variantId;
+            }
+
+            return { ...prev, [face]: curFace, [other]: curOther };
+        });
+    };
+
     const panelSlotMapRef = useRef(new Map()); // panelId -> slot
     const changeKindRef = useRef(null); // 'preset' | 'slot' | null
 
@@ -776,19 +801,29 @@ export default function CostumeEditor() {
     useEffect(() => {
         const prev = detailsRef.current;
         const cur = details;
-        let changed = null;
+
+        // собираем все изменения
+        const changes = [];
         for (const face of ['front', 'back']) {
             const p = prev[face] || {}, c = cur[face] || {};
             for (const slot of Object.keys({ ...p, ...c })) {
-                if (p[slot] !== c[slot]) changed = { presetId: face, slot };
+                if (p[slot] !== c[slot]) {
+                    changes.push({ presetId: face, slot });
+                }
             }
         }
-        if (changed) {
+
+        if (changes.length) {
             changeKindRef.current = 'slot';
-            lastChangedSlotRef.current = changed;
+            // приоритет — для текущей активной стороны (чтобы чистились заливки/линии именно там)
+            const curFace = currentPresetIdRef.current;
+            const preferred = changes.find(ch => ch.presetId === curFace) || changes[0];
+            lastChangedSlotRef.current = preferred;
         }
+
         detailsRef.current = cur;
     }, [details]);
+
 
     useEffect(() => {
         // на время восстановления/переключения пресета — ничего не сохраняем
@@ -823,7 +858,14 @@ export default function CostumeEditor() {
             if (!preset) return;
             setIsLoadingPreset(true);
 
-            const baseSources = await getBaseSources(preset.id);
+            // ВАЖНО: делаем глубокую копию, чтобы подмены не трогали manifest.base[*]
+            let baseSources = await getBaseSources(preset.id);
+            baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({
+                file: e.file,
+                slot: e.slot ?? null,
+                side: e.side ?? null,
+                which: e.which ?? null
+            }));
             // индекс базовых частей по (slot,side,which)
             const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
             const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
@@ -842,6 +884,14 @@ export default function CostumeEditor() {
                 if (!v) continue;
 
                 const fmap = v.files?.[preset.id] || {}; // files для текущей стороны
+
+                // Если на этой стороне у варианта нет ни одного файла — пропускаем,
+                // чтобы не "очищать" базу и не ломать канву
+                if (!fmap || Object.keys(fmap).length === 0) {
+                    // console.warn(`[variants] empty files for ${slot}/${variantId} on ${preset.id}`);
+                    continue;
+                }
+                // после выбора варианта слота v и нахождения подходящей ветки files для active side:
                 const entries = [];
                 if (fmap.file) entries.push({ file: fmap.file, side: null, which: null });
                 if (fmap.left) entries.push({ file: fmap.left, side: "left", which: null });
@@ -1719,6 +1769,7 @@ export default function CostumeEditor() {
                             details={details}
                             setDetails={setDetails}
                             activeDetailId={activeDetailId}
+                            setSlotVariant={setSlotVariant}
                         />
                     )
                 }
