@@ -101,7 +101,21 @@
   },
   "variants": {
     "body": [],
-    "belt": [],
+    "belt": [
+      {
+        "id": "belt2",
+        "name": "belt2",
+        "preview": "2d/svg/hoodie/back/variants/belt/belt2_preview.svg",
+        "files": {
+          "front": {
+            "file": "2d/svg/hoodie/front/variants/belt/belt2.svg"
+          },
+          "back": {
+            "file": "2d/svg/hoodie/back/variants/belt/belt2.svg"
+          }
+        }
+      }
+    ],
     "sleeve": [],
     "cuff": [
       {
