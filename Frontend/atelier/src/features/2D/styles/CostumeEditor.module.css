@@ -61,6 +61,23 @@
 .tbCenter { grid-column: 2; justify-self: center; }
 .tbRight  { grid-column: 3; justify-self: end; }
 
+/* === Reset / Export: equal widths always === */
+.tbRight {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* две равные колонки */
+  gap: 8px;
+}
+.tbRight > .resetBtn,
+.tbRight > .exportBtn {
+  width: 100%;
+  margin: 0;                /* перекрываем margin у .exportBtn */
+  justify-content: center;
+}
+/* На очень узких — в одну колонку */
+@media (max-width: 560px) {
+  .tbRight { grid-template-columns: 1fr; }
+}
+
 .topbarHint {
   position: absolute;
   top: 56px;
@@ -287,30 +304,18 @@
 }
 .resetBtn:hover { border-color:#c7d2fe; background:#eef2ff; }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Visual stopper for disabled reset actions */
-
-
-
 
 /* ===== Focus rings ===== */
 .iconBtn:focus-visible,
 .segBtn:focus-visible,
 .resetBtn:focus-visible,
-
+.exportBtn:focus-visible,
+.btn:focus-visible,
+.pickerBtn:focus-visible {
+  outline: 2px solid #c7d2fe;
+  outline-offset: 2px;
+}
 
 /* ===== Export button ===== */
 .exportBtn {
@@ -447,66 +452,6 @@
   .tbCenter { grid-area: center; }
   .resetBtn { padding: 6px 10px; }
   .segBtnSmall { padding: 6px 10px; font-size: 14px; }
-}
-
-/* === Equal-width Reset / Export on narrow screens === */
-
-@media (max-width: 460px) {
-  /* на совсем узких — в одну колонку, одинаковая ширина */
-  .tbRight .topbarGroup {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* На очень узких — в один столбец, обе 100% ширины */
-@media (max-width: 540px) {
-  .tbRight {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 960px) {
-  /* две равные колонки справа в топбаре */
-  .tbRight .topbarGroup {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .tbRight .resetBtn,
-  .tbRight .exportBtn {
-    width: 100%;
-    margin: 0;                 /* убрать разный внешний отступ */
-    justify-content: center;   /* выровнять содержимое по центру */
-  }
-}
-
-/* === Equal width for Reset/Export (<=1024px, incl. 972px) === */
-@media (max-width: 1024px) {
-  .tbRight {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .tbRight .resetBtn,
-  .tbRight .exportBtn {
-    width: 100%;
-    margin: 0;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 1200px) {
-  .tbRight {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .tbRight > .resetBtn,
-  .tbRight > .exportBtn {
-    width: 100%;
-    margin: 0;
-    justify-content: center;
-  }
 }
 
 /* tiny lock icon for disabled reset buttons */
