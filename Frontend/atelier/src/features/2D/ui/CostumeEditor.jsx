@@ -912,7 +912,7 @@ export default function CostumeEditor() {
                 {/* внешний контур */}
                 {ring && (
                     <path
-                        d={facePath(ring)}
+                        d={segsToD(p.segs)}
                         fill="none"
                         stroke="#111"
                         strokeWidth={1.8 * (scale.k || 1)}
