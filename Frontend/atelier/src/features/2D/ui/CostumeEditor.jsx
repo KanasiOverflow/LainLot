@@ -939,11 +939,20 @@ export default function CostumeEditor() {
                     continue;
                 }
                 // после выбора варианта слота v и нахождения подходящей ветки files для active side:
-                const entries = [];
+                const sLower = (slot || "").toLowerCase();
+                const allowSides = (sLower === "cuff" || sLower === "sleeve");
+
+                let entries = [];
                 if (fmap.file) entries.push({ file: fmap.file, side: null, which: null });
-                if (fmap.left) entries.push({ file: fmap.left, side: "left", which: null });
-                if (fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
+                if (allowSides && fmap.left) entries.push({ file: fmap.left, side: "left", which: null });
+                if (allowSides && fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
                 if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
+
+                // 3) не создаём новые под-части, которых нет в базе (кроме hood)
+                const hasBaseFor = (side, which) => baseIdx.has([slot, side || "", which || ""].join("|"));
+                if (sLower !== "hood") {
+                    entries = entries.filter(e => hasBaseFor(e.side, e.which));
+                }
 
                 for (const e of entries) {
                     const k = [slot, e.side || "", e.which || ""].join("|");
@@ -957,12 +966,6 @@ export default function CostumeEditor() {
                     }
                 }
             }
-
-            const compiled = await loadPresetToPanels({ ...preset, sources });
-            if (!alive) return;
-            setComposedPanels(Array.isArray(compiled) ? compiled : []);
-            setSvgCache(prev => ({ ...prev, [preset.id]: Array.isArray(compiled) ? compiled : [] }));
-            setSvgMountKey(k => k + 1);
 
             // === ВАЖНО: капюшон поверх всего ===
             // Положим все куски слота 'hood' в конец, чтобы они рисовались последними
@@ -979,6 +982,12 @@ export default function CostumeEditor() {
                 sources.length = 0;
                 sources.push(...rest, ...hoodParts);
             }
+
+            const compiled = await loadPresetToPanels({ ...preset, sources });
+            if (!alive) return;
+            setComposedPanels(Array.isArray(compiled) ? compiled : []);
+            setSvgCache(prev => ({ ...prev, [preset.id]: Array.isArray(compiled) ? compiled : [] }));
+            setSvgMountKey(k => k + 1);
 
         })().catch(() => {
             if (alive)
