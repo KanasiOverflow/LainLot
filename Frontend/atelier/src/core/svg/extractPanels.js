@@ -5,7 +5,7 @@ import { parsePathD, segsFromPoints } from "../svg/parsePath.js";
 import { looksLikeBackground } from "../svg/heuristics.js";
 import { parseViewBox, parseMatrix, applyMatrixToSegs } from "../geometry/matrix.js";
 import { collectAnchors } from "../svg/anchors.js";
-import { SVG_BASE } from "../../core/variables/svgPath.js";
+import { urlForSrcFile } from "../../core/variables/svgPath.js";
 import { getBaseSources } from "../../core/variables/variants.js";
 
 /* ================== настройки ================== */
@@ -263,16 +263,6 @@ export const extractPanels = (rawSVG) => {
         anchors: collectAnchors(c.segs)
     }));
 }
-
-// рядом с loadPresetToPanels
-export const urlForSrcFile = (p) => {
-    if (!p) return "";
-    const clean = p.replace(/^\/+/, "");                 // убрали ведущие слэши
-    // если уже начинается с "2d/" — значит путь от корня public, берём его как есть
-    if (clean.startsWith("2d/")) return `/${clean}`;
-    // иначе это относительный путь (типа "Front/xxx.svg") — достраиваем от SVG_BASE
-    return `${SVG_BASE}/${clean}`;
-};
 
 // Загружает пресет: если sources[] — склеивает их в один набор панелей; если file — вернёт строку SVG (как раньше)
 export const loadPresetToPanels = async (preset) => {
