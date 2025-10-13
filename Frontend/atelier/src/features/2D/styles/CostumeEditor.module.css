@@ -61,6 +61,23 @@
 .tbCenter { grid-column: 2; justify-self: center; }
 .tbRight  { grid-column: 3; justify-self: end; }
 
+/* === Reset / Export: equal widths always === */
+.tbRight {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* две равные колонки */
+  gap: 8px;
+}
+.tbRight > .resetBtn,
+.tbRight > .exportBtn {
+  width: 100%;
+  margin: 0;                /* перекрываем margin у .exportBtn */
+  justify-content: center;
+}
+/* На очень узких — в одну колонку */
+@media (max-width: 560px) {
+  .tbRight { grid-template-columns: 1fr; }
+}
+
 .topbarHint {
   position: absolute;
   top: 56px;
@@ -287,76 +304,17 @@
 }
 .resetBtn:hover { border-color:#c7d2fe; background:#eef2ff; }
 
-.resetDetails { position: relative; display: inline-block; }
-.resetDetails > summary { list-style: none; }
-.resetDetails > summary::-webkit-details-marker { display: none; }
-
-.resetMenu {
-  position: absolute; right: 0; top: calc(100% + 8px);
-  min-width: 220px;
-  background: #fff; border: 1px solid #e6e6e6; border-radius: 12px;
-  box-shadow: 0 12px 28px rgba(0,0,0,.12);
-  padding: 6px; z-index: 20;
-}
-.resetMenu::before {
-  content:""; position:absolute; top:-6px; right:16px;
-  width:10px; height:10px; background:#fff;
-  border-left:1px solid #e6e6e6; border-top:1px solid #e6e6e6;
-  transform: rotate(45deg);
-}
-.resetList { display: flex; flex-direction: column; gap: 4px; }
-
-.resetItem {
-  position: relative;
-  display: inline-flex; align-items: center; gap: .5rem;
-  width: 100%; padding: 10px; border-radius: 8px;
-  border: 0; background: transparent; cursor: pointer;
-  white-space: nowrap; text-align: left; color:#30302e;
-}
-.resetItem:hover { background:#f5f7ff; }
-.resetSep { height:1px; background:#efefef; margin:6px 4px; }
-.resetDanger { color:#b91c1c; }
-.resetDanger:hover { background:#fff1f1; }
-
 /* Visual stopper for disabled reset actions */
-.resetItem[disabled],
-.resetItemDisabled {
-  opacity: .5;
-  filter: grayscale(100%);
-  cursor: not-allowed;
-}
-.resetItemBadge {
-  font-size: .85em;
-  opacity: .9;
-  white-space: nowrap;
-  user-select: none;
-}
-.resetItem[disabled]::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: .5rem;
-  background: repeating-linear-gradient(
-    -45deg,
-    rgba(0,0,0,.06) 0, rgba(0,0,0,.06) 4px,
-    transparent 4px, transparent 8px
-  );
-  pointer-events: none;
-}
 
 /* ===== Focus rings ===== */
 .iconBtn:focus-visible,
 .segBtn:focus-visible,
 .resetBtn:focus-visible,
-.resetItem:focus-visible,
-.historyBtn:focus-visible,
-.historyToggleBtn:focus-visible,
-.navBtn:focus-visible,
-.input:focus,
-.textarea:focus {
+.exportBtn:focus-visible,
+.btn:focus-visible,
+.pickerBtn:focus-visible {
   outline: 2px solid #c7d2fe;
   outline-offset: 2px;
-  border-radius: 8px;
 }
 
 /* ===== Export button ===== */
@@ -497,9 +455,3 @@
 }
 
 /* tiny lock icon for disabled reset buttons */
-.resetLock {
-  font-size: 12px;
-  opacity: .7;
-  margin-left: 6px;
-  line-height: 1;
-}

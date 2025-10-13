@@ -3,6 +3,27 @@ import { MANIFEST_URL } from "./svgPath";
 // Runtime-обёртка над manifest.json
 let _manifestCache = null;
 
+const FORCED_SLOTS = {
+    front: new Set(["hood", "pocket"]),
+    back: new Set(["hood"]),
+};
+
+// алиасы имён слотов (на случай разных названий в манифесте)
+const SLOT_ALIASES = {
+    cuff: "cuff",
+    sleeve: "sleeve",
+    neck: "neck",
+    belt: "belt",
+    body: "body",
+    hood: "hood",
+    pocket: "pocket"
+};
+
+export function isForcedSlot(face, slot) {
+    const f = face === "back" ? "back" : "front";
+    return FORCED_SLOTS[f].has(slot);
+}
+
 export async function loadSvgManifest() {
     if (_manifestCache) return _manifestCache;
     const res = await fetch(MANIFEST_URL, { cache: "no-store" });
@@ -17,14 +38,11 @@ export async function loadSvgManifest() {
     return _manifestCache;
 }
 
-// алиасы имён слотов (на случай разных названий в манифесте)
-const SLOT_ALIASES = {
-    cuff: "cuff",
-    sleeve: "sleeve",
-    neck: "neck",
-    belt: "belt",
-    body: "body"
-};
+export async function baseHasSlot(face, slot) {
+    const m = await loadSvgManifest();
+    const list = m?.base?.[face] || [];
+    return list.some(e => e?.slot === slot);
+}
 
 function resolveVariantList(manifest, slot) {
     const s = (slot || "").toLowerCase();
@@ -72,11 +90,20 @@ export async function getVariantsForSlot(slot) {
     return [...baseV, ...uniq];
 }
 
-// Базовые источники (все файлы из Front/Back, без подпапок)
+// Базовые источники (все файлы из front/back, без подпапок)
 export async function getBaseSources(face /* 'front'|'back' */) {
-    const m = await loadSvgManifest();
-    return (m.base?.[face] || []).slice(); // [{file, slot, side?, which?}]
+    const m = await loadSvgManifest();           // ← берём манифест
+    const f = (face === 'back') ? 'back' : 'front';
+    const src = m.base?.[f] || [];
+    // ВАЖНО: возвращаем ГЛУБОКУЮ копию объектов, чтобы не мутировать m.base[*]
+    return src.map(e => ({
+        file: e.file,
+        slot: e.slot ?? null,
+        side: e.side ?? null,
+        which: e.which ?? null
+    }));
 }
+
 
 // Вернуть путь превью базового слота для заданной стороны
 export async function getBasePreview(slot, face /* 'front' | 'back' */) {
@@ -108,7 +135,7 @@ export async function getVisibleSlotsForFace(face /* 'front' | 'back' */) {
     for (const e of (m?.base?.[f] || [])) {
         if (e?.slot) set.add(e.slot);
     }
-    // базовые превью для стороны
+    // базовые превью для стороныа
     Object.keys(m?.base?.previews?.[f] || {}).forEach(s => set.add(s));
     // варианты, у которых есть файлы на стороне
     for (const [slot, list] of Object.entries(m?.variants || {})) {
@@ -118,5 +145,10 @@ export async function getVisibleSlotsForFace(face /* 'front' | 'back' */) {
         });
         if (ok) set.add(slot);
     }
+
+    // Всегда добавляем форс-слоты (капюшон обе стороны, карман — только перед)
+    for (const s of FORCED_SLOTS[f])
+        set.add(s);
+
     return Array.from(set);
 }

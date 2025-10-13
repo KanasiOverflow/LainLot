@@ -731,6 +731,67 @@ export default function CostumeEditor() {
     const activeDetailId = (presetIdx === 0 ? "front" : "back");
     const [manifest, setManifest] = useState(null);
     const [details, setDetails] = useState({ front: { cuff: "base" }, back: { cuff: "base" } }); // пока работаем только с манжетами
+
+    // какие слоты синхронизируем между передом/спинкой
+    const shouldSyncSlot = (slot) => slot && slot.toLowerCase() !== "pocket";
+
+    // централизованный апдейтер + правила «капюшон ↔ шея»
+    const setSlotVariant = (face /* 'front'|'back' */, slot, variantId) => {
+        setDetails(prev => {
+            const other = face === "front" ? "back" : "front";
+            const curFace = { ...(prev[face] || {}) };
+            const curOther = { ...(prev[other] || {}) };
+
+            const hoodIsTurningOn = slot === "hood" && variantId && variantId !== "base";
+            const hoodIsTurningOff = slot === "hood" && (variantId === "base" || variantId == null);
+            const neckIsChanging = slot === "neck";
+
+            // Если пользователь меняет шею, а капюшон включён — капюшон отключаем автоматически
+            if (neckIsChanging) {
+                const hoodActive = (curFace.hood && curFace.hood !== "base");
+                if (hoodActive) {
+                    // сбрасываем капюшон
+                    delete curFace.hood;
+                }
+            }
+
+            // Включение капюшона: запомним текущую шею и «обнулим» её выбор
+            if (hoodIsTurningOn) {
+                // сохраняем «какой была шея» (если нет — считаем 'base')
+                prevNeckByFaceRef.current[face] = curFace.neck ?? "base";
+                // убираем выбранную шею (капюшон перекрывает её)
+                delete curFace.neck;
+            }
+
+            // Выключение капюшона: восстановим шею
+            if (hoodIsTurningOff) {
+                const prevNeck = prevNeckByFaceRef.current[face];
+                if (prevNeck) {
+                    if (prevNeck === "base") delete curFace.neck;
+                    else curFace.neck = prevNeck;
+                }
+                prevNeckByFaceRef.current[face] = null;
+            }
+
+            // Применяем текущее изменение слота
+            if (variantId === "base" || variantId == null) {
+                delete curFace[slot];
+                if (shouldSyncSlot(slot)) delete curOther[slot];
+            } else {
+                curFace[slot] = variantId;
+                if (shouldSyncSlot(slot)) curOther[slot] = variantId;
+            }
+
+            // Если пользователь менял шею — это «явный» выбор, перезапишем память,
+            // чтобы в будущем не было неожиданного восстановления старой шеи.
+            if (neckIsChanging) {
+                prevNeckByFaceRef.current[face] = curFace.neck ?? "base";
+            }
+
+            return { ...prev, [face]: curFace, [other]: curOther };
+        });
+    };
+
     const panelSlotMapRef = useRef(new Map()); // panelId -> slot
     const changeKindRef = useRef(null); // 'preset' | 'slot' | null
 
@@ -738,8 +799,224 @@ export default function CostumeEditor() {
     const lastChangedSlotRef = useRef(null); // { presetId: 'front'|'back', slot: 'cuff'|... } | null
     const restoringPresetRef = useRef(false); // true — пока восстанавливаем снапшот пресета
 
+    // сохраняем выбранную шею, когда включается капюшон, чтобы вернуть её при выключении
+    const prevNeckByFaceRef = useRef({ front: null, back: null });
+
     const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
     const savedByPresetRef = useRef({});
+
+    // единая кнопка "Сбросить всё"
+    const resetAll = useCallback(() => {
+        if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях."))
+            return;
+
+        // 1) чистим snapshots и состояния
+        savedByPresetRef.current = {};
+        setSavedByPreset({});
+        setCurvesByPanel({});
+        setFills([]);
+        setActivePanelId(panels[0]?.id ?? null);
+        setDetails({ front: {}, back: {} });
+        setMode("preview");
+
+        // 2) фиксируем «preview» как последний режим для обеих сторон
+        setPrefs(prev => {
+            const next = {
+                ...prev,
+                front: { ...(prev.front || {}), lastMode: "preview" },
+                back: { ...(prev.back || {}), lastMode: "preview" }
+            };
+            try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
+            return next;
+        });
+    }, [panels, setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId, setDetails, setMode, setPrefs]);
+
+    // панели-капюшоны
+    const hoodPanelIds = useMemo(() => {
+        return new Set(
+            panels
+                .filter(p => String(p.meta?.slot || '').toLowerCase() === 'hood')
+                .map(p => p.id)
+        );
+    }, [panels]);
+
+    // внешние кольца (силуэты) капюшона
+    const hoodRings = useMemo(() => {
+        return panels
+            .filter(p => hoodPanelIds.has(p.id))
+            .map(p => outerRingByPanel[p.id])
+            .filter(Boolean);
+    }, [panels, outerRingByPanel, hoodPanelIds]);
+
+    // ➕ ДОБАВЬТЕ: внутренние отверстия (inner rings) капюшона
+    const hoodHoles = useMemo(() => {
+        const holes = [];
+        for (const p of panels) {
+            if (!hoodPanelIds.has(p.id)) continue;
+            const rings = ringsByPanel[p.id] || [];
+            const outer = outerRingByPanel[p.id];
+            for (const r of rings) {
+                if (!outer || r !== outer) holes.push(r);
+            }
+        }
+        return holes;
+    }, [panels, ringsByPanel, outerRingByPanel, hoodPanelIds]);
+
+    // Рендер одной панели
+    const renderPanel = (p) => {
+        const faces = facesByPanel[p.id] || [];
+        const ring = outerRingByPanel[p.id];
+        const isActive = activePanel?.id === p.id;
+        const clickableFaces = faces.length ? faces : (ring ? [ring] : []);
+        const dimInactive = mode !== "preview" && !isActive;
+
+        return (
+            <g key={p.id} className={dimInactive ? styles.panelDimmed : undefined}>
+                {/* выбор детали (не мешаем заливке) */}
+                {ring && mode !== "preview" && mode !== "paint" && mode !== "deleteFill" && (
+                    <path
+                        d={facePath(ring)}
+                        fill="transparent"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => onPanelActivate(p.id)}
+                    />
+                )}
+
+                {/* грани для покраски / очистки */}
+                {clickableFaces.map(poly => {
+                    const fk = faceKey(poly);
+                    const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
+                    const hasFill = fill !== "none";
+                    const isHover = !!hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk;
+                    const canHit = mode === "paint" || mode === "deleteFill";
+
+                    return (
+                        <g key={fk}>
+                            <path
+                                d={facePath(poly)}
+                                fill={hasFill ? fill : (mode === "paint" && isHover ? "#9ca3af" : "transparent")}
+                                fillOpacity={hasFill ? 0.9 : (mode === "paint" && isHover ? 0.35 : 0.001)}
+                                stroke="none"
+                                style={{ pointerEvents: canHit ? 'all' : 'none', cursor: canHit ? 'crosshair' : 'default' }}
+                                onMouseEnter={() => (hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly))}
+                                onMouseLeave={() => (hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly))}
+                                onClick={() => (hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly))}
+                            />
+                            {hasFill && mode === "deleteFill" && isHover && (
+                                <path d={facePath(poly)} fill="#000" fillOpacity={0.18} style={{ pointerEvents: "none" }} />
+                            )}
+                        </g>
+                    );
+                })}
+
+                {/* внешний контур */}
+                {ring && (
+                    <path
+                        d={facePath(ring)}
+                        fill="none"
+                        stroke="#111"
+                        strokeWidth={1.8 * (scale.k || 1)}
+                        style={{ pointerEvents: "none" }}
+                    />
+                )}
+
+                {/* пользовательские линии */}
+                {(curvesByPanel[p.id] || []).map(c => {
+                    const merged = mergedAnchorsOf(p);
+                    const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
+                    const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.x, y: c.y } : null);
+                    if (!a || !b) return null;
+
+                    const d = c.type === "cubic"
+                        ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
+                        : c.d;
+
+                    const key = `${p.id}:${c.id}`;
+                    const isHover = hoverCurveKey === key;
+                    const isSelected = selectedCurveKey === key;
+                    const isClicked = clickedCurveKey === key;
+
+                    const cls = clsx(
+                        styles.userCurve,
+                        mode === "preview" && styles.userCurvePreview,
+                        mode === "delete" && isHover && styles.userCurveDeleteHover,
+                        isSelected && styles.userCurveSelected,
+                        isClicked && styles.userCurveClicked
+                    );
+
+                    return (
+                        <path
+                            key={c.id}
+                            d={d}
+                            className={cls}
+                            onMouseEnter={() => { if (isActive) onCurveEnter(p.id, c.id); }}
+                            onMouseLeave={() => {
+                                if (mode === "insert") setInsertPreview(prev => (prev && prev.curveId === c.id ? null : prev));
+                                onCurveLeave(p.id, c.id);
+                            }}
+                            onMouseMove={(e) => { /* твой существующий onMouseMove код */ }}
+                            onClick={(e) => { /* твой существующий onClick код */ }}
+                            style={{ cursor: (mode === 'preview' || !isActive) ? 'default' : (mode === 'insert' ? 'copy' : 'pointer') }}
+                            pointerEvents={(mode === "preview" || !isActive || mode === "deleteVertex") ? "none" : "auto"}
+                            strokeLinecap="round"
+                        />
+                    );
+                })}
+
+                {/* превью точки вставки */}
+                {isActive && mode === "insert" && insertPreview && insertPreview.panelId === p.id && (
+                    <circle
+                        cx={insertPreview.x}
+                        cy={insertPreview.y}
+                        r={4}
+                        fill={insertPreview.allowed ? "#22c55e" : "#ef4444"}
+                        stroke={insertPreview.allowed ? "#166534" : "#991b1b"}
+                        strokeWidth={1.5}
+                        style={{ pointerEvents: "none" }}
+                    />
+                )}
+
+                {/* базовые + доп. якоря */}
+                {isActive && (mode === "add" || mode === "delete" || mode === "insert") && (() => {
+                    const base = p.anchors || [];
+                    const extras = extraAnchorsByPanel[p.id] || [];
+                    const merged = [...base, ...extras];
+                    return merged.map((pt, mi) => (
+                        <circle
+                            key={`m-${mi}`}
+                            cx={pt.x}
+                            cy={pt.y}
+                            r={3.5}
+                            className={clsx(
+                                styles.anchor,
+                                styles.anchorClickable,
+                                mi === hoverAnchorIdx && styles.anchorHovered,
+                                mi === addBuffer && styles.anchorSelectedA
+                            )}
+                            onClick={(e) => { e.stopPropagation(); onAnchorClickAddMode(mi); }}
+                            onMouseEnter={() => setHoverAnchorIdx(mi)}
+                            onMouseLeave={() => setHoverAnchorIdx(null)}
+                        />
+                    ));
+                })()}
+
+                {/* ручные вершины — для удаления */}
+                {isActive && mode === "deleteVertex" && (() => {
+                    const extras = (extraAnchorsByPanel[p.id] || []).filter(ex => ex?.id?.includes("@m"));
+                    return extras.map(ex => (
+                        <circle
+                            key={ex.id}
+                            cx={ex.x}
+                            cy={ex.y}
+                            r={4}
+                            className={styles.anchorManualDelete}
+                            onClick={(e) => { e.stopPropagation(); eraseManualAnchor(p.id, ex); }}
+                        />
+                    ));
+                })()}
+            </g>
+        );
+    };
 
     useEffect(() => {
         try { localStorage.setItem("ce.activeFace", presetIdx === 0 ? "front" : "back"); } catch { }
@@ -750,19 +1027,29 @@ export default function CostumeEditor() {
     useEffect(() => {
         const prev = detailsRef.current;
         const cur = details;
-        let changed = null;
+
+        // собираем все изменения
+        const changes = [];
         for (const face of ['front', 'back']) {
             const p = prev[face] || {}, c = cur[face] || {};
             for (const slot of Object.keys({ ...p, ...c })) {
-                if (p[slot] !== c[slot]) changed = { presetId: face, slot };
+                if (p[slot] !== c[slot]) {
+                    changes.push({ presetId: face, slot });
+                }
             }
         }
-        if (changed) {
+
+        if (changes.length) {
             changeKindRef.current = 'slot';
-            lastChangedSlotRef.current = changed;
+            // приоритет — для текущей активной стороны (чтобы чистились заливки/линии именно там)
+            const curFace = currentPresetIdRef.current;
+            const preferred = changes.find(ch => ch.presetId === curFace) || changes[0];
+            lastChangedSlotRef.current = preferred;
         }
+
         detailsRef.current = cur;
     }, [details]);
+
 
     useEffect(() => {
         // на время восстановления/переключения пресета — ничего не сохраняем
@@ -797,24 +1084,98 @@ export default function CostumeEditor() {
             if (!preset) return;
             setIsLoadingPreset(true);
 
-            const baseSources = await getBaseSources(preset.id);
-            const cuffVariantId = details[preset.id]?.cuff || "base";
-            const sources = baseSources.map(src => {
-                if (src.slot !== "cuff") return src;
-                if (cuffVariantId === "base") return src;
-                const v = manifest?.variants?.cuff?.find(x => x.id === cuffVariantId);
-                if (!v) return src;
-                const map = v.files?.[preset.id] || {};
-                if (src.side === "left" && map.left) return { ...src, file: map.left };
-                if (src.side === "right" && map.right) return { ...src, file: map.right };
-                return src;
-            });
+            // ВАЖНО: делаем глубокую копию, чтобы подмены не трогали manifest.base[*]
+            let baseSources = await getBaseSources(preset.id);
+            baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({
+                file: e.file,
+                slot: e.slot ?? null,
+                side: e.side ?? null,
+                which: e.which ?? null
+            }));
+
+            // индекс базовых частей по (slot,side,which)
+            const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
+            const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
+
+            // находим, какие слоты у нас вообще выбраны на этой стороне (details[preset.id])
+            const chosen = details[preset.id] || {};
+            const hoodActive = !!(chosen.hood && chosen.hood !== "base");
+
+            // Если капюшон активен — полностью убираем из базы любые части слота 'neck'
+            // (иначе базовая шея будет торчать под капюшоном)
+            if (hoodActive) {
+                baseSources = baseSources.filter(s => (s.slot || "").toLowerCase() !== "neck");
+            }
+
+            // начнём с копии базы
+            const sources = baseSources.slice();
+
+            // для каждого выбранного слота подставляем/добавляем файлы из варианта
+            for (const [slot, variantId] of Object.entries(chosen)) {
+                if (!variantId || variantId === "base") continue; // база: ничего не меняем
+                const list = manifest?.variants?.[slot] || [];
+                const v = list.find(x => x.id === variantId);
+                if (!v) continue;
+
+                const fmap = v.files?.[preset.id] || {}; // files для текущей стороны
+
+                // Если на этой стороне у варианта нет ни одного файла — пропускаем,
+                // чтобы не "очищать" базу и не ломать канву
+                if (!fmap || Object.keys(fmap).length === 0) {
+                    // console.warn(`[variants] empty files for ${slot}/${variantId} on ${preset.id}`);
+                    continue;
+                }
+                // после выбора варианта слота v и нахождения подходящей ветки files для active side:
+                const sLower = (slot || "").toLowerCase();
+                const allowSides = (sLower === "cuff" || sLower === "sleeve");
+
+                let entries = [];
+                if (fmap.file) entries.push({ file: fmap.file, side: null, which: null });
+                if (allowSides && fmap.left) entries.push({ file: fmap.left, side: "left", which: null });
+                if (allowSides && fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
+                if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
+
+                // 3) не создаём новые под-части, которых нет в базе (кроме hood)
+                const hasBaseFor = (side, which) => baseIdx.has([slot, side || "", which || ""].join("|"));
+                if (sLower !== "hood") {
+                    entries = entries.filter(e => hasBaseFor(e.side, e.which));
+                }
+
+                for (const e of entries) {
+                    const k = [slot, e.side || "", e.which || ""].join("|");
+                    const baseHit = baseIdx.get(k);
+                    if (baseHit) {
+                        // заменяем файл в уже существующем базовом источнике
+                        baseHit.file = e.file;
+                    } else {
+                        // базы нет — добавляем новый кусок
+                        sources.push({ file: e.file, slot, side: e.side || null, which: e.which || null });
+                    }
+                }
+            }
+
+            // === ВАЖНО: капюшон поверх всего ===
+            // Положим все куски слота 'hood' в конец, чтобы они рисовались последними
+            // (и визуально перекрывали остальные детали)
+            if (sources.length) {
+                const hoodParts = [];
+                const rest = [];
+                for (const src of sources) {
+                    if ((src.slot || "").toLowerCase() === "hood") hoodParts.push(src);
+                    else rest.push(src);
+                }
+                // если хотим ещё и шнурки/подкладку поверх остальных частей капюшона — можно тоньше сортировать
+                // но базово достаточно просто положить hoodParts в конец
+                sources.length = 0;
+                sources.push(...rest, ...hoodParts);
+            }
 
             const compiled = await loadPresetToPanels({ ...preset, sources });
             if (!alive) return;
             setComposedPanels(Array.isArray(compiled) ? compiled : []);
             setSvgCache(prev => ({ ...prev, [preset.id]: Array.isArray(compiled) ? compiled : [] }));
             setSvgMountKey(k => k + 1);
+
         })().catch(() => {
             if (alive)
                 setComposedPanels([]);
@@ -823,7 +1184,7 @@ export default function CostumeEditor() {
                 setIsLoadingPreset(false);
         });
         return () => { alive = false; };
-    }, [presetIdx, manifest, details.front?.cuff, details.back?.cuff]);
+    }, [presetIdx, manifest, details]);
 
     useEffect(() => {
         const target = PRESETS[presetIdx];
@@ -1332,121 +1693,16 @@ export default function CostumeEditor() {
                             >Спинка</button>
                         </div>
 
-                        {/* Сброс (dropdown) */}
+                        {/* Сброс — одна кнопка */}
                         <div className={styles.tbRight}>
-                            <details className={styles.resetDetails}>
-                                <summary className={styles.resetBtn}>
-                                    Сброс <span aria-hidden>▾</span>
-                                </summary>
-
-                                <div className={styles.resetMenu}>
-                                    <div className={styles.resetList}>
-                                        <button
-                                            className={clsx(styles.resetItem, activeId !== "front" && styles.resetItemDisabled)}
-                                            disabled={activeId !== "front"}
-                                            aria-disabled={activeId !== "front"}
-                                            title={activeId !== "front" ? "Откройте «Перед», чтобы сбросить его" : undefined}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                const id = "front";
-
-                                                if (currentPresetIdRef.current !== id) return; // на всякий случай
-                                                // аккуратно удалить снапшот только этой стороны (и из ref, и из state)
-                                                { const ref = { ...savedByPresetRef.current }; delete ref[id]; savedByPresetRef.current = ref; }
-                                                setSavedByPreset(prev => { const cp = { ...prev }; delete cp[id]; return cp; });
-
-                                                // видимые панели текущей стороны
-                                                const visible = new Set(panels.map(p => p.id));
-                                                // чистим только линии этой стороны
-                                                setCurvesByPanel(prev => {
-                                                    const next = { ...prev };
-                                                    for (const pid of Object.keys(next)) if (visible.has(pid)) delete next[pid];
-                                                    return next;
-                                                });
-                                                // чистим только заливки этой стороны
-                                                setFills(fs => fs.filter(f => !visible.has(f.panelId)));
-                                                setActivePanelId(panels[0]?.id ?? null);
-                                                // сбрасываем ВАРИАНТЫ только этой стороны
-                                                setDetails(d => ({ ...d, [id]: { cuff: "base" } }));
-                                                // уходим в превью
-                                                setMode("preview");
-                                                // фиксируем превью как последний режим для этой стороны (и в LS)
-                                                setPrefs(prev => {
-                                                    const next = { ...prev, [id]: { ...(prev[id] || {}), lastMode: "preview" } };
-                                                    try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
-                                                    return next;
-                                                });
-                                            }}
-                                        ><span className={styles.resetItemText}>Сбросить перед</span>
-                                            {activeId !== "front" && <span className={styles.resetLock} aria-hidden>🔒</span>}
-                                        </button>
-
-                                        <button
-                                            className={clsx(styles.resetItem, activeId !== "back" && styles.resetItemDisabled)}
-                                            disabled={activeId !== "back"}
-                                            aria-disabled={activeId !== "back"}
-                                            title={activeId !== "back" ? "Откройте «Спинку», чтобы сбросить её" : undefined}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                const id = "back";
-
-                                                if (currentPresetIdRef.current !== id) return;
-                                                { const ref = { ...savedByPresetRef.current }; delete ref[id]; savedByPresetRef.current = ref; }
-                                                setSavedByPreset(prev => { const cp = { ...prev }; delete cp[id]; return cp; });
-
-                                                const visible = new Set(panels.map(p => p.id));
-                                                setCurvesByPanel(prev => {
-                                                    const next = { ...prev };
-                                                    for (const pid of Object.keys(next)) if (visible.has(pid)) delete next[pid];
-                                                    return next;
-                                                });
-                                                setFills(fs => fs.filter(f => !visible.has(f.panelId)));
-                                                setActivePanelId(panels[0]?.id ?? null);
-                                                setDetails(d => ({ ...d, [id]: { cuff: "base" } }));
-                                                setMode("preview");
-                                                setPrefs(prev => {
-                                                    const next = { ...prev, [id]: { ...(prev[id] || {}), lastMode: "preview" } };
-                                                    try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
-                                                    return next;
-                                                });
-                                            }}
-                                        ><span className={styles.resetItemText}>Сбросить спинку</span>
-                                            {activeId !== "back" && <span className={styles.resetLock} aria-hidden>🔒</span>}
-                                        </button>
-
-                                        <div className={styles.resetSep} />
-
-                                        <button
-                                            className={clsx(styles.resetItem, styles.resetDanger)}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях."))
-                                                    return;
-
-                                                // 1) полностью чистим snapshots и ref
-                                                savedByPresetRef.current = {};
-                                                setSavedByPreset({});
-                                                setCurvesByPanel({});
-                                                setFills([]);
-                                                setActivePanelId(panels[0]?.id ?? null);
-                                                setDetails({ front: { cuff: "base" }, back: { cuff: "base" } });
-                                                setMode("preview");
-
-                                                // 2) фиксируем «preview» как последний режим для обеих сторон
-                                                setPrefs(prev => {
-                                                    const next = {
-                                                        ...prev,
-                                                        front: { ...(prev.front || {}), lastMode: "preview" },
-                                                        back: { ...(prev.back || {}), lastMode: "preview" }
-                                                    };
-                                                    try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
-                                                    return next;
-                                                });
-                                            }}
-                                        >⚠️ Сбросить всё</button>
-                                    </div>
-                                </div>
-                            </details>
+                            <button
+                                className={styles.resetBtn}
+                                onClick={resetAll}
+                                aria-label="Сбросить всё"
+                                title="Сбросить всё"
+                            >
+                                ⚠️ Сбросить всё
+                            </button>
 
                             <button
                                 className={styles.exportBtn}
@@ -1513,6 +1769,22 @@ export default function CostumeEditor() {
                                         shapeRendering="crispEdges"
                                     />
                                 </pattern>
+
+                                {/* Маска, которая спрячeт всё под капюшоном */}
+                                <mask id={`under-hood-mask-${svgMountKey}`} maskUnits="userSpaceOnUse">
+                                    {/* всё показываем по умолчанию */}
+                                    <rect
+                                        x={gridDef.b.x}
+                                        y={gridDef.b.y}
+                                        width={gridDef.b.w}
+                                        height={gridDef.b.h}
+                                        fill="#fff"
+                                    />
+                                    {/* а область капюшона вычёркиваем (чёрным) */}
+                                    {hoodRings.map((poly, i) => (
+                                        <path key={i} d={facePath(poly)} fill="#000" />
+                                    ))}
+                                </mask>
                             </defs>
                             <rect
                                 x={gridDef.b.x}
@@ -1522,209 +1794,14 @@ export default function CostumeEditor() {
                                 fill={`url(#grid-${svgMountKey})`} pointerEvents="none"
                             />
 
-                            {/* FACES + OUTLINE + USER CURVES + ANCHORS */}
-                            {panels.map(p => {
-                                const faces = facesByPanel[p.id] || [];
-                                const ring = outerRingByPanel[p.id];
-                                const isActive = activePanel?.id === p.id;
-                                const clickableFaces = faces.length ? faces : (ring ? [ring] : []);
-                                const dimInactive = mode !== "preview" && !isActive;
+                            {/* 1) Все детали, КРОМЕ капюшона — под маской */}
+                            <g mask={`url(#under-hood-mask-${svgMountKey})`}>
+                                {panels.filter(p => !hoodPanelIds.has(p.id)).map(renderPanel)}
+                            </g>
 
-                                return (
-                                    <g key={p.id} className={dimInactive ? styles.panelDimmed : undefined}>
-                                        {/* выбор детали (не мешаем заливке) */}
-                                        {ring && mode !== "preview" && mode !== "paint" && mode !== "deleteFill" && (
-                                            <path
-                                                d={facePath(ring)}
-                                                fill="transparent"
-                                                style={{ cursor: "pointer" }}
-                                                onClick={() => onPanelActivate(p.id)}
-                                            />
-                                        )}
+                            {/* 2) Капюшон — поверх, без «белых ластиков» */}
+                            {panels.filter(p => hoodPanelIds.has(p.id)).map(renderPanel)}
 
-                                        {/* грани для покраски / очистки */}
-                                        {clickableFaces.map(poly => {
-                                            const fk = faceKey(poly);
-                                            const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
-                                            const hasFill = fill !== "none";
-                                            const isHover = !!hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk;
-                                            const canHit = mode === "paint" || mode === "deleteFill";
-
-                                            return (
-                                                <g key={fk}>
-                                                    <path
-                                                        d={facePath(poly)}
-                                                        fill={hasFill ? fill : (mode === "paint" && isHover ? "#9ca3af" : "transparent")}
-                                                        fillOpacity={hasFill ? 0.9 : (mode === "paint" && isHover ? 0.35 : 0.001)}
-                                                        stroke="none"
-                                                        style={{ pointerEvents: canHit ? 'all' : 'none', cursor: canHit ? 'crosshair' : 'default' }}
-                                                        onMouseEnter={() => (hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly))}
-                                                        onMouseLeave={() => (hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly))}
-                                                        onClick={() => (hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly))}
-                                                    />
-                                                    {hasFill && mode === "deleteFill" && isHover && (
-                                                        <path d={facePath(poly)} fill="#000" fillOpacity={0.18} style={{ pointerEvents: "none" }} />
-                                                    )}
-                                                </g>
-                                            );
-                                        })}
-
-                                        {/* внешний контур */}
-                                        {ring && (
-                                            <path
-                                                d={facePath(ring)}
-                                                fill="none"
-                                                stroke="#111"
-                                                strokeWidth={1.8 * (scale.k || 1)}
-                                                style={{ pointerEvents: "none" }}
-                                            />
-                                        )}
-
-                                        {/* пользовательские линии */}
-                                        {(curvesByPanel[p.id] || []).map(c => {
-                                            const merged = mergedAnchorsOf(p);
-                                            const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
-                                            const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
-                                            if (!a || !b) return null;
-
-                                            const d = c.type === "cubic"
-                                                ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
-                                                : c.d;
-
-                                            const key = `${p.id}:${c.id}`;
-                                            const isHover = hoverCurveKey === key;
-                                            const isSelected = selectedCurveKey === key;
-                                            const isClicked = clickedCurveKey === key;
-
-                                            const cls = clsx(
-                                                styles.userCurve,
-                                                mode === "preview" && styles.userCurvePreview,
-                                                mode === "delete" && isHover && styles.userCurveDeleteHover,
-                                                isSelected && styles.userCurveSelected,
-                                                isClicked && styles.userCurveClicked
-                                            );
-
-                                            return (
-                                                <path
-                                                    key={c.id}
-                                                    d={d}
-                                                    className={cls}
-                                                    onMouseEnter={() => { if (isActive) onCurveEnter(p.id, c.id); }}
-                                                    onMouseLeave={() => {
-                                                        if (mode === "insert") setInsertPreview(prev => (prev && prev.curveId === c.id ? null : prev));
-                                                        onCurveLeave(p.id, c.id);
-                                                    }}
-                                                    onMouseMove={(e) => {
-                                                        if (!isActive || mode !== "insert")
-                                                            return;
-                                                        const svg = svgRef.current; if (!svg)
-                                                            return;
-
-                                                        const p2 = svg.createSVGPoint(); p2.x = e.clientX; p2.y = e.clientY;
-                                                        const loc = p2.matrixTransform(svg.getScreenCTM().inverse());
-                                                        const hit = closestPointOnCurve(p, c, loc);
-
-                                                        if (!hit)
-                                                            return;
-
-                                                        const allowed = !tooCloseToExistingAnchors(p, c, { x: hit.x, y: hit.y });
-                                                        setInsertPreview({ panelId: p.id, curveId: c.id, x: hit.x, y: hit.y, t: hit.t, allowed });
-                                                    }}
-                                                    onClick={(e) => {
-                                                        if (!isActive)
-                                                            return;
-
-                                                        if (mode === "insert") {
-                                                            if (!selectedCurveKey) setSelectedCurveKey(`${p.id}:${c.id}`);
-                                                            e.stopPropagation();
-                                                            if (!insertPreview || insertPreview.curveId !== c.id) return;
-                                                            if (!insertPreview.allowed) { setToast({ text: "Слишком близко к существующей вершине" }); return; }
-                                                            applyCurvesChange(prev => {
-                                                                const list = [...(prev[p.id] || [])];
-                                                                const i = list.findIndex(x => x.id === c.id);
-                                                                if (i < 0) return prev;
-                                                                const cur = list[i];
-                                                                const stops = Array.isArray(cur.extraStops) ? [...cur.extraStops] : [];
-                                                                stops.push(Math.max(0, Math.min(1, insertPreview.t)));
-                                                                const uniq = Array.from(new Set(stops)).sort((a, b) => a - b);
-                                                                list[i] = { ...cur, extraStops: uniq };
-                                                                return { ...prev, [p.id]: list };
-                                                            });
-                                                            setInsertPreview(null);
-                                                            return;
-                                                        }
-                                                        onCurveClick(p.id, c.id, e);
-                                                    }}
-                                                    style={{
-                                                        cursor:
-                                                            (mode === 'preview' || !isActive)
-                                                                ? 'default'
-                                                                : (mode === 'insert'
-                                                                    ? ((insertPreview && insertPreview.curveId === c.id && insertPreview.allowed === false)
-                                                                        ? 'not-allowed'
-                                                                        : 'copy')
-                                                                    : 'pointer')
-                                                    }}
-                                                    pointerEvents={(mode === "preview" || !isActive || mode === "deleteVertex") ? "none" : "auto"}
-                                                    strokeLinecap="round"
-                                                />
-                                            );
-                                        })}
-
-                                        {/* превью точки вставки */}
-                                        {isActive && mode === "insert" && insertPreview && insertPreview.panelId === p.id && (
-                                            <circle
-                                                cx={insertPreview.x}
-                                                cy={insertPreview.y}
-                                                r={4}
-                                                fill={insertPreview.allowed ? "#22c55e" : "#ef4444"}
-                                                stroke={insertPreview.allowed ? "#166534" : "#991b1b"}
-                                                strokeWidth={1.5}
-                                                style={{ pointerEvents: "none" }}
-                                            />
-                                        )}
-
-                                        {/* базовые + доп. якоря */}
-                                        {isActive && (mode === "add" || mode === "delete" || mode === "insert") && (() => {
-                                            const base = p.anchors || [];
-                                            const extras = extraAnchorsByPanel[p.id] || [];
-                                            const merged = [...base, ...extras];
-                                            return merged.map((pt, mi) => (
-                                                <circle
-                                                    key={`m-${mi}`}
-                                                    cx={pt.x}
-                                                    cy={pt.y}
-                                                    r={3.5}
-                                                    className={clsx(
-                                                        styles.anchor,
-                                                        styles.anchorClickable,
-                                                        mi === hoverAnchorIdx && styles.anchorHovered,
-                                                        mi === addBuffer && styles.anchorSelectedA
-                                                    )}
-                                                    onClick={(e) => { e.stopPropagation(); onAnchorClickAddMode(mi); }}
-                                                    onMouseEnter={() => setHoverAnchorIdx(mi)}
-                                                    onMouseLeave={() => setHoverAnchorIdx(null)}
-                                                />
-                                            ));
-                                        })()}
-
-                                        {/* ручные вершины — для удаления */}
-                                        {isActive && mode === "deleteVertex" && (() => {
-                                            const extras = (extraAnchorsByPanel[p.id] || []).filter(ex => ex?.id?.includes("@m"));
-                                            return extras.map(ex => (
-                                                <circle
-                                                    key={ex.id}
-                                                    cx={ex.x}
-                                                    cy={ex.y}
-                                                    r={4}
-                                                    className={styles.anchorManualDelete}
-                                                    onClick={(e) => { e.stopPropagation(); eraseManualAnchor(p.id, ex); }}
-                                                />
-                                            ));
-                                        })()}
-                                    </g>
-                                );
-                            })}
                         </svg>
                     </div>
 
@@ -1773,6 +1850,7 @@ export default function CostumeEditor() {
                             details={details}
                             setDetails={setDetails}
                             activeDetailId={activeDetailId}
+                            setSlotVariant={setSlotVariant}
                         />
                     )
                 }

@@ -25,7 +25,9 @@ export default function SidebarEditor(props) {
         // история
         historyItems, historyIndex, historyUndo, historyRedo, canUndo, canRedo,
 
-        details, setDetails, activeDetailId
+        details, setDetails, activeDetailId,
+
+        setSlotVariant
     } = props;
 
     // какие слоты доступны на текущей стороне
@@ -254,7 +256,8 @@ export default function SidebarEditor(props) {
                             { slot: "neck", title: "Шея" },
                             { slot: "belt", title: "Пояс" },
                             { slot: "body", title: "Тело" },
-                            // можешь добавлять: { slot: "hood", title: "Капюшон" }, { slot: "pocket", title: "Карман" }, ...
+                            { slot: "hood", title: "Капюшон" },
+                            { slot: "pocket", title: "Карман" }
                         ]
                             .filter(sec => visibleSlots.has(sec.slot)) // ← показываем только те, что реально есть на стороне
                             .map(sec => (
@@ -264,10 +267,7 @@ export default function SidebarEditor(props) {
                                         slot={sec.slot}
                                         face={activeDetailId}
                                         value={details[activeDetailId]?.[sec.slot] || "base"}
-                                        onChange={(id) => setDetails(prev => ({
-                                            ...prev,
-                                            [activeDetailId]: { ...(prev[activeDetailId] || {}), [sec.slot]: id }
-                                        }))}
+                                        onChange={(id) => setSlotVariant(activeDetailId, sec.slot, id)}
                                     />
                                 </div>
                             ))}

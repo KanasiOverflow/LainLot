@@ -32,7 +32,7 @@ const VAR_DIR = await firstExisting(
     path.join(HOODIE, "Variants"),
 );
 
-const SLOT_ORDER = ["body", "belt", "sleeve", "cuff", "neck"]; // для сортировки вывода
+const SLOT_ORDER = ["body", "belt", "sleeve", "cuff", "neck", "hood", "pocket"]; // для сортировки вывода
 
 function toUnix(p) { return p.split(path.sep).join("/"); }
 function urlOf(absPath) {
@@ -48,6 +48,8 @@ function detectBaseFileMeta(filename) {
     else if (f.includes("belt")) meta.slot = "belt";
     else if (f.includes("neck")) meta.slot = "neck";
     else if (f.includes("body")) meta.slot = "body";
+    else if (f.includes("hood")) meta.slot = "hood";
+    else if (f.includes("pocket")) meta.slot = "pocket";
     if (f.includes("left")) meta.side = "left";
     if (f.includes("right")) meta.side = "right";
     if (f.includes("internal")) meta.which = "inner";
