@@ -12,10 +12,8 @@ import {
 } from "../../../core/svg/polylineOps.js";
 import { splitByIntersections } from "../../../core/geometry/intersections.js";
 import { buildFacesFromSegments, pointInAnyFace } from "../../../core/svg/buildFaces.js";
-import { extractPanels } from "../../../core/svg/extractPanels.js";
+import { loadPresetToPanels, composePanelsForSide } from "../../../core/svg/extractPanels.js";
 import { makeUserCurveBetween } from "../../../core/svg/curves.js";
-import { applyMatrixToSegs } from "../../../core/geometry/matrix.js";
-import { collectAnchors } from "../../../core/svg/anchors.js";
 import { useHistory } from "../../../shared/hooks/useHistory.jsx";
 import { downloadText } from "../../../core/export/export.js";
 import { buildCombinedSVG } from "../../../core/export/buildCombinedSVG.js";
@@ -26,8 +24,7 @@ import BodyParams from "./BodyParams.jsx";
 import OrderForm from "./OrderForm.jsx";
 
 import { PRESETS } from "../../../core/variables/presets.js";
-import { SVG_BASE, MANIFEST_URL } from "../../../core/variables/svgPath.js";
-import { getBaseSources, getVariantsForSlot, loadSvgManifest } from "../../../core/variables/variants.js";
+import { getBaseSources, loadSvgManifest } from "../../../core/variables/variants.js";
 
 /* ================== компонент ================== */
 export default function CostumeEditor() {
@@ -96,121 +93,13 @@ export default function CostumeEditor() {
     const [waveLenPx, setWaveLenPx] = useState(36);
     const [paletteOpen, setPaletteOpen] = useState(false);
     const paletteRef = useRef(null);
-    const translateScaleMatrix = (dx = 0, dy = 0, s = 1) => ({ a: s, b: 0, c: 0, d: s, e: dx, f: dy });
+
 
     const dismissTopbarHint = useCallback(() => {
         if (!showTopbarHint) return;
         setShowTopbarHint(false);
         try { localStorage.setItem("ce.topbarHint.v1", "1"); } catch (e) { }
     }, [showTopbarHint]);
-
-    // рядом с loadPresetToPanels
-    const urlForSrcFile = (p) => {
-        if (!p) return "";
-        const clean = p.replace(/^\/+/, "");                 // убрали ведущие слэши
-        // если уже начинается с "2d/" — значит путь от корня public, берём его как есть
-        if (clean.startsWith("2d/")) return `/${clean}`;
-        // иначе это относительный путь (типа "Front/xxx.svg") — достраиваем от SVG_BASE
-        return `${SVG_BASE}/${clean}`;
-    };
-
-    // Загружает пресет: если sources[] — склеивает их в один набор панелей; если file — вернёт строку SVG (как раньше)
-    const loadPresetToPanels = async (preset) => {
-        if (Array.isArray(preset.sources) && preset.sources.length) {
-            const partsAll = [];
-            for (let i = 0; i < preset.sources.length; i++) {
-                const src = preset.sources[i];
-                const fileResolved = src.file; // (или твой resolveSourceFile, если используешь)
-                const url = urlForSrcFile(fileResolved);
-                const txt = await fetch(url).then(r => r.text())
-                const parts = extractPanels(txt); // парсим в панели (как обычно)
-                const M = translateScaleMatrix(src.dx || 0, src.dy || 0, src.scale || 1);
-
-                // детерминированный префикс по слоту/стороне/варианту:
-                const prefix = (src.idPrefix ||
-                    // включаем ИД пресета (front/back), чтобы у спинки и переда НЕ совпадали panelId
-                    [String(preset?.id || 'part'), src.slot || 'part', src.side || 'both', src.which || 'main'].join('_'))
-                    .toLowerCase();
-
-                let localIdx = 0;
-                for (const p of parts) {
-                    const segsT = applyMatrixToSegs(p.segs, M);
-                    partsAll.push({
-                        // стаб. id: НЕ зависит от внутренних id в svg-файле
-                        id: `${prefix}__${localIdx++}`,
-                        segs: segsT,
-                        anchors: collectAnchors(segsT),
-                        meta: { slot: src.slot || null, side: src.side || null, which: src.which || null }
-                    });
-                }
-            }
-            return partsAll;
-        }
-
-        console.warn('Preset without "sources" is not supported anymore:', preset);
-        return [];
-    };
-
-    const composePanelsForSide = async (sideId) => {
-        // 1) база
-        let baseSources = await getBaseSources(sideId);
-        baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({
-            file: e.file, slot: e.slot ?? null, side: e.side ?? null, which: e.which ?? null
-        }));
-        const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
-        const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
-
-        const chosen = (details[sideId] || {});
-        const hoodActive = !!(chosen.hood && chosen.hood !== "base");
-        if (hoodActive) {
-            baseSources = baseSources.filter(s => (s.slot || "").toLowerCase() !== "neck");
-        }
-
-        const sources = baseSources.slice();
-
-        // 2) применяем варианты (ровно как в useEffect)
-        for (const [slot, variantId] of Object.entries(chosen)) {
-            if (!variantId || variantId === "base") continue;
-            const list = manifest?.variants?.[slot] || [];
-            const v = list.find(x => x.id === variantId);
-            if (!v) continue;
-
-            const fmap = v.files?.[sideId] || {};
-            if (!fmap || Object.keys(fmap).length === 0) continue;
-
-            const sLower = (slot || "").toLowerCase();
-            const allowSides = (sLower === "cuff" || sLower === "sleeve");
-
-            let entries = [];
-            if (fmap.file) entries.push({ file: fmap.file, side: null, which: null });
-            if (allowSides && fmap.left) entries.push({ file: fmap.left, side: "left", which: null });
-            if (allowSides && fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
-            if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
-
-            const hasBaseFor = (side, which) => baseIdx.has([slot, side || "", which || ""].join("|"));
-            if (sLower !== "hood") entries = entries.filter(e => hasBaseFor(e.side, e.which));
-
-            for (const e of entries) {
-                const k = [slot, e.side || "", e.which || ""].join("|");
-                const baseHit = baseIdx.get(k);
-                if (baseHit) baseHit.file = e.file;
-                else sources.push({ file: e.file, slot, side: e.side || null, which: e.which || null });
-            }
-        }
-
-        // 3) капюшон — в конец (перекрывает всё)
-        if (sources.length) {
-            const hoodParts = [], rest = [];
-            for (const src of sources) {
-                if ((src.slot || "").toLowerCase() === "hood") hoodParts.push(src);
-                else rest.push(src);
-            }
-            sources.length = 0; sources.push(...rest, ...hoodParts);
-        }
-
-        // 4) собрать панели с тем же загрузчиком
-        return await loadPresetToPanels({ id: sideId, sources });
-    };
 
     // --- PRESETS: кнопки/клавиши
     const prevPreset = () => setPresetIdx(i => (i - 1 + PRESETS.length) % PRESETS.length);
