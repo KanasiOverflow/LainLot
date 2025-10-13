@@ -831,6 +831,193 @@ export default function CostumeEditor() {
         });
     }, [panels, setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId, setDetails, setMode, setPrefs]);
 
+    // панели-капюшоны
+    const hoodPanelIds = useMemo(() => {
+        return new Set(
+            panels
+                .filter(p => String(p.meta?.slot || '').toLowerCase() === 'hood')
+                .map(p => p.id)
+        );
+    }, [panels]);
+
+    // внешние кольца (силуэты) капюшона
+    const hoodRings = useMemo(() => {
+        return panels
+            .filter(p => hoodPanelIds.has(p.id))
+            .map(p => outerRingByPanel[p.id])
+            .filter(Boolean);
+    }, [panels, outerRingByPanel, hoodPanelIds]);
+
+    // ➕ ДОБАВЬТЕ: внутренние отверстия (inner rings) капюшона
+    const hoodHoles = useMemo(() => {
+        const holes = [];
+        for (const p of panels) {
+            if (!hoodPanelIds.has(p.id)) continue;
+            const rings = ringsByPanel[p.id] || [];
+            const outer = outerRingByPanel[p.id];
+            for (const r of rings) {
+                if (!outer || r !== outer) holes.push(r);
+            }
+        }
+        return holes;
+    }, [panels, ringsByPanel, outerRingByPanel, hoodPanelIds]);
+
+    // Рендер одной панели
+    const renderPanel = (p) => {
+        const faces = facesByPanel[p.id] || [];
+        const ring = outerRingByPanel[p.id];
+        const isActive = activePanel?.id === p.id;
+        const clickableFaces = faces.length ? faces : (ring ? [ring] : []);
+        const dimInactive = mode !== "preview" && !isActive;
+
+        return (
+            <g key={p.id} className={dimInactive ? styles.panelDimmed : undefined}>
+                {/* выбор детали (не мешаем заливке) */}
+                {ring && mode !== "preview" && mode !== "paint" && mode !== "deleteFill" && (
+                    <path
+                        d={facePath(ring)}
+                        fill="transparent"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => onPanelActivate(p.id)}
+                    />
+                )}
+
+                {/* грани для покраски / очистки */}
+                {clickableFaces.map(poly => {
+                    const fk = faceKey(poly);
+                    const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
+                    const hasFill = fill !== "none";
+                    const isHover = !!hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk;
+                    const canHit = mode === "paint" || mode === "deleteFill";
+
+                    return (
+                        <g key={fk}>
+                            <path
+                                d={facePath(poly)}
+                                fill={hasFill ? fill : (mode === "paint" && isHover ? "#9ca3af" : "transparent")}
+                                fillOpacity={hasFill ? 0.9 : (mode === "paint" && isHover ? 0.35 : 0.001)}
+                                stroke="none"
+                                style={{ pointerEvents: canHit ? 'all' : 'none', cursor: canHit ? 'crosshair' : 'default' }}
+                                onMouseEnter={() => (hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly))}
+                                onMouseLeave={() => (hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly))}
+                                onClick={() => (hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly))}
+                            />
+                            {hasFill && mode === "deleteFill" && isHover && (
+                                <path d={facePath(poly)} fill="#000" fillOpacity={0.18} style={{ pointerEvents: "none" }} />
+                            )}
+                        </g>
+                    );
+                })}
+
+                {/* внешний контур */}
+                {ring && (
+                    <path
+                        d={facePath(ring)}
+                        fill="none"
+                        stroke="#111"
+                        strokeWidth={1.8 * (scale.k || 1)}
+                        style={{ pointerEvents: "none" }}
+                    />
+                )}
+
+                {/* пользовательские линии */}
+                {(curvesByPanel[p.id] || []).map(c => {
+                    const merged = mergedAnchorsOf(p);
+                    const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
+                    const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.x, y: c.y } : null);
+                    if (!a || !b) return null;
+
+                    const d = c.type === "cubic"
+                        ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
+                        : c.d;
+
+                    const key = `${p.id}:${c.id}`;
+                    const isHover = hoverCurveKey === key;
+                    const isSelected = selectedCurveKey === key;
+                    const isClicked = clickedCurveKey === key;
+
+                    const cls = clsx(
+                        styles.userCurve,
+                        mode === "preview" && styles.userCurvePreview,
+                        mode === "delete" && isHover && styles.userCurveDeleteHover,
+                        isSelected && styles.userCurveSelected,
+                        isClicked && styles.userCurveClicked
+                    );
+
+                    return (
+                        <path
+                            key={c.id}
+                            d={d}
+                            className={cls}
+                            onMouseEnter={() => { if (isActive) onCurveEnter(p.id, c.id); }}
+                            onMouseLeave={() => {
+                                if (mode === "insert") setInsertPreview(prev => (prev && prev.curveId === c.id ? null : prev));
+                                onCurveLeave(p.id, c.id);
+                            }}
+                            onMouseMove={(e) => { /* твой существующий onMouseMove код */ }}
+                            onClick={(e) => { /* твой существующий onClick код */ }}
+                            style={{ cursor: (mode === 'preview' || !isActive) ? 'default' : (mode === 'insert' ? 'copy' : 'pointer') }}
+                            pointerEvents={(mode === "preview" || !isActive || mode === "deleteVertex") ? "none" : "auto"}
+                            strokeLinecap="round"
+                        />
+                    );
+                })}
+
+                {/* превью точки вставки */}
+                {isActive && mode === "insert" && insertPreview && insertPreview.panelId === p.id && (
+                    <circle
+                        cx={insertPreview.x}
+                        cy={insertPreview.y}
+                        r={4}
+                        fill={insertPreview.allowed ? "#22c55e" : "#ef4444"}
+                        stroke={insertPreview.allowed ? "#166534" : "#991b1b"}
+                        strokeWidth={1.5}
+                        style={{ pointerEvents: "none" }}
+                    />
+                )}
+
+                {/* базовые + доп. якоря */}
+                {isActive && (mode === "add" || mode === "delete" || mode === "insert") && (() => {
+                    const base = p.anchors || [];
+                    const extras = extraAnchorsByPanel[p.id] || [];
+                    const merged = [...base, ...extras];
+                    return merged.map((pt, mi) => (
+                        <circle
+                            key={`m-${mi}`}
+                            cx={pt.x}
+                            cy={pt.y}
+                            r={3.5}
+                            className={clsx(
+                                styles.anchor,
+                                styles.anchorClickable,
+                                mi === hoverAnchorIdx && styles.anchorHovered,
+                                mi === addBuffer && styles.anchorSelectedA
+                            )}
+                            onClick={(e) => { e.stopPropagation(); onAnchorClickAddMode(mi); }}
+                            onMouseEnter={() => setHoverAnchorIdx(mi)}
+                            onMouseLeave={() => setHoverAnchorIdx(null)}
+                        />
+                    ));
+                })()}
+
+                {/* ручные вершины — для удаления */}
+                {isActive && mode === "deleteVertex" && (() => {
+                    const extras = (extraAnchorsByPanel[p.id] || []).filter(ex => ex?.id?.includes("@m"));
+                    return extras.map(ex => (
+                        <circle
+                            key={ex.id}
+                            cx={ex.x}
+                            cy={ex.y}
+                            r={4}
+                            className={styles.anchorManualDelete}
+                            onClick={(e) => { e.stopPropagation(); eraseManualAnchor(p.id, ex); }}
+                        />
+                    ));
+                })()}
+            </g>
+        );
+    };
+
     useEffect(() => {
         try { localStorage.setItem("ce.activeFace", presetIdx === 0 ? "front" : "back"); } catch { }
     }, [presetIdx]);
@@ -1582,6 +1769,22 @@ export default function CostumeEditor() {
                                         shapeRendering="crispEdges"
                                     />
                                 </pattern>
+
+                                {/* Маска, которая спрячeт всё под капюшоном */}
+                                <mask id={`under-hood-mask-${svgMountKey}`} maskUnits="userSpaceOnUse">
+                                    {/* всё показываем по умолчанию */}
+                                    <rect
+                                        x={gridDef.b.x}
+                                        y={gridDef.b.y}
+                                        width={gridDef.b.w}
+                                        height={gridDef.b.h}
+                                        fill="#fff"
+                                    />
+                                    {/* а область капюшона вычёркиваем (чёрным) */}
+                                    {hoodRings.map((poly, i) => (
+                                        <path key={i} d={facePath(poly)} fill="#000" />
+                                    ))}
+                                </mask>
                             </defs>
                             <rect
                                 x={gridDef.b.x}
@@ -1591,209 +1794,14 @@ export default function CostumeEditor() {
                                 fill={`url(#grid-${svgMountKey})`} pointerEvents="none"
                             />
 
-                            {/* FACES + OUTLINE + USER CURVES + ANCHORS */}
-                            {panels.map(p => {
-                                const faces = facesByPanel[p.id] || [];
-                                const ring = outerRingByPanel[p.id];
-                                const isActive = activePanel?.id === p.id;
-                                const clickableFaces = faces.length ? faces : (ring ? [ring] : []);
-                                const dimInactive = mode !== "preview" && !isActive;
+                            {/* 1) Все детали, КРОМЕ капюшона — под маской */}
+                            <g mask={`url(#under-hood-mask-${svgMountKey})`}>
+                                {panels.filter(p => !hoodPanelIds.has(p.id)).map(renderPanel)}
+                            </g>
 
-                                return (
-                                    <g key={p.id} className={dimInactive ? styles.panelDimmed : undefined}>
-                                        {/* выбор детали (не мешаем заливке) */}
-                                        {ring && mode !== "preview" && mode !== "paint" && mode !== "deleteFill" && (
-                                            <path
-                                                d={facePath(ring)}
-                                                fill="transparent"
-                                                style={{ cursor: "pointer" }}
-                                                onClick={() => onPanelActivate(p.id)}
-                                            />
-                                        )}
+                            {/* 2) Капюшон — поверх, без «белых ластиков» */}
+                            {panels.filter(p => hoodPanelIds.has(p.id)).map(renderPanel)}
 
-                                        {/* грани для покраски / очистки */}
-                                        {clickableFaces.map(poly => {
-                                            const fk = faceKey(poly);
-                                            const fill = (fills.find(f => f.panelId === p.id && f.faceKey === fk)?.color) || "none";
-                                            const hasFill = fill !== "none";
-                                            const isHover = !!hoverFace && hoverFace.panelId === p.id && hoverFace.faceKey === fk;
-                                            const canHit = mode === "paint" || mode === "deleteFill";
-
-                                            return (
-                                                <g key={fk}>
-                                                    <path
-                                                        d={facePath(poly)}
-                                                        fill={hasFill ? fill : (mode === "paint" && isHover ? "#9ca3af" : "transparent")}
-                                                        fillOpacity={hasFill ? 0.9 : (mode === "paint" && isHover ? 0.35 : 0.001)}
-                                                        stroke="none"
-                                                        style={{ pointerEvents: canHit ? 'all' : 'none', cursor: canHit ? 'crosshair' : 'default' }}
-                                                        onMouseEnter={() => (hasFill ? onFilledEnter(p.id, fk) : onFaceEnter(p.id, poly))}
-                                                        onMouseLeave={() => (hasFill ? onFilledLeave(p.id, fk) : onFaceLeave(p.id, poly))}
-                                                        onClick={() => (hasFill ? onFilledClick(p.id, fk) : onFaceClick(p.id, poly))}
-                                                    />
-                                                    {hasFill && mode === "deleteFill" && isHover && (
-                                                        <path d={facePath(poly)} fill="#000" fillOpacity={0.18} style={{ pointerEvents: "none" }} />
-                                                    )}
-                                                </g>
-                                            );
-                                        })}
-
-                                        {/* внешний контур */}
-                                        {ring && (
-                                            <path
-                                                d={facePath(ring)}
-                                                fill="none"
-                                                stroke="#111"
-                                                strokeWidth={1.8 * (scale.k || 1)}
-                                                style={{ pointerEvents: "none" }}
-                                            />
-                                        )}
-
-                                        {/* пользовательские линии */}
-                                        {(curvesByPanel[p.id] || []).map(c => {
-                                            const merged = mergedAnchorsOf(p);
-                                            const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
-                                            const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
-                                            if (!a || !b) return null;
-
-                                            const d = c.type === "cubic"
-                                                ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
-                                                : c.d;
-
-                                            const key = `${p.id}:${c.id}`;
-                                            const isHover = hoverCurveKey === key;
-                                            const isSelected = selectedCurveKey === key;
-                                            const isClicked = clickedCurveKey === key;
-
-                                            const cls = clsx(
-                                                styles.userCurve,
-                                                mode === "preview" && styles.userCurvePreview,
-                                                mode === "delete" && isHover && styles.userCurveDeleteHover,
-                                                isSelected && styles.userCurveSelected,
-                                                isClicked && styles.userCurveClicked
-                                            );
-
-                                            return (
-                                                <path
-                                                    key={c.id}
-                                                    d={d}
-                                                    className={cls}
-                                                    onMouseEnter={() => { if (isActive) onCurveEnter(p.id, c.id); }}
-                                                    onMouseLeave={() => {
-                                                        if (mode === "insert") setInsertPreview(prev => (prev && prev.curveId === c.id ? null : prev));
-                                                        onCurveLeave(p.id, c.id);
-                                                    }}
-                                                    onMouseMove={(e) => {
-                                                        if (!isActive || mode !== "insert")
-                                                            return;
-                                                        const svg = svgRef.current; if (!svg)
-                                                            return;
-
-                                                        const p2 = svg.createSVGPoint(); p2.x = e.clientX; p2.y = e.clientY;
-                                                        const loc = p2.matrixTransform(svg.getScreenCTM().inverse());
-                                                        const hit = closestPointOnCurve(p, c, loc);
-
-                                                        if (!hit)
-                                                            return;
-
-                                                        const allowed = !tooCloseToExistingAnchors(p, c, { x: hit.x, y: hit.y });
-                                                        setInsertPreview({ panelId: p.id, curveId: c.id, x: hit.x, y: hit.y, t: hit.t, allowed });
-                                                    }}
-                                                    onClick={(e) => {
-                                                        if (!isActive)
-                                                            return;
-
-                                                        if (mode === "insert") {
-                                                            if (!selectedCurveKey) setSelectedCurveKey(`${p.id}:${c.id}`);
-                                                            e.stopPropagation();
-                                                            if (!insertPreview || insertPreview.curveId !== c.id) return;
-                                                            if (!insertPreview.allowed) { setToast({ text: "Слишком близко к существующей вершине" }); return; }
-                                                            applyCurvesChange(prev => {
-                                                                const list = [...(prev[p.id] || [])];
-                                                                const i = list.findIndex(x => x.id === c.id);
-                                                                if (i < 0) return prev;
-                                                                const cur = list[i];
-                                                                const stops = Array.isArray(cur.extraStops) ? [...cur.extraStops] : [];
-                                                                stops.push(Math.max(0, Math.min(1, insertPreview.t)));
-                                                                const uniq = Array.from(new Set(stops)).sort((a, b) => a - b);
-                                                                list[i] = { ...cur, extraStops: uniq };
-                                                                return { ...prev, [p.id]: list };
-                                                            });
-                                                            setInsertPreview(null);
-                                                            return;
-                                                        }
-                                                        onCurveClick(p.id, c.id, e);
-                                                    }}
-                                                    style={{
-                                                        cursor:
-                                                            (mode === 'preview' || !isActive)
-                                                                ? 'default'
-                                                                : (mode === 'insert'
-                                                                    ? ((insertPreview && insertPreview.curveId === c.id && insertPreview.allowed === false)
-                                                                        ? 'not-allowed'
-                                                                        : 'copy')
-                                                                    : 'pointer')
-                                                    }}
-                                                    pointerEvents={(mode === "preview" || !isActive || mode === "deleteVertex") ? "none" : "auto"}
-                                                    strokeLinecap="round"
-                                                />
-                                            );
-                                        })}
-
-                                        {/* превью точки вставки */}
-                                        {isActive && mode === "insert" && insertPreview && insertPreview.panelId === p.id && (
-                                            <circle
-                                                cx={insertPreview.x}
-                                                cy={insertPreview.y}
-                                                r={4}
-                                                fill={insertPreview.allowed ? "#22c55e" : "#ef4444"}
-                                                stroke={insertPreview.allowed ? "#166534" : "#991b1b"}
-                                                strokeWidth={1.5}
-                                                style={{ pointerEvents: "none" }}
-                                            />
-                                        )}
-
-                                        {/* базовые + доп. якоря */}
-                                        {isActive && (mode === "add" || mode === "delete" || mode === "insert") && (() => {
-                                            const base = p.anchors || [];
-                                            const extras = extraAnchorsByPanel[p.id] || [];
-                                            const merged = [...base, ...extras];
-                                            return merged.map((pt, mi) => (
-                                                <circle
-                                                    key={`m-${mi}`}
-                                                    cx={pt.x}
-                                                    cy={pt.y}
-                                                    r={3.5}
-                                                    className={clsx(
-                                                        styles.anchor,
-                                                        styles.anchorClickable,
-                                                        mi === hoverAnchorIdx && styles.anchorHovered,
-                                                        mi === addBuffer && styles.anchorSelectedA
-                                                    )}
-                                                    onClick={(e) => { e.stopPropagation(); onAnchorClickAddMode(mi); }}
-                                                    onMouseEnter={() => setHoverAnchorIdx(mi)}
-                                                    onMouseLeave={() => setHoverAnchorIdx(null)}
-                                                />
-                                            ));
-                                        })()}
-
-                                        {/* ручные вершины — для удаления */}
-                                        {isActive && mode === "deleteVertex" && (() => {
-                                            const extras = (extraAnchorsByPanel[p.id] || []).filter(ex => ex?.id?.includes("@m"));
-                                            return extras.map(ex => (
-                                                <circle
-                                                    key={ex.id}
-                                                    cx={ex.x}
-                                                    cy={ex.y}
-                                                    r={4}
-                                                    className={styles.anchorManualDelete}
-                                                    onClick={(e) => { e.stopPropagation(); eraseManualAnchor(p.id, ex); }}
-                                                />
-                                            ));
-                                        })()}
-                                    </g>
-                                );
-                            })}
                         </svg>
                     </div>
 
