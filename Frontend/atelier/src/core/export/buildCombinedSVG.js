@@ -38,15 +38,11 @@ export const buildCombinedSVG = async ({
         }
     };
 
-    const [frontPanelsRaw, backPanelsRaw] = await Promise.all([
-        Array.isArray(svgCache.front) ? svgCache.front : loadPresetToPanels({ id: "front" }),
-        Array.isArray(svgCache.back) ? svgCache.back : loadPresetToPanels({ id: "back" })
-    ]);
-    const frontPanels = Array.isArray(frontPanelsRaw) ? frontPanelsRaw : [];
-    const backPanels = Array.isArray(backPanelsRaw) ? backPanelsRaw : [];
+    const frontPanels = Array.isArray(svgCache.front) ? svgCache.front : [];
+    const backPanels = Array.isArray(svgCache.back) ? svgCache.back : [];
 
-    const gFront = renderPresetGroup(frontPanels, mergedSnaps.front?.curvesByPanel, mergedSnaps.front?.fills, { inkscapeCompat });
-    const gBack = renderPresetGroup(backPanels, mergedSnaps.back?.curvesByPanel, mergedSnaps.back?.fills, { inkscapeCompat });
+    const gFront = renderPresetGroup(frontPanels, mergedSnaps.front?.curvesByPanel, mergedSnaps.front?.fills, { inkscapeCompat, maskId: "under-hood-front" });
+    const gBack = renderPresetGroup(backPanels, mergedSnaps.back?.curvesByPanel, mergedSnaps.back?.fills, { inkscapeCompat, maskId: "under-hood-back" });
 
     // раскладка
     const bbF = bboxForPanels(frontPanels);
