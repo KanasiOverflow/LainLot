@@ -49,13 +49,12 @@ export const renderPresetGroup = (panels, curvesByPanelLocal = {}, fillsLocal = 
         }
     }
 
-    // 2) Контуры деталей
+    // 2) Контуры деталей — stroke по исходным сегментам (без искусственного замыкания)
     for (const p of panels) {
-        const ring = ringByPanel[p.id];
-        if (ring) {
-            // без vector-effect для Inkscape-совместимости
-            pieces.push(`<path d="${facePath(ring)}" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round"/>`);
-        }
+        const d = segsToD(p.segs);
+        pieces.push(
+            `<path d="${d}" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>`
+        );
     }
 
     // 3) Пользовательские линии (cubic, d, segs, wavy) — с учётом shortId
