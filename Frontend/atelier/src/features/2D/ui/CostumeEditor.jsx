@@ -151,6 +151,67 @@ export default function CostumeEditor() {
         return [];
     };
 
+    const composePanelsForSide = async (sideId) => {
+        // 1) база
+        let baseSources = await getBaseSources(sideId);
+        baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({
+            file: e.file, slot: e.slot ?? null, side: e.side ?? null, which: e.which ?? null
+        }));
+        const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
+        const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
+
+        const chosen = (details[sideId] || {});
+        const hoodActive = !!(chosen.hood && chosen.hood !== "base");
+        if (hoodActive) {
+            baseSources = baseSources.filter(s => (s.slot || "").toLowerCase() !== "neck");
+        }
+
+        const sources = baseSources.slice();
+
+        // 2) применяем варианты (ровно как в useEffect)
+        for (const [slot, variantId] of Object.entries(chosen)) {
+            if (!variantId || variantId === "base") continue;
+            const list = manifest?.variants?.[slot] || [];
+            const v = list.find(x => x.id === variantId);
+            if (!v) continue;
+
+            const fmap = v.files?.[sideId] || {};
+            if (!fmap || Object.keys(fmap).length === 0) continue;
+
+            const sLower = (slot || "").toLowerCase();
+            const allowSides = (sLower === "cuff" || sLower === "sleeve");
+
+            let entries = [];
+            if (fmap.file) entries.push({ file: fmap.file, side: null, which: null });
+            if (allowSides && fmap.left) entries.push({ file: fmap.left, side: "left", which: null });
+            if (allowSides && fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
+            if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
+
+            const hasBaseFor = (side, which) => baseIdx.has([slot, side || "", which || ""].join("|"));
+            if (sLower !== "hood") entries = entries.filter(e => hasBaseFor(e.side, e.which));
+
+            for (const e of entries) {
+                const k = [slot, e.side || "", e.which || ""].join("|");
+                const baseHit = baseIdx.get(k);
+                if (baseHit) baseHit.file = e.file;
+                else sources.push({ file: e.file, slot, side: e.side || null, which: e.which || null });
+            }
+        }
+
+        // 3) капюшон — в конец (перекрывает всё)
+        if (sources.length) {
+            const hoodParts = [], rest = [];
+            for (const src of sources) {
+                if ((src.slot || "").toLowerCase() === "hood") hoodParts.push(src);
+                else rest.push(src);
+            }
+            sources.length = 0; sources.push(...rest, ...hoodParts);
+        }
+
+        // 4) собрать панели с тем же загрузчиком
+        return await loadPresetToPanels({ id: sideId, sources });
+    };
+
     // --- PRESETS: кнопки/клавиши
     const prevPreset = () => setPresetIdx(i => (i - 1 + PRESETS.length) % PRESETS.length);
     const nextPreset = () => setPresetIdx(i => (i + 1) % PRESETS.length);
@@ -690,9 +751,18 @@ export default function CostumeEditor() {
         if (isExporting) return;
         try {
             setIsExporting(true);
+
+            // гарантируем, что обе стороны собраны, даже если вкладку не открывали
+            const [frontPanels, backPanels] = await Promise.all([
+                (svgCacheRef.current.front?.length ? svgCacheRef.current.front : composePanelsForSide("front")),
+                (svgCacheRef.current.back?.length ? svgCacheRef.current.back : composePanelsForSide("back")),
+            ]);
+            svgCacheRef.current = { ...svgCacheRef.current, front: frontPanels, back: backPanels };
+
             const svgText = await buildCombinedSVG({
                 svgCache: svgCacheRef.current,
                 loadPresetToPanels,
+                svgCache: svgCacheRef.current,   // теперь тут уже гарантированно обе стороны
                 currentPresetId: PRESETS[presetIdx]?.id || "front",
                 currentCurves: curvesByPanel,
                 currentFills: fills,

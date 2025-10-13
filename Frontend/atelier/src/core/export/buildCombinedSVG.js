@@ -38,11 +38,11 @@ export const buildCombinedSVG = async ({
         }
     };
 
-    const frontPanels = Array.isArray(svgCache.front) ? svgCache.front : await loadPresetToPanels({ id: "front" });
-    const backPanels = Array.isArray(svgCache.back) ? svgCache.back : await loadPresetToPanels({ id: "back" });
+    const frontPanels = Array.isArray(svgCache.front) ? svgCache.front : [];
+    const backPanels = Array.isArray(svgCache.back) ? svgCache.back : [];
 
-    const gFront = renderPresetGroup(frontPanels, mergedSnaps.front?.curvesByPanel, mergedSnaps.front?.fills, { inkscapeCompat });
-    const gBack = renderPresetGroup(backPanels, mergedSnaps.back?.curvesByPanel, mergedSnaps.back?.fills, { inkscapeCompat });
+    const gFront = renderPresetGroup(frontPanels, mergedSnaps.front?.curvesByPanel, mergedSnaps.front?.fills, { inkscapeCompat, maskId: "under-hood-front" });
+    const gBack = renderPresetGroup(backPanels, mergedSnaps.back?.curvesByPanel, mergedSnaps.back?.fills, { inkscapeCompat, maskId: "under-hood-back" });
 
     // раскладка
     const bbF = bboxForPanels(frontPanels);
@@ -58,7 +58,7 @@ export const buildCombinedSVG = async ({
 
     return [
         `<?xml version="1.0" encoding="UTF-8"?>`,
-        `<svg xmlns="http://www.w3.org/2000/svg" width="${w}px" height="${h}px" viewBox="0 0 ${w} ${h}">`,
+        `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${w}px"  height="${h}px" viewBox="0 0 ${w} ${h}">`,
         `  <desc>${esc("Costume — front & back")}</desc>`,
         `  <g transform="${tFront}">${gFront}</g>`,
         `  <g transform="${tBack}">${gBack}</g>`,
