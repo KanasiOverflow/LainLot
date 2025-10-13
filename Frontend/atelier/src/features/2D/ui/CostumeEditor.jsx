@@ -732,24 +732,60 @@ export default function CostumeEditor() {
     const [manifest, setManifest] = useState(null);
     const [details, setDetails] = useState({ front: { cuff: "base" }, back: { cuff: "base" } }); // пока работаем только с манжетами
 
-    // слоты, которые должны быть синхронизированы между передом и спинкой
+    // какие слоты синхронизируем между передом/спинкой
     const shouldSyncSlot = (slot) => slot && slot.toLowerCase() !== "pocket";
 
-    // централизованный апдейтер варианта слота с зеркалированием на вторую сторону
+    // централизованный апдейтер + правила «капюшон ↔ шея»
     const setSlotVariant = (face /* 'front'|'back' */, slot, variantId) => {
         setDetails(prev => {
             const other = face === "front" ? "back" : "front";
             const curFace = { ...(prev[face] || {}) };
             const curOther = { ...(prev[other] || {}) };
 
+            const hoodIsTurningOn = slot === "hood" && variantId && variantId !== "base";
+            const hoodIsTurningOff = slot === "hood" && (variantId === "base" || variantId == null);
+            const neckIsChanging = slot === "neck";
+
+            // Если пользователь меняет шею, а капюшон включён — капюшон отключаем автоматически
+            if (neckIsChanging) {
+                const hoodActive = (curFace.hood && curFace.hood !== "base");
+                if (hoodActive) {
+                    // сбрасываем капюшон
+                    delete curFace.hood;
+                }
+            }
+
+            // Включение капюшона: запомним текущую шею и «обнулим» её выбор
+            if (hoodIsTurningOn) {
+                // сохраняем «какой была шея» (если нет — считаем 'base')
+                prevNeckByFaceRef.current[face] = curFace.neck ?? "base";
+                // убираем выбранную шею (капюшон перекрывает её)
+                delete curFace.neck;
+            }
+
+            // Выключение капюшона: восстановим шею
+            if (hoodIsTurningOff) {
+                const prevNeck = prevNeckByFaceRef.current[face];
+                if (prevNeck) {
+                    if (prevNeck === "base") delete curFace.neck;
+                    else curFace.neck = prevNeck;
+                }
+                prevNeckByFaceRef.current[face] = null;
+            }
+
+            // Применяем текущее изменение слота
             if (variantId === "base" || variantId == null) {
-                // «Базовая» = нет оверлея → удаляем ключ слота
                 delete curFace[slot];
                 if (shouldSyncSlot(slot)) delete curOther[slot];
             } else {
-                // Устанавливаем выбранный вариант на обе стороны (если слот синхронизируемый)
                 curFace[slot] = variantId;
                 if (shouldSyncSlot(slot)) curOther[slot] = variantId;
+            }
+
+            // Если пользователь менял шею — это «явный» выбор, перезапишем память,
+            // чтобы в будущем не было неожиданного восстановления старой шеи.
+            if (neckIsChanging) {
+                prevNeckByFaceRef.current[face] = curFace.neck ?? "base";
             }
 
             return { ...prev, [face]: curFace, [other]: curOther };
@@ -762,6 +798,9 @@ export default function CostumeEditor() {
     const detailsRef = useRef(details);
     const lastChangedSlotRef = useRef(null); // { presetId: 'front'|'back', slot: 'cuff'|... } | null
     const restoringPresetRef = useRef(false); // true — пока восстанавливаем снапшот пресета
+
+    // сохраняем выбранную шею, когда включается капюшон, чтобы вернуть её при выключении
+    const prevNeckByFaceRef = useRef({ front: null, back: null });
 
     const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
     const savedByPresetRef = useRef({});
@@ -866,12 +905,20 @@ export default function CostumeEditor() {
                 side: e.side ?? null,
                 which: e.which ?? null
             }));
+
             // индекс базовых частей по (slot,side,which)
             const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
             const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
 
             // находим, какие слоты у нас вообще выбраны на этой стороне (details[preset.id])
             const chosen = details[preset.id] || {};
+            const hoodActive = !!(chosen.hood && chosen.hood !== "base");
+
+            // Если капюшон активен — полностью убираем из базы любые части слота 'neck'
+            // (иначе базовая шея будет торчать под капюшоном)
+            if (hoodActive) {
+                baseSources = baseSources.filter(s => (s.slot || "").toLowerCase() !== "neck");
+            }
 
             // начнём с копии базы
             const sources = baseSources.slice();
@@ -916,6 +963,23 @@ export default function CostumeEditor() {
             setComposedPanels(Array.isArray(compiled) ? compiled : []);
             setSvgCache(prev => ({ ...prev, [preset.id]: Array.isArray(compiled) ? compiled : [] }));
             setSvgMountKey(k => k + 1);
+
+            // === ВАЖНО: капюшон поверх всего ===
+            // Положим все куски слота 'hood' в конец, чтобы они рисовались последними
+            // (и визуально перекрывали остальные детали)
+            if (sources.length) {
+                const hoodParts = [];
+                const rest = [];
+                for (const src of sources) {
+                    if ((src.slot || "").toLowerCase() === "hood") hoodParts.push(src);
+                    else rest.push(src);
+                }
+                // если хотим ещё и шнурки/подкладку поверх остальных частей капюшона — можно тоньше сортировать
+                // но базово достаточно просто положить hoodParts в конец
+                sources.length = 0;
+                sources.push(...rest, ...hoodParts);
+            }
+
         })().catch(() => {
             if (alive)
                 setComposedPanels([]);

@@ -143,7 +143,19 @@
         }
       }
     ],
-    "neck": [],
+    "neck": [
+      {
+        "id": "neck2",
+        "name": "neck2",
+        "preview": "2d/svg/hoodie/front/variants/neck/neck2_preview.svg",
+        "files": {
+          "front": {
+            "file": "2d/svg/hoodie/front/variants/neck/neck2.svg"
+          },
+          "back": {}
+        }
+      }
+    ],
     "hood": [
       {
         "id": "hood",
