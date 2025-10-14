@@ -2,16 +2,16 @@
 import { useEffect, useMemo, useRef, useState, useLayoutEffect, useCallback } from "react";
 import styles from "../styles/CostumeEditor.module.css";
 import clsx from "clsx";
-import { sampleBezier, sampleBezierPoints, segsSignature } from "../../../core/geometry/geometry.js";
-import { area, getBounds } from "../../../core/geometry/bounds.js";
-import { cumulativeLengths, nearestOnPolyline, pointsToPairedPolyline, waveAlongPolyline } from "../../../core/geometry/polylineOps.js";
+import { sampleBezierPoints } from "../../../core/geometry/geometry.js";
+import { getBounds } from "../../../core/geometry/bounds.js";
+import { cumulativeLengths, nearestOnPolyline, waveAlongPolyline } from "../../../core/geometry/polylineOps.js";
 import { facePath, faceKey, segsToD } from "../../../core/svg/faceUtils.js";
+import { catmullRomToBezierPath } from "../../../core/svg/polylineOps.js";
 import {
-    polylinesFromSegs, segmentsFromPolylines, splitSegsIntoSubpaths, polylineFromSubpath,
-    catmullRomToBezierPath
-} from "../../../core/svg/polylineOps.js";
-import { splitByIntersections } from "../../../core/geometry/intersections.js";
-import { buildFacesFromSegments, pointInAnyFace } from "../../../core/svg/buildFaces.js";
+    pointInAnyFace, computeBaseFaces, computeRingsByPanel,
+    pickOuterRing, computeFacesWithUserLines
+}
+    from "../../../core/svg/buildFaces.js";
 import { loadPresetToPanels, composePanelsForSide } from "../../../core/svg/extractPanels.js";
 import { makeUserCurveBetween } from "../../../core/svg/curves.js";
 import { useHistory } from "../../../shared/hooks/useHistory.jsx";
@@ -187,30 +187,11 @@ export default function CostumeEditor() {
 
     /* -------- базовые faces и кольца контура -------- */
     const baseFacesByPanel = useMemo(() => {
-        const res = {};
-        for (const p of panels) {
-            const sig = segsSignature(p.segs);
-            const cached = baseFacesCacheRef.current.get(p.id);
-            if (cached && cached.sig === sig) {
-                res[p.id] = cached.faces;
-                continue;
-            }
-            const baseLines = polylinesFromSegs(p.segs);
-            const segsFlat = segmentsFromPolylines(baseLines);
-            const faces = buildFacesFromSegments(splitByIntersections(segsFlat));
-            baseFacesCacheRef.current.set(p.id, { sig, faces });
-            res[p.id] = faces;
-        }
-        return res;
+        return computeBaseFaces(panels, baseFacesCacheRef.current);
     }, [panels]);
 
     const ringsByPanel = useMemo(() => {
-        const res = {};
-        for (const p of panels) {
-            const subs = splitSegsIntoSubpaths(p.segs);
-            res[p.id] = subs.map(polylineFromSubpath).filter(r => r.length >= 3);
-        }
-        return res;
+        return computeRingsByPanel(panels);
     }, [panels]);
 
     const [defaultSubCount, setDefaultSubCount] = useState(2); // используется только при создании новых линий
@@ -350,31 +331,7 @@ export default function CostumeEditor() {
 
     // faces с учётом пользовательских линий
     const facesByPanel = useMemo(() => {
-        const res = {};
-        for (const p of panels) {
-            const baseLines = polylinesFromSegs(p.segs);
-            const merged = mergedAnchorsOf(p);
-
-            const userLines = (curvesByPanel[p.id] || []).flatMap(c => {
-                if (c.type === "cubic") {
-                    const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
-                    const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
-                    if (!a || !b) return []; // пропускаем некорректную кривую
-                    return [sampleBezier(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y)];
-                }
-                else {
-                    // wavy: используем уже дискретизированные точки линии
-                    if (Array.isArray(c.pts) && c.pts.length >= 2) {
-                        return [pointsToPairedPolyline(c.pts)];
-                    }
-                    return [];
-                }
-            });
-
-            const segsFlat = segmentsFromPolylines([...baseLines, ...userLines]);
-            res[p.id] = buildFacesFromSegments(splitByIntersections(segsFlat));
-        }
-        return res;
+        return computeFacesWithUserLines(panels, curvesByPanel, mergedAnchorsOf);
     }, [panels, curvesByPanel, mergedAnchorsOf]);
 
     const modeGroup =
@@ -389,19 +346,9 @@ export default function CostumeEditor() {
     }, [worldBBox]);
 
     const outerRingByPanel = useMemo(() => {
-        const res = {};
-        for (const p of panels) {
-            const rings = ringsByPanel[p.id] || [];
-            if (!rings.length) { res[p.id] = null; continue; }
-            let best = null, bestA = -Infinity;
-            for (const r of rings) {
-                const A = Math.abs(area(r));
-                if (A > bestA) { bestA = A; best = r; }
-            }
-            res[p.id] = best;
-        }
-        return res;
+        return pickOuterRing(panels, ringsByPanel);
     }, [panels, ringsByPanel]);
+
     /* ===== действия ===== */
     const activePanel = useMemo(
         () => panels.find(p => p.id === activePanelId) || panels[0] || null,
@@ -650,8 +597,6 @@ export default function CostumeEditor() {
 
             const svgText = await buildCombinedSVG({
                 svgCache: svgCacheRef.current,
-                loadPresetToPanels,
-                svgCache: svgCacheRef.current,   // теперь тут уже гарантированно обе стороны
                 currentPresetId: PRESETS[presetIdx]?.id || "front",
                 currentCurves: curvesByPanel,
                 currentFills: fills,

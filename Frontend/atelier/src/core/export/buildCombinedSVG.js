@@ -23,8 +23,10 @@ const bboxForPanels = (panels) => {
 
 /** Склейка «Перед» и «Спинка» в один SVG */
 export const buildCombinedSVG = async ({
-    svgCache, loadPresetToPanels,
-    currentPresetId, currentCurves, currentFills,
+    svgCache,
+    currentPresetId,
+    currentCurves,
+    currentFills,
     savedByPreset,
     inkscapeCompat = true
 }) => {
