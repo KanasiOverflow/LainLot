@@ -5,7 +5,7 @@ import { parsePathD, segsFromPoints } from "../svg/parsePath.js";
 import { looksLikeBackground } from "../svg/heuristics.js";
 import { parseViewBox, parseMatrix, applyMatrixToSegs } from "../geometry/matrix.js";
 import { collectAnchors } from "../svg/anchors.js";
-import { urlForSrcFile } from "../../core/variables/svgPath.js";
+import { resolveSvgSrcPath } from "../../core/variables/svgPath.js";
 import { getBaseSources } from "../../core/variables/variants.js";
 
 /* ================== настройки ================== */
@@ -271,7 +271,7 @@ export const loadPresetToPanels = async (preset) => {
         for (let i = 0; i < preset.sources.length; i++) {
             const src = preset.sources[i];
             const fileResolved = src.file; // (или твой resolveSourceFile, если используешь)
-            const url = urlForSrcFile(fileResolved);
+            const url = resolveSvgSrcPath(fileResolved);
             const txt = await fetch(url).then(r => r.text())
             const parts = extractPanels(txt); // парсим в панели (как обычно)
             const M = translateScaleMatrix(src.dx || 0, src.dy || 0, src.scale || 1);

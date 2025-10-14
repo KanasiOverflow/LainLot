@@ -24,7 +24,7 @@ import BodyParams from "./BodyParams.jsx";
 import OrderForm from "./OrderForm.jsx";
 
 import { PRESETS } from "../../../core/variables/presets.js";
-import { getBaseSources, loadSvgManifest } from "../../../core/variables/variants.js";
+import { getBaseSources, loadSvgManifest, reduceSetSlotVariant } from "../../../core/variables/variants.js";
 
 /* ================== компонент ================== */
 export default function CostumeEditor() {
@@ -691,63 +691,20 @@ export default function CostumeEditor() {
     const [manifest, setManifest] = useState(null);
     const [details, setDetails] = useState({ front: { cuff: "base" }, back: { cuff: "base" } }); // пока работаем только с манжетами
 
-    // какие слоты синхронизируем между передом/спинкой
-    const shouldSyncSlot = (slot) => slot && slot.toLowerCase() !== "pocket";
+    // сохраняем выбранную шею, когда включается капюшон, чтобы вернуть её при выключении
+    const prevNeckByFaceRef = useRef({ front: null, back: null });
 
     // централизованный апдейтер + правила «капюшон ↔ шея»
-    const setSlotVariant = (face /* 'front'|'back' */, slot, variantId) => {
+    const setSlotVariant = (face, slot, variantId) => {
         setDetails(prev => {
-            const other = face === "front" ? "back" : "front";
-            const curFace = { ...(prev[face] || {}) };
-            const curOther = { ...(prev[other] || {}) };
-
-            const hoodIsTurningOn = slot === "hood" && variantId && variantId !== "base";
-            const hoodIsTurningOff = slot === "hood" && (variantId === "base" || variantId == null);
-            const neckIsChanging = slot === "neck";
-
-            // Если пользователь меняет шею, а капюшон включён — капюшон отключаем автоматически
-            if (neckIsChanging) {
-                const hoodActive = (curFace.hood && curFace.hood !== "base");
-                if (hoodActive) {
-                    // сбрасываем капюшон
-                    delete curFace.hood;
-                }
-            }
-
-            // Включение капюшона: запомним текущую шею и «обнулим» её выбор
-            if (hoodIsTurningOn) {
-                // сохраняем «какой была шея» (если нет — считаем 'base')
-                prevNeckByFaceRef.current[face] = curFace.neck ?? "base";
-                // убираем выбранную шею (капюшон перекрывает её)
-                delete curFace.neck;
-            }
-
-            // Выключение капюшона: восстановим шею
-            if (hoodIsTurningOff) {
-                const prevNeck = prevNeckByFaceRef.current[face];
-                if (prevNeck) {
-                    if (prevNeck === "base") delete curFace.neck;
-                    else curFace.neck = prevNeck;
-                }
-                prevNeckByFaceRef.current[face] = null;
-            }
-
-            // Применяем текущее изменение слота
-            if (variantId === "base" || variantId == null) {
-                delete curFace[slot];
-                if (shouldSyncSlot(slot)) delete curOther[slot];
-            } else {
-                curFace[slot] = variantId;
-                if (shouldSyncSlot(slot)) curOther[slot] = variantId;
-            }
-
-            // Если пользователь менял шею — это «явный» выбор, перезапишем память,
-            // чтобы в будущем не было неожиданного восстановления старой шеи.
-            if (neckIsChanging) {
-                prevNeckByFaceRef.current[face] = curFace.neck ?? "base";
-            }
-
-            return { ...prev, [face]: curFace, [other]: curOther };
+            const { nextDetails, nextPrevNeck } = reduceSetSlotVariant(prev, {
+                face,
+                slot,
+                variantId,
+                prevNeckByFace: prevNeckByFaceRef.current
+            });
+            prevNeckByFaceRef.current = nextPrevNeck; // обновили «память шеи»
+            return nextDetails;
         });
     };
 
@@ -757,9 +714,6 @@ export default function CostumeEditor() {
     const detailsRef = useRef(details);
     const lastChangedSlotRef = useRef(null); // { presetId: 'front'|'back', slot: 'cuff'|... } | null
     const restoringPresetRef = useRef(false); // true — пока восстанавливаем снапшот пресета
-
-    // сохраняем выбранную шею, когда включается капюшон, чтобы вернуть её при выключении
-    const prevNeckByFaceRef = useRef({ front: null, back: null });
 
     const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
     const savedByPresetRef = useRef({});

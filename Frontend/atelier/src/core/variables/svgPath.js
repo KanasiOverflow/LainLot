@@ -4,7 +4,7 @@ export const MANIFEST_URL = `${SVG_BASE}/manifest.json`;
 export const EMPTY_PREVIEW = `${SVG_BASE}/empty.svg`;
 
 // рядом с loadPresetToPanels
-export const urlForSrcFile = (p) => {
+export const resolveSvgSrcPath = (p) => {
     if (!p) return "";
     const clean = p.replace(/^\/+/, "");                 // убрали ведущие слэши
     // если уже начинается с "2d/" — значит путь от корня public, берём его как есть
