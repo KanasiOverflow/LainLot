@@ -301,7 +301,7 @@ export const loadPresetToPanels = async (preset) => {
     return [];
 };
 
-export const composePanelsForSide = async (sideId) => {
+export const composePanelsForSide = async (sideId, details, manifest) => {
     // 1) база
     let baseSources = await getBaseSources(sideId);
     baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({

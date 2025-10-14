@@ -602,8 +602,8 @@ export default function CostumeEditor() {
 
             // гарантируем, что обе стороны собраны, даже если вкладку не открывали
             const [frontPanels, backPanels] = await Promise.all([
-                (svgCacheRef.current.front?.length ? svgCacheRef.current.front : composePanelsForSide("front")),
-                (svgCacheRef.current.back?.length ? svgCacheRef.current.back : composePanelsForSide("back")),
+                (svgCacheRef.current.front?.length ? svgCacheRef.current.front : composePanelsForSide("front", details, manifest)),
+                (svgCacheRef.current.back?.length ? svgCacheRef.current.back : composePanelsForSide("back", details, manifest)),
             ]);
             svgCacheRef.current = { ...svgCacheRef.current, front: frontPanels, back: backPanels };
 
@@ -1734,6 +1734,10 @@ export default function CostumeEditor() {
                                     {/* а область капюшона вычёркиваем (чёрным) */}
                                     {hoodRings.map((poly, i) => (
                                         <path key={i} d={facePath(poly)} fill="#000" />
+                                    ))}
+                                    {/* внутренние отверстия капюшона возвращаем (белым) */}
+                                    {hoodHoles.map((poly, i) => (
+                                        <path key={`hole-${i}`} d={facePath(poly)} fill="#fff" />
                                     ))}
                                 </mask>
                             </defs>
