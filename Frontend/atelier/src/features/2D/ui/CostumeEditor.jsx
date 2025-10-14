@@ -148,6 +148,18 @@ export default function CostumeEditor() {
         setActivePanelId(active);
     }, []);
 
+    const getCursorWorld = (e) => {
+        const svg = svgRef.current;
+        if (!svg) return null;
+        const pt = svg.createSVGPoint();
+        pt.x = e.clientX;
+        pt.y = e.clientY;
+        const inv = svg.getScreenCTM()?.inverse?.();
+        if (!inv) return null;
+        const p = pt.matrixTransform(inv);
+        return { x: p.x, y: p.y };
+    };
+
     const closestPointOnCurve = (panel, curve, P) => {
         // возвращает {x,y,t,total,poly,L} где t — доля 0..1
         let poly = null;
@@ -720,6 +732,34 @@ export default function CostumeEditor() {
         return holes;
     }, [panels, ringsByPanel, outerRingByPanel, hoodPanelIds]);
 
+    // где-то рядом с остальными useRef/useState
+    const rAFRef = useRef(0);
+    const lastPreviewRef = useRef(null);
+
+    // "умный" setter: склеивает апдейты до ближайшего кадра и пропускает мелкие изменения
+    const setInsertPreviewRAF = useCallback((next) => {
+        // 1) если почти не поменялось — не трогаем стейт
+        const prev = lastPreviewRef.current;
+        if (
+            prev &&
+            prev.curveId === next.curveId &&
+            prev.panelId === next.panelId &&
+            prev.allowed === next.allowed &&
+            Math.abs(prev.x - next.x) < 0.5 &&   // порог можно привязать к масштабу: 0.5/scale.k
+            Math.abs(prev.y - next.y) < 0.5 &&
+            Math.abs(prev.t - next.t) < 1e-4
+        ) {
+            return;
+        }
+
+        // 2) отменяем прошлой кадр и планируем новый
+        cancelAnimationFrame(rAFRef.current);
+        rAFRef.current = requestAnimationFrame(() => {
+            lastPreviewRef.current = next;
+            setInsertPreview(next);
+        });
+    }, [setInsertPreview]);
+
     // Рендер одной панели
     const renderPanel = (p) => {
         const faces = facesByPanel[p.id] || [];
@@ -812,8 +852,58 @@ export default function CostumeEditor() {
                                 if (mode === "insert") setInsertPreview(prev => (prev && prev.curveId === c.id ? null : prev));
                                 onCurveLeave(p.id, c.id);
                             }}
-                            onMouseMove={(e) => { /* твой существующий onMouseMove код */ }}
-                            onClick={(e) => { /* твой существующий onClick код */ }}
+                            onMouseMove={(e) => {
+                                if (mode !== 'insert' || !isActive) return;
+                                const P = getCursorWorld(e);
+                                if (!P) return;
+                                const merged = mergedAnchorsOf(p);
+                                const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
+                                const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
+                                if (!a || !b) return;
+
+                                const near = closestPointOnCurve(p, c, P); // ← твой хелпер
+                                if (!near) return;
+
+                                const allowed = !tooCloseToExistingAnchors(p, c, { x: near.x, y: near.y }); // ← твой хелпер
+                                setInsertPreviewRAF({ panelId: p.id, curveId: c.id, x: near.x, y: near.y, allowed, t: near.t });
+                            }}
+                            onClick={(e) => {
+                                if (mode !== 'insert' || !isActive) return;
+                                e.stopPropagation();
+                                const P = getCursorWorld(e);
+                                if (!P) return;
+                                const near = closestPointOnCurve(p, c, P);
+                                if (!near) return;
+
+                                if (tooCloseToExistingAnchors(p, c, { x: near.x, y: near.y })) {
+                                    setToast({ text: "Слишком близко к существующей вершине" });
+                                    return;
+                                }
+
+                                // Добавляем метку t в extraStops
+                                applyCurvesChange(prev => {
+                                    const list = [...(prev[p.id] || [])];
+                                    const i = list.findIndex(x => x.id === c.id);
+                                    if (i < 0) return prev;
+
+                                    const cur = list[i];
+                                    const stops = Array.isArray(cur.extraStops) ? cur.extraStops.slice() : [];
+                                    const t = Math.max(0, Math.min(1, near.t));
+                                    stops.push({ t });
+
+                                    // sort + dedupe
+                                    const EPS = 1e-3; // или 0.5 / scale.k, если хочешь адаптацию к зуму
+                                    const cleaned = stops
+                                        .sort((a, b) => a.t - b.t)
+                                        .filter((s, idx, arr) => idx === 0 || Math.abs(s.t - arr[idx - 1].t) > EPS);
+
+                                    list[i] = { ...cur, extraStops: cleaned };
+                                    return { ...prev, [p.id]: list };
+                                }, "Вставить вершину");
+
+                                // визуальный отклик и сброс превью
+                                setInsertPreview(null);
+                            }}
                             style={{ cursor: (mode === 'preview' || !isActive) ? 'default' : (mode === 'insert' ? 'copy' : 'pointer') }}
                             pointerEvents={(mode === "preview" || !isActive || mode === "deleteVertex") ? "none" : "auto"}
                             strokeLinecap="round"
@@ -875,6 +965,9 @@ export default function CostumeEditor() {
             </g>
         );
     };
+
+    // не забыть очистку при размонтировании
+    useEffect(() => () => cancelAnimationFrame(rAFRef.current), []);
 
     useEffect(() => {
         try { localStorage.setItem("ce.activeFace", presetIdx === 0 ? "front" : "back"); } catch { }
