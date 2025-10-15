@@ -11,12 +11,14 @@ const PRODUCTS = [
         slots: ["body", "belt", "sleeve", "cuff", "neck", "hood", "pocket"],
         // смещение базовых деталей на канве
         offsets: { front: { x: 0, y: 0 }, back: { x: 0, y: 0 } },
+        scale: { x: 1, y: 1 }
     },
     {
         key: "pants",
         slots: ["body", "belt", "leg", "cuff"],
         // положим штаны ниже худи (напр., +900 по y — под свои размеры подправишь)
-        offsets: { front: { x: 0, y: 900 }, back: { x: 0, y: 900 } },
+        offsets: { front: { x: 0, y: 1200 }, back: { x: 0, y: 1200 } },
+        scale: { x: 1.35, y: 1.35 }
     },
 ];
 
@@ -73,13 +75,17 @@ function parseVariantName(file, slot, faceHint = null) {
     return { face, side, which, id, preview: isPreview };
 }
 
-async function collectBase({ product, FRONT_DIR, BACK_DIR }, slotOrder, offsets) {
+async function collectBase({ product, FRONT_DIR, BACK_DIR }, slotOrder, offsets, scale) {
     const base = { front: [], back: [] };
 
     for (const [dir, face] of [[FRONT_DIR, "front"], [BACK_DIR, "back"]]) {
         const entries = await fs.readdir(dir, { withFileTypes: true }).catch(() => []);
         for (const d of entries) {
             if (!d.isFile() || !d.name.toLowerCase().endsWith(".svg")) continue;
+
+            // не тащим превью в базовые детали
+            if (/_preview\.(svg|png|jpe?g)$/i.test(d.name)) continue;
+
             const meta = detectBaseFileMeta(d.name);
             if (!meta) continue;
             base[face].push({
@@ -89,6 +95,7 @@ async function collectBase({ product, FRONT_DIR, BACK_DIR }, slotOrder, offsets)
                 side: meta.side ?? null,
                 which: meta.which ?? null,
                 offset: offsets?.[face] ?? { x: 0, y: 0 },
+                scale: scale ?? { x: 1, y: 1 }
             });
         }
     }
@@ -176,7 +183,7 @@ async function build() {
         const VAR_DIR = await firstExisting(path.join(PRODUCT_DIR, "variants"), path.join(PRODUCT_DIR, "Variants"));
 
         // базовые детали
-        const base = await collectBase({ product: prod.key, FRONT_DIR, BACK_DIR }, prod.slots, prod.offsets);
+        const base = await collectBase({ product: prod.key, FRONT_DIR, BACK_DIR }, prod.slots, prod.offsets, prod.scale);
         allBase.front.push(...base.front);
         allBase.back.push(...base.back);
 
@@ -220,7 +227,7 @@ async function build() {
     };
 
     // Пишем в манифест худи (чтобы ничего не менять в пути загрузки)
-    const OUT = path.join(ROOT, "public/2d/svg", "manifest.json"); // ⟵ было в hoodie/manifest.json
+    const OUT = path.join(ROOT, "public/2d/svg", "manifest.json");
     await fs.writeFile(OUT, JSON.stringify(manifest, null, 2), "utf8");
     console.log("✅ manifest (hoodie+pants):", toUnix(OUT));
 }

@@ -12,10 +12,15 @@ export function useSceneGeometry({ panels, curvesByPanel, defaultSubCount }) {
     const baseFacesCacheRef = useRef(new Map()); // panelId -> { sig, faces }
 
     const worldBBox = useMemo(() => {
+        const isGood = (v) => Number.isFinite(v);
         let bb = null;
-        for (const p of panels) {
+        for (const p of Array.isArray(panels) ? panels : []) {
+            if (!p || !Array.isArray(p.segs) || p.segs.length === 0) continue;
             const b = getBounds(p.segs);
-            if (!bb) bb = { ...b };
+            if (!isGood(b?.x) || !isGood(b?.y) || !isGood(b?.w) || !isGood(b?.h) || b.w <= 0 || b.h <= 0) {
+                continue; // пропускаем «битые» панели
+            }
+            if (!bb) bb = { x: b.x, y: b.y, w: b.w, h: b.h };
             else {
                 const x1 = Math.min(bb.x, b.x);
                 const y1 = Math.min(bb.y, b.y);
@@ -24,13 +29,10 @@ export function useSceneGeometry({ panels, curvesByPanel, defaultSubCount }) {
                 bb = { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
             }
         }
-        return bb || { x: 0, y: 0, w: 800, h: 500 };
+        // безопасный дефолт
+        if (!bb) bb = { x: 0, y: 0, w: 800, h: 500 };
+        return bb;
     }, [panels]);
-
-    const viewBox = useMemo(() => {
-        const pad = Math.max(worldBBox.w, worldBBox.h) * 0.06;
-        return `${worldBBox.x - pad} ${worldBBox.y - pad} ${worldBBox.w + pad * 2} ${worldBBox.h + pad * 2}`;
-    }, [worldBBox]);
 
     const [scale, setScale] = useState({ k: 1 });
     useLayoutEffect(() => {
@@ -49,8 +51,12 @@ export function useSceneGeometry({ panels, curvesByPanel, defaultSubCount }) {
     }, [panels.length]);
 
     const gridDef = useMemo(() => {
-        const step = Math.max(1e-6, Math.min(worldBBox.w, worldBBox.h) / 20);
-        return { step, b: { x: worldBBox.x, y: worldBBox.y, w: worldBBox.w, h: worldBBox.h } };
+        const W = Number.isFinite(worldBBox.w) ? worldBBox.w : 800;
+        const H = Number.isFinite(worldBBox.h) ? worldBBox.h : 500;
+        const X = Number.isFinite(worldBBox.x) ? worldBBox.x : 0;
+        const Y = Number.isFinite(worldBBox.y) ? worldBBox.y : 0;
+        const step = Math.max(1, Math.min(W, H) / 20);
+        return { step, b: { x: X, y: Y, w: W, h: H } };
     }, [worldBBox]);
 
     const baseFacesByPanel = useMemo(() => {

@@ -70,12 +70,15 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
 
             // ВАЖНО: делаем глубокую копию, чтобы подмены не трогали manifest.base[*]
             let baseSources = await getBaseSources(preset.id);
-            baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({
+            baseSources = (Array.isArray(baseSources) ? baseSources.map(e => ({
                 file: e.file,
                 slot: e.slot ?? null,
                 side: e.side ?? null,
-                which: e.which ?? null
-            }));
+                which: e.which ?? null,
+                offset: e.offset ?? { x: 0, y: 0 },
+                product: e.product ?? null,
+                scale: e.scale ?? { x: 1, y: 1 }
+            })) : []);
 
             // индекс базовых частей по (slot,side,which)
             const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
@@ -131,9 +134,16 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                     if (baseHit) {
                         // заменяем файл в уже существующем базовом источнике
                         baseHit.file = e.file;
+                        // offset берём от варианта, если когда-нибудь появится на уровне варианта;
+                        // пока — наследуем базовый (важно для pants)
+                        baseHit.offset = baseHit.offset ?? { x: 0, y: 0 };
                     } else {
                         // базы нет — добавляем новый кусок
-                        sources.push({ file: e.file, slot, side: e.side || null, which: e.which || null });
+                        sources.push({
+                            file: e.file, slot, side: e.side || null, which: e.which || null,
+                            offset: baseIdx.get([slot, "", ""].join("|"))?.offset ?? { x: 0, y: 0 },
+                            scale: baseIdx.get([slot, "", ""].join("|"))?.scale ?? { x: 1, y: 1 }
+                        });
                     }
                 }
             }

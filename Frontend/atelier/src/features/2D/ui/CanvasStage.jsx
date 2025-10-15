@@ -3,7 +3,6 @@ import PanelView from "./PanelView.jsx";
 import styles from "../styles/CostumeEditor.module.css";
 
 export default function CanvasStage({
-
     mode, scale, facesByPanel, outerRingByPanel,
     activePanel, onPanelActivate, fills, onFilledEnter, onFaceEnter,
     onFilledLeave, onFaceLeave, onFilledClick, onFaceClick, onCurveLeave,
@@ -16,6 +15,27 @@ export default function CanvasStage({
     hoodPanelIds, hoodRings, hoodHoles, onCanvasClick, didEverSwapRef,
     presetIdx, PRESETS
 }) {
+
+    // универсально: берём оффсет, если он пришёл из манифеста
+    const translateOf = (panel) => {
+        const off = panel?.meta?.offset || panel?.offset || null;
+        if (!off) return null;
+        const x = +off.x || 0, y = +off.y || 0;
+        return (x || y) ? `translate(${x}, ${y})` : null;
+    };
+
+    const scaleOf = (panel) => {
+        const s = panel?.meta?.scale || panel?.scale || null;
+        if (!s) return null;
+        const sx = +s.x || 1, sy = +s.y || 1;
+        return (sx !== 1 || sy !== 1) ? `scale(${sx}, ${sy})` : null;
+    };
+
+    const transformOf = (panel) => {
+        const t = [translateOf(panel), scaleOf(panel)].filter(Boolean).join(" ");
+        return t || undefined;
+    };
+
     return (
         <div className={styles.canvasStack}>
             {/* нижний слой — пред. сцена, только контуры */}
@@ -23,14 +43,14 @@ export default function CanvasStage({
                 <svg
                     className={`${styles.canvas} ${styles.stage} ${styles.swapOut}`}
                     viewBox={viewBox}
-                    preserveAspectRatio="xMidYMid meet"
+                    preserveAspectRatio="xMidYMin meet"
                     style={{ pointerEvents: "none" }}
                     aria-hidden="true"
                 >
                     <g>
-                        {prevPanels.map(p => (
+                        {prevPanels.map((p, i) => (
                             <path
-                                key={`prev-${p.id}`}
+                                key={`prev-${i}-${p.id}`}
                                 d={segsToD(p.segs)}
                                 fill="none"
                                 stroke="#c9ced6"
@@ -48,7 +68,7 @@ export default function CanvasStage({
                 ref={svgRef}
                 className={`${styles.canvas} ${styles.stage} ${isSwapping ? styles.swapIn : (!didEverSwapRef.current ? styles.svgEnter : "")}`}
                 viewBox={viewBox}
-                preserveAspectRatio="xMidYMid meet"
+                preserveAspectRatio="xMidYMin meet"
                 onClick={onCanvasClick}
                 role="tabpanel"
                 id={presetIdx === 0 ? "panel-front" : "panel-back"}
@@ -99,55 +119,57 @@ export default function CanvasStage({
 
                 {/* 1) Все детали, КРОМЕ капюшона — под маской */}
                 <g mask={`url(#under-hood-mask-${svgMountKey})`}>
-                    {panels.filter(p => !hoodPanelIds.has(p.id)).map((p) => (
-                        <PanelView
-                            key={p.id}
-                            panel={p}
-                            mode={mode}
-                            scale={scale}
-                            facesByPanel={facesByPanel}
-                            outerRingByPanel={outerRingByPanel}
-                            activePanel={activePanel}
-                            onPanelActivate={onPanelActivate}
-                            fills={fills}
-                            onFilledEnter={onFilledEnter}
-                            onFaceEnter={onFaceEnter}
-                            onFilledLeave={onFilledLeave}
-                            onFaceLeave={onFaceLeave}
-                            onFilledClick={onFilledClick}
-                            onFaceClick={onFaceClick}
-                            onCurveLeave={onCurveLeave}
-                            mergedAnchorsOf={mergedAnchorsOf}
-                            curvesByPanel={curvesByPanel}
-                            setInsertPreview={setInsertPreview}
-                            getCursorWorld={getCursorWorld}
-                            closestPointOnCurve={closestPointOnCurve}
-                            tooCloseToExistingAnchors={tooCloseToExistingAnchors}
-                            setInsertPreviewRAF={setInsertPreviewRAF}
-                            applyCurvesChange={applyCurvesChange}
-                            insertPreview={insertPreview}
-                            extraAnchorsByPanel={extraAnchorsByPanel}
-                            setHoverAnchorIdx={setHoverAnchorIdx}
-                            eraseManualAnchor={eraseManualAnchor}
-                            hoverFace={hoverFace}
-                            hoverAnchorIdx={hoverAnchorIdx}
-                            addBuffer={addBuffer}
-                            onAnchorClickAddMode={onAnchorClickAddMode}
-                            hoverCurveKey={hoverCurveKey}
-                            selectedCurveKey={selectedCurveKey}
-                            clickedCurveKey={clickedCurveKey}
-                            onCurveEnter={onCurveEnter}
-                            setToast={setToast}
-                            onCurveClickDelete={onCurveClickDelete}
-                            onCurveClick={onCurveClick}
-                        />
+                    {panels.filter(p => !hoodPanelIds.has(p.id)).map((p, i) => (
+                        <g key={`wrap-${i}-${p.id}`} transform={transformOf(p) || undefined}>
+                            <PanelView
+                                key={`${p.id}-${i}`}
+                                panel={p}
+                                mode={mode}
+                                scale={scale}
+                                facesByPanel={facesByPanel}
+                                outerRingByPanel={outerRingByPanel}
+                                activePanel={activePanel}
+                                onPanelActivate={onPanelActivate}
+                                fills={fills}
+                                onFilledEnter={onFilledEnter}
+                                onFaceEnter={onFaceEnter}
+                                onFilledLeave={onFilledLeave}
+                                onFaceLeave={onFaceLeave}
+                                onFilledClick={onFilledClick}
+                                onFaceClick={onFaceClick}
+                                onCurveLeave={onCurveLeave}
+                                mergedAnchorsOf={mergedAnchorsOf}
+                                curvesByPanel={curvesByPanel}
+                                setInsertPreview={setInsertPreview}
+                                getCursorWorld={getCursorWorld}
+                                closestPointOnCurve={closestPointOnCurve}
+                                tooCloseToExistingAnchors={tooCloseToExistingAnchors}
+                                setInsertPreviewRAF={setInsertPreviewRAF}
+                                applyCurvesChange={applyCurvesChange}
+                                insertPreview={insertPreview}
+                                extraAnchorsByPanel={extraAnchorsByPanel}
+                                setHoverAnchorIdx={setHoverAnchorIdx}
+                                eraseManualAnchor={eraseManualAnchor}
+                                hoverFace={hoverFace}
+                                hoverAnchorIdx={hoverAnchorIdx}
+                                addBuffer={addBuffer}
+                                onAnchorClickAddMode={onAnchorClickAddMode}
+                                hoverCurveKey={hoverCurveKey}
+                                selectedCurveKey={selectedCurveKey}
+                                clickedCurveKey={clickedCurveKey}
+                                onCurveEnter={onCurveEnter}
+                                setToast={setToast}
+                                onCurveClickDelete={onCurveClickDelete}
+                                onCurveClick={onCurveClick}
+                            />
+                        </g>
                     ))}
                 </g>
 
                 {/* 2) Капюшон — поверх, без «белых ластиков» */}
-                {panels.filter(p => hoodPanelIds.has(p.id)).map((p) => (
+                {panels.filter(p => hoodPanelIds.has(p.id)).map((p, i) => (
                     <PanelView
-                        key={p.id}
+                        key={`${p.id}-${i}`}
                         panel={p}
                         mode={mode}
                         scale={scale}

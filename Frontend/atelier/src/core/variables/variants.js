@@ -105,7 +105,10 @@ export async function getBaseSources(face /* 'front'|'back' */) {
         file: e.file,
         slot: e.slot ?? null,
         side: e.side ?? null,
-        which: e.which ?? null
+        which: e.which ?? null,
+        offset: e.offset ?? { x: 0, y: 0 },
+        product: e.product ?? null,
+        scale: e.scale ?? { x: 1, y: 1 }
     }));
 }
 

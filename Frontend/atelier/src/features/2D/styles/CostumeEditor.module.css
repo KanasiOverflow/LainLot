@@ -6,6 +6,7 @@
 .layout {
   width: 100%;
   height: calc(100dvh - 180px);
+  overflow: auto;                /* вертикальный скролл внутри редактора */
   min-height: 520px;
   display: grid;
   grid-template-columns: 1fr minmax(260px, 28%);
@@ -37,8 +38,10 @@
   --canvas-bottom-ui: 64px;
   padding-bottom: var(--canvas-bottom-ui);
   padding-top: 6px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
-.canvasStack { position: relative; min-height: 62vh; }
+.canvasStack { position: relative; min-height: clamp(900px, 110vh, 1800px); }
 .stage, .canvas {
   position: absolute;
   inset: 0;

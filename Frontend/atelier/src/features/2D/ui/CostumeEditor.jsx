@@ -131,7 +131,8 @@ export default function CostumeEditor() {
     const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
 
     const { svgRef, scale, gridDef, baseFacesByPanel, outerRingByPanel,
-        facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve
+        facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve,
+        viewBox
     } = useSceneGeometry({ panels, curvesByPanel, defaultSubCount });
 
     const { applyingPrefsRef, setBothLastModePreview } = useEditorPrefs({

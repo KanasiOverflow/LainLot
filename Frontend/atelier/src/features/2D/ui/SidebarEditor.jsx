@@ -250,6 +250,7 @@ export default function SidebarEditor(props) {
 
                 {mode === "variants" && (
                     <>
+                        {/* --- ХУДИ --- */}
                         {[
                             { slot: "cuff", title: "Манжета" },
                             { slot: "sleeve", title: "Рукав" },
@@ -262,6 +263,26 @@ export default function SidebarEditor(props) {
                             .filter(sec => visibleSlots.has(sec.slot)) // ← показываем только те, что реально есть на стороне
                             .map(sec => (
                                 <div className={styles.section} key={sec.slot}>
+                                    <div className={styles.sectionTitle}>{sec.title}</div>
+                                    <VariantsGrid
+                                        slot={sec.slot}
+                                        face={activeDetailId}
+                                        value={details[activeDetailId]?.[sec.slot] || "base"}
+                                        onChange={(id) => setSlotVariant(activeDetailId, sec.slot, id)}
+                                    />
+                                </div>
+                            ))}
+
+                        {/* --- ШТАНЫ --- */}
+                        {[
+                            { slot: "leg", title: "Брючины" },
+                            { slot: "belt", title: "Пояс" },
+                            { slot: "cuff", title: "Манжета" }
+                            // при необходимости добавите сюда "pants_cuff", "pants_belt" и т.д.
+                        ]
+                            .filter(sec => visibleSlots.has(sec.slot))
+                            .map(sec => (
+                                <div className={styles.section} key={`pants-${sec.slot}`}>
                                     <div className={styles.sectionTitle}>{sec.title}</div>
                                     <VariantsGrid
                                         slot={sec.slot}
