@@ -40,7 +40,8 @@ export default memo(function PanelView({
     clickedCurveKey,
     onCurveEnter,
     setToast,
-    onCurveClickDelete
+    onCurveClickDelete,
+    onCurveClick
 }) {
 
     const faces = facesByPanel[panel.id] || [];
@@ -155,41 +156,37 @@ export default memo(function PanelView({
                             setInsertPreviewRAF({ panelId: panel.id, curveId: c.id, x: near.x, y: near.y, allowed, t: near.t });
                         }}
                         onClick={(e) => {
-                            if (mode !== 'insert' || !isActive) return;
-                            e.stopPropagation();
-                            const P = getCursorWorld(e);
-                            if (!P) return;
-                            const near = closestPointOnCurve(panel, c, P);
-                            if (!near) return;
-
-                            if (tooCloseToExistingAnchors(panel, c, { x: near.x, y: near.y })) {
-                                setToast({ text: "Слишком близко к существующей вершине" });
+                            if (!isActive) return;
+                            if (mode === "insert") {
+                                e.stopPropagation();
+                                const P = getCursorWorld(e);
+                                if (!P) return;
+                                const near = closestPointOnCurve(panel, c, P);
+                                if (!near) return;
+                                if (tooCloseToExistingAnchors(panel, c, { x: near.x, y: near.y })) {
+                                    setToast({ text: "Слишком близко к существующей вершине" });
+                                    return;
+                                }
+                                applyCurvesChange(prev => {
+                                    const list = [...(prev[panel.id] || [])];
+                                    const i = list.findIndex(x => x.id === c.id);
+                                    if (i < 0) return prev;
+                                    const cur = list[i];
+                                    const stops = Array.isArray(cur.extraStops) ? cur.extraStops.slice() : [];
+                                    const t = Math.max(0, Math.min(1, near.t));
+                                    stops.push({ t });
+                                    const EPS = 1e-3;
+                                    const cleaned = stops
+                                        .sort((a, b) => a.t - b.t)
+                                        .filter((s, idx, arr) => idx === 0 || Math.abs(s.t - arr[idx - 1].t) > EPS);
+                                    list[i] = { ...cur, extraStops: cleaned };
+                                    return { ...prev, [panel.id]: list };
+                                }, "Вставить вершину");
+                                setInsertPreview(null);
                                 return;
                             }
-
-                            // Добавляем метку t в extraStops
-                            applyCurvesChange(prev => {
-                                const list = [...(prev[panel.id] || [])];
-                                const i = list.findIndex(x => x.id === c.id);
-                                if (i < 0) return prev;
-
-                                const cur = list[i];
-                                const stops = Array.isArray(cur.extraStops) ? cur.extraStops.slice() : [];
-                                const t = Math.max(0, Math.min(1, near.t));
-                                stops.push({ t });
-
-                                // sort + dedupe
-                                const EPS = 1e-3; // или 0.5 / scale.k, если хочешь адаптацию к зуму
-                                const cleaned = stops
-                                    .sort((a, b) => a.t - b.t)
-                                    .filter((s, idx, arr) => idx === 0 || Math.abs(s.t - arr[idx - 1].t) > EPS);
-
-                                list[i] = { ...cur, extraStops: cleaned };
-                                return { ...prev, [panel.id]: list };
-                            }, "Вставить вершину");
-
-                            // визуальный отклик и сброс превью
-                            setInsertPreview(null);
+                            // все остальные режимы — общий клик по кривой
+                            onCurveClick?.(panel.id, c.id, e);
                         }}
                         style={{ cursor: (mode === 'preview' || !isActive) ? 'default' : (mode === 'insert' ? 'copy' : 'pointer') }}
                         pointerEvents={(mode === "preview" || !isActive || mode === "deleteVertex") ? "none" : "auto"}

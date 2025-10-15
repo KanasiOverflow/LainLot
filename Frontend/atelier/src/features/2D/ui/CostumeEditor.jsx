@@ -19,7 +19,6 @@ import { downloadText } from "../../../core/export/export.js";
 import { buildCombinedSVG } from "../../../core/export/buildCombinedSVG.js";
 
 import SidebarEditor from "./SidebarEditor.jsx";
-import Tooltip from "./Tooltip.jsx";
 import BodyParams from "./BodyParams.jsx";
 import OrderForm from "./OrderForm.jsx";
 import PanelView from "./PanelView.jsx";
@@ -1477,6 +1476,7 @@ export default function CostumeEditor() {
                                         onCurveEnter={onCurveEnter}
                                         setToast={setToast}
                                         onCurveClickDelete={onCurveClickDelete}
+                                        onCurveClick={onCurveClick}
                                     />
                                 ))}
                             </g>
@@ -1522,6 +1522,7 @@ export default function CostumeEditor() {
                                     onCurveEnter={onCurveEnter}
                                     setToast={setToast}
                                     onCurveClickDelete={onCurveClickDelete}
+                                    onCurveClick={onCurveClick}
                                 />
                             ))}
 
