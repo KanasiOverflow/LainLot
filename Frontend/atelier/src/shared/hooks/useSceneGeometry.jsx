@@ -164,8 +164,7 @@ export function useSceneGeometry({ panels, curvesByPanel, defaultSubCount }) {
     }, []);
 
     return {
-        svgRef, viewBox, scale, gridDef, baseFacesByPanel,
-        outerRingByPanel, facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld,
-        closestPointOnCurve
+        svgRef, scale, gridDef, baseFacesByPanel, outerRingByPanel,
+        facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve
     };
 }
