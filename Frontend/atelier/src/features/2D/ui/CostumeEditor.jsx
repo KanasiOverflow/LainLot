@@ -2,8 +2,10 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import styles from "../styles/CostumeEditor.module.css";
 import clsx from "clsx";
+
 import { sampleBezierPoints } from "../../../core/geometry/geometry.js";
 import { waveAlongPolyline } from "../../../core/geometry/polylineOps.js";
+
 import { faceKey } from "../../../core/svg/faceUtils.js";
 import { catmullRomToBezierPath } from "../../../core/svg/polylineOps.js";
 import { pointInAnyFace } from "../../../core/svg/buildFaces.js";
@@ -18,12 +20,14 @@ import { useInsertPreviewRAF } from "../../../shared/hooks/useInsertPreviewRAF.j
 import { useSceneGeometry } from "../../../shared/hooks/useSceneGeometry.jsx";
 import { useEditorPrefs } from "../../../shared/hooks/useEditorPrefs.jsx";
 import { useVariantsComposition } from "../../../shared/hooks/useVariantsComposition.jsx";
+import useCanvasZoom from "../../../shared/hooks/useCanvasZoom.jsx";
 
 import SidebarEditor from "./SidebarEditor.jsx";
 import BodyParams from "./BodyParams.jsx";
 import OrderForm from "./OrderForm.jsx";
 import Topbar from "./Topbar.jsx";
 import CanvasStage from "./CanvasStage.jsx";
+import ZoomControls from "./ZoomControls.jsx";
 
 import { PRESETS } from "../../../core/variables/presets.js";
 import { reduceSetSlotVariant } from "../../../core/variables/variants.js";
@@ -62,7 +66,7 @@ export default function CostumeEditor() {
     const [clickedCurveKey, setClickedCurveKey] = useState(null);
     const [hoverFace, setHoverFace] = useState(null);
     const [toast, setToast] = useState(null);
-
+    const zoomScopeRef = useRef(null);
     // параметры волны (в пикселях экрана)
     const [waveAmpPx, setWaveAmpPx] = useState(6);
     const [waveLenPx, setWaveLenPx] = useState(36);
@@ -126,9 +130,8 @@ export default function CostumeEditor() {
 
     const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
 
-    const { svgRef, viewBox, scale, gridDef, baseFacesByPanel,
-        outerRingByPanel, facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld,
-        closestPointOnCurve
+    const { svgRef, scale, gridDef, baseFacesByPanel, outerRingByPanel,
+        facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve
     } = useSceneGeometry({ panels, curvesByPanel, defaultSubCount });
 
     const { applyingPrefsRef, setBothLastModePreview } = useEditorPrefs({
@@ -137,6 +140,11 @@ export default function CostumeEditor() {
         setWaveAmpPx, waveLenPx, setWaveLenPx, lastLineMode, setLastLineMode,
         presetIdx
     });
+
+    const {
+        zoom, zoomedViewBox, zoomIn, zoomOut, reset,
+        setZoomExact
+    } = useCanvasZoom({ bbox: gridDef.b, svgRef });
 
     const tooCloseToExistingAnchors = (panel, curve, testPt) => {
         // берём все уже существующие «снимки» якорей для этой кривой:
@@ -548,6 +556,12 @@ export default function CostumeEditor() {
         setBothLastModePreview();
     }, [panels, setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId, setDetails, setMode]);
 
+    // автофокус на контейнере, чтобы клавиши работали сразу
+    useEffect(() => {
+        zoomScopeRef.current?.setAttribute("tabindex", "0");
+        zoomScopeRef.current?.focus();
+    }, []);
+
     // Отслеживаем изменение details, чтобы знать какой слот поменялся на активной стороне
     useEffect(() => {
         const prev = detailsRef.current;
@@ -934,7 +948,7 @@ export default function CostumeEditor() {
                         onCurveClickDelete={onCurveClickDelete}
                         onCurveClick={onCurveClick}
                         svgRef={svgRef}
-                        viewBox={viewBox}
+                        viewBox={zoomedViewBox}
                         gridDef={gridDef}
                         svgMountKey={svgMountKey}
                         panels={panels}
@@ -947,6 +961,15 @@ export default function CostumeEditor() {
                         didEverSwapRef={didEverSwapRef}
                         presetIdx={presetIdx}
                         PRESETS={PRESETS}
+                    />
+
+                    {/* Зум-кнопки (центр снизу) */}
+                    <ZoomControls
+                        onIn={zoomIn}
+                        onOut={zoomOut}
+                        onReset={reset}
+                        zoom={zoom}
+                        onSet={setZoomExact}
                     />
 
                     {/* навигация пресетов снизу */}
