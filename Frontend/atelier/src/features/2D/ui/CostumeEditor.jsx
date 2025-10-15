@@ -4,14 +4,10 @@ import styles from "../styles/CostumeEditor.module.css";
 import clsx from "clsx";
 import { sampleBezierPoints } from "../../../core/geometry/geometry.js";
 import { getBounds } from "../../../core/geometry/bounds.js";
-import { cumulativeLengths, nearestOnPolyline, waveAlongPolyline } from "../../../core/geometry/polylineOps.js";
+import { waveAlongPolyline } from "../../../core/geometry/polylineOps.js";
 import { faceKey } from "../../../core/svg/faceUtils.js";
 import { catmullRomToBezierPath } from "../../../core/svg/polylineOps.js";
-import {
-    pointInAnyFace, computeBaseFaces, computeRingsByPanel,
-    pickOuterRing, computeFacesWithUserLines
-}
-    from "../../../core/svg/buildFaces.js";
+import { pointInAnyFace } from "../../../core/svg/buildFaces.js";
 import { loadPresetToPanels, composePanelsForSide } from "../../../core/svg/extractPanels.js";
 import { makeUserCurveBetween } from "../../../core/svg/curves.js";
 
@@ -20,6 +16,7 @@ import { buildCombinedSVG } from "../../../core/export/buildCombinedSVG.js";
 
 import { useHistory } from "../../../shared/hooks/useHistory.jsx";
 import { useInsertPreviewRAF } from "../../../shared/hooks/useInsertPreviewRAF.jsx";
+import { useSceneGeometry } from "../../../shared/hooks/useSceneGeometry.jsx";
 
 import SidebarEditor from "./SidebarEditor.jsx";
 import BodyParams from "./BodyParams.jsx";
@@ -66,6 +63,8 @@ export default function CostumeEditor() {
     const [fills, setFills] = useState([]);
     const [paintColor, setPaintColor] = useState("#f26522");
     const [mode, setMode] = useState("preview");
+    const [defaultSubCount, setDefaultSubCount] = useState(2); // используется только при создании новых линий
+    const [selectedCurveKey, setSelectedCurveKey] = useState(null); // `${panelId}:${curveId}`
 
     // ↓ внутри CostumeEditor(), рядом с остальными useState/useRef
     const applyingPrefsRef = useRef(false);   // сейчас применяем prefs -> не писать их обратно
@@ -82,6 +81,12 @@ export default function CostumeEditor() {
     });
 
     const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
+
+    const { svgRef, viewBox, scale, gridDef,
+        baseFacesByPanel, ringsByPanel, outerRingByPanel, facesByPanel,
+        extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve,
+        setScale
+    } = useSceneGeometry({ panels, curvesByPanel, defaultSubCount });
 
     const [addBuffer, setAddBuffer] = useState(null);
     const [hoverAnchorIdx, setHoverAnchorIdx] = useState(null);
@@ -122,14 +127,6 @@ export default function CostumeEditor() {
         }
         return bb || { x: 0, y: 0, w: 800, h: 500 };
     }, [panels]);
-    // осн. окно на основе общего bbox
-    const viewBox = useMemo(() => {
-        const pad = Math.max(worldBBox.w, worldBBox.h) * 0.06;
-        return `${worldBBox.x - pad} ${worldBBox.y - pad} ${worldBBox.w + pad * 2} ${worldBBox.h + pad * 2}`;
-    }, [worldBBox]);
-    const svgRef = useRef(null);
-    const [scale, setScale] = useState({ k: 1 });
-    const baseFacesCacheRef = useRef(new Map()); // panelId -> { sig, faces }
 
     const snapshotFor = useCallback(() => ({
         curvesByPanel,
@@ -150,37 +147,6 @@ export default function CostumeEditor() {
         setActivePanelId(active);
     }, []);
 
-    const getCursorWorld = (e) => {
-        const svg = svgRef.current;
-        if (!svg) return null;
-        const pt = svg.createSVGPoint();
-        pt.x = e.clientX;
-        pt.y = e.clientY;
-        const inv = svg.getScreenCTM()?.inverse?.();
-        if (!inv) return null;
-        const p = pt.matrixTransform(inv);
-        return { x: p.x, y: p.y };
-    };
-
-    const closestPointOnCurve = (panel, curve, P) => {
-        // возвращает {x,y,t,total,poly,L} где t — доля 0..1
-        let poly = null;
-        if (curve.type === 'cubic') {
-            const a = panel.anchors?.[curve.aIdx] ?? (curve.ax != null ? { x: curve.ax, y: curve.ay } : null);
-            const b = panel.anchors?.[curve.bIdx] ?? (curve.bx != null ? { x: curve.bx, y: curve.by } : null);
-            if (!a || !b) return null;
-            poly = sampleBezierPoints(a.x, a.y, curve.c1.x, curve.c1.y, curve.c2.x, curve.c2.y, b.x, b.y, 128);
-        } else if (Array.isArray(curve.pts)) {
-            poly = curve.pts;
-        }
-        if (!poly || poly.length < 2 || !P) return null;
-        const near = nearestOnPolyline(poly, P);               // ✅ сюда передаём координату курсора
-        const L = cumulativeLengths(poly);
-        const total = L[L.length - 1] || 1;
-        const t = total > 0 ? near.s / total : 0;
-        return { x: near.x, y: near.y, t, total, poly, L };
-    };
-
     const tooCloseToExistingAnchors = (panel, curve, testPt) => {
         // берём все уже существующие «снимки» якорей для этой кривой:
         const merged = mergedAnchorsOf(panel);
@@ -198,18 +164,6 @@ export default function CostumeEditor() {
         }
         return pts.some(q => Math.hypot(q.x - testPt.x, q.y - testPt.y) < MIN_GAP_WORLD);
     };
-
-    /* -------- базовые faces и кольца контура -------- */
-    const baseFacesByPanel = useMemo(() => {
-        return computeBaseFaces(panels, baseFacesCacheRef.current);
-    }, [panels]);
-
-    const ringsByPanel = useMemo(() => {
-        return computeRingsByPanel(panels);
-    }, [panels]);
-
-    const [defaultSubCount, setDefaultSubCount] = useState(2); // используется только при создании новых линий
-    const [selectedCurveKey, setSelectedCurveKey] = useState(null); // `${panelId}:${curveId}`
 
     const onCurveClick = (panelId, curveId, e) => {
         if (mode === "delete") {
@@ -286,82 +240,11 @@ export default function CostumeEditor() {
         return { x: p0.x + (p1.x - p0.x) * a, y: p0.y + (p1.y - p0.y) * a };
     };
 
-    //вычисляем «экстра-якоря» (виртуальные вершины) для всех кривых панели
-    const extraAnchorsByPanel = useMemo(() => {
-        const map = {};
-        for (const p of panels) {
-            const arr = [];
-            const curves = (curvesByPanel[p.id] || []);
-            for (const c of curves) {
-                // получаем опорные точки полилинии кривой
-                let poly = null;
-                if (c.type === "cubic") {
-                    const a = p.anchors?.[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
-                    const b = p.anchors?.[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
-                    if (!a || !b) continue;
-                    poly = sampleBezierPoints(a.x, a.y, c.c1.x, c.c1.y, c.c2.x, c.c2.y, b.x, b.y, 128);
-                } else {
-                    // для wavy берём дискретизацию самой линии
-                    if (Array.isArray(c.pts) && c.pts.length >= 2) {
-                        poly = c.pts;
-                    } else {
-                        continue;
-                    }
-                }
-
-                if (!poly || poly.length < 2) continue;
-
-                const L = cumulativeLengths(poly);
-                const total = L[L.length - 1] || 1;
-                const n = Math.max(2, Math.min(10, c?.subCount ?? defaultSubCount ?? 2));
-                for (let k = 1; k <= n; k++) {
-                    const s = (total * k) / (n + 1);
-                    const pt = pointAtS(poly, L, s);
-                    arr.push({ id: `${c.id}:${k}`, x: pt.x, y: pt.y });
-                }
-
-                // ручные точки (новое): extraStops — доли 0..1
-                if (Array.isArray(c.extraStops)) {
-                    c.extraStops.forEach((stop, idx) => {
-                        const t = typeof stop === 'number' ? stop : (stop?.t ?? 0);
-                        const s = Math.max(0, Math.min(1, t)) * total;
-                        const pt = pointAtS(poly, L, s);
-                        // id можно оставить индексный — удалять будем по t:
-                        arr.push({ id: `${c.id}@m${idx}`, x: pt.x, y: pt.y, t });
-                    });
-                }
-            }
-            map[p.id] = arr;
-        }
-        return map;
-    }, [panels, curvesByPanel, defaultSubCount]);
-
-    // утилита для объединённого списка вершин панели
-    const mergedAnchorsOf = useCallback((p) => {
-        const extras = extraAnchorsByPanel[p.id] || [];
-        // порядок важен: базовые, затем дополнительные — индексы merged совпадут с кликами
-        return [...(p.anchors || []), ...extras];
-    }, [extraAnchorsByPanel]);
-
-    // faces с учётом пользовательских линий
-    const facesByPanel = useMemo(() => {
-        return computeFacesWithUserLines(panels, curvesByPanel, mergedAnchorsOf);
-    }, [panels, curvesByPanel, mergedAnchorsOf]);
-
     const modeGroup =
         (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
             (mode === 'add' || mode === 'delete' || mode === 'insert' || mode === 'deleteVertex') ? 'line' :
                 (mode === 'variants' ? 'variants' : 'preview');
 
-
-    const gridDef = useMemo(() => {
-        const step = Math.max(1e-6, Math.min(worldBBox.w, worldBBox.h) / 20);
-        return { step, b: { x: worldBBox.x, y: worldBBox.y, w: worldBBox.w, h: worldBBox.h } };
-    }, [worldBBox]);
-
-    const outerRingByPanel = useMemo(() => {
-        return pickOuterRing(panels, ringsByPanel);
-    }, [panels, ringsByPanel]);
 
     /* ===== действия ===== */
     const activePanel = useMemo(
@@ -1214,7 +1097,6 @@ export default function CostumeEditor() {
             }
         };
     }, [composedPanels]);
-
 
     useLayoutEffect(() => {
         const update = () => {
