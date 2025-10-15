@@ -17,6 +17,7 @@ import { useHistory } from "../../../shared/hooks/useHistory.jsx";
 import { useInsertPreviewRAF } from "../../../shared/hooks/useInsertPreviewRAF.jsx";
 import { useSceneGeometry } from "../../../shared/hooks/useSceneGeometry.jsx";
 import { useEditorPrefs } from "../../../shared/hooks/useEditorPrefs.jsx";
+import { useVariantsComposition } from "../../../shared/hooks/useVariantsComposition.jsx";
 
 import SidebarEditor from "./SidebarEditor.jsx";
 import BodyParams from "./BodyParams.jsx";
@@ -32,15 +33,11 @@ export default function CostumeEditor() {
     const scopeRef = useRef(null);
     const [showTopbarHint, setShowTopbarHint] = useState(false);
     const [composedPanels, setComposedPanels] = useState(null);
-    // кеш SVG по пресетам и сохранённые пользовательские состояния по пресетам
-    const svgCacheRef = useRef({});
-    const [svgCache, setSvgCache] = useState({}); // { [presetId]: rawSVG }
-    const currentPresetIdRef = useRef(PRESETS[0]?.id || "front");
     // Минимальный зазор между вершинами (в мировых единицах SVG). Настраивается из кода.
     const MIN_GAP_WORLD = 20; // TODO: подберите под ваши единицы (напр., «5 см»)
     // state для «запоминания» последнего подрежима
     const [lastLineMode, setLastLineMode] = useState('add');     // 'add' | 'delete
-    const [panels, setPanels] = useState([]);
+
     const [activePanelId, setActivePanelId] = useState(null);
     // для анимации "из-за спины"
     const [prevPanels, setPrevPanels] = useState(null);
@@ -48,14 +45,9 @@ export default function CostumeEditor() {
     const SWAP_MS = 180; // синхрон с .swapIn/.swapOut (180ms)
     const didEverSwapRef = useRef(false);
     const swapTimerRef = useRef(null);
-    // чтобы поймать "старые" панели до перезаписи
-    const panelsRef = useRef(panels);
     // --- PRESETS state
     const [presetIdx, setPresetIdx] = useState(0);   // 0: Перед, 1: Спинка
     const activeId = presetIdx === 0 ? "front" : "back";
-    const [isLoadingPreset, setIsLoadingPreset] = useState(false);
-    // красивый ре-монтаж svg при смене пресета (для анимации появления)
-    const [svgMountKey, setSvgMountKey] = useState(0);
     // кривые: 'cubic' или 'routed' (по контуру)
     const [curvesByPanel, setCurvesByPanel] = useState({});
     const [fills, setFills] = useState([]);
@@ -77,6 +69,12 @@ export default function CostumeEditor() {
     const [waveLenPx, setWaveLenPx] = useState(36);
     const [paletteOpen, setPaletteOpen] = useState(false);
     const paletteRef = useRef(null);
+
+    const activeDetailId = (presetIdx === 0 ? "front" : "back");
+    const [details, setDetails] = useState({ front: { cuff: "base" }, back: { cuff: "base" } }); // пока работаем только с манжетами
+
+    const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
+    const savedByPresetRef = useRef({});
 
     const dismissTopbarHint = useCallback(() => {
         if (!showTopbarHint) return;
@@ -117,6 +115,15 @@ export default function CostumeEditor() {
         setFills, setCurvesByPanel,
         max: 50, // можно поменять
     });
+
+    const {
+        manifest, setManifest, isLoadingPreset, panels, setPanels,
+        svgCacheRef, svgCache, setSvgCache, svgMountKey, hoodPanelIds,
+        hoodRings, hoodHoles, panelSlotMapRef, currentPresetIdRef
+    } = useVariantsComposition({ presetIdx, details, savedByPresetRef, applySnapshot });
+
+    // чтобы поймать "старые" панели до перезаписи
+    const panelsRef = useRef(panels);
 
     const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
 
@@ -503,10 +510,6 @@ export default function CostumeEditor() {
         return n.length > 1 && /.+@.+\..+/.test(e) && p.length >= 6;
     })();
 
-    const activeDetailId = (presetIdx === 0 ? "front" : "back");
-    const [manifest, setManifest] = useState(null);
-    const [details, setDetails] = useState({ front: { cuff: "base" }, back: { cuff: "base" } }); // пока работаем только с манжетами
-
     // сохраняем выбранную шею, когда включается капюшон, чтобы вернуть её при выключении
     const prevNeckByFaceRef = useRef({ front: null, back: null });
 
@@ -523,16 +526,12 @@ export default function CostumeEditor() {
             return nextDetails;
         });
     };
-
-    const panelSlotMapRef = useRef(new Map()); // panelId -> slot
     const changeKindRef = useRef(null); // 'preset' | 'slot' | null
 
     const detailsRef = useRef(details);
     const lastChangedSlotRef = useRef(null); // { presetId: 'front'|'back', slot: 'cuff'|... } | null
     const restoringPresetRef = useRef(false); // true — пока восстанавливаем снапшот пресета
 
-    const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
-    const savedByPresetRef = useRef({});
 
     // единая кнопка "Сбросить всё"
     const resetAll = useCallback(() => {
@@ -552,69 +551,11 @@ export default function CostumeEditor() {
         setBothLastModePreview();
     }, [panels, setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId, setDetails, setMode, setPrefs]);
 
-    // панели-капюшоны
-    const hoodPanelIds = useMemo(() => {
-        return new Set(
-            panels
-                .filter(p => String(p.meta?.slot || '').toLowerCase() === 'hood')
-                .map(p => p.id)
-        );
-    }, [panels]);
-
-    // внешние кольца (силуэты) капюшона
-    const hoodRings = useMemo(() => {
-        return panels
-            .filter(p => hoodPanelIds.has(p.id))
-            .map(p => outerRingByPanel[p.id])
-            .filter(Boolean);
-    }, [panels, outerRingByPanel, hoodPanelIds]);
-
-    // ➕ ДОБАВЬТЕ: внутренние отверстия (inner rings) капюшона
-    const hoodHoles = useMemo(() => {
-        const holes = [];
-        for (const p of panels) {
-            if (!hoodPanelIds.has(p.id)) continue;
-            const rings = ringsByPanel[p.id] || [];
-            const outer = outerRingByPanel[p.id];
-            for (const r of rings) {
-                if (!outer || r !== outer) holes.push(r);
-            }
-        }
-        return holes;
-    }, [panels, ringsByPanel, outerRingByPanel, hoodPanelIds]);
-
     useEffect(() => {
         try { localStorage.setItem("ce.activeFace", presetIdx === 0 ? "front" : "back"); } catch { }
     }, [presetIdx]);
 
     useEffect(() => { savedByPresetRef.current = savedByPreset; }, [savedByPreset]);
-
-    useEffect(() => {
-        const prev = detailsRef.current;
-        const cur = details;
-
-        // собираем все изменения
-        const changes = [];
-        for (const face of ['front', 'back']) {
-            const p = prev[face] || {}, c = cur[face] || {};
-            for (const slot of Object.keys({ ...p, ...c })) {
-                if (p[slot] !== c[slot]) {
-                    changes.push({ presetId: face, slot });
-                }
-            }
-        }
-
-        if (changes.length) {
-            changeKindRef.current = 'slot';
-            // приоритет — для текущей активной стороны (чтобы чистились заливки/линии именно там)
-            const curFace = currentPresetIdRef.current;
-            const preferred = changes.find(ch => ch.presetId === curFace) || changes[0];
-            lastChangedSlotRef.current = preferred;
-        }
-
-        detailsRef.current = cur;
-    }, [details]);
-
 
     useEffect(() => {
         // на время восстановления/переключения пресета — ничего не сохраняем
@@ -627,129 +568,6 @@ export default function CostumeEditor() {
         savedByPresetRef.current = { ...savedByPresetRef.current, [id]: snap };
         setSavedByPreset(prev => ({ ...prev, [id]: snap }));
     }, [fills, curvesByPanel, activePanelId]);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const m = await loadSvgManifest();
-                setManifest(m);
-            } catch (e) {
-                console.error(e);
-                // опционально: показать в UI подсказку
-                // toast.error("Не найден manifest.json. Запусти npm run build:svg-manifest");
-            }
-        })();
-    }, []);
-
-    useEffect(() => {
-        if (!manifest) return;        // ⬅️ без манифеста ничего не делаем
-        let alive = true;
-        (async () => {
-            const preset = PRESETS[presetIdx];
-            if (!preset) return;
-            setIsLoadingPreset(true);
-
-            // ВАЖНО: делаем глубокую копию, чтобы подмены не трогали manifest.base[*]
-            let baseSources = await getBaseSources(preset.id);
-            baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({
-                file: e.file,
-                slot: e.slot ?? null,
-                side: e.side ?? null,
-                which: e.which ?? null
-            }));
-
-            // индекс базовых частей по (slot,side,which)
-            const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
-            const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
-
-            // находим, какие слоты у нас вообще выбраны на этой стороне (details[preset.id])
-            const chosen = details[preset.id] || {};
-            const hoodActive = !!(chosen.hood && chosen.hood !== "base");
-
-            // Если капюшон активен — полностью убираем из базы любые части слота 'neck'
-            // (иначе базовая шея будет торчать под капюшоном)
-            if (hoodActive) {
-                baseSources = baseSources.filter(s => (s.slot || "").toLowerCase() !== "neck");
-            }
-
-            // начнём с копии базы
-            const sources = baseSources.slice();
-
-            // для каждого выбранного слота подставляем/добавляем файлы из варианта
-            for (const [slot, variantId] of Object.entries(chosen)) {
-                if (!variantId || variantId === "base") continue; // база: ничего не меняем
-                const list = manifest?.variants?.[slot] || [];
-                const v = list.find(x => x.id === variantId);
-                if (!v) continue;
-
-                const fmap = v.files?.[preset.id] || {}; // files для текущей стороны
-
-                // Если на этой стороне у варианта нет ни одного файла — пропускаем,
-                // чтобы не "очищать" базу и не ломать канву
-                if (!fmap || Object.keys(fmap).length === 0) {
-                    // console.warn(`[variants] empty files for ${slot}/${variantId} on ${preset.id}`);
-                    continue;
-                }
-                // после выбора варианта слота v и нахождения подходящей ветки files для active side:
-                const sLower = (slot || "").toLowerCase();
-                const allowSides = (sLower === "cuff" || sLower === "sleeve");
-
-                let entries = [];
-                if (fmap.file) entries.push({ file: fmap.file, side: null, which: null });
-                if (allowSides && fmap.left) entries.push({ file: fmap.left, side: "left", which: null });
-                if (allowSides && fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
-                if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
-
-                // 3) не создаём новые под-части, которых нет в базе (кроме hood)
-                const hasBaseFor = (side, which) => baseIdx.has([slot, side || "", which || ""].join("|"));
-                if (sLower !== "hood") {
-                    entries = entries.filter(e => hasBaseFor(e.side, e.which));
-                }
-
-                for (const e of entries) {
-                    const k = [slot, e.side || "", e.which || ""].join("|");
-                    const baseHit = baseIdx.get(k);
-                    if (baseHit) {
-                        // заменяем файл в уже существующем базовом источнике
-                        baseHit.file = e.file;
-                    } else {
-                        // базы нет — добавляем новый кусок
-                        sources.push({ file: e.file, slot, side: e.side || null, which: e.which || null });
-                    }
-                }
-            }
-
-            // === ВАЖНО: капюшон поверх всего ===
-            // Положим все куски слота 'hood' в конец, чтобы они рисовались последними
-            // (и визуально перекрывали остальные детали)
-            if (sources.length) {
-                const hoodParts = [];
-                const rest = [];
-                for (const src of sources) {
-                    if ((src.slot || "").toLowerCase() === "hood") hoodParts.push(src);
-                    else rest.push(src);
-                }
-                // если хотим ещё и шнурки/подкладку поверх остальных частей капюшона — можно тоньше сортировать
-                // но базово достаточно просто положить hoodParts в конец
-                sources.length = 0;
-                sources.push(...rest, ...hoodParts);
-            }
-
-            const compiled = await loadPresetToPanels({ ...preset, sources });
-            if (!alive) return;
-            setComposedPanels(Array.isArray(compiled) ? compiled : []);
-            setSvgCache(prev => ({ ...prev, [preset.id]: Array.isArray(compiled) ? compiled : [] }));
-            setSvgMountKey(k => k + 1);
-
-        })().catch(() => {
-            if (alive)
-                setComposedPanels([]);
-        }).finally(() => {
-            if (alive)
-                setIsLoadingPreset(false);
-        });
-        return () => { alive = false; };
-    }, [presetIdx, manifest, details]);
 
     useEffect(() => {
         const target = PRESETS[presetIdx];
