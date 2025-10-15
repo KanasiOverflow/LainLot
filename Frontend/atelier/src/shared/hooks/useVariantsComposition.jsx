@@ -229,8 +229,8 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
     }, [panels, ringsByPanel, outerRingByPanel, hoodPanelIds]);
 
     return {
-        manifest, setManifest, isLoadingPreset, panels, setPanels,
-        svgCacheRef, svgCache, setSvgCache, svgMountKey, hoodPanelIds,
-        hoodRings, hoodHoles, panelSlotMapRef, currentPresetIdRef
+        manifest, isLoadingPreset, panels, svgCacheRef, svgCache,
+        svgMountKey, hoodPanelIds, hoodRings, hoodHoles, panelSlotMapRef,
+        currentPresetIdRef
     };
 }

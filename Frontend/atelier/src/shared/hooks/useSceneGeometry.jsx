@@ -1,4 +1,4 @@
-import { useMemo, useRef, useLayoutEffect, useCallback, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, useCallback } from "react";
 import { getBounds } from "../../core/geometry/bounds.js";
 import { cumulativeLengths, nearestOnPolyline } from "../../core/geometry/polylineOps.js";
 import { sampleBezierPoints } from "../../core/geometry/geometry.js";
@@ -164,9 +164,8 @@ export function useSceneGeometry({ panels, curvesByPanel, defaultSubCount }) {
     }, []);
 
     return {
-        svgRef, viewBox, scale, gridDef,
-        baseFacesByPanel, ringsByPanel, outerRingByPanel, facesByPanel,
-        extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve,
-        setScale
+        svgRef, viewBox, scale, gridDef, baseFacesByPanel,
+        outerRingByPanel, facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld,
+        closestPointOnCurve
     };
 }

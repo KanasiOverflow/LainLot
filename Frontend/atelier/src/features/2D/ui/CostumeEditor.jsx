@@ -7,7 +7,7 @@ import { waveAlongPolyline } from "../../../core/geometry/polylineOps.js";
 import { faceKey } from "../../../core/svg/faceUtils.js";
 import { catmullRomToBezierPath } from "../../../core/svg/polylineOps.js";
 import { pointInAnyFace } from "../../../core/svg/buildFaces.js";
-import { loadPresetToPanels, composePanelsForSide } from "../../../core/svg/extractPanels.js";
+import { composePanelsForSide } from "../../../core/svg/extractPanels.js";
 import { makeUserCurveBetween } from "../../../core/svg/curves.js";
 
 import { downloadText } from "../../../core/export/export.js";
@@ -26,13 +26,12 @@ import Topbar from "./Topbar.jsx";
 import CanvasStage from "./CanvasStage.jsx";
 
 import { PRESETS } from "../../../core/variables/presets.js";
-import { getBaseSources, loadSvgManifest, reduceSetSlotVariant } from "../../../core/variables/variants.js";
+import { reduceSetSlotVariant } from "../../../core/variables/variants.js";
 
 /* ================== компонент ================== */
 export default function CostumeEditor() {
     const scopeRef = useRef(null);
     const [showTopbarHint, setShowTopbarHint] = useState(false);
-    const [composedPanels, setComposedPanels] = useState(null);
     // Минимальный зазор между вершинами (в мировых единицах SVG). Настраивается из кода.
     const MIN_GAP_WORLD = 20; // TODO: подберите под ваши единицы (напр., «5 см»)
     // state для «запоминания» последнего подрежима
@@ -117,9 +116,9 @@ export default function CostumeEditor() {
     });
 
     const {
-        manifest, setManifest, isLoadingPreset, panels, setPanels,
-        svgCacheRef, svgCache, setSvgCache, svgMountKey, hoodPanelIds,
-        hoodRings, hoodHoles, panelSlotMapRef, currentPresetIdRef
+        manifest, isLoadingPreset, panels, svgCacheRef, svgCache,
+        svgMountKey, hoodPanelIds, hoodRings, hoodHoles, panelSlotMapRef,
+        currentPresetIdRef
     } = useVariantsComposition({ presetIdx, details, savedByPresetRef, applySnapshot });
 
     // чтобы поймать "старые" панели до перезаписи
@@ -127,10 +126,9 @@ export default function CostumeEditor() {
 
     const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
 
-    const { svgRef, viewBox, scale, gridDef,
-        baseFacesByPanel, ringsByPanel, outerRingByPanel, facesByPanel,
-        extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve,
-        setScale
+    const { svgRef, viewBox, scale, gridDef, baseFacesByPanel,
+        outerRingByPanel, facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld,
+        closestPointOnCurve
     } = useSceneGeometry({ panels, curvesByPanel, defaultSubCount });
 
     const { applyingPrefsRef, setPrefs, setBothLastModePreview } = useEditorPrefs({
@@ -532,7 +530,6 @@ export default function CostumeEditor() {
     const lastChangedSlotRef = useRef(null); // { presetId: 'front'|'back', slot: 'cuff'|... } | null
     const restoringPresetRef = useRef(false); // true — пока восстанавливаем снапшот пресета
 
-
     // единая кнопка "Сбросить всё"
     const resetAll = useCallback(() => {
         if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях."))
@@ -550,6 +547,25 @@ export default function CostumeEditor() {
         // 2) фиксируем «preview» как последний режим для обеих сторон
         setBothLastModePreview();
     }, [panels, setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId, setDetails, setMode, setPrefs]);
+
+    // Отслеживаем изменение details, чтобы знать какой слот поменялся на активной стороне
+    useEffect(() => {
+        const prev = detailsRef.current;
+        const cur = details;
+        const changes = [];
+        for (const face of ['front', 'back']) {
+            const p = prev[face] || {}, c = cur[face] || {};
+            for (const slot of Object.keys({ ...p, ...c })) {
+                if (p[slot] !== c[slot]) changes.push({ presetId: face, slot });
+            }
+        }
+        if (changes.length) {
+            changeKindRef.current = 'slot';
+            const preferred = changes.find(ch => ch.presetId === (presetIdx === 0 ? 'front' : 'back')) || changes[0];
+            lastChangedSlotRef.current = preferred;
+        }
+        detailsRef.current = cur;
+    }, [details, presetIdx]);
 
     useEffect(() => {
         try { localStorage.setItem("ce.activeFace", presetIdx === 0 ? "front" : "back"); } catch { }
@@ -722,18 +738,14 @@ export default function CostumeEditor() {
         return () => el.removeEventListener("keydown", onKey);
     }, [panels, activePanel]);
 
+    // Реагируем на изменение panels (из хука): анимация, карта слотов, восстановление/очистка
     useEffect(() => {
-        if (!composedPanels)
-            return;
+        if (!panels || panels.length === 0) return;
 
-        // предотвращаем раннюю чистку fills пока восстанавливаем снапшот пресета
         const kind = changeKindRef.current;
-        if (kind === 'preset')
-            restoringPresetRef.current = true;
+        if (kind === 'preset') restoringPresetRef.current = true;
 
-        const parts = composedPanels;
-
-        // старая логика анимации/переключений
+        // анимация переключения
         const old = panelsRef.current;
         if (old && old.length) {
             didEverSwapRef.current = true;
@@ -747,26 +759,19 @@ export default function CostumeEditor() {
             }, SWAP_MS);
         }
 
-        setPanels(parts);
-
         // обновим карту принадлежности панелей слотам
         const map = new Map();
-        for (const p of parts) {
-            const slot = p.meta?.slot || null;
-            map.set(p.id, slot);
-        }
+        for (const p of panels) map.set(p.id, p.meta?.slot || null);
         panelSlotMapRef.current = map;
 
-        // --- основная логика восстановления/сохранения состояния ---
+        // восстановление/очистка
         const presetId = currentPresetIdRef.current;
         const changed = lastChangedSlotRef.current;
 
         if (kind === 'preset') {
-            // 🔹 ТОЛЬКО при смене пресета — восстановить снапшот
             const snap = savedByPresetRef.current[presetId];
-            applySnapshot(snap, parts);
+            applySnapshot(snap, panels);
         } else if (changed) {
-            // 🔹 Смена варианта слота — чистим только затронутые панели
             const { presetId: chPreset, slot: chSlot } = changed;
             if (chPreset === presetId && chSlot) {
                 const panelSlotMap = panelSlotMapRef.current;
@@ -774,27 +779,17 @@ export default function CostumeEditor() {
                 setCurvesByPanel(prev => {
                     const next = { ...prev };
                     for (const pid of Object.keys(next)) {
-                        if (panelSlotMap.get(pid) === chSlot) {
-                            delete next[pid];
-                        }
+                        if (panelSlotMap.get(pid) === chSlot) delete next[pid];
                     }
                     return next;
                 });
             }
         }
 
-        // сбрасываем маркеры после обработки
         changeKindRef.current = null;
         lastChangedSlotRef.current = null;
-
-        if (toast)
-            setToast(null);
-
-        // разблокировать чистильщик заливок — следующей микротаской,
-        // чтобы успели пересчитаться faces по восстановленным curves/fills
-        if (restoringPresetRef.current) {
-            setTimeout(() => { restoringPresetRef.current = false; }, 0);
-        }
+        if (toast) setToast(null);
+        if (restoringPresetRef.current) setTimeout(() => { restoringPresetRef.current = false; }, 0);
 
         return () => {
             if (swapTimerRef.current) {
@@ -802,19 +797,7 @@ export default function CostumeEditor() {
                 swapTimerRef.current = null;
             }
         };
-    }, [composedPanels]);
-
-    useLayoutEffect(() => {
-        const update = () => {
-            const svg = svgRef.current; if (!svg || !panels.length) return;
-            const vb = svg.viewBox.baseVal; const kx = vb.width / svg.clientWidth, ky = vb.height / svg.clientHeight;
-            setScale({ k: Math.max(kx, ky) });
-        };
-        update();
-        const ro = new ResizeObserver(update); if (svgRef.current) ro.observe(svgRef.current);
-        window.addEventListener("resize", update);
-        return () => { ro.disconnect(); window.removeEventListener("resize", update); };
-    }, [panels.length]);
+    }, [panels]);
 
     // стало — чистим только то, что относится к ТЕКУЩИМ панелям
     useEffect(() => {
