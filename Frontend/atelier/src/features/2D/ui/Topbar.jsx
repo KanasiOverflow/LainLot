@@ -3,16 +3,8 @@ import Tooltip from "./Tooltip.jsx";
 import clsx from "clsx";
 
 export default function Topbar({
-    mode,
-    setMode,
-    lastLineMode,
-    setShowTopbarHint,
-    showTopbarHint,
-    dismissTopbarHint,
-    presetIdx,
-    setPresetIdx,
-    resetAll,
-    doExportSVG,
+    mode, setMode, lastLineMode, setShowTopbarHint, showTopbarHint,
+    dismissTopbarHint, presetIdx, setPresetIdx, resetAll, doExportSVG,
     isExporting,
 }) {
     const modeGroup =
