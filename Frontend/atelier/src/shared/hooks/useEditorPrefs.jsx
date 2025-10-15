@@ -102,5 +102,5 @@ export function useEditorPrefs({
         });
     };
 
-    return { applyingPrefsRef, setPrefs, setBothLastModePreview };
+    return { applyingPrefsRef, setBothLastModePreview };
 }

@@ -1,5 +1,5 @@
 // CostumeEditor.jsx
-import { useEffect, useMemo, useRef, useState, useLayoutEffect, useCallback } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import styles from "../styles/CostumeEditor.module.css";
 import clsx from "clsx";
 import { sampleBezierPoints } from "../../../core/geometry/geometry.js";
@@ -131,7 +131,7 @@ export default function CostumeEditor() {
         closestPointOnCurve
     } = useSceneGeometry({ panels, curvesByPanel, defaultSubCount });
 
-    const { applyingPrefsRef, setPrefs, setBothLastModePreview } = useEditorPrefs({
+    const { applyingPrefsRef, setBothLastModePreview } = useEditorPrefs({
         activeId, mode, setMode, paintColor, setPaintColor,
         lineStyle, setLineStyle, defaultSubCount, setDefaultSubCount, waveAmpPx,
         setWaveAmpPx, waveLenPx, setWaveLenPx, lastLineMode, setLastLineMode,
@@ -546,7 +546,7 @@ export default function CostumeEditor() {
 
         // 2) фиксируем «preview» как последний режим для обеих сторон
         setBothLastModePreview();
-    }, [panels, setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId, setDetails, setMode, setPrefs]);
+    }, [panels, setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId, setDetails, setMode]);
 
     // Отслеживаем изменение details, чтобы знать какой слот поменялся на активной стороне
     useEffect(() => {
