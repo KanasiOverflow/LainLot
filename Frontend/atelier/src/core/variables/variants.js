@@ -8,6 +8,9 @@ const FORCED_SLOTS = {
     back: new Set(["hood"]),
 };
 
+// какие слоты синхронизируем между передом/спинкой
+const shouldSyncSlot = (slot) => slot && slot.toLowerCase() !== "pocket";
+
 // алиасы имён слотов (на случай разных названий в манифесте)
 const SLOT_ALIASES = {
     cuff: "cuff",
@@ -104,7 +107,6 @@ export async function getBaseSources(face /* 'front'|'back' */) {
     }));
 }
 
-
 // Вернуть путь превью базового слота для заданной стороны
 export async function getBasePreview(slot, face /* 'front' | 'back' */) {
     const m = await loadSvgManifest();
@@ -151,4 +153,57 @@ export async function getVisibleSlotsForFace(face /* 'front' | 'back' */) {
         set.add(s);
 
     return Array.from(set);
+}
+
+export function reduceSetSlotVariant(
+    prev,                                  // текущее details {front:{}, back:{}}
+    { face, slot, variantId, prevNeckByFace }
+) {
+    const other = face === "front" ? "back" : "front";
+    const curFace = { ...(prev[face] || {}) };
+    const curOther = { ...(prev[other] || {}) };
+    const nextPrevNeck = { ...(prevNeckByFace || {}) };
+
+    const hoodIsTurningOn = slot === "hood" && variantId && variantId !== "base";
+    const hoodIsTurningOff = slot === "hood" && (variantId === "base" || variantId == null);
+    const neckIsChanging = slot === "neck";
+
+    // Если меняют шею, а капюшон включён — отключаем капюшон
+    if (neckIsChanging) {
+        const hoodActive = curFace.hood && curFace.hood !== "base";
+        if (hoodActive) delete curFace.hood;
+    }
+
+    // Включение капюшона: запомним текущее значение шеи и временно уберём её
+    if (hoodIsTurningOn) {
+        nextPrevNeck[face] = curFace.neck ?? "base";
+        delete curFace.neck;
+    }
+
+    // Выключение капюшона: восстановим сохранённую шею
+    if (hoodIsTurningOff) {
+        const prevNeck = nextPrevNeck[face];
+        if (prevNeck) {
+            if (prevNeck === "base") delete curFace.neck;
+            else curFace.neck = prevNeck;
+        }
+        nextPrevNeck[face] = null;
+    }
+
+    // Применяем текущее изменение слота
+    if (variantId === "base" || variantId == null) {
+        delete curFace[slot];
+        if (shouldSyncSlot(slot)) delete curOther[slot];
+    } else {
+        curFace[slot] = variantId;
+        if (shouldSyncSlot(slot)) curOther[slot] = variantId;
+    }
+
+    // Если меняли шею — перезаписываем «память шеи»
+    if (neckIsChanging) {
+        nextPrevNeck[face] = curFace.neck ?? "base";
+    }
+
+    const nextDetails = { ...prev, [face]: curFace, [other]: curOther };
+    return { nextDetails, nextPrevNeck };
 }
