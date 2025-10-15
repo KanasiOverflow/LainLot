@@ -1,43 +1,32 @@
 import fs from "fs/promises";
 import path from "path";
 
-// ДОБАВЬ рядом с импортами
+const ROOT = process.cwd();
 const IMG_EXT_RE = /\.(svg|png|jpe?g)$/i;
 
-const ROOT = process.cwd();
-// найдём реальную папку (hoodie/Hoodie), но URL всегда запишем в lower-case
-async function firstExisting(...candidates) {
-    for (const p of candidates) {
-        try { await fs.access(p); return p; } catch { }
-    }
-    return candidates[0];
-}
-const HOODIE = await firstExisting(
-    path.join(ROOT, "public/2d/svg/hoodie"),
-    path.join(ROOT, "public/2d/svg/Hoodie"),
-);
-
-const FRONT_DIR = await firstExisting(
-    path.join(HOODIE, "front"),
-    path.join(HOODIE, "Front"),
-);
-
-const BACK_DIR = await firstExisting(
-    path.join(HOODIE, "back"),
-    path.join(HOODIE, "Back"),
-);
-
-const VAR_DIR = await firstExisting(
-    path.join(HOODIE, "variants"),
-    path.join(HOODIE, "Variants"),
-);
-
-const SLOT_ORDER = ["body", "belt", "sleeve", "cuff", "neck", "hood", "pocket"]; // для сортировки вывода
+// ——— конфиг изделий и желаемые смещения на канве ———
+const PRODUCTS = [
+    {
+        key: "hoodie",
+        slots: ["body", "belt", "sleeve", "cuff", "neck", "hood", "pocket"],
+        // смещение базовых деталей на канве
+        offsets: { front: { x: 0, y: 0 }, back: { x: 0, y: 0 } },
+    },
+    {
+        key: "pants",
+        slots: ["body", "belt", "leg", "cuff"],
+        // положим штаны ниже худи (напр., +900 по y — под свои размеры подправишь)
+        offsets: { front: { x: 0, y: 900 }, back: { x: 0, y: 900 } },
+    },
+];
 
 function toUnix(p) { return p.split(path.sep).join("/"); }
-function urlOf(absPath) {
-    // берём часть пути после /public и приводим к нижнему регистру
-    return toUnix(absPath).split("/public").pop().replace(/^\/+/, "").toLowerCase();
+function urlOf(abs) {
+    return toUnix(abs).split("/public").pop().replace(/^\/+/, "").toLowerCase();
+}
+async function firstExisting(...cands) {
+    for (const p of cands) { try { await fs.access(p); return p; } catch { } }
+    return cands[0];
 }
 
 function detectBaseFileMeta(filename) {
@@ -50,70 +39,30 @@ function detectBaseFileMeta(filename) {
     else if (f.includes("body")) meta.slot = "body";
     else if (f.includes("hood")) meta.slot = "hood";
     else if (f.includes("pocket")) meta.slot = "pocket";
+    else if (f.includes("leg")) meta.slot = "leg";
+
     if (f.includes("left")) meta.side = "left";
     if (f.includes("right")) meta.side = "right";
     if (f.includes("internal")) meta.which = "inner";
-    if (!meta.slot) return null;
-    return meta;
+
+    return meta.slot ? meta : null;
 }
 
-async function buildBase() {
-    const base = { front: [], back: [], previews: { front: {}, back: {} } };
-
-    for (const [faceDir, faceKey] of [[FRONT_DIR, "front"], [BACK_DIR, "back"]]) {
-        const entries = await fs.readdir(faceDir, { withFileTypes: true });
-
-        for (const d of entries) {
-            if (!d.isFile()) continue;
-            const lower = d.name.toLowerCase();
-            const abs = path.join(faceDir, d.name);
-
-            // 4.1 базовые превью: *_preview.(svg|png|jpg)
-            if (/_preview\.(svg|png|jpe?g)$/.test(lower)) {
-                const name = lower.replace(/_preview\.(svg|png|jpe?g)$/, "");
-                // определяем слот (belt/body/sleeve/cuff/neck)
-                const slot = SLOT_ORDER.find(s => name === s) || SLOT_ORDER.find(s => name.includes(s));
-                if (slot && !base.previews[faceKey][slot]) {
-                    base.previews[faceKey][slot] = urlOf(abs);
-                }
-                continue;
-            }
-
-            // 4.2 базовые детали одежды: только .svg
-            if (lower.endsWith(".svg")) {
-                const meta = detectBaseFileMeta(d.name);
-                if (!meta) continue;
-                base[faceKey].push({ file: urlOf(abs), ...meta });
-            }
-        }
-    }
-    return base;
-}
-
-// Разбор имени варианта: поддерживает
-// - префиксы front_/back_ (или определяем face из структуры каталогов)
-// - cuff/sleeve с _left/_right и необязательным суффиксом числа (cuff_left2.svg)
-// - *_preview.svg — отдельная превьюшка варианта
 function parseVariantName(file, slot, faceHint = null) {
-    // имя без расширения, но с возможным _preview
     const raw = path.basename(file).toLowerCase().replace(IMG_EXT_RE, "");
     const isPreview = raw.endsWith("_preview");
-    // убираем только _preview, чтобы дальше разобрать как обычный вариант
     const name = isPreview ? raw.replace(/_preview$/, "") : raw;
 
     let face = null, side = null, which = null, id = null;
-
     if (name.startsWith("front_")) face = "front";
     if (name.startsWith("back_")) face = "back";
-    if (!face) face = faceHint; // если префикса нет — берём из каталога
+    if (!face) face = faceHint;
 
     const rest = name.replace(/^(front_|back_)/, "");
-
-    if (slot === "cuff" || slot === "sleeve") {
-        // match: "<base>_(left|right)<suffix?>"
+    const sideSlots = new Set(["cuff", "sleeve", "leg"]);
+    if (sideSlots.has(slot)) {
         const m = rest.match(/^(.*?)(?:_(left|right))(.*)$/);
         side = m?.[2] || (rest.endsWith("_left") ? "left" : rest.endsWith("_right") ? "right" : null);
-        // id: base + возможный числовой суффикс после стороны (cuff_left2 -> cuff2)
         id = m ? (m[1] + (m[3] || "")) : rest.replace(/_(left|right)$/, "");
     } else if (slot === "neck") {
         which = rest.endsWith("_internal") ? "inner" : null;
@@ -121,28 +70,42 @@ function parseVariantName(file, slot, faceHint = null) {
     } else {
         id = rest;
     }
-
     return { face, side, which, id, preview: isPreview };
 }
 
-// Собирает варианты из трёх возможных мест:
-// 1) /hoodie/variants/<slot>/...
-// 2) /hoodie/front/variants/<slot>/...
-// 3) /hoodie/back/variants/<slot>/...
-// Все URL нормализуются в lower-case через urlOf().
-async function buildVariants() {
-    const bySlot = Object.fromEntries(SLOT_ORDER.map(s => [s, []]));
+async function collectBase({ product, FRONT_DIR, BACK_DIR }, slotOrder, offsets) {
+    const base = { front: [], back: [] };
 
-    const variantRoots = [
-        VAR_DIR,                              // /hoodie/variants
-        path.join(FRONT_DIR, "variants"),     // /hoodie/front/variants
-        path.join(BACK_DIR, "variants"),     // /hoodie/back/variants
-    ];
+    for (const [dir, face] of [[FRONT_DIR, "front"], [BACK_DIR, "back"]]) {
+        const entries = await fs.readdir(dir, { withFileTypes: true }).catch(() => []);
+        for (const d of entries) {
+            if (!d.isFile() || !d.name.toLowerCase().endsWith(".svg")) continue;
+            const meta = detectBaseFileMeta(d.name);
+            if (!meta) continue;
+            base[face].push({
+                file: urlOf(path.join(dir, d.name)),
+                product,
+                slot: meta.slot,
+                side: meta.side ?? null,
+                which: meta.which ?? null,
+                offset: offsets?.[face] ?? { x: 0, y: 0 },
+            });
+        }
+    }
+    // стабильная сортировка по порядку слотов
+    for (const face of ["front", "back"]) {
+        base[face].sort((a, b) => slotOrder.indexOf(a.slot) - slotOrder.indexOf(b.slot));
+    }
+    return base;
+}
 
-    for (const slot of SLOT_ORDER) {
+async function collectVariants({ product, VAR_DIR, FRONT_DIR, BACK_DIR }, slotOrder, offsets) {
+    const bySlot = Object.fromEntries(slotOrder.map(s => [s, []]));
+    const roots = [VAR_DIR, path.join(FRONT_DIR, "variants"), path.join(BACK_DIR, "variants")];
+
+    for (const slot of slotOrder) {
         const files = [];
-
-        for (const root of variantRoots) {
+        for (const root of roots) {
             try {
                 const dir = path.join(root, slot);
                 const list = (await fs.readdir(dir, { withFileTypes: true }))
@@ -150,83 +113,116 @@ async function buildVariants() {
                     .map(d => ({
                         name: d.name,
                         abs: path.join(dir, d.name),
-                        faceHint:
-                            root.includes(`${path.sep}front${path.sep}`) || root.endsWith(`${path.sep}front`)
-                                ? "front"
-                                : (root.includes(`${path.sep}back${path.sep}`) || root.endsWith(`${path.sep}back`)
-                                    ? "back"
-                                    : null),
+                        faceHint: root.includes(`${path.sep}front`) ? "front" :
+                            root.includes(`${path.sep}back`) ? "back" : null,
                     }));
                 files.push(...list);
-            } catch { /* каталога может не быть — это нормально */ }
+            } catch { }
         }
 
-        // группируем по id варианта
         const groups = new Map();
         for (const f of files) {
             const meta = parseVariantName(f.name, slot, f.faceHint);
-            const id = meta.id;
-            if (!id) continue;
-
-            if (!groups.has(id)) {
-                groups.set(id, {
-                    id,
-                    name: id,
+            if (!meta?.id) continue;
+            if (!groups.has(meta.id)) {
+                groups.set(meta.id, {
+                    id: meta.id,
+                    name: meta.id,
+                    product,
                     preview: null,
                     files: { front: {}, back: {} },
+                    offset: offsets || { front: { x: 0, y: 0 }, back: { x: 0, y: 0 } },
                 });
             }
-            const g = groups.get(id);
+            const g = groups.get(meta.id);
+            const url = urlOf(f.abs);
 
             if (meta.preview) {
-                g.preview = urlOf(f.abs);
+                g.preview = url;
             } else if (meta.face === "front") {
-                if (slot === "cuff" || slot === "sleeve") {
-                    if (meta.side) g.files.front[meta.side] = urlOf(f.abs);
+                if (["cuff", "sleeve", "leg"].includes(slot)) {
+                    if (meta.side) g.files.front[meta.side] = url;
                 } else if (slot === "neck" && meta.which === "inner") {
-                    g.files.front.inner = urlOf(f.abs);
+                    g.files.front.inner = url;
                 } else {
-                    g.files.front.file = urlOf(f.abs);
+                    g.files.front.file = url;
                 }
             } else if (meta.face === "back") {
-                if (slot === "cuff" || slot === "sleeve") {
-                    if (meta.side) g.files.back[meta.side] = urlOf(f.abs);
+                if (["cuff", "sleeve", "leg"].includes(slot)) {
+                    if (meta.side) g.files.back[meta.side] = url;
                 } else {
-                    g.files.back.file = urlOf(f.abs);
+                    g.files.back.file = url;
                 }
             }
         }
-
         bySlot[slot] = [...groups.values()].sort((a, b) => a.id.localeCompare(b.id));
     }
 
     return bySlot;
 }
 
-(async () => {
-    const base = await buildBase();
-    const variants = await buildVariants();
+async function build() {
+    // собираем hoodie + pants в один манифест
+    const allBase = { front: [], back: [], previews: { front: {}, back: {} } };
+    const allVariants = {};
 
-    // базовые «виртуальные» варианты — всегда первые
+    for (const prod of PRODUCTS) {
+        const PRODUCT_DIR = await firstExisting(
+            path.join(ROOT, "public/2d/svg", prod.key),
+            path.join(ROOT, "public/2d/svg", prod.key[0].toUpperCase() + prod.key.slice(1)),
+        );
+        const FRONT_DIR = await firstExisting(path.join(PRODUCT_DIR, "front"), path.join(PRODUCT_DIR, "Front"));
+        const BACK_DIR = await firstExisting(path.join(PRODUCT_DIR, "back"), path.join(PRODUCT_DIR, "Back"));
+        const VAR_DIR = await firstExisting(path.join(PRODUCT_DIR, "variants"), path.join(PRODUCT_DIR, "Variants"));
+
+        // базовые детали
+        const base = await collectBase({ product: prod.key, FRONT_DIR, BACK_DIR }, prod.slots, prod.offsets);
+        allBase.front.push(...base.front);
+        allBase.back.push(...base.back);
+
+        // превью базовых слотов
+        for (const face of ["front", "back"]) {
+            for (const s of prod.slots) {
+                const candidates = [
+                    path.join(FRONT_DIR, `${s}_preview.svg`), path.join(FRONT_DIR, `${s}_preview.png`), path.join(FRONT_DIR, `${s}_preview.jpg`),
+                    path.join(BACK_DIR, `${s}_preview.svg`), path.join(BACK_DIR, `${s}_preview.png`), path.join(BACK_DIR, `${s}_preview.jpg`),
+                ];
+                for (const c of candidates) {
+                    try {
+                        await fs.access(c);
+                        if (!allBase.previews[face][s]) allBase.previews[face][s] = urlOf(c);
+                    } catch { }
+                }
+            }
+        }
+
+        // варианты слотов
+        const variants = await collectVariants({ product: prod.key, VAR_DIR, FRONT_DIR, BACK_DIR }, prod.slots, prod.offsets);
+        for (const slot of Object.keys(variants)) {
+            allVariants[slot] = (allVariants[slot] || []).concat(variants[slot]);
+        }
+    }
+
+    // базовые «виртуальные» опции для каждого слота
     const baseVariantBySlot = {};
-    for (const slot of SLOT_ORDER) {
-        baseVariantBySlot[slot] = {
-            id: "base",
-            name: "Базовая",
-            // важнo: у базового варианта превью не указываем — берём по стороне в UI
-            preview: null,
-            files: { front: {}, back: {} }
-        };
+    for (const slot of new Set(Object.keys(allVariants).concat(PRODUCTS.flatMap(p => p.slots)))) {
+        baseVariantBySlot[slot] = { id: "base", name: "Базовая", preview: null, files: { front: {}, back: {} } };
     }
 
     const manifest = {
-        version: 1,
-        base,             // front/back sources (каждый — массив {file, slot, side?, which?})
-        variants,         // варианты из папок
-        baseVariantBySlot // виртуальные «base»
+        version: 2,
+        // теперь включает hoodie + pants вместе
+        base: allBase,
+        variants: allVariants,
+        baseVariantBySlot,
+        // универсальный пустой превьюшник (если понадобится в UI)
+        emptyPreview: "2d/svg/empty.svg",
     };
 
-    const out = path.join(HOODIE, "manifest.json");
-    await fs.writeFile(out, JSON.stringify(manifest, null, 2), "utf8");
-    console.log("✅ manifest written:", toUnix(out));
-})().catch(e => { console.error(e); process.exit(1); });
+    // Пишем в манифест худи (чтобы ничего не менять в пути загрузки)
+    const OUT = path.join(ROOT, "public/2d/svg", "manifest.json"); // ⟵ было в hoodie/manifest.json
+    await fs.writeFile(OUT, JSON.stringify(manifest, null, 2), "utf8");
+    console.log("✅ manifest (hoodie+pants):", toUnix(OUT));
+}
+
+build().catch(e => { console.error(e); process.exit(1); });

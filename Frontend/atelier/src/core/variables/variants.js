@@ -12,6 +12,7 @@ const FORCED_SLOTS = {
 const shouldSyncSlot = (slot) => slot && slot.toLowerCase() !== "pocket";
 
 // алиасы имён слотов (на случай разных названий в манифесте)
+// + leg
 const SLOT_ALIASES = {
     cuff: "cuff",
     sleeve: "sleeve",
@@ -19,7 +20,8 @@ const SLOT_ALIASES = {
     belt: "belt",
     body: "body",
     hood: "hood",
-    pocket: "pocket"
+    pocket: "pocket",
+    leg: "leg",        // <— добавь
 };
 
 export function isForcedSlot(face, slot) {
