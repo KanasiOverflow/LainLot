@@ -14,9 +14,12 @@ import {
     from "../../../core/svg/buildFaces.js";
 import { loadPresetToPanels, composePanelsForSide } from "../../../core/svg/extractPanels.js";
 import { makeUserCurveBetween } from "../../../core/svg/curves.js";
-import { useHistory } from "../../../shared/hooks/useHistory.jsx";
+
 import { downloadText } from "../../../core/export/export.js";
 import { buildCombinedSVG } from "../../../core/export/buildCombinedSVG.js";
+
+import { useHistory } from "../../../shared/hooks/useHistory.jsx";
+import { useInsertPreviewRAF } from "../../../shared/hooks/useInsertPreviewRAF.jsx";
 
 import SidebarEditor from "./SidebarEditor.jsx";
 import BodyParams from "./BodyParams.jsx";
@@ -38,8 +41,6 @@ export default function CostumeEditor() {
     const currentPresetIdRef = useRef(PRESETS[0]?.id || "front");
     // Минимальный зазор между вершинами (в мировых единицах SVG). Настраивается из кода.
     const MIN_GAP_WORLD = 20; // TODO: подберите под ваши единицы (напр., «5 см»)
-    // превью точки для вставки вершины
-    const [insertPreview, setInsertPreview] = useState(null); // { panelId, curveId, x, y, allowed }
     // state для «запоминания» последнего подрежима
     const [lastLineMode, setLastLineMode] = useState('add');     // 'add' | 'delete
     const [panels, setPanels] = useState([]);
@@ -79,6 +80,8 @@ export default function CostumeEditor() {
         setFills, setCurvesByPanel,
         max: 50, // можно поменять
     });
+
+    const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
 
     const [addBuffer, setAddBuffer] = useState(null);
     const [hoverAnchorIdx, setHoverAnchorIdx] = useState(null);
@@ -730,37 +733,6 @@ export default function CostumeEditor() {
         }
         return holes;
     }, [panels, ringsByPanel, outerRingByPanel, hoodPanelIds]);
-
-    // где-то рядом с остальными useRef/useState
-    const rAFRef = useRef(0);
-    const lastPreviewRef = useRef(null);
-
-    // "умный" setter: склеивает апдейты до ближайшего кадра и пропускает мелкие изменения
-    const setInsertPreviewRAF = useCallback((next) => {
-        // 1) если почти не поменялось — не трогаем стейт
-        const prev = lastPreviewRef.current;
-        if (
-            prev &&
-            prev.curveId === next.curveId &&
-            prev.panelId === next.panelId &&
-            prev.allowed === next.allowed &&
-            Math.abs(prev.x - next.x) < 0.5 &&   // порог можно привязать к масштабу: 0.5/scale.k
-            Math.abs(prev.y - next.y) < 0.5 &&
-            Math.abs(prev.t - next.t) < 1e-4
-        ) {
-            return;
-        }
-
-        // 2) отменяем прошлой кадр и планируем новый
-        cancelAnimationFrame(rAFRef.current);
-        rAFRef.current = requestAnimationFrame(() => {
-            lastPreviewRef.current = next;
-            setInsertPreview(next);
-        });
-    }, [setInsertPreview]);
-
-    // не забыть очистку при размонтировании
-    useEffect(() => () => cancelAnimationFrame(rAFRef.current), []);
 
     useEffect(() => {
         try { localStorage.setItem("ce.activeFace", presetIdx === 0 ? "front" : "back"); } catch { }
