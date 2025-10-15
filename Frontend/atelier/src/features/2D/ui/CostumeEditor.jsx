@@ -3,7 +3,6 @@ import { useEffect, useMemo, useRef, useState, useLayoutEffect, useCallback } fr
 import styles from "../styles/CostumeEditor.module.css";
 import clsx from "clsx";
 import { sampleBezierPoints } from "../../../core/geometry/geometry.js";
-import { getBounds } from "../../../core/geometry/bounds.js";
 import { waveAlongPolyline } from "../../../core/geometry/polylineOps.js";
 import { faceKey } from "../../../core/svg/faceUtils.js";
 import { catmullRomToBezierPath } from "../../../core/svg/polylineOps.js";
@@ -17,6 +16,7 @@ import { buildCombinedSVG } from "../../../core/export/buildCombinedSVG.js";
 import { useHistory } from "../../../shared/hooks/useHistory.jsx";
 import { useInsertPreviewRAF } from "../../../shared/hooks/useInsertPreviewRAF.jsx";
 import { useSceneGeometry } from "../../../shared/hooks/useSceneGeometry.jsx";
+import { useEditorPrefs } from "../../../shared/hooks/useEditorPrefs.jsx";
 
 import SidebarEditor from "./SidebarEditor.jsx";
 import BodyParams from "./BodyParams.jsx";
@@ -52,8 +52,6 @@ export default function CostumeEditor() {
     const panelsRef = useRef(panels);
     // --- PRESETS state
     const [presetIdx, setPresetIdx] = useState(0);   // 0: Перед, 1: Спинка
-    // === Prefs per detail (persist in LS) ===
-    const [prefs, setPrefs] = useState({ front: {}, back: {} });
     const activeId = presetIdx === 0 ? "front" : "back";
     const [isLoadingPreset, setIsLoadingPreset] = useState(false);
     // красивый ре-монтаж svg при смене пресета (для анимации появления)
@@ -65,37 +63,15 @@ export default function CostumeEditor() {
     const [mode, setMode] = useState("preview");
     const [defaultSubCount, setDefaultSubCount] = useState(2); // используется только при создании новых линий
     const [selectedCurveKey, setSelectedCurveKey] = useState(null); // `${panelId}:${curveId}`
-
-    // ↓ внутри CostumeEditor(), рядом с остальными useState/useRef
-    const applyingPrefsRef = useRef(false);   // сейчас применяем prefs -> не писать их обратно
-    const [prefsLoaded, setPrefsLoaded] = useState(false); // prefs из LS уже загружены
-
-    const {
-        historyUndo, historyRedo, canUndo, canRedo,
-        applyFillChange, applyCurvesChange,
-        historyItems, historyIndex,
-    } = useHistory({
-        fills, curvesByPanel, presetIdx,
-        setFills, setCurvesByPanel,
-        max: 50, // можно поменять
-    });
-
-    const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
-
-    const { svgRef, viewBox, scale, gridDef,
-        baseFacesByPanel, ringsByPanel, outerRingByPanel, facesByPanel,
-        extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve,
-        setScale
-    } = useSceneGeometry({ panels, curvesByPanel, defaultSubCount });
-
+    // тип пользовательской линии
+    const [lineStyle, setLineStyle] = useState("straight"); // 'straight' | 'wavy'
     const [addBuffer, setAddBuffer] = useState(null);
     const [hoverAnchorIdx, setHoverAnchorIdx] = useState(null);
     const [hoverCurveKey, setHoverCurveKey] = useState(null);
     const [clickedCurveKey, setClickedCurveKey] = useState(null);
     const [hoverFace, setHoverFace] = useState(null);
     const [toast, setToast] = useState(null);
-    // тип пользовательской линии
-    const [lineStyle, setLineStyle] = useState("straight"); // 'straight' | 'wavy'
+
     // параметры волны (в пикселях экрана)
     const [waveAmpPx, setWaveAmpPx] = useState(6);
     const [waveLenPx, setWaveLenPx] = useState(36);
@@ -112,21 +88,6 @@ export default function CostumeEditor() {
     const prevPreset = () => setPresetIdx(i => (i - 1 + PRESETS.length) % PRESETS.length);
     const nextPreset = () => setPresetIdx(i => (i + 1) % PRESETS.length);
     // общий bbox сцены — используется и для viewBox, и для сетки
-    const worldBBox = useMemo(() => {
-        let bb = null;
-        for (const p of panels) {
-            const b = getBounds(p.segs);
-            if (!bb) bb = { ...b };
-            else {
-                const x1 = Math.min(bb.x, b.x);
-                const y1 = Math.min(bb.y, b.y);
-                const x2 = Math.max(bb.x + bb.w, b.x + b.w);
-                const y2 = Math.max(bb.y + bb.h, b.y + b.h);
-                bb = { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
-            }
-        }
-        return bb || { x: 0, y: 0, w: 800, h: 500 };
-    }, [panels]);
 
     const snapshotFor = useCallback(() => ({
         curvesByPanel,
@@ -146,6 +107,31 @@ export default function CostumeEditor() {
         setFills(fills);
         setActivePanelId(active);
     }, []);
+
+    const {
+        historyUndo, historyRedo, canUndo, canRedo,
+        applyFillChange, applyCurvesChange,
+        historyItems, historyIndex,
+    } = useHistory({
+        fills, curvesByPanel, presetIdx,
+        setFills, setCurvesByPanel,
+        max: 50, // можно поменять
+    });
+
+    const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
+
+    const { svgRef, viewBox, scale, gridDef,
+        baseFacesByPanel, ringsByPanel, outerRingByPanel, facesByPanel,
+        extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve,
+        setScale
+    } = useSceneGeometry({ panels, curvesByPanel, defaultSubCount });
+
+    const { applyingPrefsRef, setPrefs, setBothLastModePreview } = useEditorPrefs({
+        activeId, mode, setMode, paintColor, setPaintColor,
+        lineStyle, setLineStyle, defaultSubCount, setDefaultSubCount, waveAmpPx,
+        setWaveAmpPx, waveLenPx, setWaveLenPx, lastLineMode, setLastLineMode,
+        presetIdx
+    });
 
     const tooCloseToExistingAnchors = (panel, curve, testPt) => {
         // берём все уже существующие «снимки» якорей для этой кривой:
@@ -227,18 +213,6 @@ export default function CostumeEditor() {
     };
 
     // линейная интерполяция точки на полилинии по «дуговой длине»
-    const pointAtS = (pts, Larr, s) => {
-        // Larr — cumulativeLengths(pts)
-        const total = Larr[Larr.length - 1] || 1;
-        const t = Math.max(0, Math.min(total, s));
-        let i = 0;
-        while (i + 1 < Larr.length && Larr[i + 1] < t) i++;
-        const l0 = Larr[i], l1 = Larr[Math.min(Larr.length - 1, i + 1)];
-        const p0 = pts[i], p1 = pts[Math.min(pts.length - 1, i + 1)];
-        const seg = Math.max(1e-12, l1 - l0);
-        const a = (t - l0) / seg;
-        return { x: p0.x + (p1.x - p0.x) * a, y: p0.y + (p1.y - p0.y) * a };
-    };
 
     const modeGroup =
         (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
@@ -575,15 +549,7 @@ export default function CostumeEditor() {
         setMode("preview");
 
         // 2) фиксируем «preview» как последний режим для обеих сторон
-        setPrefs(prev => {
-            const next = {
-                ...prev,
-                front: { ...(prev.front || {}), lastMode: "preview" },
-                back: { ...(prev.back || {}), lastMode: "preview" }
-            };
-            try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
-            return next;
-        });
+        setBothLastModePreview();
     }, [panels, setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId, setDetails, setMode, setPrefs]);
 
     // панели-капюшоны
@@ -817,55 +783,6 @@ export default function CostumeEditor() {
         catch { }
     }, [orderInfo]);
 
-    // загрузка prefs
-    useEffect(() => {
-        try {
-            const v = JSON.parse(localStorage.getItem("ce.prefs.v1") || "{}");
-            setPrefs({ front: {}, back: {}, ...v });
-            setPrefsLoaded(true);
-        } catch { }
-    }, []);
-
-    useEffect(() => {
-        if (!prefsLoaded) return;       // ещё не загрузили из LS — ничего не делать
-
-        const p = prefs[activeId] || {};
-
-        // Включаем "фазу применения" — остальные эффекты записей не должны срабатывать
-        applyingPrefsRef.current = true;
-
-        if (p.paintColor && p.paintColor !== paintColor) setPaintColor(p.paintColor);
-        if (p.lineStyle && p.lineStyle !== lineStyle) setLineStyle(p.lineStyle);
-        if (Number.isFinite(p.defaultSubCount) && p.defaultSubCount !== defaultSubCount) setDefaultSubCount(p.defaultSubCount);
-        if (Number.isFinite(p.waveAmpPx) && p.waveAmpPx !== waveAmpPx) setWaveAmpPx(p.waveAmpPx);
-        if (Number.isFinite(p.waveLenPx) && p.waveLenPx !== waveLenPx) setWaveLenPx(p.waveLenPx);
-        if (p.lastLineMode && p.lastLineMode !== lastLineMode) setLastLineMode(p.lastLineMode);
-
-        // применяем сохранённый режим (preview допускается)
-        const desired = p.lastMode ?? "preview";                // можно оставить без фоллбэка, но так предсказуемей
-        const safe = desired === "deleteFill" ? "paint" : desired;
-        if (safe !== mode) setMode(safe);
-
-        Promise.resolve().then(() => { applyingPrefsRef.current = false; });
-    }, [presetIdx, prefsLoaded]);  // зависимости — только смена детали/загрузка prefs
-
-    useEffect(() => {
-        // во время применения prefs не пишем обратно
-        if (applyingPrefsRef.current) return;
-
-        // единственная “правка безопасности”: не возвращаемся в deleteFill
-        const safe = mode === "deleteFill" ? "paint" : mode;
-
-        setPrefs(prev => {
-            const cur = prev[activeId] || {};
-            if (cur.lastMode === safe) return prev;            // ничего не меняется
-            const next = { ...prev, [activeId]: { ...cur, lastMode: safe } };
-            try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
-            return next;
-        });
-    }, [mode, activeId]);
-
-
     useEffect(() => {
         const onKey = (e) => {
             const ctrl = e.ctrlKey || e.metaKey;
@@ -888,35 +805,6 @@ export default function CostumeEditor() {
 
         return () => window.removeEventListener('keydown', onKey);
     }, [historyUndo, historyRedo]);
-
-    useEffect(() => {
-        if (applyingPrefsRef.current) return;    // во время применения ничего не пишем
-        setPrefs(prev => {
-            const cur = prev[activeId] || {};
-            const nextDetail = {
-                ...cur,
-                paintColor, lineStyle, defaultSubCount, waveAmpPx, waveLenPx, lastLineMode,
-            };
-
-            // shallow-equal: если ничего не поменялось — не дергаем setPrefs, чтобы не раскручивать эффекты
-            const same =
-                cur.paintColor === nextDetail.paintColor &&
-                cur.lineStyle === nextDetail.lineStyle &&
-                cur.defaultSubCount === nextDetail.defaultSubCount &&
-                cur.waveAmpPx === nextDetail.waveAmpPx &&
-                cur.waveLenPx === nextDetail.waveLenPx &&
-                cur.lastLineMode === nextDetail.lastLineMode;
-
-            if (same)
-                return prev;
-
-            const next = { ...prev, [activeId]: nextDetail };
-            try { localStorage.setItem("ce.prefs.v1", JSON.stringify(next)); } catch { }
-
-            return next;
-        });
-    }, [activeId, paintColor, lineStyle, defaultSubCount, waveAmpPx, waveLenPx, lastLineMode]);
-
 
     useEffect(() => {
         const onKey = (e) => {
