@@ -196,15 +196,23 @@ export async function hasSlotForFace(slot, face) {
     const pure = ns.split(".").pop();
     const product = ns.includes(".") ? ns.split(".")[0] : null;
 
-    const hasBase = arr.some(x => x.slot === pure && (!product || x.product === product));
-    const hasBackPreview = !!(m?.base?.previews?.[face]?.[ns] || m?.base?.previews?.[face]?.[pure]);
-    const hasAnyVariantFiles =
-        (m?.variants?.[pure] || []).some(v => {
-            if (product && (v?.product || "hoodie") !== product) return false;
-            const side = v?.files?.[face] || {};
-            return !!(side.file || side.left || side.right || side.inner);
+    const hasBase = arr.some(x => {
+        const prod = x?.product || "hoodie";        // ← дефолт как в baseHasSlot
+        return x?.slot === pure && (!product || prod === product);
+    });
+
+    // Исключение для капюшона: если базы нет, но есть вариант с файлами на этой стороне — считаем слот доступным.
+    let hasVariantWithFiles = false;
+    if (!hasBase && pure === "hood" && (!product || product === "hoodie")) {
+        const list = m?.variants?.[pure] || [];
+        hasVariantWithFiles = list.some(v => {
+            if ((v?.product || "hoodie") !== "hoodie") return false;
+            const f = v?.files?.[face] || {};
+            return !!(f.file || f.left || f.right || f.inner);
         });
-    return hasBase || hasBackPreview || hasAnyVariantFiles;
+    }
+
+    return hasBase || hasVariantWithFiles;
 }
 
 // 🔹 Какие слоты показывать в меню на этой стороне.
@@ -213,43 +221,37 @@ export async function getVisibleSlotsForFace(face) {
     const m = await loadSvgManifest();
     const f = face === 'back' ? 'back' : 'front';
 
-    // Базовый минимум, который показываем всегда
-    const MIN_SECTIONS = {
-        hoodie: ["body", "sleeve", "cuff", "belt", "hood", "pocket", "neck"],
-        pants: ["leg", "belt", "cuff"]
-    };
+    const candidates = new Set();
 
-    const result = new Set();
-
-    // 1) Минимальные секции
-    for (const [product, slots] of Object.entries(MIN_SECTIONS)) {
-        for (const pure of slots) result.add(`${product}.${pure}`);
-    }
-
-    // 2) База (если в manifest.base задан product/slоt)
+    // 1) База (если в manifest.base задан product/slоt)
     for (const e of (m?.base?.[f] || [])) {
-        if (e?.slot) result.add(`${e.product || "hoodie"}.${e.slot}`);
+        if (e?.slot) candidates.add(`${e.product || "hoodie"}.${e.slot}`);
     }
 
-    // 3) Превью базы (ключ может быть с/без префикса → нормализуем)
+    // 2) Превью базы (ключ может быть с/без префикса → нормализуем)
     Object.keys(m?.base?.previews?.[f] || {}).forEach((k) => {
         const pure = String(k || "").split(".").pop();
         const product = k.includes(".") ? k.split(".")[0] : "hoodie";
-        if (pure) result.add(`${product}.${pure}`);
+        if (pure) candidates.add(`${product}.${pure}`);
     });
 
-    // 4) Варианты, у которых есть файлы на этой стороне
+    // 3) Варианты, у которых есть файлы на этой стороне
     for (const [slot, list] of Object.entries(m?.variants || {})) {
         for (const v of (list || [])) {
             const map = v?.files?.[f] || {};
             if (map.file || map.left || map.right || map.inner) {
-                result.add(`${v?.product || "hoodie"}.${slot}`);
+                const product = v?.product || "hoodie";
+                candidates.add(`${product}.${slot}`);
             }
         }
     }
 
-    // 5) Форс-слоты только для худи (hood/pocket по сторонам)
-    for (const s of FORCED_SLOTS[f]) result.add(`hoodie.${s}`);
+    // ✅ Финальный фильтр: оставляем только реально существующие на стороне слоты
+    const result = new Set();
+
+    for (const ns of candidates) {
+        if (await hasSlotForFace(ns, f)) result.add(ns);
+    }
 
     return Array.from(result);
 }
