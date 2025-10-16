@@ -115,7 +115,7 @@ export default function CostumeEditor() {
     const {
         historyUndo, historyRedo, canUndo, canRedo,
         applyFillChange, applyCurvesChange,
-        historyItems, historyIndex,
+        historyItems, historyIndex, pushHistory
     } = useHistory({
         fills, curvesByPanel, presetIdx,
         setFills, setCurvesByPanel,
@@ -535,6 +535,10 @@ export default function CostumeEditor() {
             prevNeckByFaceRef.current = nextPrevNeck; // обновили «память шеи»
             return nextDetails;
         });
+
+        // добавим запись в историю действий текущей стороны
+        const label = `Вариант: ${slot.split(".").pop()} → ${variantId || "base"}`;
+        pushHistory(label);
     };
     const changeKindRef = useRef(null); // 'preset' | 'slot' | null
 
