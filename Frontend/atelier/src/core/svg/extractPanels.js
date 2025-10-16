@@ -8,6 +8,24 @@ import { collectAnchors } from "../svg/anchors.js";
 import { resolveSvgSrcPath } from "../../core/variables/svgPath.js";
 import { getBaseSources } from "../../core/variables/variants.js";
 
+/*
+
+localStorage.setItem("ce.debug.panels", "1"); // включить
+// перезагрузить страницу, повторить действие
+localStorage.removeItem("ce.debug.panels");   // выключить
+
+
+*/
+
+// Включение логов: localStorage.setItem("ce.debug.panels", "1")
+// Выключение:       localStorage.removeItem("ce.debug.panels")
+const __DBG_PANELS = (() => {
+    try { return (typeof window !== "undefined") && localStorage.getItem("ce.debug.panels") === "1"; }
+    catch { return false; }
+})();
+const __logPanels = (...args) => { if (__DBG_PANELS) console.log("[extractPanels]", ...args); };
+
+
 /* ================== настройки ================== */
 const PANEL_MAX_COUNT = 12;
 const PANEL_MIN_AREA_RATIO_DEFAULT = 0.005; // 0.3–0.8% обычно хватает для деталей
@@ -30,6 +48,9 @@ export const pushCandidate = (candidates, segs, tag, label) => {
 }
 
 export const extractPanels = (rawSVG) => {
+
+    __logPanels("start", { rawLen: (rawSVG?.length || 0) });
+
     const rootBox = parseViewBox(rawSVG);
 
     // --- собираем теги
@@ -207,6 +228,17 @@ export const extractPanels = (rawSVG) => {
         push(segs, tag);
     }
 
+    __logPanels("tags", {
+        path: pathTags.length,
+        polygon: polygonTags.length,
+        polyline: polylineTags.length,
+        rect: rectTags.length,
+        circle: circleTags.length,
+        ellipse: ellipseTags.length,
+        line: lineTags.length
+    });
+
+
     // fallback: если вообще ничего не нашли — берём первый path
     if (!candidates.length) {
         const m = rawSVG.match(/<path[^>]*\sd="([^"]+)"[^>]*>/i);
@@ -218,17 +250,29 @@ export const extractPanels = (rawSVG) => {
     if (!candidates.length)
         return [];
 
+    __logPanels("candidates", { count: candidates.length });
+
+
     // --- Удаляем «фон/рамку», если есть из чего выбирать
     if (candidates.length > 1) {
         const kept = candidates.filter(c => !looksLikeBackground(c, rootBox));
         if (kept.length) candidates = kept;
     }
 
+    __logPanels("afterBG", { count: candidates.length });
+
+
     // --- Фильтрация по площади (адаптивная)
     candidates.sort((a, b) => b.bboxArea - a.bboxArea);
     const maxA = candidates[0].bboxArea || 1;
     const dominatesView = (candidates[0].bboxArea / (rootBox.w * rootBox.h || 1)) > 0.45;
     const ratio = (candidates.length <= 3 || dominatesView) ? 0.005 : PANEL_MIN_AREA_RATIO_DEFAULT;
+
+    __logPanels("areas", {
+        maxA: Math.round(maxA || 0),
+        dominatesView,
+        ratio
+    });
 
     let filtered = candidates.filter(c => (c.bboxArea / maxA) >= ratio);
 
@@ -253,6 +297,13 @@ export const extractPanels = (rawSVG) => {
             break;
     }
     filtered = uniq;
+
+    if (!filtered.length && candidates.length) {
+        __logPanels("fallback", "keep-largest");
+        filtered = [candidates[0]];
+    }
+    __logPanels("return", { out: filtered.length });
+
 
     // --- Финально
     return filtered.map((c, idx) => ({
@@ -282,9 +333,8 @@ export const loadPresetToPanels = async (preset) => {
 
             // детерминированный префикс по слоту/стороне/варианту:
             const prefix = (src.idPrefix ||
-                // включаем ИД пресета (front/back), чтобы у спинки и переда НЕ совпадали panelId
-                [String(preset?.id || 'part'), src.slot || 'part', src.side || 'both', src.which || 'main'].join('_'))
-                .toLowerCase();
+                [String(preset?.id || 'part'), src.product || 'hoodie', src.slot || 'part', src.side || 'both', src.which || 'main'].join('_')
+            ).toLowerCase();
 
             let localIdx = 0;
             for (const p of parts) {
@@ -294,7 +344,7 @@ export const loadPresetToPanels = async (preset) => {
                     id: `${prefix}__${localIdx++}`,
                     segs: segsT,
                     anchors: collectAnchors(segsT),
-                    meta: { slot: src.slot || null, side: src.side || null, which: src.which || null }
+                    meta: { product: src.product || 'hoodie', slot: src.slot || null, side: src.side || null, which: src.which || null }
                 });
             }
         }

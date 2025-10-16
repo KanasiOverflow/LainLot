@@ -10,14 +10,26 @@ const PRODUCTS = [
         key: "hoodie",
         slots: ["body", "belt", "sleeve", "cuff", "neck", "hood", "pocket"],
         // смещение базовых деталей на канве
-        offsets: { front: { x: 0, y: 0 }, back: { x: 0, y: 0 } },
-        scale: { x: 1, y: 1 }
+        offsets: {
+            front: { x: 0, y: 0 },
+            back: { x: 0, y: 0 }
+        },
+        scale: {
+            front: { x: 1.0, y: 1.0 },
+            back: { x: 1.0, y: 1.0 }
+        }
     },
     {
         key: "pants",
         slots: ["body", "belt", "leg", "cuff"],
-        offsets: { front: { x: 35, y: 400 }, back: { x: 35, y: 400 } },
-        scale: { x: 3, y: 2 }
+        offsets: {
+            front: { x: -20, y: 380 },
+            back: { x: 35, y: 400 }
+        },
+        scale: {
+            front: { x: 3.4, y: 3.4 },
+            back: { x: 0, y: 0 }
+        }
     },
 ];
 
@@ -74,7 +86,7 @@ function parseVariantName(file, slot, faceHint = null) {
     return { face, side, which, id, preview: isPreview };
 }
 
-async function collectBase({ product, FRONT_DIR, BACK_DIR }, slotOrder, offsets, scale) {
+async function collectBase({ product, FRONT_DIR, BACK_DIR }, slotOrder, offsets, scaleByFace) {
     const base = { front: [], back: [] };
 
     for (const [dir, face] of [[FRONT_DIR, "front"], [BACK_DIR, "back"]]) {
@@ -87,6 +99,11 @@ async function collectBase({ product, FRONT_DIR, BACK_DIR }, slotOrder, offsets,
 
             const meta = detectBaseFileMeta(d.name);
             if (!meta) continue;
+
+            const scale = (scaleByFace && (scaleByFace.front || scaleByFace.back))
+                ? (scaleByFace[face] || { x: 1, y: 1 })
+                : (scaleByFace || { x: 1, y: 1 });
+
             base[face].push({
                 file: urlOf(path.join(dir, d.name)),
                 product,
@@ -94,7 +111,7 @@ async function collectBase({ product, FRONT_DIR, BACK_DIR }, slotOrder, offsets,
                 side: meta.side ?? null,
                 which: meta.which ?? null,
                 offset: offsets?.[face] ?? { x: 0, y: 0 },
-                scale: scale ?? { x: 1, y: 1 }
+                scale
             });
         }
     }
@@ -171,6 +188,7 @@ async function build() {
     // собираем hoodie + pants в один манифест
     const allBase = { front: [], back: [], previews: { front: {}, back: {} } };
     const allVariants = {};
+    const layout = {};
 
     for (const prod of PRODUCTS) {
         const PRODUCT_DIR = await firstExisting(
@@ -180,6 +198,18 @@ async function build() {
         const FRONT_DIR = await firstExisting(path.join(PRODUCT_DIR, "front"), path.join(PRODUCT_DIR, "Front"));
         const BACK_DIR = await firstExisting(path.join(PRODUCT_DIR, "back"), path.join(PRODUCT_DIR, "Back"));
         const VAR_DIR = await firstExisting(path.join(PRODUCT_DIR, "variants"), path.join(PRODUCT_DIR, "Variants"));
+
+        // layout по продукту и стороне
+        layout[prod.key] = {
+            front: {
+                offset: prod.offsets?.front ?? { x: 0, y: 0 },
+                scale: (prod.scale?.front ?? prod.scale ?? { x: 1, y: 1 })
+            },
+            back: {
+                offset: prod.offsets?.back ?? { x: 0, y: 0 },
+                scale: (prod.scale?.back ?? prod.scale ?? { x: 1, y: 1 })
+            }
+        };
 
         // базовые детали
         const base = await collectBase({ product: prod.key, FRONT_DIR, BACK_DIR }, prod.slots, prod.offsets, prod.scale);
@@ -223,6 +253,7 @@ async function build() {
         baseVariantBySlot,
         // универсальный пустой превьюшник (если понадобится в UI)
         emptyPreview: "2d/svg/empty.svg",
+        layout
     };
 
     // Пишем в манифест худи (чтобы ничего не менять в пути загрузки)
