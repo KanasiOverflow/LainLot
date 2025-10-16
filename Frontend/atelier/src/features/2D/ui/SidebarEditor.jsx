@@ -263,14 +263,13 @@ export default function SidebarEditor(props) {
                             // visibleSlots содержит "чистые" имена (cuff, belt, ...)
                             .filter(sec => visibleSlots.has(sec.slot.toLowerCase()))
                             .map(sec => {
-                                const slotPure = sec.slot.split(".").pop(); // для VariantsGrid/манифеста
                                 return (
                                     <div className={styles.section} key={sec.slot}>
                                         <div className={styles.sectionTitle}>{sec.title}</div>
                                         <VariantsGrid
-                                            slot={slotPure}                 // ← сюда идёт "чистый" слот
+                                            slot={sec.slot}
                                             face={activeDetailId}
-                                            value={details[activeDetailId]?.[sec.slot] || "base"}   // ← state по полному ключу
+                                            value={details[activeDetailId]?.[sec.slot] || "base"}
                                             onChange={(id) => setSlotVariant(activeDetailId, sec.slot, id)}
                                         />
                                     </div>
@@ -286,12 +285,11 @@ export default function SidebarEditor(props) {
                         ]
                             .filter(sec => visibleSlots.has(sec.slot.toLowerCase()))
                             .map(sec => {
-                                const slotPure = sec.slot.split(".").pop();
                                 return (
                                     <div className={styles.section} key={`pants-${sec.slot}`}>
                                         <div className={styles.sectionTitle}>{sec.title}</div>
                                         <VariantsGrid
-                                            slot={slotPure}
+                                            slot={sec.slot}
                                             face={activeDetailId}
                                             value={details[activeDetailId]?.[sec.slot] || "base"}
                                             onChange={(id) => setSlotVariant(activeDetailId, sec.slot, id)}
