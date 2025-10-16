@@ -15,8 +15,8 @@ const PRODUCTS = [
             back: { x: 0, y: 0 }
         },
         scale: {
-            front: { x: 1.0, y: 1.0 },
-            back: { x: 1.0, y: 1.0 }
+            front: { x: 1, y: 1 },
+            back: { x: 1.1, y: 1.1 }
         }
     },
     {
@@ -24,11 +24,11 @@ const PRODUCTS = [
         slots: ["body", "belt", "leg", "cuff"],
         offsets: {
             front: { x: -20, y: 380 },
-            back: { x: 35, y: 400 }
+            back: { x: -33, y: 290 }
         },
         scale: {
             front: { x: 3.4, y: 3.4 },
-            back: { x: 0, y: 0 }
+            back: { x: 2.5, y: 2.5 }
         }
     },
 ];
