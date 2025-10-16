@@ -23,12 +23,12 @@ const PRODUCTS = [
         key: "pants",
         slots: ["body", "belt", "leg", "cuff"],
         offsets: {
-            front: { x: -20, y: 380 },
-            back: { x: -33, y: 290 }
+            front: { x: -140, y: 330 },
+            back: { x: -140, y: 240 }
         },
         scale: {
-            front: { x: 3.4, y: 3.4 },
-            back: { x: 2.5, y: 2.5 }
+            front: { x: 4.5, y: 4.5 },
+            back: { x: 3.5, y: 3.5 }
         }
     },
 ];
