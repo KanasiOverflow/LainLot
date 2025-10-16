@@ -261,7 +261,7 @@ export default function SidebarEditor(props) {
                             { slot: "hoodie.pocket", title: "Карман" }
                         ]
                             // visibleSlots содержит "чистые" имена (cuff, belt, ...)
-                            .filter(sec => visibleSlots.has(sec.slot.split(".").pop().toLowerCase()))
+                            .filter(sec => visibleSlots.has(sec.slot.toLowerCase()))
                             .map(sec => {
                                 const slotPure = sec.slot.split(".").pop(); // для VariantsGrid/манифеста
                                 return (
@@ -284,7 +284,7 @@ export default function SidebarEditor(props) {
                             { slot: "pants.cuff", title: "Манжета" }
                             // при необходимости добавите сюда "pants_cuff", "pants_belt" и т.д.
                         ]
-                            .filter(sec => visibleSlots.has(sec.slot.split(".").pop().toLowerCase()))
+                            .filter(sec => visibleSlots.has(sec.slot.toLowerCase()))
                             .map(sec => {
                                 const slotPure = sec.slot.split(".").pop();
                                 return (

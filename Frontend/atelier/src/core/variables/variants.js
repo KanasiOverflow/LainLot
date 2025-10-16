@@ -43,10 +43,14 @@ export async function loadSvgManifest() {
     return _manifestCache;
 }
 
+// База содержит ли слот (поддерживает неймспейсный слот "hoodie.cuff")
 export async function baseHasSlot(face, slot) {
     const m = await loadSvgManifest();
     const list = m?.base?.[face] || [];
-    return list.some(e => e?.slot === slot);
+    const parts = String(slot || "").split(".");
+    const product = parts.length > 1 ? parts[0] : null;
+    const pure = parts.length > 1 ? parts.slice(1).join(".") : parts[0];
+    return list.some(e => e?.slot === pure && (!product || e?.product === product));
 }
 
 function resolveVariantList(manifest, slot) {
@@ -62,28 +66,35 @@ function resolveVariantList(manifest, slot) {
     );
 }
 
-// Список вариантов для слота (база всегда первая)
+// Варианты для слота (поддерживает неймспейс "hoodie.cuff" | "pants.cuff")
 export async function getVariantsForSlot(slot) {
     const m = await loadSvgManifest();
+
     const baseV = m.baseVariantBySlot?.[slot]
         ? [m.baseVariantBySlot[slot]]
         : [{ id: "base", name: "Базовая", preview: null, files: { front: {}, back: {} } }];
-    let list = resolveVariantList(m, slot);
 
-    // Фильтр по активной стороне (front/back) — берём только те варианты,
-    // у которых реально есть файлы для текущей стороны.
+    const parts = String(slot || "").split(".");
+    const product = parts.length > 1 ? parts[0] : null;
+
+    // берём список по "чистому" имени
+    const s = (String(slot || "").split(".").pop() || "").toLowerCase();
+    const canon = (SLOT_ALIASES[s] || s);
+    let list = m?.variants?.[canon] || m?.variants?.[`${canon}s`] || m?.variants?.[s] || [];
+
+    if (product) list = list.filter(v => (v?.product || null) === product);
+
+    // фильтр по активной стороне (если сохранена в localStorage)
     let face = null;
     try { face = (localStorage.getItem("ce.activeFace") || "").toLowerCase(); } catch { }
     if (face === "front" || face === "back") {
         list = list.filter(v => {
-            if (!v || !v.files) return false;
-            const map = v.files[face] || {};
-            // Есть хотя бы один файл (left/right/any)
-            return Object.keys(map).length > 0;
+            const map = v?.files?.[face] || {};
+            return !!(map.file || map.left || map.right || map.inner);
         });
     }
 
-    // убрать дубли по id, если внезапно пришли из нескольких мест
+    // uniq по id
     const seen = new Set();
     const uniq = [];
     for (const v of list) {
@@ -95,12 +106,11 @@ export async function getVariantsForSlot(slot) {
     return [...baseV, ...uniq];
 }
 
-// Базовые источники (все файлы из front/back, без подпапок)
-export async function getBaseSources(face /* 'front'|'back' */) {
-    const m = await loadSvgManifest();           // ← берём манифест
+// База (глубокая копия + дефолт product = "hoodie", если не указан)
+export async function getBaseSources(face) {
+    const m = await loadSvgManifest();
     const f = (face === 'back') ? 'back' : 'front';
     const src = m.base?.[f] || [];
-    // ВАЖНО: возвращаем ГЛУБОКУЮ копию объектов, чтобы не мутировать m.base[*]
     return src.map(e => ({
         file: e.file,
         slot: e.slot ?? null,
@@ -108,60 +118,83 @@ export async function getBaseSources(face /* 'front'|'back' */) {
         which: e.which ?? null,
         offset: e.offset ?? { x: 0, y: 0 },
         scale: e.scale ?? { x: 1, y: 1 },
-        // 🔧 КЛЮЧЕВОЕ: если product не указан в манифесте — считаем, что это hoodie
         product: e.product ?? "hoodie",
     }));
 }
 
-// Вернуть путь превью базового слота для заданной стороны
-export async function getBasePreview(slot, face /* 'front' | 'back' */) {
+// Превью базы: сначала ищем ключ с неймспейсом, затем — по чистому имени
+export async function getBasePreview(slot, face) {
     const m = await loadSvgManifest();
     const f = (face === 'back') ? 'back' : 'front';
-    return m?.base?.previews?.[f]?.[slot] || null;
+    const nsKey = String(slot || "");
+    const pure = nsKey.split(".").pop();
+    return m?.base?.previews?.[f]?.[nsKey] || m?.base?.previews?.[f]?.[pure] || null;
 }
 
+// Слот доступен на стороне?
 export async function hasSlotForFace(slot, face) {
     const m = await loadSvgManifest();
     const arr = (m?.base && m.base[face]) || [];
-    const hasBase = arr.some(x => x.slot === slot);
-    const hasBackPreview = !!m?.base?.previews?.[face]?.[slot];
+    const ns = String(slot || "");
+    const pure = ns.split(".").pop();
+    const product = ns.includes(".") ? ns.split(".")[0] : null;
+
+    const hasBase = arr.some(x => x.slot === pure && (!product || x.product === product));
+    const hasBackPreview = !!(m?.base?.previews?.[face]?.[ns] || m?.base?.previews?.[face]?.[pure]);
     const hasAnyVariantFiles =
-        (m?.variants?.[slot] || []).some(v => {
+        (m?.variants?.[pure] || []).some(v => {
+            if (product && (v?.product || "hoodie") !== product) return false;
             const side = v?.files?.[face] || {};
             return !!(side.file || side.left || side.right || side.inner);
         });
     return hasBase || hasBackPreview || hasAnyVariantFiles;
 }
 
-// 🔹 Универсально: какие детали вообще существуют на этой стороне (front/back)
-// ВОЗВРАЩАЕМ "чистые" имена слотов (без префикса продукта) — для обратной совместимости канвы.
-export async function getVisibleSlotsForFace(face /* 'front' | 'back' */) {
+// 🔹 Какие слоты показывать в меню на этой стороне.
+// ВОЗВРАЩАЕМ **НЕЙМСПЕЙСНЫЕ** ключи: "hoodie.cuff", "pants.cuff", ...
+export async function getVisibleSlotsForFace(face) {
     const m = await loadSvgManifest();
     const f = face === 'back' ? 'back' : 'front';
-    const set = new Set();
 
-    // базовые SVG для стороны
+    // Базовый минимум, который показываем всегда
+    const MIN_SECTIONS = {
+        hoodie: ["body", "sleeve", "cuff", "belt", "hood", "pocket", "neck"],
+        pants: ["leg", "belt", "cuff"]
+    };
+
+    const result = new Set();
+
+    // 1) Минимальные секции
+    for (const [product, slots] of Object.entries(MIN_SECTIONS)) {
+        for (const pure of slots) result.add(`${product}.${pure}`);
+    }
+
+    // 2) База (если в manifest.base задан product/slоt)
     for (const e of (m?.base?.[f] || [])) {
-        if (e?.slot) set.add(String(e.slot));
+        if (e?.slot) result.add(`${e.product || "hoodie"}.${e.slot}`);
     }
-    // базовые превью (могут быть ключи с/без префикса) — берём чистое имя
-    Object.keys(m?.base?.previews?.[f] || {}).forEach(s => {
-        const pure = String(s || "").split(".").pop();
-        if (pure) set.add(pure);
+
+    // 3) Превью базы (ключ может быть с/без префикса → нормализуем)
+    Object.keys(m?.base?.previews?.[f] || {}).forEach((k) => {
+        const pure = String(k || "").split(".").pop();
+        const product = k.includes(".") ? k.split(".")[0] : "hoodie";
+        if (pure) result.add(`${product}.${pure}`);
     });
-    // варианты, у которых есть файлы на стороне — добавим по чистому имени
+
+    // 4) Варианты, у которых есть файлы на этой стороне
     for (const [slot, list] of Object.entries(m?.variants || {})) {
-        const ok = (list || []).some(v => {
-            const side = v?.files?.[f] || {};
-            return !!(side.file || side.left || side.right || side.inner);
-        });
-        if (ok) set.add(slot);
+        for (const v of (list || [])) {
+            const map = v?.files?.[f] || {};
+            if (map.file || map.left || map.right || map.inner) {
+                result.add(`${v?.product || "hoodie"}.${slot}`);
+            }
+        }
     }
 
-    // форс-слоты — по чистому имени
-    for (const s of FORCED_SLOTS[f]) set.add(s);
+    // 5) Форс-слоты только для худи (hood/pocket по сторонам)
+    for (const s of FORCED_SLOTS[f]) result.add(`hoodie.${s}`);
 
-    return Array.from(set);
+    return Array.from(result);
 }
 
 export function reduceSetSlotVariant(
