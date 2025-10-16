@@ -11,7 +11,7 @@ import { getBaseSources } from "../../core/variables/variants.js";
 /* ================== настройки ================== */
 const PANEL_MAX_COUNT = 12;
 const PANEL_MIN_AREA_RATIO_DEFAULT = 0.005; // 0.3–0.8% обычно хватает для деталей
-const translateScaleMatrix = (dx = 0, dy = 0, s = 1) => ({ a: s, b: 0, c: 0, d: s, e: dx, f: dy });
+const translateScaleMatrix = (dx = 0, dy = 0, sx = 1, sy = sx) => ({ a: sx, b: 0, c: 0, d: sy, e: dx, f: dy });
 
 export const pushCandidate = (candidates, segs, tag, label) => {
     if (!segs || !segs.length) return;
@@ -278,7 +278,7 @@ export const loadPresetToPanels = async (preset) => {
             const dy = +(src?.offset?.y ?? 0);
             const sx = +(src?.scale?.x ?? 1);
             const sy = +(src?.scale?.y ?? 1);
-            const M = { a: sx, b: 0, c: 0, d: sy, e: dx, f: dy };
+            const M = translateScaleMatrix(dx, dy, sx, sy);
 
             // детерминированный префикс по слоту/стороне/варианту:
             const prefix = (src.idPrefix ||
@@ -310,28 +310,33 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
     let baseSources = await getBaseSources(sideId);
     baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({
         file: e.file,
-        slot: e.slot ?? null,
+        slot: e.slot ?? null,          // «голый» слот (belt/cuff/neck/…)
         side: e.side ?? null,
         which: e.which ?? null,
         offset: e.offset ?? { x: 0, y: 0 },
-        scale: e.scale ?? { x: 1, y: 1 }
+        scale: e.scale ?? { x: 1, y: 1 },
+        product: e.product ?? "hoodie" // ✅ сохраняем продукт
     }));
-    const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
+    const keyOf = (s) => [s.product || "hoodie", s.slot || "", s.side || "", s.which || ""].join("|");
     const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
 
     const chosen = (details[sideId] || {});
-    const hoodActive = !!(chosen.hood && chosen.hood !== "base");
+    const hoodActive = !!(chosen["hoodie.hood"] && chosen["hoodie.hood"] !== "base"); // ✅ неймспейс
     if (hoodActive) {
-        baseSources = baseSources.filter(s => (s.slot || "").toLowerCase() !== "neck");
+        baseSources = baseSources.filter(s => !((s.product || "hoodie") === "hoodie" && (s.slot || "").toLowerCase() === "neck")); // ✅ убираем только шею худи
     }
 
     const sources = baseSources.slice();
 
     // 2) применяем варианты (ровно как в useEffect)
-    for (const [slot, variantId] of Object.entries(chosen)) {
+    for (const [nsSlot, variantId] of Object.entries(chosen)) {
         if (!variantId || variantId === "base") continue;
+        // nsSlot: "hoodie.cuff" | "pants.belt" ...
+        const [productRaw, ...rest] = String(nsSlot || "").split(".");
+        const product = productRaw || "hoodie";
+        const slot = rest.length ? rest.join(".") : nsSlot; // «голый» слот
         const list = manifest?.variants?.[slot] || [];
-        const v = list.find(x => x.id === variantId);
+        const v = list.find(x => x.id === variantId && ((x.product || "hoodie") === product));
         if (!v) continue;
 
         const fmap = v.files?.[sideId] || {};
@@ -346,11 +351,11 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
         if (allowSides && fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
         if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
 
-        const hasBaseFor = (side, which) => baseIdx.has([slot, side || "", which || ""].join("|"));
+        const hasBaseFor = (side, which) => baseIdx.has([product, slot, side || "", which || ""].join("|"));
         if (sLower !== "hood") entries = entries.filter(e => hasBaseFor(e.side, e.which));
 
         for (const e of entries) {
-            const k = [slot, e.side || "", e.which || ""].join("|");
+            const k = [product, slot, e.side || "", e.which || ""].join("|");
             const baseHit = baseIdx.get(k);
             if (baseHit) {
                 baseHit.file = e.file;                      // смещения/масштабы остаются от baseHit
@@ -359,6 +364,7 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
                 sources.push({
                     file: e.file, slot,
                     side: e.side || null, which: e.which || null,
+                    product,
                     offset: { x: 0, y: 0 }, scale: { x: 1, y: 1 }
                 });
             }
@@ -369,10 +375,11 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
     if (sources.length) {
         const hoodParts = [], rest = [];
         for (const src of sources) {
-            if ((src.slot || "").toLowerCase() === "hood") hoodParts.push(src);
-            else rest.push(src);
+            const isHood = (String(src.slot).toLowerCase() === "hood") && ((src.product || "hoodie") === "hoodie");
+            (isHood ? hoodParts : rest).push(src);
         }
-        sources.length = 0; sources.push(...rest, ...hoodParts);
+        sources.length = 0;
+        sources.push(...rest, ...hoodParts); // ✅ корректный спред
     }
 
     // 4) собрать панели с тем же загрузчиком
