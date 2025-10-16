@@ -964,20 +964,21 @@ export default function CostumeEditor() {
                         PRESETS={PRESETS}
                     />
 
-                    {/* Зум-кнопки (центр снизу) */}
-                    <ZoomControls
-                        onIn={zoomIn}
-                        onOut={zoomOut}
-                        onReset={reset}
-                        zoom={zoom}
-                        onSet={setZoomExact}
-                    />
-
-                    {/* навигация пресетов снизу */}
-                    <div className={styles.presetNav}>
-                        <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
-                        <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
-                        <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
+                    <div className={styles.bottomUI}>
+                        {/* навигация пресетов снизу */}
+                        <div className={styles.presetNav}>
+                            <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
+                            <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
+                            <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
+                        </div>
+                        {/* Зум-кнопки (центр снизу) */}
+                        <ZoomControls
+                            onIn={zoomIn}
+                            onOut={zoomOut}
+                            onReset={reset}
+                            zoom={zoom}
+                            onSet={setZoomExact}
+                        />
                     </div>
 
                 </div>

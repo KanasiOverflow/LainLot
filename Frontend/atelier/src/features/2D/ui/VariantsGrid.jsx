@@ -6,12 +6,18 @@ import { EMPTY_PREVIEW, SVG_BASE } from "../../../core/variables/svgPath.js"
 export default function VariantsGrid({ slot, face, value, onChange }) {
     const [items, setItems] = React.useState([]);
     const abs = (p) => (p ? (p.startsWith("/") ? p : `/${p}`) : null);
+    // product-aware fallbacks
     const FALLBACK = {
-        cuff: "cuff_right.svg",
-        sleeve: "sleeve_right.svg",
-        neck: "neck.svg",
-        belt: "belt.svg",
-        body: "body.svg"
+        cuff: (product) => `${product}/front/cuff_right.svg`,
+        sleeve: (product) => `${product}/front/sleeve_right.svg`,
+        neck: (product) => `${product}/front/neck.svg`,
+        belt: (product) => `${product}/front/belt.svg`,
+        body: (product) => `${product}/front/body.svg`,
+        leg: (product) => `${product}/front/leg_preview.svg`,
+    };
+    const parseSlot = (s) => {
+        const parts = String(s || "").split(".");
+        return parts.length >= 2 ? { product: parts[0], pure: parts.slice(1).join(".") } : { product: null, pure: s };
     };
 
     React.useEffect(() => {
@@ -32,9 +38,9 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
                         const hasBase = await baseHasSlot(face, slot);
                         const forced = isForcedSlot(face, slot);
                         if (hasBase) {
-                            const dir = face === "front" ? "front" : "back";
-                            const fname = FALLBACK[slot] || "body.svg";
-                            preview = `${SVG_BASE}/${dir}/${fname}`;
+                            const { product, pure } = parseSlot(slot);
+                            const gen = FALLBACK[pure];
+                            if (gen) preview = `${SVG_BASE}/${gen(product || "hoodie")}`;
                         }
                         else if (forced) {
                             // базового слота нет, но слот должен отображаться → “Отсутствует”
@@ -64,9 +70,6 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
     // а на текущей стороне у этого варианта нет файлов — он не попадёт в items.
     const unavailableSelected =
         !!value && value !== "base" && !new Set(items.map(it => it.id)).has(value);
-
-    // внутри VariantsGrid.jsx, рядом с unavailableSelected
-    const isGhostBase = unavailableSelected;
 
     return (
         <div className={styles.pickerGrid}>

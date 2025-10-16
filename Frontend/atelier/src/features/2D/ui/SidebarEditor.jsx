@@ -252,13 +252,13 @@ export default function SidebarEditor(props) {
                     <>
                         {/* --- ХУДИ --- */}
                         {[
-                            { slot: "cuff", title: "Манжета" },
-                            { slot: "sleeve", title: "Рукав" },
-                            { slot: "neck", title: "Шея" },
-                            { slot: "belt", title: "Пояс" },
-                            { slot: "body", title: "Тело" },
-                            { slot: "hood", title: "Капюшон" },
-                            { slot: "pocket", title: "Карман" }
+                            { slot: "hoodie.cuff", title: "Манжета" },
+                            { slot: "hoodie.sleeve", title: "Рукав" },
+                            { slot: "hoodie.neck", title: "Шея" },
+                            { slot: "hoodie.belt", title: "Пояс" },
+                            { slot: "hoodie.body", title: "Тело" },
+                            { slot: "hoodie.hood", title: "Капюшон" },
+                            { slot: "hoodie.pocket", title: "Карман" }
                         ]
                             .filter(sec => visibleSlots.has(sec.slot)) // ← показываем только те, что реально есть на стороне
                             .map(sec => (
@@ -275,9 +275,9 @@ export default function SidebarEditor(props) {
 
                         {/* --- ШТАНЫ --- */}
                         {[
-                            { slot: "leg", title: "Брючины" },
-                            { slot: "belt", title: "Пояс" },
-                            { slot: "cuff", title: "Манжета" }
+                            { slot: "pants.leg", title: "Брючины" },
+                            { slot: "pants.belt", title: "Пояс" },
+                            { slot: "pants.cuff", title: "Манжета" }
                             // при необходимости добавите сюда "pants_cuff", "pants_belt" и т.д.
                         ]
                             .filter(sec => visibleSlots.has(sec.slot))

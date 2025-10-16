@@ -7,9 +7,11 @@ export default function ZoomControls({ onIn, onOut, onReset, zoom = 1, onSet }) 
     return (
         <div
             style={{
-                position: "absolute", left: "50%", bottom: 88, transform: "translateX(-50%)",
-                display: "flex", gap: 12, zIndex: 5, alignItems: "center", background: "rgba(255,255,255,.7)",
-                backdropFilter: "blur(4px)", padding: 8, borderRadius: 9999, border: "1px solid #e5e7eb"
+                margin: "0 auto",
+                display: "flex", gap: 12, alignItems: "center", justifyContent: "center",
+                background: "rgba(255,255,255,.7)",
+                backdropFilter: "blur(4px)",
+                padding: 8, borderRadius: 9999, border: "1px solid #e5e7eb"
             }}
             aria-label="Управление масштабом"
         >

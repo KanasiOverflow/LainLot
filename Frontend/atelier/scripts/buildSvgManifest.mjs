@@ -15,10 +15,9 @@ const PRODUCTS = [
     },
     {
         key: "pants",
-        slots: ["body", "belt", "leg", "cuff"],
-        // положим штаны ниже худи (напр., +900 по y — под свои размеры подправишь)
-        offsets: { front: { x: 0, y: 900 }, back: { x: 0, y: 900 } },
-        scale: { x: 1.35, y: 1.35 }
+        slots: ["body", "belt", "leg", "cufsf"],
+        offsets: { front: { x: 35, y: 400 }, back: { x: 35, y: 400 } },
+        scale: { x: 3, y: 2 }
     },
 ];
 
