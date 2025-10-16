@@ -168,6 +168,12 @@ export function reduceSetSlotVariant(
     prev,                                  // текущее details {front:{}, back:{}}
     { face, slot, variantId, prevNeckByFace }
 ) {
+
+    // распарсим product/pure из слота: "hoodie.cuff" -> {product:"hoodie", pure:"cuff"}
+    const parts = String(slot || "").split(".");
+    const product = parts.length > 1 ? parts[0] : null;
+    const pure = parts.length > 1 ? parts.slice(1).join(".") : parts[0];
+
     const other = face === "front" ? "back" : "front";
     const curFace = { ...(prev[face] || {}) };
     const curOther = { ...(prev[other] || {}) };
@@ -189,7 +195,6 @@ export function reduceSetSlotVariant(
 
     // Включение капюшона: запомним текущее значение шеи и временно уберём её
     if (hoodIsTurningOn) {
-        const neckKey = "hoodie.neck";
         nextPrevNeck[face] = curFace[neckKey] ?? "base";
         delete curFace[neckKey];
     }
@@ -214,9 +219,7 @@ export function reduceSetSlotVariant(
 
     // Если меняли шею — перезаписываем «память шеи»
     if (neckIsChanging) {
-        const neckKey = "hoodie.neck";
         nextPrevNeck[face] = curFace[neckKey] ?? "base";
-        delete curFace[neckKey];
     }
 
     const nextDetails = { ...prev, [face]: curFace, [other]: curOther };
