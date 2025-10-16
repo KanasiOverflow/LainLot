@@ -19,22 +19,23 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
         let alive = true;
         (async () => {
 
-            const raw = await getVariantsForSlot(slot);
+            const { product, pure } = parseSlot(slot);
+            const prod = product || "hoodie"; // один раз вычислили дефолт продукта
+            const raw = await getVariantsForSlot(pure);
             const withPreviews = await Promise.all(raw.map(async (v) => {
                 let preview = v?.preview || null;
                 let name = v?.name;
                 if (v?.id === "base") {
                     // Сначала — «правильная» превью из манифеста для текущей стороны:
-                    preview = (await getBasePreview(slot, face)) || preview;
+                    preview = (await getBasePreview(pure, face)) || preview;
                 }
                 // Если всё ещё нет — стандартный фоллбэк.
                 if (!preview) {
                     if (v?.id === "base") {
-                        const hasBase = await baseHasSlot(face, slot);
-                        const forced = isForcedSlot(face, slot);
+                        const hasBase = await baseHasSlot(face, pure);
+                        const forced = isForcedSlot(face, pure);
                         if (hasBase) {
-                            const { product, pure } = parseSlot(slot);
-                            const prod = product || "hoodie";
+                            // уже есть prod и pure — используем их
                             preview = `${SVG_BASE}/${fallbackPreview(prod, pure, face)}`;
                         }
                         else if (forced) {

@@ -794,9 +794,10 @@ export default function CostumeEditor() {
             const snap = savedByPresetRef.current[presetId];
             applySnapshot(snap, panels);
         } else if (changed) {
-            const { presetId: chPreset, slot: chSlot } = changed;
-            if (chPreset === presetId && chSlot) {
-                const panelSlotMap = panelSlotMapRef.current;
+            const { presetId: chPreset, slot: chSlotFull } = changed;
+            if (chPreset === presetId && chSlotFull) {
+                const panelSlotMap = panelSlotMapRef.current || new Map();
+                const chSlot = String(chSlotFull).split(".").pop(); // ← normalize to pure
                 setFills(fs => fs.filter(f => panelSlotMap.get(f.panelId) !== chSlot));
                 setCurvesByPanel(prev => {
                     const next = { ...prev };

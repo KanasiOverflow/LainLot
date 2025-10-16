@@ -261,7 +261,7 @@ export default function SidebarEditor(props) {
                             { slot: "hoodie.pocket", title: "Карман" }
                         ]
                             // visibleSlots содержит "чистые" имена (cuff, belt, ...)
-                            .filter(sec => visibleSlots.has(sec.slot.toLowerCase()))
+                            .filter(sec => visibleSlots.has(String(sec.slot).toLowerCase()))
                             .map(sec => {
                                 return (
                                     <div className={styles.section} key={sec.slot}>
@@ -283,7 +283,7 @@ export default function SidebarEditor(props) {
                             { slot: "pants.cuff", title: "Манжета" }
                             // при необходимости добавите сюда "pants_cuff", "pants_belt" и т.д.
                         ]
-                            .filter(sec => visibleSlots.has(sec.slot.toLowerCase()))
+                            .filter(sec => visibleSlots.has(String(sec.slot).toLowerCase()))
                             .map(sec => {
                                 return (
                                     <div className={styles.section} key={`pants-${sec.slot}`}>

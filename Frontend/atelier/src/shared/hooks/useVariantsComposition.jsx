@@ -86,7 +86,10 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
 
             // находим, какие слоты у нас вообще выбраны на этой стороне (details[preset.id])
             const chosen = details[preset.id] || {};
-            const hoodActive = !!(chosen.hood && chosen.hood !== "base");
+            // hood активен, если ЛЮБОЙ из выбранных слотов имеет pure === 'hood'
+            const hoodActive = Object.entries(chosen).some(
+                ([slotKey, val]) => val && val !== "base" && String(slotKey).split(".").pop().toLowerCase() === "hood"
+            );
 
             // Если капюшон активен — полностью убираем из базы любые части слота 'neck'
             // (иначе базовая шея будет торчать под капюшоном)
@@ -98,9 +101,13 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
             const sources = baseSources.slice();
 
             // для каждого выбранного слота подставляем/добавляем файлы из варианта
-            for (const [slot, variantId] of Object.entries(chosen)) {
+            for (const [slotFull, variantId] of Object.entries(chosen)) {
                 if (!variantId || variantId === "base") continue; // база: ничего не меняем
-                const list = manifest?.variants?.[slot] || [];
+                const pure = String(slotFull).split(".").pop();        // ← normalize
+                const list =
+                    (manifest?.variants?.[pure]) ||
+                    (manifest?.variants?.[slotFull]) ||                 // на случай, если уже переложили ключи
+                    [];
                 const v = list.find(x => x.id === variantId);
                 if (!v) continue;
 
@@ -113,7 +120,7 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                     continue;
                 }
                 // после выбора варианта слота v и нахождения подходящей ветки files для active side:
-                const sLower = (slot || "").toLowerCase();
+                const sLower = pure.toLowerCase();
                 const allowSides = (sLower === "cuff" || sLower === "sleeve");
 
                 let entries = [];
@@ -123,13 +130,13 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                 if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
 
                 // 3) не создаём новые под-части, которых нет в базе (кроме hood)
-                const hasBaseFor = (side, which) => baseIdx.has([slot, side || "", which || ""].join("|"));
+                const hasBaseFor = (side, which) => baseIdx.has([pure, side || "", which || ""].join("|"));
                 if (sLower !== "hood") {
                     entries = entries.filter(e => hasBaseFor(e.side, e.which));
                 }
 
                 for (const e of entries) {
-                    const k = [slot, e.side || "", e.which || ""].join("|");
+                    const k = [pure, e.side || "", e.which || ""].join("|");
                     const baseHit = baseIdx.get(k);
                     if (baseHit) {
                         // заменяем файл в уже существующем базовом источнике
@@ -140,9 +147,9 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                     } else {
                         // базы нет — добавляем новый кусок
                         sources.push({
-                            file: e.file, slot, side: e.side || null, which: e.which || null,
-                            offset: baseIdx.get([slot, "", ""].join("|"))?.offset ?? { x: 0, y: 0 },
-                            scale: baseIdx.get([slot, "", ""].join("|"))?.scale ?? { x: 1, y: 1 }
+                            file: e.file, slot: pure, side: e.side || null, which: e.which || null,
+                            offset: baseIdx.get([pure, "", ""].join("|"))?.offset ?? { x: 0, y: 0 },
+                            scale: baseIdx.get([pure, "", ""].join("|"))?.scale ?? { x: 1, y: 1 }
                         });
                     }
                 }
