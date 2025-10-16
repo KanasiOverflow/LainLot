@@ -274,7 +274,11 @@ export const loadPresetToPanels = async (preset) => {
             const url = resolveSvgSrcPath(fileResolved);
             const txt = await fetch(url).then(r => r.text())
             const parts = extractPanels(txt); // парсим в панели (как обычно)
-            const M = translateScaleMatrix(src.dx || 0, src.dy || 0, src.scale || 1);
+            const dx = +(src?.offset?.x ?? 0);
+            const dy = +(src?.offset?.y ?? 0);
+            const sx = +(src?.scale?.x ?? 1);
+            const sy = +(src?.scale?.y ?? 1);
+            const M = { a: sx, b: 0, c: 0, d: sy, e: dx, f: dy };
 
             // детерминированный префикс по слоту/стороне/варианту:
             const prefix = (src.idPrefix ||
@@ -305,7 +309,12 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
     // 1) база
     let baseSources = await getBaseSources(sideId);
     baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({
-        file: e.file, slot: e.slot ?? null, side: e.side ?? null, which: e.which ?? null
+        file: e.file,
+        slot: e.slot ?? null,
+        side: e.side ?? null,
+        which: e.which ?? null,
+        offset: e.offset ?? { x: 0, y: 0 },
+        scale: e.scale ?? { x: 1, y: 1 }
     }));
     const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
     const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
@@ -343,8 +352,16 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
         for (const e of entries) {
             const k = [slot, e.side || "", e.which || ""].join("|");
             const baseHit = baseIdx.get(k);
-            if (baseHit) baseHit.file = e.file;
-            else sources.push({ file: e.file, slot, side: e.side || null, which: e.which || null });
+            if (baseHit) {
+                baseHit.file = e.file;                      // смещения/масштабы остаются от baseHit
+            } else {
+                // если слот добавляется впервые — кладём с нейтральными offset/scale
+                sources.push({
+                    file: e.file, slot,
+                    side: e.side || null, which: e.which || null,
+                    offset: { x: 0, y: 0 }, scale: { x: 1, y: 1 }
+                });
+            }
         }
     }
 

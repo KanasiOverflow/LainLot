@@ -62,10 +62,11 @@ export default memo(function PanelView({
             {/* внешний контур */}
             {ring && (
                 <path
-                    d={segsToD(panel.segs)}
+                    d={facePath(ring)}
                     fill="none"
                     stroke="#111"
                     strokeWidth={1.8 * (scale.k || 1)}
+                    vectorEffect="non-scaling-stroke"
                     style={{ pointerEvents: "none" }}
                 />
             )}
@@ -75,11 +76,16 @@ export default memo(function PanelView({
                 const merged = mergedAnchorsOf(panel);
                 const a = merged[c.aIdx] ?? (c.ax != null ? { x: c.ax, y: c.ay } : null);
                 const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
-                if (!a || !b) return null;
+                if (!a || !b || !Number.isFinite(a.x) || !Number.isFinite(a.y) || !Number.isFinite(b.x) || !Number.isFinite(b.y)) {
+                    return null;
+                }
 
-                const d = c.type === "cubic"
+                const dRaw = c.type === "cubic"
                     ? `M ${a.x} ${a.y} C ${c.c1.x} ${c.c1.y} ${c.c2.x} ${c.c2.y} ${b.x} ${b.y}`
                     : c.d;
+
+                const d = (dRaw && !/NaN/.test(String(dRaw))) ? dRaw : null;
+                if (!d) return null;
 
                 const key = `${panel.id}:${c.id}`;
                 const isHover = hoverCurveKey === key;
@@ -167,15 +173,17 @@ export default memo(function PanelView({
 
             {/* превью точки вставки */}
             {isActive && mode === "insert" && insertPreview && insertPreview.panelId === panel.id && (
-                <circle
-                    cx={insertPreview.x}
-                    cy={insertPreview.y}
-                    r={4}
-                    fill={insertPreview.allowed ? "#22c55e" : "#ef4444"}
-                    stroke={insertPreview.allowed ? "#166534" : "#991b1b"}
-                    strokeWidth={1.5}
-                    style={{ pointerEvents: "none" }}
-                />
+                Number.isFinite(insertPreview.x) && Number.isFinite(insertPreview.y) ? (
+                    <circle
+                        cx={insertPreview.x}
+                        cy={insertPreview.y}
+                        r={4}
+                        fill={insertPreview.allowed ? "#22c55e" : "#ef4444"}
+                        stroke={insertPreview.allowed ? "#166534" : "#991b1b"}
+                        strokeWidth={1.5}
+                        style={{ pointerEvents: "none" }}
+                    />
+                ) : null
             )}
 
             {/* базовые + доп. якоря */}
@@ -183,38 +191,44 @@ export default memo(function PanelView({
                 const base = panel.anchors || [];
                 const extras = extraAnchorsByPanel[panel.id] || [];
                 const merged = [...base, ...extras];
-                return merged.map((pt, mi) => (
-                    <circle
-                        key={`m-${mi}`}
-                        cx={pt.x}
-                        cy={pt.y}
-                        r={3.5}
-                        className={clsx(
-                            styles.anchor,
-                            styles.anchorClickable,
-                            mi === hoverAnchorIdx && styles.anchorHovered,
-                            mi === addBuffer && styles.anchorSelectedA
-                        )}
-                        onClick={(e) => { e.stopPropagation(); onAnchorClickAddMode(mi); }}
-                        onMouseEnter={() => setHoverAnchorIdx(mi)}
-                        onMouseLeave={() => setHoverAnchorIdx(null)}
-                    />
-                ));
+                return merged.map((pt, mi) => {
+                    if (!pt || !Number.isFinite(pt.x) || !Number.isFinite(pt.y)) return null;
+                    return (
+                        <circle
+                            key={`m-${mi}`}
+                            cx={pt.x}
+                            cy={pt.y}
+                            r={3.5}
+                            className={clsx(
+                                styles.anchor,
+                                styles.anchorClickable,
+                                mi === hoverAnchorIdx && styles.anchorHovered,
+                                mi === addBuffer && styles.anchorSelectedA
+                            )}
+                            onClick={(e) => { e.stopPropagation(); onAnchorClickAddMode(mi); }}
+                            onMouseEnter={() => setHoverAnchorIdx(mi)}
+                            onMouseLeave={() => setHoverAnchorIdx(null)}
+                        />
+                    );
+                });
             })()}
 
             {/* ручные вершины — для удаления */}
             {isActive && mode === "deleteVertex" && (() => {
                 const extras = (extraAnchorsByPanel[panel.id] || []).filter(ex => ex?.id?.includes("@m"));
-                return extras.map(ex => (
-                    <circle
-                        key={ex.id}
-                        cx={ex.x}
-                        cy={ex.y}
-                        r={4}
-                        className={styles.anchorManualDelete}
-                        onClick={(e) => { e.stopPropagation(); eraseManualAnchor(panel.id, ex); }}
-                    />
-                ));
+                return extras.map(ex => {
+                    if (!ex || !Number.isFinite(ex.x) || !Number.isFinite(ex.y)) return null;
+                    return (
+                        <circle
+                            key={ex.id}
+                            cx={ex.x}
+                            cy={ex.y}
+                            r={4}
+                            className={styles.anchorManualDelete}
+                            onClick={(e) => { e.stopPropagation(); eraseManualAnchor(panel.id, ex); }}
+                        />
+                    );
+                });
             })()}
         </g>
     );

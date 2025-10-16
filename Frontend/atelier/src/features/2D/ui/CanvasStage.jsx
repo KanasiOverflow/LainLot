@@ -36,6 +36,16 @@ export default function CanvasStage({
         return t || undefined;
     };
 
+    // Безопасная сборка d: не рендерим, если сегменты «битые»
+    const toPathD = (segs) => {
+        try {
+            const d = segsToD(segs);
+            return (d && !/NaN/.test(d)) ? d : null;
+        } catch {
+            return null;
+        }
+    };
+
     return (
         <div className={styles.canvasStack}>
             {/* нижний слой — пред. сцена, только контуры */}
@@ -48,16 +58,20 @@ export default function CanvasStage({
                     aria-hidden="true"
                 >
                     <g>
-                        {prevPanels.map((p, i) => (
-                            <path
-                                key={`prev-${i}-${p.id}`}
-                                d={segsToD(p.segs)}
-                                fill="none"
-                                stroke="#c9ced6"
-                                strokeWidth={1.2}
-                                vectorEffect="non-scaling-stroke"
-                            />
-                        ))}
+                        {prevPanels.map((p, i) => {
+                            const d = (Array.isArray(p?.segs) && p.segs.length) ? toPathD(p.segs) : null;
+                            if (!d) return null;
+                            return (
+                                <path
+                                    key={`prev-${i}-${p.id}`}
+                                    d={d}
+                                    fill="none"
+                                    stroke="#c9ced6"
+                                    strokeWidth={1.2}
+                                    vectorEffect="non-scaling-stroke"
+                                />
+                            );
+                        })}
                     </g>
                 </svg>
             )}
@@ -168,47 +182,49 @@ export default function CanvasStage({
 
                 {/* 2) Капюшон — поверх, без «белых ластиков» */}
                 {panels.filter(p => hoodPanelIds.has(p.id)).map((p, i) => (
-                    <PanelView
-                        key={`${p.id}-${i}`}
-                        panel={p}
-                        mode={mode}
-                        scale={scale}
-                        facesByPanel={facesByPanel}
-                        outerRingByPanel={outerRingByPanel}
-                        activePanel={activePanel}
-                        onPanelActivate={onPanelActivate}
-                        fills={fills}
-                        onFilledEnter={onFilledEnter}
-                        onFaceEnter={onFaceEnter}
-                        onFilledLeave={onFilledLeave}
-                        onFaceLeave={onFaceLeave}
-                        onFilledClick={onFilledClick}
-                        onFaceClick={onFaceClick}
-                        onCurveLeave={onCurveLeave}
-                        mergedAnchorsOf={mergedAnchorsOf}
-                        curvesByPanel={curvesByPanel}
-                        setInsertPreview={setInsertPreview}
-                        getCursorWorld={getCursorWorld}
-                        closestPointOnCurve={closestPointOnCurve}
-                        tooCloseToExistingAnchors={tooCloseToExistingAnchors}
-                        setInsertPreviewRAF={setInsertPreviewRAF}
-                        applyCurvesChange={applyCurvesChange}
-                        insertPreview={insertPreview}
-                        extraAnchorsByPanel={extraAnchorsByPanel}
-                        setHoverAnchorIdx={setHoverAnchorIdx}
-                        eraseManualAnchor={eraseManualAnchor}
-                        hoverFace={hoverFace}
-                        hoverAnchorIdx={hoverAnchorIdx}
-                        addBuffer={addBuffer}
-                        onAnchorClickAddMode={onAnchorClickAddMode}
-                        hoverCurveKey={hoverCurveKey}
-                        selectedCurveKey={selectedCurveKey}
-                        clickedCurveKey={clickedCurveKey}
-                        onCurveEnter={onCurveEnter}
-                        setToast={setToast}
-                        onCurveClickDelete={onCurveClickDelete}
-                        onCurveClick={onCurveClick}
-                    />
+                    <g key={`wrap-hood-${i}-${p.id}`} transform={transformOf(p) || undefined}>
+                        <PanelView
+                            key={`${p.id}-${i}`}
+                            panel={p}
+                            mode={mode}
+                            scale={scale}
+                            facesByPanel={facesByPanel}
+                            outerRingByPanel={outerRingByPanel}
+                            activePanel={activePanel}
+                            onPanelActivate={onPanelActivate}
+                            fills={fills}
+                            onFilledEnter={onFilledEnter}
+                            onFaceEnter={onFaceEnter}
+                            onFilledLeave={onFilledLeave}
+                            onFaceLeave={onFaceLeave}
+                            onFilledClick={onFilledClick}
+                            onFaceClick={onFaceClick}
+                            onCurveLeave={onCurveLeave}
+                            mergedAnchorsOf={mergedAnchorsOf}
+                            curvesByPanel={curvesByPanel}
+                            setInsertPreview={setInsertPreview}
+                            getCursorWorld={getCursorWorld}
+                            closestPointOnCurve={closestPointOnCurve}
+                            tooCloseToExistingAnchors={tooCloseToExistingAnchors}
+                            setInsertPreviewRAF={setInsertPreviewRAF}
+                            applyCurvesChange={applyCurvesChange}
+                            insertPreview={insertPreview}
+                            extraAnchorsByPanel={extraAnchorsByPanel}
+                            setHoverAnchorIdx={setHoverAnchorIdx}
+                            eraseManualAnchor={eraseManualAnchor}
+                            hoverFace={hoverFace}
+                            hoverAnchorIdx={hoverAnchorIdx}
+                            addBuffer={addBuffer}
+                            onAnchorClickAddMode={onAnchorClickAddMode}
+                            hoverCurveKey={hoverCurveKey}
+                            selectedCurveKey={selectedCurveKey}
+                            clickedCurveKey={clickedCurveKey}
+                            onCurveEnter={onCurveEnter}
+                            setToast={setToast}
+                            onCurveClickDelete={onCurveClickDelete}
+                            onCurveClick={onCurveClick}
+                        />
+                    </g>
                 ))}
 
             </svg>
