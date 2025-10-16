@@ -80,8 +80,8 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                 scale: e.scale ?? { x: 1, y: 1 }
             })) : []);
 
-            // индекс базовых частей по (slot,side,which)
-            const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
+            // индекс базовых частей по (product,slot,side,which)
+            const keyOf = (s) => [s.product || "hoodie", s.slot || "", s.side || "", s.which || ""].join("|");
             const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
 
             // находим, какие слоты у нас вообще выбраны на этой стороне (details[preset.id])
@@ -103,10 +103,11 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
             // для каждого выбранного слота подставляем/добавляем файлы из варианта
             for (const [slotFull, variantId] of Object.entries(chosen)) {
                 if (!variantId || variantId === "base") continue; // база: ничего не меняем
-                const pure = String(slotFull).split(".").pop();        // ← normalize
+                const pure = String(slotFull).split(".").pop();        // «голый» слот
+                const product = slotFull.includes(".") ? slotFull.split(".")[0] : "hoodie";
                 const list =
                     (manifest?.variants?.[pure]) ||
-                    (manifest?.variants?.[slotFull]) ||                 // на случай, если уже переложили ключи
+                    (manifest?.variants?.[slotFull]) ||                 // запасной путь
                     [];
                 const v = list.find(x => x.id === variantId);
                 if (!v) continue;
@@ -130,13 +131,13 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                 if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
 
                 // 3) не создаём новые под-части, которых нет в базе (кроме hood)
-                const hasBaseFor = (side, which) => baseIdx.has([pure, side || "", which || ""].join("|"));
+                const hasBaseFor = (side, which) => baseIdx.has([product, pure, side || "", which || ""].join("|"));
                 if (sLower !== "hood") {
                     entries = entries.filter(e => hasBaseFor(e.side, e.which));
                 }
 
                 for (const e of entries) {
-                    const k = [pure, e.side || "", e.which || ""].join("|");
+                    const k = [product, pure, e.side || "", e.which || ""].join("|");
                     const baseHit = baseIdx.get(k);
                     if (baseHit) {
                         // заменяем файл в уже существующем базовом источнике
@@ -147,9 +148,14 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                     } else {
                         // базы нет — добавляем новый кусок
                         sources.push({
-                            file: e.file, slot: pure, side: e.side || null, which: e.which || null,
-                            offset: baseIdx.get([pure, "", ""].join("|"))?.offset ?? { x: 0, y: 0 },
-                            scale: baseIdx.get([pure, "", ""].join("|"))?.scale ?? { x: 1, y: 1 }
+                            file: e.file,
+                            slot: pure,
+                            side: e.side || null,
+                            which: e.which || null,
+                            product,
+                            // наследуем смещения/масштаб из базовой «корневой» записи этого слота и продукта
+                            offset: baseIdx.get([product, pure, "", ""].join("|"))?.offset ?? { x: 0, y: 0 },
+                            scale: baseIdx.get([product, pure, "", ""].join("|"))?.scale ?? { x: 1, y: 1 }
                         });
                     }
                 }
@@ -162,8 +168,8 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                 const hoodParts = [];
                 const rest = [];
                 for (const src of sources) {
-                    if ((src.slot || "").toLowerCase() === "hood") hoodParts.push(src);
-                    else rest.push(src);
+                    const isHood = (String(src.slot).toLowerCase() === "hood") && ((src.product || "hoodie") === "hoodie");
+                    if (isHood) hoodParts.push(src); else rest.push(src);
                 }
                 // если хотим ещё и шнурки/подкладку поверх остальных частей капюшона — можно тоньше сортировать
                 // но базово достаточно просто положить hoodParts в конец
