@@ -26,7 +26,8 @@ const SLOT_ALIASES = {
 
 export function isForcedSlot(face, slot) {
     const f = face === "back" ? "back" : "front";
-    return FORCED_SLOTS[f].has(slot);
+    const pure = String(slot || "").split(".").pop();   // ← поддержка "hoodie.hood"
+    return FORCED_SLOTS[f].has(pure);
 }
 
 export async function loadSvgManifest() {
@@ -50,7 +51,10 @@ export async function baseHasSlot(face, slot) {
     const parts = String(slot || "").split(".");
     const product = parts.length > 1 ? parts[0] : null;
     const pure = parts.length > 1 ? parts.slice(1).join(".") : parts[0];
-    return list.some(e => e?.slot === pure && (!product || e?.product === product));
+    return list.some(e => {
+        const prod = e?.product || "hoodie";
+        return e?.slot === pure && (!product || prod === product);
+    });
 }
 
 function resolveVariantList(manifest, slot) {
@@ -128,6 +132,11 @@ export async function getBasePreview(slot, face) {
     const f = (face === 'back') ? 'back' : 'front';
     const nsKey = String(slot || "");
     const pure = nsKey.split(".").pop();
+    // приоритет: для pants/… НЕ откатываемся на "pure" (чтобы не тянуть hoodie-превью)
+    const product = nsKey.includes(".") ? nsKey.split(".")[0] : null;
+    if (product && product !== "hoodie") {
+        return m?.base?.previews?.[f]?.[nsKey] || null;
+    }
     return m?.base?.previews?.[f]?.[nsKey] || m?.base?.previews?.[f]?.[pure] || null;
 }
 
