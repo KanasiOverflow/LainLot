@@ -74,7 +74,10 @@ export default function CostumeEditor() {
     const paletteRef = useRef(null);
 
     const activeDetailId = (presetIdx === 0 ? "front" : "back");
-    const [details, setDetails] = useState({ front: { cuff: "base" }, back: { cuff: "base" } }); // пока работаем только с манжетами
+    const [details, setDetails] = useState({
+        front: { "hoodie.cuff": "base", "hoodie.belt": "base" },
+        back: { "hoodie.cuff": "base", "hoodie.belt": "base" }
+    });
 
     const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
     const savedByPresetRef = useRef({});

@@ -15,7 +15,7 @@ const PRODUCTS = [
     },
     {
         key: "pants",
-        slots: ["body", "belt", "leg", "cufsf"],
+        slots: ["body", "belt", "leg", "cuff"],
         offsets: { front: { x: 35, y: 400 }, back: { x: 35, y: 400 } },
         scale: { x: 3, y: 2 }
     },

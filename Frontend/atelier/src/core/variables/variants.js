@@ -107,8 +107,9 @@ export async function getBaseSources(face /* 'front'|'back' */) {
         side: e.side ?? null,
         which: e.which ?? null,
         offset: e.offset ?? { x: 0, y: 0 },
-        product: e.product ?? null,
-        scale: e.scale ?? { x: 1, y: 1 }
+        scale: e.scale ?? { x: 1, y: 1 },
+        // 🔧 КЛЮЧЕВОЕ: если product не указан в манифесте — считаем, что это hoodie
+        product: e.product ?? "hoodie",
     }));
 }
 
@@ -133,6 +134,7 @@ export async function hasSlotForFace(slot, face) {
 }
 
 // 🔹 Универсально: какие детали вообще существуют на этой стороне (front/back)
+// ВОЗВРАЩАЕМ "чистые" имена слотов (без префикса продукта) — для обратной совместимости канвы.
 export async function getVisibleSlotsForFace(face /* 'front' | 'back' */) {
     const m = await loadSvgManifest();
     const f = face === 'back' ? 'back' : 'front';
@@ -140,22 +142,24 @@ export async function getVisibleSlotsForFace(face /* 'front' | 'back' */) {
 
     // базовые SVG для стороны
     for (const e of (m?.base?.[f] || [])) {
-        if (e?.slot) set.add(e.slot);
+        if (e?.slot) set.add(String(e.slot));
     }
-    // базовые превью для стороныа
-    Object.keys(m?.base?.previews?.[f] || {}).forEach(s => set.add(s));
-    // варианты, у которых есть файлы на стороне
+    // базовые превью (могут быть ключи с/без префикса) — берём чистое имя
+    Object.keys(m?.base?.previews?.[f] || {}).forEach(s => {
+        const pure = String(s || "").split(".").pop();
+        if (pure) set.add(pure);
+    });
+    // варианты, у которых есть файлы на стороне — добавим по чистому имени
     for (const [slot, list] of Object.entries(m?.variants || {})) {
         const ok = (list || []).some(v => {
-            const map = v?.files?.[f] || {};
-            return !!(map.file || map.left || map.right || map.inner);
+            const side = v?.files?.[f] || {};
+            return !!(side.file || side.left || side.right || side.inner);
         });
         if (ok) set.add(slot);
     }
 
-    // Всегда добавляем форс-слоты (капюшон обе стороны, карман — только перед)
-    for (const s of FORCED_SLOTS[f])
-        set.add(s);
+    // форс-слоты — по чистому имени
+    for (const s of FORCED_SLOTS[f]) set.add(s);
 
     return Array.from(set);
 }
@@ -169,30 +173,34 @@ export function reduceSetSlotVariant(
     const curOther = { ...(prev[other] || {}) };
     const nextPrevNeck = { ...(prevNeckByFace || {}) };
 
-    const hoodIsTurningOn = slot === "hood" && variantId && variantId !== "base";
-    const hoodIsTurningOff = slot === "hood" && (variantId === "base" || variantId == null);
-    const neckIsChanging = slot === "neck";
+    const hoodIsTurningOn = product === "hoodie" && pure === "hood" && variantId && variantId !== "base";
+    const hoodIsTurningOff = product === "hoodie" && pure === "hood" && (variantId === "base" || variantId == null);
+    const neckIsChanging = product === "hoodie" && pure === "neck";
+
+    // 🔧 корректное имя ключа для шеи
+    const neckKey = "hoodie.neck";
 
     // Если меняют шею, а капюшон включён — отключаем капюшон
     if (neckIsChanging) {
-        const hoodActive = curFace.hood && curFace.hood !== "base";
-        if (hoodActive) delete curFace.hood;
+        const hoodKey = "hoodie.hood";
+        const hoodActive = curFace[hoodKey] && curFace[hoodKey] !== "base";
+        if (hoodActive) delete curFace[hoodKey];
     }
 
     // Включение капюшона: запомним текущее значение шеи и временно уберём её
     if (hoodIsTurningOn) {
-        nextPrevNeck[face] = curFace.neck ?? "base";
-        delete curFace.neck;
+        const neckKey = "hoodie.neck";
+        nextPrevNeck[face] = curFace[neckKey] ?? "base";
+        delete curFace[neckKey];
     }
 
     // Выключение капюшона: восстановим сохранённую шею
     if (hoodIsTurningOff) {
         const prevNeck = nextPrevNeck[face];
-        if (prevNeck) {
-            if (prevNeck === "base") delete curFace.neck;
-            else curFace.neck = prevNeck;
+        if (prevNeck != null) {
+            if (prevNeck === "base") delete curFace[neckKey];
+            else curFace[neckKey] = prevNeck;
         }
-        nextPrevNeck[face] = null;
     }
 
     // Применяем текущее изменение слота
@@ -206,7 +214,9 @@ export function reduceSetSlotVariant(
 
     // Если меняли шею — перезаписываем «память шеи»
     if (neckIsChanging) {
-        nextPrevNeck[face] = curFace.neck ?? "base";
+        const neckKey = "hoodie.neck";
+        nextPrevNeck[face] = curFace[neckKey] ?? "base";
+        delete curFace[neckKey];
     }
 
     const nextDetails = { ...prev, [face]: curFace, [other]: curOther };

@@ -108,36 +108,6 @@
         }
       },
       {
-        "file": "2d/svg/pants/front/cuff_left.svg",
-        "product": "pants",
-        "slot": "cuff",
-        "side": "left",
-        "which": null,
-        "offset": {
-          "x": 35,
-          "y": 400
-        },
-        "scale": {
-          "x": 3,
-          "y": 2
-        }
-      },
-      {
-        "file": "2d/svg/pants/front/cuff_right.svg",
-        "product": "pants",
-        "slot": "cuff",
-        "side": "right",
-        "which": null,
-        "offset": {
-          "x": 35,
-          "y": 400
-        },
-        "scale": {
-          "x": 3,
-          "y": 2
-        }
-      },
-      {
         "file": "2d/svg/pants/front/belt.svg",
         "product": "pants",
         "slot": "belt",
@@ -171,6 +141,36 @@
         "file": "2d/svg/pants/front/leg_right.svg",
         "product": "pants",
         "slot": "leg",
+        "side": "right",
+        "which": null,
+        "offset": {
+          "x": 35,
+          "y": 400
+        },
+        "scale": {
+          "x": 3,
+          "y": 2
+        }
+      },
+      {
+        "file": "2d/svg/pants/front/cuff_left.svg",
+        "product": "pants",
+        "slot": "cuff",
+        "side": "left",
+        "which": null,
+        "offset": {
+          "x": 35,
+          "y": 400
+        },
+        "scale": {
+          "x": 3,
+          "y": 2
+        }
+      },
+      {
+        "file": "2d/svg/pants/front/cuff_right.svg",
+        "product": "pants",
+        "slot": "cuff",
         "side": "right",
         "which": null,
         "offset": {
@@ -275,36 +275,6 @@
         }
       },
       {
-        "file": "2d/svg/pants/back/cuff_left.svg",
-        "product": "pants",
-        "slot": "cuff",
-        "side": "left",
-        "which": null,
-        "offset": {
-          "x": 35,
-          "y": 400
-        },
-        "scale": {
-          "x": 3,
-          "y": 2
-        }
-      },
-      {
-        "file": "2d/svg/pants/back/cuff_right.svg",
-        "product": "pants",
-        "slot": "cuff",
-        "side": "right",
-        "which": null,
-        "offset": {
-          "x": 35,
-          "y": 400
-        },
-        "scale": {
-          "x": 3,
-          "y": 2
-        }
-      },
-      {
         "file": "2d/svg/pants/back/belt.svg",
         "product": "pants",
         "slot": "belt",
@@ -338,6 +308,36 @@
         "file": "2d/svg/pants/back/leg_right.svg",
         "product": "pants",
         "slot": "leg",
+        "side": "right",
+        "which": null,
+        "offset": {
+          "x": 35,
+          "y": 400
+        },
+        "scale": {
+          "x": 3,
+          "y": 2
+        }
+      },
+      {
+        "file": "2d/svg/pants/back/cuff_left.svg",
+        "product": "pants",
+        "slot": "cuff",
+        "side": "left",
+        "which": null,
+        "offset": {
+          "x": 35,
+          "y": 400
+        },
+        "scale": {
+          "x": 3,
+          "y": 2
+        }
+      },
+      {
+        "file": "2d/svg/pants/back/cuff_right.svg",
+        "product": "pants",
+        "slot": "cuff",
         "side": "right",
         "which": null,
         "offset": {
@@ -495,8 +495,7 @@
       }
     ],
     "pocket": [],
-    "leg": [],
-    "cufsf": []
+    "leg": []
   },
   "baseVariantBySlot": {
     "body": {
@@ -563,15 +562,6 @@
       }
     },
     "leg": {
-      "id": "base",
-      "name": "Базовая",
-      "preview": null,
-      "files": {
-        "front": {},
-        "back": {}
-      }
-    },
-    "cufsf": {
       "id": "base",
       "name": "Базовая",
       "preview": null,
