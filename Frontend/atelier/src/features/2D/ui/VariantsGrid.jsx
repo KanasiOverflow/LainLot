@@ -7,14 +7,9 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
     const [items, setItems] = React.useState([]);
     const abs = (p) => (p ? (p.startsWith("/") ? p : `/${p}`) : null);
     // product-aware fallbacks
-    const FALLBACK = {
-        cuff: (product) => `${product}/front/cuff_right.svg`,
-        sleeve: (product) => `${product}/front/sleeve_right.svg`,
-        neck: (product) => `${product}/front/neck.svg`,
-        belt: (product) => `${product}/front/belt.svg`,
-        body: (product) => `${product}/front/body.svg`,
-        leg: (product) => `${product}/front/leg_preview.svg`,
-    };
+    // product + face aware fallbacks (всегда *_preview.svg)
+    const fallbackPreview = (product, pure, face) =>
+        `${product}/${face}/${pure}_preview.svg`;
     const parseSlot = (s) => {
         const parts = String(s || "").split(".");
         return parts.length >= 2 ? { product: parts[0], pure: parts.slice(1).join(".") } : { product: null, pure: s };
@@ -39,8 +34,8 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
                         const forced = isForcedSlot(face, slot);
                         if (hasBase) {
                             const { product, pure } = parseSlot(slot);
-                            const gen = FALLBACK[pure];
-                            if (gen) preview = `${SVG_BASE}/${gen(product || "hoodie")}`;
+                            const prod = product || "hoodie";
+                            preview = `${SVG_BASE}/${fallbackPreview(prod, pure, face)}`;
                         }
                         else if (forced) {
                             // базового слота нет, но слот должен отображаться → “Отсутствует”
