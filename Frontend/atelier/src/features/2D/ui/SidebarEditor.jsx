@@ -250,27 +250,53 @@ export default function SidebarEditor(props) {
 
                 {mode === "variants" && (
                     <>
+                        {/* --- ХУДИ --- */}
                         {[
-                            { slot: "cuff", title: "Манжета" },
-                            { slot: "sleeve", title: "Рукав" },
-                            { slot: "neck", title: "Шея" },
-                            { slot: "belt", title: "Пояс" },
-                            { slot: "body", title: "Тело" },
-                            { slot: "hood", title: "Капюшон" },
-                            { slot: "pocket", title: "Карман" }
+                            { slot: "hoodie.cuff", title: "Манжета" },
+                            { slot: "hoodie.sleeve", title: "Рукав" },
+                            { slot: "hoodie.neck", title: "Шея" },
+                            { slot: "hoodie.belt", title: "Пояс" },
+                            { slot: "hoodie.body", title: "Тело" },
+                            { slot: "hoodie.hood", title: "Капюшон" },
+                            { slot: "hoodie.pocket", title: "Карман" }
                         ]
-                            .filter(sec => visibleSlots.has(sec.slot)) // ← показываем только те, что реально есть на стороне
-                            .map(sec => (
-                                <div className={styles.section} key={sec.slot}>
-                                    <div className={styles.sectionTitle}>{sec.title}</div>
-                                    <VariantsGrid
-                                        slot={sec.slot}
-                                        face={activeDetailId}
-                                        value={details[activeDetailId]?.[sec.slot] || "base"}
-                                        onChange={(id) => setSlotVariant(activeDetailId, sec.slot, id)}
-                                    />
-                                </div>
-                            ))}
+                            // visibleSlots содержит "чистые" имена (cuff, belt, ...)
+                            .filter(sec => visibleSlots.has(String(sec.slot).toLowerCase()))
+                            .map(sec => {
+                                return (
+                                    <div className={styles.section} key={sec.slot}>
+                                        <div className={styles.sectionTitle}>{sec.title}</div>
+                                        <VariantsGrid
+                                            slot={sec.slot}
+                                            face={activeDetailId}
+                                            value={details[activeDetailId]?.[sec.slot] || "base"}
+                                            onChange={(id) => setSlotVariant(activeDetailId, sec.slot, id)}
+                                        />
+                                    </div>
+                                );
+                            })}
+
+                        {/* --- ШТАНЫ --- */}
+                        {[
+                            { slot: "pants.leg", title: "Брючины" },
+                            { slot: "pants.belt", title: "Пояс" },
+                            { slot: "pants.cuff", title: "Манжета" }
+                            // при необходимости добавите сюда "pants_cuff", "pants_belt" и т.д.
+                        ]
+                            .filter(sec => visibleSlots.has(String(sec.slot).toLowerCase()))
+                            .map(sec => {
+                                return (
+                                    <div className={styles.section} key={`pants-${sec.slot}`}>
+                                        <div className={styles.sectionTitle}>{sec.title}</div>
+                                        <VariantsGrid
+                                            slot={sec.slot}
+                                            face={activeDetailId}
+                                            value={details[activeDetailId]?.[sec.slot] || "base"}
+                                            onChange={(id) => setSlotVariant(activeDetailId, sec.slot, id)}
+                                        />
+                                    </div>
+                                );
+                            })}
                     </>
                 )}
 

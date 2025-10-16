@@ -74,7 +74,10 @@ export default function CostumeEditor() {
     const paletteRef = useRef(null);
 
     const activeDetailId = (presetIdx === 0 ? "front" : "back");
-    const [details, setDetails] = useState({ front: { cuff: "base" }, back: { cuff: "base" } }); // пока работаем только с манжетами
+    const [details, setDetails] = useState({
+        front: { "hoodie.cuff": "base", "hoodie.belt": "base" },
+        back: { "hoodie.cuff": "base", "hoodie.belt": "base" }
+    });
 
     const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
     const savedByPresetRef = useRef({});
@@ -112,7 +115,7 @@ export default function CostumeEditor() {
     const {
         historyUndo, historyRedo, canUndo, canRedo,
         applyFillChange, applyCurvesChange,
-        historyItems, historyIndex,
+        historyItems, historyIndex, pushHistory
     } = useHistory({
         fills, curvesByPanel, presetIdx,
         setFills, setCurvesByPanel,
@@ -131,7 +134,8 @@ export default function CostumeEditor() {
     const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
 
     const { svgRef, scale, gridDef, baseFacesByPanel, outerRingByPanel,
-        facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve
+        facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve,
+        viewBox
     } = useSceneGeometry({ panels, curvesByPanel, defaultSubCount });
 
     const { applyingPrefsRef, setBothLastModePreview } = useEditorPrefs({
@@ -531,6 +535,10 @@ export default function CostumeEditor() {
             prevNeckByFaceRef.current = nextPrevNeck; // обновили «память шеи»
             return nextDetails;
         });
+
+        // добавим запись в историю действий текущей стороны
+        const label = `Вариант: ${slot.split(".").pop()} → ${variantId || "base"}`;
+        pushHistory(label);
     };
     const changeKindRef = useRef(null); // 'preset' | 'slot' | null
 
@@ -786,9 +794,10 @@ export default function CostumeEditor() {
             const snap = savedByPresetRef.current[presetId];
             applySnapshot(snap, panels);
         } else if (changed) {
-            const { presetId: chPreset, slot: chSlot } = changed;
-            if (chPreset === presetId && chSlot) {
-                const panelSlotMap = panelSlotMapRef.current;
+            const { presetId: chPreset, slot: chSlotFull } = changed;
+            if (chPreset === presetId && chSlotFull) {
+                const panelSlotMap = panelSlotMapRef.current || new Map();
+                const chSlot = String(chSlotFull).split(".").pop(); // ← normalize to pure
                 setFills(fs => fs.filter(f => panelSlotMap.get(f.panelId) !== chSlot));
                 setCurvesByPanel(prev => {
                     const next = { ...prev };
@@ -963,20 +972,21 @@ export default function CostumeEditor() {
                         PRESETS={PRESETS}
                     />
 
-                    {/* Зум-кнопки (центр снизу) */}
-                    <ZoomControls
-                        onIn={zoomIn}
-                        onOut={zoomOut}
-                        onReset={reset}
-                        zoom={zoom}
-                        onSet={setZoomExact}
-                    />
-
-                    {/* навигация пресетов снизу */}
-                    <div className={styles.presetNav}>
-                        <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
-                        <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
-                        <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
+                    <div className={styles.bottomUI}>
+                        {/* навигация пресетов снизу */}
+                        <div className={styles.presetNav}>
+                            <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
+                            <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
+                            <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
+                        </div>
+                        {/* Зум-кнопки (центр снизу) */}
+                        <ZoomControls
+                            onIn={zoomIn}
+                            onOut={zoomOut}
+                            onReset={reset}
+                            zoom={zoom}
+                            onSet={setZoomExact}
+                        />
                     </div>
 
                 </div>

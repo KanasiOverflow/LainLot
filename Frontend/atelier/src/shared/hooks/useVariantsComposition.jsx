@@ -70,20 +70,26 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
 
             // ВАЖНО: делаем глубокую копию, чтобы подмены не трогали manifest.base[*]
             let baseSources = await getBaseSources(preset.id);
-            baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({
+            baseSources = (Array.isArray(baseSources) ? baseSources.map(e => ({
                 file: e.file,
                 slot: e.slot ?? null,
                 side: e.side ?? null,
-                which: e.which ?? null
-            }));
+                which: e.which ?? null,
+                offset: e.offset ?? { x: 0, y: 0 },
+                product: e.product ?? null,
+                scale: e.scale ?? { x: 1, y: 1 }
+            })) : []);
 
-            // индекс базовых частей по (slot,side,which)
-            const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
+            // индекс базовых частей по (product,slot,side,which)
+            const keyOf = (s) => [s.product || "hoodie", s.slot || "", s.side || "", s.which || ""].join("|");
             const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
 
             // находим, какие слоты у нас вообще выбраны на этой стороне (details[preset.id])
             const chosen = details[preset.id] || {};
-            const hoodActive = !!(chosen.hood && chosen.hood !== "base");
+            // hood активен, если ЛЮБОЙ из выбранных слотов имеет pure === 'hood'
+            const hoodActive = Object.entries(chosen).some(
+                ([slotKey, val]) => val && val !== "base" && String(slotKey).split(".").pop().toLowerCase() === "hood"
+            );
 
             // Если капюшон активен — полностью убираем из базы любые части слота 'neck'
             // (иначе базовая шея будет торчать под капюшоном)
@@ -95,9 +101,14 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
             const sources = baseSources.slice();
 
             // для каждого выбранного слота подставляем/добавляем файлы из варианта
-            for (const [slot, variantId] of Object.entries(chosen)) {
+            for (const [slotFull, variantId] of Object.entries(chosen)) {
                 if (!variantId || variantId === "base") continue; // база: ничего не меняем
-                const list = manifest?.variants?.[slot] || [];
+                const pure = String(slotFull).split(".").pop();        // «голый» слот
+                const product = slotFull.includes(".") ? slotFull.split(".")[0] : "hoodie";
+                const list =
+                    (manifest?.variants?.[pure]) ||
+                    (manifest?.variants?.[slotFull]) ||                 // запасной путь
+                    [];
                 const v = list.find(x => x.id === variantId);
                 if (!v) continue;
 
@@ -110,7 +121,7 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                     continue;
                 }
                 // после выбора варианта слота v и нахождения подходящей ветки files для active side:
-                const sLower = (slot || "").toLowerCase();
+                const sLower = pure.toLowerCase();
                 const allowSides = (sLower === "cuff" || sLower === "sleeve");
 
                 let entries = [];
@@ -120,20 +131,32 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                 if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
 
                 // 3) не создаём новые под-части, которых нет в базе (кроме hood)
-                const hasBaseFor = (side, which) => baseIdx.has([slot, side || "", which || ""].join("|"));
+                const hasBaseFor = (side, which) => baseIdx.has([product, pure, side || "", which || ""].join("|"));
                 if (sLower !== "hood") {
                     entries = entries.filter(e => hasBaseFor(e.side, e.which));
                 }
 
                 for (const e of entries) {
-                    const k = [slot, e.side || "", e.which || ""].join("|");
+                    const k = [product, pure, e.side || "", e.which || ""].join("|");
                     const baseHit = baseIdx.get(k);
                     if (baseHit) {
                         // заменяем файл в уже существующем базовом источнике
                         baseHit.file = e.file;
+                        // offset берём от варианта, если когда-нибудь появится на уровне варианта;
+                        // пока — наследуем базовый (важно для pants)
+                        baseHit.offset = baseHit.offset ?? { x: 0, y: 0 };
                     } else {
                         // базы нет — добавляем новый кусок
-                        sources.push({ file: e.file, slot, side: e.side || null, which: e.which || null });
+                        sources.push({
+                            file: e.file,
+                            slot: pure,
+                            side: e.side || null,
+                            which: e.which || null,
+                            product,
+                            // наследуем смещения/масштаб из базовой «корневой» записи этого слота и продукта
+                            offset: baseIdx.get([product, pure, "", ""].join("|"))?.offset ?? { x: 0, y: 0 },
+                            scale: baseIdx.get([product, pure, "", ""].join("|"))?.scale ?? { x: 1, y: 1 }
+                        });
                     }
                 }
             }
@@ -145,8 +168,8 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                 const hoodParts = [];
                 const rest = [];
                 for (const src of sources) {
-                    if ((src.slot || "").toLowerCase() === "hood") hoodParts.push(src);
-                    else rest.push(src);
+                    const isHood = (String(src.slot).toLowerCase() === "hood") && ((src.product || "hoodie") === "hoodie");
+                    if (isHood) hoodParts.push(src); else rest.push(src);
                 }
                 // если хотим ещё и шнурки/подкладку поверх остальных частей капюшона — можно тоньше сортировать
                 // но базово достаточно просто положить hoodParts в конец

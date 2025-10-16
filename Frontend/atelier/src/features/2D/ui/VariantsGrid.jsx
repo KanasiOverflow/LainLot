@@ -6,18 +6,21 @@ import { EMPTY_PREVIEW, SVG_BASE } from "../../../core/variables/svgPath.js"
 export default function VariantsGrid({ slot, face, value, onChange }) {
     const [items, setItems] = React.useState([]);
     const abs = (p) => (p ? (p.startsWith("/") ? p : `/${p}`) : null);
-    const FALLBACK = {
-        cuff: "cuff_right.svg",
-        sleeve: "sleeve_right.svg",
-        neck: "neck.svg",
-        belt: "belt.svg",
-        body: "body.svg"
+    // product-aware fallbacks
+    // product + face aware fallbacks (всегда *_preview.svg)
+    const fallbackPreview = (product, pure, face) =>
+        `${product}/${face}/${pure}_preview.svg`;
+    const parseSlot = (s) => {
+        const parts = String(s || "").split(".");
+        return parts.length >= 2 ? { product: parts[0], pure: parts.slice(1).join(".") } : { product: null, pure: s };
     };
 
     React.useEffect(() => {
         let alive = true;
         (async () => {
 
+            const { product, pure } = parseSlot(slot);
+            const prod = product || "hoodie"; // один раз вычислили дефолт продукта
             const raw = await getVariantsForSlot(slot);
             const withPreviews = await Promise.all(raw.map(async (v) => {
                 let preview = v?.preview || null;
@@ -29,12 +32,11 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
                 // Если всё ещё нет — стандартный фоллбэк.
                 if (!preview) {
                     if (v?.id === "base") {
-                        const hasBase = await baseHasSlot(face, slot);
-                        const forced = isForcedSlot(face, slot);
+                        const hasBase = await baseHasSlot(face, slot);     // ← поддерживает неймспейс
+                        const forced = isForcedSlot(face, slot);           // ← из него берётся pure внутри
                         if (hasBase) {
-                            const dir = face === "front" ? "front" : "back";
-                            const fname = FALLBACK[slot] || "body.svg";
-                            preview = `${SVG_BASE}/${dir}/${fname}`;
+                            // уже есть prod и pure — используем их
+                            preview = `${SVG_BASE}/${fallbackPreview(prod, pure, face)}`;
                         }
                         else if (forced) {
                             // базового слота нет, но слот должен отображаться → “Отсутствует”
@@ -64,9 +66,6 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
     // а на текущей стороне у этого варианта нет файлов — он не попадёт в items.
     const unavailableSelected =
         !!value && value !== "base" && !new Set(items.map(it => it.id)).has(value);
-
-    // внутри VariantsGrid.jsx, рядом с unavailableSelected
-    const isGhostBase = unavailableSelected;
 
     return (
         <div className={styles.pickerGrid}>

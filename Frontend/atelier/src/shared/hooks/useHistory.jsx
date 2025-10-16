@@ -63,6 +63,13 @@ export function useHistory({
         });
     }, [pid, max]);
 
+    // Позволяет добавить запись в историю без изменения данных,
+    // фиксируя текущее состояние (как PS/AI делает «после действия»).
+    const pushHistory = useCallback((label = "Шаг") => {
+        const snap = snapNow();
+        commitState(snap, label);
+    }, [snapNow, commitState]);
+
     // Отмена / Повтор
     const historyUndo = useCallback(() => {
         setHistByPreset(prev => {
@@ -125,6 +132,8 @@ export function useHistory({
         historyUndo, historyRedo, canUndo, canRedo,
         // применение изменений с лейблами
         applyFillChange, applyCurvesChange,
+        // лог без изменений (для вариантов)
+        pushHistory,
         // данные для ленты
         historyItems, historyIndex,
     };

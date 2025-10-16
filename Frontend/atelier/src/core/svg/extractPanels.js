@@ -8,10 +8,28 @@ import { collectAnchors } from "../svg/anchors.js";
 import { resolveSvgSrcPath } from "../../core/variables/svgPath.js";
 import { getBaseSources } from "../../core/variables/variants.js";
 
+/*
+
+localStorage.setItem("ce.debug.panels", "1"); // включить
+// перезагрузить страницу, повторить действие
+localStorage.removeItem("ce.debug.panels");   // выключить
+
+
+*/
+
+// Включение логов: localStorage.setItem("ce.debug.panels", "1")
+// Выключение:       localStorage.removeItem("ce.debug.panels")
+const __DBG_PANELS = (() => {
+    try { return (typeof window !== "undefined") && localStorage.getItem("ce.debug.panels") === "1"; }
+    catch { return false; }
+})();
+const __logPanels = (...args) => { if (__DBG_PANELS) console.log("[extractPanels]", ...args); };
+
+
 /* ================== настройки ================== */
 const PANEL_MAX_COUNT = 12;
 const PANEL_MIN_AREA_RATIO_DEFAULT = 0.005; // 0.3–0.8% обычно хватает для деталей
-const translateScaleMatrix = (dx = 0, dy = 0, s = 1) => ({ a: s, b: 0, c: 0, d: s, e: dx, f: dy });
+const translateScaleMatrix = (dx = 0, dy = 0, sx = 1, sy = sx) => ({ a: sx, b: 0, c: 0, d: sy, e: dx, f: dy });
 
 export const pushCandidate = (candidates, segs, tag, label) => {
     if (!segs || !segs.length) return;
@@ -30,6 +48,9 @@ export const pushCandidate = (candidates, segs, tag, label) => {
 }
 
 export const extractPanels = (rawSVG) => {
+
+    __logPanels("start", { rawLen: (rawSVG?.length || 0) });
+
     const rootBox = parseViewBox(rawSVG);
 
     // --- собираем теги
@@ -207,6 +228,17 @@ export const extractPanels = (rawSVG) => {
         push(segs, tag);
     }
 
+    __logPanels("tags", {
+        path: pathTags.length,
+        polygon: polygonTags.length,
+        polyline: polylineTags.length,
+        rect: rectTags.length,
+        circle: circleTags.length,
+        ellipse: ellipseTags.length,
+        line: lineTags.length
+    });
+
+
     // fallback: если вообще ничего не нашли — берём первый path
     if (!candidates.length) {
         const m = rawSVG.match(/<path[^>]*\sd="([^"]+)"[^>]*>/i);
@@ -218,17 +250,29 @@ export const extractPanels = (rawSVG) => {
     if (!candidates.length)
         return [];
 
+    __logPanels("candidates", { count: candidates.length });
+
+
     // --- Удаляем «фон/рамку», если есть из чего выбирать
     if (candidates.length > 1) {
         const kept = candidates.filter(c => !looksLikeBackground(c, rootBox));
         if (kept.length) candidates = kept;
     }
 
+    __logPanels("afterBG", { count: candidates.length });
+
+
     // --- Фильтрация по площади (адаптивная)
     candidates.sort((a, b) => b.bboxArea - a.bboxArea);
     const maxA = candidates[0].bboxArea || 1;
     const dominatesView = (candidates[0].bboxArea / (rootBox.w * rootBox.h || 1)) > 0.45;
     const ratio = (candidates.length <= 3 || dominatesView) ? 0.005 : PANEL_MIN_AREA_RATIO_DEFAULT;
+
+    __logPanels("areas", {
+        maxA: Math.round(maxA || 0),
+        dominatesView,
+        ratio
+    });
 
     let filtered = candidates.filter(c => (c.bboxArea / maxA) >= ratio);
 
@@ -254,6 +298,13 @@ export const extractPanels = (rawSVG) => {
     }
     filtered = uniq;
 
+    if (!filtered.length && candidates.length) {
+        __logPanels("fallback", "keep-largest");
+        filtered = [candidates[0]];
+    }
+    __logPanels("return", { out: filtered.length });
+
+
     // --- Финально
     return filtered.map((c, idx) => ({
         id: String(idx + 1),
@@ -274,13 +325,16 @@ export const loadPresetToPanels = async (preset) => {
             const url = resolveSvgSrcPath(fileResolved);
             const txt = await fetch(url).then(r => r.text())
             const parts = extractPanels(txt); // парсим в панели (как обычно)
-            const M = translateScaleMatrix(src.dx || 0, src.dy || 0, src.scale || 1);
+            const dx = +(src?.offset?.x ?? 0);
+            const dy = +(src?.offset?.y ?? 0);
+            const sx = +(src?.scale?.x ?? 1);
+            const sy = +(src?.scale?.y ?? 1);
+            const M = translateScaleMatrix(dx, dy, sx, sy);
 
             // детерминированный префикс по слоту/стороне/варианту:
             const prefix = (src.idPrefix ||
-                // включаем ИД пресета (front/back), чтобы у спинки и переда НЕ совпадали panelId
-                [String(preset?.id || 'part'), src.slot || 'part', src.side || 'both', src.which || 'main'].join('_'))
-                .toLowerCase();
+                [String(preset?.id || 'part'), src.product || 'hoodie', src.slot || 'part', src.side || 'both', src.which || 'main'].join('_')
+            ).toLowerCase();
 
             let localIdx = 0;
             for (const p of parts) {
@@ -290,7 +344,7 @@ export const loadPresetToPanels = async (preset) => {
                     id: `${prefix}__${localIdx++}`,
                     segs: segsT,
                     anchors: collectAnchors(segsT),
-                    meta: { slot: src.slot || null, side: src.side || null, which: src.which || null }
+                    meta: { product: src.product || 'hoodie', slot: src.slot || null, side: src.side || null, which: src.which || null }
                 });
             }
         }
@@ -305,24 +359,34 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
     // 1) база
     let baseSources = await getBaseSources(sideId);
     baseSources = (Array.isArray(baseSources) ? baseSources : []).map(e => ({
-        file: e.file, slot: e.slot ?? null, side: e.side ?? null, which: e.which ?? null
+        file: e.file,
+        slot: e.slot ?? null,          // «голый» слот (belt/cuff/neck/…)
+        side: e.side ?? null,
+        which: e.which ?? null,
+        offset: e.offset ?? { x: 0, y: 0 },
+        scale: e.scale ?? { x: 1, y: 1 },
+        product: e.product ?? "hoodie" // ✅ сохраняем продукт
     }));
-    const keyOf = (s) => [s.slot || "", s.side || "", s.which || ""].join("|");
+    const keyOf = (s) => [s.product || "hoodie", s.slot || "", s.side || "", s.which || ""].join("|");
     const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
 
     const chosen = (details[sideId] || {});
-    const hoodActive = !!(chosen.hood && chosen.hood !== "base");
+    const hoodActive = !!(chosen["hoodie.hood"] && chosen["hoodie.hood"] !== "base"); // ✅ неймспейс
     if (hoodActive) {
-        baseSources = baseSources.filter(s => (s.slot || "").toLowerCase() !== "neck");
+        baseSources = baseSources.filter(s => !((s.product || "hoodie") === "hoodie" && (s.slot || "").toLowerCase() === "neck")); // ✅ убираем только шею худи
     }
 
     const sources = baseSources.slice();
 
     // 2) применяем варианты (ровно как в useEffect)
-    for (const [slot, variantId] of Object.entries(chosen)) {
+    for (const [nsSlot, variantId] of Object.entries(chosen)) {
         if (!variantId || variantId === "base") continue;
+        // nsSlot: "hoodie.cuff" | "pants.belt" ...
+        const [productRaw, ...rest] = String(nsSlot || "").split(".");
+        const product = productRaw || "hoodie";
+        const slot = rest.length ? rest.join(".") : nsSlot; // «голый» слот
         const list = manifest?.variants?.[slot] || [];
-        const v = list.find(x => x.id === variantId);
+        const v = list.find(x => x.id === variantId && ((x.product || "hoodie") === product));
         if (!v) continue;
 
         const fmap = v.files?.[sideId] || {};
@@ -337,14 +401,23 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
         if (allowSides && fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
         if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
 
-        const hasBaseFor = (side, which) => baseIdx.has([slot, side || "", which || ""].join("|"));
+        const hasBaseFor = (side, which) => baseIdx.has([product, slot, side || "", which || ""].join("|"));
         if (sLower !== "hood") entries = entries.filter(e => hasBaseFor(e.side, e.which));
 
         for (const e of entries) {
-            const k = [slot, e.side || "", e.which || ""].join("|");
+            const k = [product, slot, e.side || "", e.which || ""].join("|");
             const baseHit = baseIdx.get(k);
-            if (baseHit) baseHit.file = e.file;
-            else sources.push({ file: e.file, slot, side: e.side || null, which: e.which || null });
+            if (baseHit) {
+                baseHit.file = e.file;                      // смещения/масштабы остаются от baseHit
+            } else {
+                // если слот добавляется впервые — кладём с нейтральными offset/scale
+                sources.push({
+                    file: e.file, slot,
+                    side: e.side || null, which: e.which || null,
+                    product,
+                    offset: { x: 0, y: 0 }, scale: { x: 1, y: 1 }
+                });
+            }
         }
     }
 
@@ -352,10 +425,11 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
     if (sources.length) {
         const hoodParts = [], rest = [];
         for (const src of sources) {
-            if ((src.slot || "").toLowerCase() === "hood") hoodParts.push(src);
-            else rest.push(src);
+            const isHood = (String(src.slot).toLowerCase() === "hood") && ((src.product || "hoodie") === "hoodie");
+            (isHood ? hoodParts : rest).push(src);
         }
-        sources.length = 0; sources.push(...rest, ...hoodParts);
+        sources.length = 0;
+        sources.push(...rest, ...hoodParts); // ✅ корректный спред
     }
 
     // 4) собрать панели с тем же загрузчиком

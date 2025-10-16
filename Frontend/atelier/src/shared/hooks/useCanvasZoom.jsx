@@ -1,6 +1,6 @@
-import { useMemo, useEffect, useState, useCallback } from "react";
+import { useMemo, useState, useCallback } from "react";
 
-export default function useCanvasZoom({ bbox, svgRef, containerRef, padRatio = 0.06 }) {
+export default function useCanvasZoom({ bbox, padRatio = 0.06 }) {
     const [zoom, setZoom] = useState(1);                 // 0.5 … 1.0
     const clamp = (z) => Math.max(0.5, Math.min(1, z));
     const setZoomExact = useCallback((k) => setZoom(clamp(k)), []);
