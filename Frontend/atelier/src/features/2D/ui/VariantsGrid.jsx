@@ -1,9 +1,13 @@
 import React from "react";
-import styles from "../styles/CostumeEditor.module.css";
+import { useTranslation } from "react-i18next";
 import { getVariantsForSlot, getBasePreview, baseHasSlot, isForcedSlot } from "../../../core/variables/variants.js";
 import { EMPTY_PREVIEW, SVG_BASE } from "../../../core/variables/svgPath.js"
+import styles from "../styles/CostumeEditor.module.css";
 
 export default function VariantsGrid({ slot, face, value, onChange }) {
+
+    const { t } = useTranslation();
+
     const [items, setItems] = React.useState([]);
     const abs = (p) => (p ? (p.startsWith("/") ? p : `/${p}`) : null);
     // product-aware fallbacks
@@ -20,28 +24,31 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
         (async () => {
 
             const { product, pure } = parseSlot(slot);
-            const prod = product || "hoodie"; // один раз вычислили дефолт продукта
+            // the product default was calculated once
+            const prod = product || "hoodie";
             const raw = await getVariantsForSlot(slot);
             const withPreviews = await Promise.all(raw.map(async (v) => {
                 let preview = v?.preview || null;
                 let name = v?.name;
                 if (v?.id === "base") {
-                    // Сначала — «правильная» превью из манифеста для текущей стороны:
+                    // First, the "correct" preview from the manifest for the current side:
                     preview = (await getBasePreview(slot, face)) || preview;
                 }
-                // Если всё ещё нет — стандартный фоллбэк.
+                // If still not, standard fallback.
                 if (!preview) {
                     if (v?.id === "base") {
-                        const hasBase = await baseHasSlot(face, slot);     // ← поддерживает неймспейс
-                        const forced = isForcedSlot(face, slot);           // ← из него берётся pure внутри
+                        // supports namespace
+                        const hasBase = await baseHasSlot(face, slot);
+                        // pure inside is taken from it
+                        const forced = isForcedSlot(face, slot);
                         if (hasBase) {
-                            // уже есть prod и pure — используем их
+                            // We already have prod and pure - we use them
                             preview = `${SVG_BASE}/${fallbackPreview(prod, pure, face)}`;
                         }
                         else if (forced) {
-                            // базового слота нет, но слот должен отображаться → “Отсутствует”
+                            // There is no base slot, but the slot should be displayed → “Missing”
                             preview = EMPTY_PREVIEW;
-                            name = "Отсутствует";
+                            name = t('Empty');
                         }
                         else {
                             preview = null;
@@ -62,8 +69,8 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
         return () => { alive = false; };
     }, [face, slot]);
 
-    // Если синхронизация проставила value с другой стороны,
-    // а на текущей стороне у этого варианта нет файлов — он не попадёт в items.
+    // If synchronization sets the value on the other side, 
+    // and there are no files on the current side for this variant, it will not be included in the items.
     const unavailableSelected =
         !!value && value !== "base" && !new Set(items.map(it => it.id)).has(value);
 
@@ -72,7 +79,7 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
             {unavailableSelected && (
                 <div
                     className={styles.noteUnavailable}
-                    title="Этот вариант выбран на другой стороне, но здесь файлов нет"
+                    title={t('MissedVariantOnThatSide')}
                     style={{
                         gridColumn: "1 / -1",
                         fontSize: "12px",
@@ -84,8 +91,7 @@ export default function VariantsGrid({ slot, face, value, onChange }) {
                         marginBottom: "6px"
                     }}
                 >
-                    Недоступно на этой стороне — выбран вариант на другой стороне.
-                    Выберите «Базовая», чтобы отключить здесь, или другой доступный вариант.
+                    {t('NotAvailableOnThisSide')}
                 </div>
             )}
             {items.map(it => (

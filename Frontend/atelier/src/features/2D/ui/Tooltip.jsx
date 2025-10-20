@@ -1,8 +1,8 @@
 import React, { useId, useState } from "react";
 
 /**
- * Лёгкий тултип без зависимостей.
- * Показывается при hover/focus. Доступный: связывается по aria-describedby.
+ * A lightweight tooltip without dependencies.
+ * Shown on hover/focus. Available: linked via aria-describedby.
  */
 export default function Tooltip({ label, side = "bottom", offset = 8, children }) {
     const id = useId();

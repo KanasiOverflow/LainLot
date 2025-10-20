@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import clsx from "clsx";
-import styles from "../styles/CostumeEditor.module.css";
+import { useTranslation } from "react-i18next";
+import { getVisibleSlotsForFace } from "../../../core/variables/variants.js";
 import SectionSlider from "./SectionSlider.jsx";
 import VariantsGrid from "./VariantsGrid.jsx";
-import { getVisibleSlotsForFace } from "../../../core/variables/variants.js";
+import clsx from "clsx";
+import styles from "../styles/CostumeEditor.module.css";
 
 const PALETTE = [
     "#f26522", "#30302e", "#93c5fd", "#a7f3d0", "#fde68a", "#d8b4fe",
@@ -13,24 +14,26 @@ const PALETTE = [
 export default function SidebarEditor(props) {
     const {
         mode, setMode, modeGroup,
-        // заливка
+        // paint
         paintColor, setPaintColor, paletteOpen, setPaletteOpen, paletteRef,
 
-        // линии
+        // lines
         lineStyle, setLineStyle, defaultSubCount, setDefaultSubCount,
         selectedCurveKey, setSelectedCurveKey, setHoverCurveKey,
-        curvesByPanel, setCurvesByPanelExtern, // см. использование ниже
+        curvesByPanel, setCurvesByPanelExtern,
         recomputeWaveForCurve, waveAmpPx, setWaveAmpPx, waveLenPx, setWaveLenPx,
 
-        // история
+        // history
         historyItems, historyIndex, historyUndo, historyRedo, canUndo, canRedo,
 
-        details, setDetails, activeDetailId,
+        details, activeDetailId,
 
         setSlotVariant
     } = props;
 
-    // какие слоты доступны на текущей стороне
+    const { t } = useTranslation();
+
+    // What slots are available on the current side
     const [visibleSlots, setVisibleSlots] = useState(new Set());
     useEffect(() => {
         let alive = true;
@@ -56,8 +59,7 @@ export default function SidebarEditor(props) {
         });
     };
 
-    // какой пресет сейчас активен
-
+    // Which preset is currently active
     const hasSelection = !!selectedCurveKey;
     let curve = null, pid = null, cid = null;
     if (hasSelection) {
@@ -79,7 +81,7 @@ export default function SidebarEditor(props) {
                 const i = arr.findIndex(x => x.id === cid);
                 if (i >= 0) arr[i] = { ...arr[i], subCount: n };
                 return { ...prev, [pid]: arr };
-            }, `Вершины: ${n}`);
+            }, `${t('Peaks')}: ${n}`);
         } else {
             setDefaultSubCount(n);
         }
@@ -90,13 +92,13 @@ export default function SidebarEditor(props) {
     const currentLen = hasSelection ? (curve?.waveLenPx ?? waveLenPx) : waveLenPx;
     const changeAmp = (val) => {
         if (hasSelection && curveIsWavyCapable)
-            recomputeWaveForCurve(pid, cid, val, currentLen, `Амплитуда: ${val}px`);
+            recomputeWaveForCurve(pid, cid, val, currentLen, `${t('Amplitude')}: ${val}px`);
         else
             setWaveAmpPx(val);
     };
     const changeLen = (val) => {
         if (hasSelection && curveIsWavyCapable)
-            recomputeWaveForCurve(pid, cid, currentAmp, val, `Длина волны: ${val}px`);
+            recomputeWaveForCurve(pid, cid, currentAmp, val, `${t('Wavelength')}: ${val}px`);
         else
             setWaveLenPx(val);
     };
@@ -104,35 +106,35 @@ export default function SidebarEditor(props) {
     return (
         <aside className={styles.sidebar}>
             <div className={styles.panel}>
-                <h3 className={styles.panelTitle}>Редактор</h3>
+                <h3 className={styles.panelTitle}>{t('Editor')}</h3>
 
-                {/* Палитра */}
+                {/* Palette */}
                 {modeGroup === "fill" && (
                     <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Цвет заливки</div>
+                        <div className={styles.sectionTitle}>{t('FillColor')}</div>
 
-                        {/* Подрежимы */}
+                        {/* Submodes */}
                         <div className={styles.segmented} style={{ gap: 8, marginBottom: 8 }}>
                             <button
                                 className={clsx(styles.segBtn, mode === "paint" && styles.segActive)}
                                 onClick={() => setMode("paint")}
-                            >🪣 Залить</button>
+                            >🪣 {t('Fill')}</button>
 
                             <button
                                 className={clsx(styles.segBtn, mode === "deleteFill" && styles.segActive)}
                                 onClick={() => setMode("deleteFill")}
-                            >✖ Стереть</button>
+                            >✖ {t('Clear')}</button>
                         </div>
 
                         {mode === "paint" ? (
                             <>
-                                {/* Текущий цвет + поповер */}
+                                {/* Current color + popover */}
                                 <div className={styles.colorRow}>
                                     <button
                                         className={styles.colorChip}
                                         style={{ background: paintColor }}
                                         onClick={() => setPaletteOpen(v => !v)}
-                                        aria-label="Открыть палитру"
+                                        aria-label={t('OpenPalette')}
                                     />
                                     {paletteOpen && (
                                         <div className={styles.palettePopover}>
@@ -149,7 +151,7 @@ export default function SidebarEditor(props) {
                                                     ))}
                                                 </div>
                                                 <div className={styles.paletteFooter}>
-                                                    <span className={styles.paletteLabel}>Произвольный</span>
+                                                    <span className={styles.paletteLabel}>{t('ArbitraryColor')}</span>
                                                     <input
                                                         type="color"
                                                         className={styles.colorInline}
@@ -162,7 +164,7 @@ export default function SidebarEditor(props) {
                                     )}
                                 </div>
 
-                                {/* Быстрые цвета */}
+                                {/* Quick colors */}
                                 <div className={styles.swatches} style={{ marginTop: 8 }}>
                                     {PALETTE.map(c => (
                                         <button
@@ -177,39 +179,39 @@ export default function SidebarEditor(props) {
                             </>
                         ) : (
                             <div className={styles.hintSmall} style={{ marginTop: 8 }}>
-                                Режим очистки: кликните по закрашенной области, чтобы удалить цвет. Горячая клавиша: <span className={styles.kbd}>X</span>.
+                                {t('ClearModePressX')} <span className={styles.kbd}>X</span>.
                             </div>
                         )}
                     </div>
                 )}
 
-                {/* Линии */}
+                {/* Lines */}
                 {modeGroup === "line" && (
                     <div className={styles.section}>
-                        <div className={styles.sectionTitle}>Линия</div>
+                        <div className={styles.sectionTitle}>{t('Line')}</div>
 
                         <div className={styles.segmented}>
                             <button className={clsx(styles.segBtn, lineStyle === "straight" && styles.segActive)}
-                                onClick={() => { setLineStyle("straight"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>Прямая</button>
+                                onClick={() => { setLineStyle("straight"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>{t('Straight')}</button>
                             <button className={clsx(styles.segBtn, lineStyle === "wavy" && styles.segActive)}
-                                onClick={() => { setLineStyle("wavy"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>Волнистая</button>
+                                onClick={() => { setLineStyle("wavy"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>{t('Wavy')}</button>
                         </div>
 
                         <div className={clsx(styles.segmented, styles.two)} style={{ marginBottom: 8 }}>
-                            <button className={clsx(styles.segBtn, mode === "add" && styles.segActive)} onClick={() => { setMode("add"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>＋ Добавить</button>
-                            <button className={clsx(styles.segBtn, mode === "delete" && styles.segActive)} onClick={() => { setMode("delete"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>🗑 Удалить</button>
-                            <button className={clsx(styles.segBtn, mode === "insert" && styles.segActive)} onClick={() => { setMode("insert"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>● Вставить вершину</button>
-                            <button className={clsx(styles.segBtn, mode === "deleteVertex" && styles.segActive)} onClick={() => { setMode("deleteVertex"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>○ Удалить вершину</button>
+                            <button className={clsx(styles.segBtn, mode === "add" && styles.segActive)} onClick={() => { setMode("add"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>＋ {t('Add')}</button>
+                            <button className={clsx(styles.segBtn, mode === "delete" && styles.segActive)} onClick={() => { setMode("delete"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>🗑 {t('Delete')}</button>
+                            <button className={clsx(styles.segBtn, mode === "insert" && styles.segActive)} onClick={() => { setMode("insert"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>● {t('InsertVertex')}</button>
+                            <button className={clsx(styles.segBtn, mode === "deleteVertex" && styles.segActive)} onClick={() => { setMode("deleteVertex"); setSelectedCurveKey(null); setHoverCurveKey(null); }}>○ {t('RemoveVertex')}</button>
                         </div>
 
-                        {/* Настройки */}
-                        <SectionSlider label={hasSelection ? "Вершины на линии" : "Вершины (для новой)"}
+                        {/* Settings */}
+                        <SectionSlider label={hasSelection ? t('VerticesOnTheLine') : t('PeaksForNew')}
                             value={currentSub} min={2} max={10} step={1}
                             onChange={changeSub} disabled={manualLock} />
 
                         {manualLock && (
                             <div className={styles.lockNote}>
-                                На линии есть ручные вершины ({manualCount}). Автоматическое распределение отключено.
+                                {t('ThereAreHandPeaksOnTheLine')} ({manualCount}). {t('AutomaticDistributionIsDisabled')}.
                                 <div style={{ marginTop: 6 }}>
                                     <button type="button" className={styles.linkBtn}
                                         onClick={() => {
@@ -223,7 +225,7 @@ export default function SidebarEditor(props) {
                                                 return { ...prev, [pp]: list };
                                             });
                                         }}>
-                                        Удалить все ручные вершины
+                                        {t('DeleteAllManualVertices')}
                                     </button>
                                 </div>
                             </div>
@@ -232,13 +234,13 @@ export default function SidebarEditor(props) {
                         {lineStyle === "wavy" && (
                             <>
                                 <SectionSlider
-                                    label={hasSelection ? (curveIsWavyCapable ? "Амплитуда на линии" : "Амплитуда (шаблон)") : "Амплитуда (для новой)"}
+                                    label={hasSelection ? (curveIsWavyCapable ? t('AmplitudeOnTheLine') : t('AmplitudeTemplate')) : t('AmplitudeForNew')}
                                     value={currentAmp} min={2} max={24} step={1}
                                     onChange={changeAmp} disabled={manualLock} suffix="px"
                                 />
 
                                 <SectionSlider
-                                    label={hasSelection ? (curveIsWavyCapable ? "Длина волны на линии" : "Длина волны (шаблон)") : "Длина волны (для новой)"}
+                                    label={hasSelection ? (curveIsWavyCapable ? t('WavelengthOnTheLine') : t('WavelengthTemplate')) : t('WavelengthForNew')}
                                     value={currentLen} min={12} max={80} step={2}
                                     onChange={changeLen} disabled={manualLock} suffix="px"
                                 />
@@ -250,17 +252,16 @@ export default function SidebarEditor(props) {
 
                 {mode === "variants" && (
                     <>
-                        {/* --- ХУДИ --- */}
+                        {/* --- HOODIE --- */}
                         {[
-                            { slot: "hoodie.cuff", title: "Манжета" },
-                            { slot: "hoodie.sleeve", title: "Рукав" },
-                            { slot: "hoodie.neck", title: "Шея" },
-                            { slot: "hoodie.belt", title: "Пояс" },
-                            { slot: "hoodie.body", title: "Тело" },
-                            { slot: "hoodie.hood", title: "Капюшон" },
-                            { slot: "hoodie.pocket", title: "Карман" }
+                            { slot: "hoodie.cuff", title: t('Cuff') },
+                            { slot: "hoodie.sleeve", title: t('Sleeve') },
+                            { slot: "hoodie.neck", title: t('Neck') },
+                            { slot: "hoodie.belt", title: t('Belt') },
+                            { slot: "hoodie.body", title: t('Body') },
+                            { slot: "hoodie.hood", title: t('Hood') },
+                            { slot: "hoodie.pocket", title: t('Pocket') }
                         ]
-                            // visibleSlots содержит "чистые" имена (cuff, belt, ...)
                             .filter(sec => visibleSlots.has(String(sec.slot).toLowerCase()))
                             .map(sec => {
                                 return (
@@ -276,12 +277,11 @@ export default function SidebarEditor(props) {
                                 );
                             })}
 
-                        {/* --- ШТАНЫ --- */}
+                        {/* --- PANTS --- */}
                         {[
-                            { slot: "pants.leg", title: "Брючины" },
-                            { slot: "pants.belt", title: "Пояс" },
-                            { slot: "pants.cuff", title: "Манжета" }
-                            // при необходимости добавите сюда "pants_cuff", "pants_belt" и т.д.
+                            { slot: "pants.leg", title: t('Leg') },
+                            { slot: "pants.belt", title: t('Belt') },
+                            { slot: "pants.cuff", title: t('Cuff') }
                         ]
                             .filter(sec => visibleSlots.has(String(sec.slot).toLowerCase()))
                             .map(sec => {
@@ -300,18 +300,18 @@ export default function SidebarEditor(props) {
                     </>
                 )}
 
-                {/* История (только не в preview — сам сайдбар скрыт в preview) */}
+                {/* History (not in the preview—the sidebar itself is hidden in the preview) */}
                 <div className={styles.section}>
                     <div className={styles.historyHeader}>
-                        <div className={styles.sectionTitle}>История</div>
+                        <div className={styles.sectionTitle}>{t('History')}</div>
 
                         <div className={styles.historyToggles}>
                             <button
                                 className={styles.historyToggleBtn}
-                                aria-label={historyOpen ? "Свернуть историю" : "Развернуть историю"}
+                                aria-label={historyOpen ? t('CollapseHistory') : t('ExpandHistory')}
                                 aria-expanded={historyOpen}
                                 aria-controls="history-panel"
-                                title={historyOpen ? "Свернуть" : "Развернуть"}
+                                title={historyOpen ? t('Collapse') : t('Expand')}
                                 onClick={toggleHistory}
                             >
                                 {historyOpen ? "▾" : "▸"}
@@ -321,24 +321,24 @@ export default function SidebarEditor(props) {
                                 className={styles.historyBtn}
                                 onClick={historyUndo}
                                 disabled={!canUndo}
-                                aria-label="Отменить (Ctrl+Z)"
-                                title="Отменить (Ctrl+Z)"
+                                aria-label={`${t('Cancel')} (Ctrl+Y / Ctrl+Shift+Z)`}
+                                title={`${t('Cancel')} (Ctrl+Y / Ctrl+Shift+Z)`}
                             >↶</button>
 
                             <button
                                 className={styles.historyBtn}
                                 onClick={historyRedo}
                                 disabled={!canRedo}
-                                aria-label="Повторить (Ctrl+Y / Ctrl+Shift+Z)"
-                                title="Повторить (Ctrl+Y / Ctrl+Shift+Z)"
+                                aria-label={`${t('Repeat')} (Ctrl+Y / Ctrl+Shift+Z)`}
+                                title={`${t('Repeat')} (Ctrl+Y / Ctrl+Shift+Z)`}
                             >↷</button>
                         </div>
                     </div>
 
-                    {/* Только два состояния: открыт -> показываем всю ленту, закрыт -> ничего */}
+                    {/* Only two states: open -> show the entire feed, closed -> nothing */}
                     {historyOpen && (
                         <div id="history-panel" className={styles.historyViewport}>
-                            <ol className={styles.historyList} aria-label="История действий">
+                            <ol className={styles.historyList} aria-label={t("ActionHistory")}>
                                 {historyItems.map((it, i) => (
                                     <li
                                         key={i}

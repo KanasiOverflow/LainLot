@@ -16,7 +16,7 @@ export default function CanvasStage({
     presetIdx, PRESETS
 }) {
 
-    // универсально: берём оффсет, если он пришёл из манифеста
+    // Universal: we take the offset if it came from the manifest
     const translateOf = (panel) => {
         const off = panel?.meta?.offset || panel?.offset || null;
         if (!off) return null;
@@ -36,7 +36,7 @@ export default function CanvasStage({
         return t || undefined;
     };
 
-    // Безопасная сборка d: не рендерим, если сегменты «битые»
+    // Safe build d: don't render if segments are broken
     const toPathD = (segs) => {
         try {
             const d = segsToD(segs);
@@ -48,7 +48,7 @@ export default function CanvasStage({
 
     return (
         <div className={styles.canvasStack}>
-            {/* нижний слой — пред. сцена, только контуры */}
+            {/* bottom layer - pre-scene, outlines only */}
             {prevPanels && (
                 <svg
                     className={`${styles.canvas} ${styles.stage} ${styles.swapOut}`}
@@ -76,7 +76,7 @@ export default function CanvasStage({
                 </svg>
             )}
 
-            {/* верхний слой — текущая интерактивная сцена */}
+            {/* the top layer is the current interactive scene */}
             <svg
                 key={svgMountKey}
                 ref={svgRef}
@@ -103,9 +103,9 @@ export default function CanvasStage({
                         />
                     </pattern>
 
-                    {/* Маска, которая спрячeт всё под капюшоном */}
+                    {/* A mask that hides everything under the hood */}
                     <mask id={`under-hood-mask-${svgMountKey}`} maskUnits="userSpaceOnUse">
-                        {/* всё показываем по умолчанию */}
+                        {/* show everything by default */}
                         <rect
                             x={gridDef.b.x}
                             y={gridDef.b.y}
@@ -113,11 +113,11 @@ export default function CanvasStage({
                             height={gridDef.b.h}
                             fill="#fff"
                         />
-                        {/* а область капюшона вычёркиваем (чёрным) */}
+                        {/* and we cross out the hood area (in black) */}
                         {hoodRings.map((poly, i) => (
                             <path key={i} d={facePath(poly)} fill="#000" />
                         ))}
-                        {/* внутренние отверстия капюшона возвращаем (белым) */}
+                        {/* return the inner holes of the hood (white) */}
                         {hoodHoles.map((poly, i) => (
                             <path key={`hole-${i}`} d={facePath(poly)} fill="#fff" />
                         ))}
@@ -131,7 +131,7 @@ export default function CanvasStage({
                     fill={`url(#grid-${svgMountKey})`} pointerEvents="none"
                 />
 
-                {/* 1) Все детали, КРОМЕ капюшона — под маской */}
+                {/* 1) All parts EXCEPT the hood are under the mask */}
                 <g mask={`url(#under-hood-mask-${svgMountKey})`}>
                     {panels.filter(p => !hoodPanelIds.has(p.id)).map((p, i) => (
                         <g key={`wrap-${i}-${p.id}`} transform={transformOf(p) || undefined}>
@@ -180,7 +180,7 @@ export default function CanvasStage({
                     ))}
                 </g>
 
-                {/* 2) Капюшон — поверх, без «белых ластиков» */}
+                {/* 2) Hood - on top, without the "white erasers" */}
                 {panels.filter(p => hoodPanelIds.has(p.id)).map((p, i) => (
                     <g key={`wrap-hood-${i}-${p.id}`} transform={transformOf(p) || undefined}>
                         <PanelView
