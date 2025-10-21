@@ -1,7 +1,7 @@
 // CostumeEditor.jsx
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import styles from "../styles/CostumeEditor.module.css";
-import clsx from "clsx";
+
+import { useTranslation } from "react-i18next";
 
 import { sampleBezierPoints } from "../../../core/geometry/geometry.js";
 import { waveAlongPolyline } from "../../../core/geometry/polylineOps.js";
@@ -32,7 +32,11 @@ import ZoomControls from "./ZoomControls.jsx";
 import { PRESETS } from "../../../core/variables/presets.js";
 import { reduceSetSlotVariant } from "../../../core/variables/variants.js";
 
+import styles from "../styles/CostumeEditor.module.css";
+import clsx from "clsx";
+
 export default function CostumeEditor() {
+    const { t } = useTranslation();
     const scopeRef = useRef(null);
     const [showTopbarHint, setShowTopbarHint] = useState(false);
     const MIN_GAP_WORLD = 20;
@@ -209,7 +213,7 @@ export default function CostumeEditor() {
             }
 
             return prev;
-        }, "Параметры волны");
+        }, t("WaveParameters"));
     };
 
     const modeGroup =
@@ -244,7 +248,6 @@ export default function CostumeEditor() {
             return { type: 'base', panelId: panel.id, anchorIndex: mi };
         }
         const ex = extras[mi - base.length];
-        // ex.id = `${curveId}:${k}`
         let curveId = null, subIdx = null;
         if (ex?.id) {
             const [cid, k] = String(ex.id).split(':');
@@ -302,7 +305,7 @@ export default function CostumeEditor() {
                         subCount: defaultSubCount
                     });
                     return { ...map, [activePanel.id]: arr };
-                }, `Добавить линию прямая`);
+                }, t("AddAStraightLine"));
             }
             else {
                 const base = sampleBezierPoints(a.x, a.y, draft.c1.x, draft.c1.y, draft.c2.x, draft.c2.y, b.x, b.y, 64);
@@ -325,14 +328,14 @@ export default function CostumeEditor() {
                         subCount: defaultSubCount
                     });
                     return { ...map, [activePanel.id]: arr };
-                }, `Добавить линию волнистая`);
+                }, t("AddAWavyLine"));
             }
 
             setAddBuffer(null);
             return;
         }
 
-        setToast({ text: "Линия выходит за пределы детали. Прижатые к краю линии отключены." });
+        setToast({ text: t("TheLinExtendsBeyondThePart") });
         setAddBuffer(null);
         return;
     };
@@ -357,7 +360,7 @@ export default function CostumeEditor() {
             }
             const kept = arr.filter(c => !toDelete.has(c.id));
             return { ...prev, [panelId]: kept };
-        }, "Удалить линию");
+        }, t("DeleteLine"));
     };
 
     const eraseManualAnchor = (panelId, manual) => {
@@ -391,7 +394,7 @@ export default function CostumeEditor() {
             }
             list[i] = { ...cur, extraStops: stops };
             return { ...prev, [panelId]: list };
-        }, "Удалить вершину");
+        }, t("DeleteVertex"));
     };
 
     const onCurveEnter = (panelId, id) => {
@@ -419,7 +422,7 @@ export default function CostumeEditor() {
             const i = fs.findIndex(f => f.panelId === panelId && f.faceKey === fk);
             if (i >= 0) { const cp = fs.slice(); cp[i] = { ...cp[i], color: paintColor }; return cp; }
             return [...fs, { id: crypto.randomUUID(), panelId, faceKey: fk, color: paintColor }];
-        }, `Заливка (${presetIdx === 0 ? 'Перед' : 'Спинка'})`);
+        }, `${t("Filling")} (${presetIdx === 0 ? t("Front") : t("Back")})`);
 
     };
     const onFilledEnter = (panelId, fk) => { if (mode === "deleteFill") setHoverFace({ panelId, faceKey: fk }); };
@@ -427,7 +430,7 @@ export default function CostumeEditor() {
     const onFilledClick = (panelId, fk) => {
         if (mode !== "deleteFill") return;
         applyFillChange(fs => fs.filter(f => !(f.panelId === panelId && f.faceKey === fk)),
-            `Очистка заливки (${presetIdx === 0 ? 'Перед' : 'Спинка'})`);
+            `${t("CleaningTheFill")}  (${presetIdx === 0 ? t("Front") : t("Back")})`);
         setHoverFace(null);
     };
 
@@ -495,7 +498,7 @@ export default function CostumeEditor() {
             return nextDetails;
         });
 
-        const label = `Вариант: ${slot.split(".").pop()} → ${variantId || "base"}`;
+        const label = `${t("Variant")}: ${slot.split(".").pop()} → ${variantId || "base"}`;
         pushHistory(label);
     };
     const changeKindRef = useRef(null);
@@ -504,9 +507,8 @@ export default function CostumeEditor() {
     const lastChangedSlotRef = useRef(null);
     const restoringPresetRef = useRef(false);
 
-    // единая кнопка "Сбросить всё"
     const resetAll = useCallback(() => {
-        if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях."))
+        if (!confirm(t("ClearlyResetEverything")))
             return;
 
         savedByPresetRef.current = {};
@@ -636,7 +638,7 @@ export default function CostumeEditor() {
         if (mode !== 'deleteVertex') return;
         if (manualLeftInActive === 0) {
             setMode('insert');
-            setToast({ text: 'Все ручные вершины удалены — переключаюсь в «Вставить вершину»' });
+            setToast({ text: t("AllManualVerticesHaveBeenRemoved") });
         }
     }, [mode, manualLeftInActive]);
 
@@ -825,7 +827,7 @@ export default function CostumeEditor() {
                 className={clsx(styles.layout, modeGroup === 'preview' && styles.layoutPreview)}
                 tabIndex={0}
                 role="region"
-                aria-label="Редактор костюма"
+                aria-label={t("CostumeEditor")}
             >
                 <div className={styles.canvasWrap} onMouseDown={() => scopeRef.current?.focus()}>
                     {toast && (
@@ -834,7 +836,7 @@ export default function CostumeEditor() {
                         </div>
                     )}
 
-                    {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
+                    {isLoadingPreset && <div className={styles.loader}>{t("Loading")}</div>}
 
                     <Topbar
                         mode={mode}
@@ -906,9 +908,9 @@ export default function CostumeEditor() {
 
                     <div className={styles.bottomUI}>
                         <div className={styles.presetNav}>
-                            <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
+                            <button className={styles.navBtn} onClick={prevPreset} aria-label={t("PreviousWorkpiece")}>⟵</button>
                             <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
-                            <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
+                            <button className={styles.navBtn} onClick={nextPreset} aria-label={t("NextWorkpiece")}>⟶</button>
                         </div>
                         <ZoomControls
                             onIn={zoomIn}
@@ -961,20 +963,20 @@ export default function CostumeEditor() {
                 }
             </div >
 
-            < section className={styles.flow} aria-label="Оформление заказа" >
+            < section className={styles.flow} aria-label={t("PlacingAnOrder")} >
                 <div className={styles.flowContainer}>
                     <header className={styles.flowHeader}>
-                        <h2 className={styles.flowTitle}>Оформление заказа</h2>
-                        <p className={styles.flowSub}>Шаг за шагом: параметры → адрес → финализация</p>
+                        <h2 className={styles.flowTitle}>{t("PlacingAnOrder")}</h2>
+                        <p className={styles.flowSub}>{t("StepByStep")}</p>
                     </header>
 
                     <div className={styles.stepCard} id="step-body">
-                        <div className={styles.stepTitle}><span className={styles.stepBadge}>1</span> Параметры тела</div>
+                        <div className={styles.stepTitle}><span className={styles.stepBadge}>1</span> {t("BodyParameters")}</div>
                         <BodyParams value={bodyParams} onChange={setBodyParams} />
                     </div>
 
                     <div className={styles.stepCard} id="step-order">
-                        <div className={styles.stepTitle}><span className={styles.stepBadge}>2</span> Данные и адрес доставки</div>
+                        <div className={styles.stepTitle}><span className={styles.stepBadge}>2</span> {t("DeliveryDetailsAndAddress")}</div>
                         <OrderForm value={orderInfo} onChange={setOrderInfo} />
                     </div>
 
@@ -984,13 +986,13 @@ export default function CostumeEditor() {
                             className={styles.ctaButton}
                             disabled={!isOrderValid}
                             onClick={() => {
-                                if (!isOrderValid) { alert("Заполни ФИО, email и телефон — и поехали!"); return; }
+                                if (!isOrderValid) { alert(t("FillData")); return; }
                                 console.log("Finalize payload", { bodyParams, orderInfo, fills, curvesByPanel });
                             }}
                         >
-                            Перейти к финализации
+                            {t("GoToFinalization")}
                         </button>
-                        {!isOrderValid && <div className={styles.ctaNote}>Чтобы активировать кнопку, заполни ФИО, email и телефон.</div>}
+                        {!isOrderValid && <div className={styles.ctaNote}>{t("ToActivateTheButton")}</div>}
                     </div>
                 </div>
             </section >
