@@ -1,4 +1,3 @@
-// CostumeEditor.jsx
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 
 import { useTranslation } from "react-i18next";
@@ -909,7 +908,7 @@ export default function CostumeEditor() {
                     <div className={styles.bottomUI}>
                         <div className={styles.presetNav}>
                             <button className={styles.navBtn} onClick={prevPreset} aria-label={t("PreviousWorkpiece")}>⟵</button>
-                            <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
+                            <div className={styles.presetChip}>{t(PRESETS[presetIdx]?.title) || "—"}</div>
                             <button className={styles.navBtn} onClick={nextPreset} aria-label={t("NextWorkpiece")}>⟶</button>
                         </div>
                         <ZoomControls

@@ -1,4 +1,4 @@
 export const PRESETS = [
-    { id: "front", title: "Перед", sources: [] },
-    { id: "back", title: "Спинка", sources: [] },
+    { id: "front", title: "Front", sources: [] },
+    { id: "back", title: "Back", sources: [] },
 ];

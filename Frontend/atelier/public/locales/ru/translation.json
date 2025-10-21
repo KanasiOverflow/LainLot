@@ -131,5 +131,8 @@
   "FillData": "Заполни ФИО, email и телефон — и поехали!",
   "GoToFinalization": "Перейти к финализации",
   "ToActivateTheButton": "Чтобы активировать кнопку, заполни ФИО, email и телефон.",
-  "Loading": "Загрузка"
+  "Loading": "Загрузка",
+  "Start": "Старт",
+  "Step": "Шаг",
+  "Detail": "Деталь"
 }

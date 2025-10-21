@@ -129,5 +129,8 @@
   "FillData": "Wpisz imię i nazwisko, e-mail i telefon — i jedziemy!",
   "GoToFinalization": "Przejdź do finalizacji",
   "ToActivateTheButton": "Aby aktywować przycisk, wpisz imię i nazwisko, e-mail i telefon.",
-  "Loading": "Ładowanie"
+  "Loading": "Ładowanie",
+  "Start": "Start",
+  "Step": "Krok",
+  "Detail": "Detal"
 }

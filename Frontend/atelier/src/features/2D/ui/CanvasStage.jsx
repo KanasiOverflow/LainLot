@@ -1,5 +1,6 @@
 import { facePath, segsToD } from "../../../core/svg/faceUtils.js";
 import PanelView from "./PanelView.jsx";
+import { useTranslation } from "react-i18next";
 import styles from "../styles/CostumeEditor.module.css";
 
 export default function CanvasStage({
@@ -15,6 +16,8 @@ export default function CanvasStage({
     hoodPanelIds, hoodRings, hoodHoles, onCanvasClick, didEverSwapRef,
     presetIdx, PRESETS
 }) {
+
+    const { t } = useTranslation();
 
     // Universal: we take the offset if it came from the manifest
     const translateOf = (panel) => {
@@ -88,7 +91,7 @@ export default function CanvasStage({
                 id={presetIdx === 0 ? "panel-front" : "panel-back"}
                 aria-labelledby={presetIdx === 0 ? "tab-front" : "tab-back"}
             >
-                <title>Деталь: {PRESETS[presetIdx]?.title || "—"}</title>
+                <title>{t("Detail")}: {t(PRESETS[presetIdx]?.title) || "—"}</title>
                 {/* GRID */}
                 <defs>
                     <pattern id={`grid-${svgMountKey}`} width={gridDef.step} height={gridDef.step} patternUnits="userSpaceOnUse">
