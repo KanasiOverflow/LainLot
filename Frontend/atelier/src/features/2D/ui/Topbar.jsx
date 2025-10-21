@@ -1,5 +1,6 @@
-import styles from "../styles/CostumeEditor.module.css";
+import { Trans, useTranslation } from "react-i18next";
 import Tooltip from "./Tooltip.jsx";
+import styles from "../styles/CostumeEditor.module.css";
 import clsx from "clsx";
 
 export default function Topbar({
@@ -7,6 +8,11 @@ export default function Topbar({
     dismissTopbarHint, presetIdx, setPresetIdx, resetAll, doExportSVG,
     isExporting,
 }) {
+
+    const { t } = useTranslation();
+    const K = ({ children }) => <span className={styles.kbd}>{children}</span>;
+    const KM = ({ children }) => <span className={styles.kbd} style={{ marginLeft: 6 }}>{children}</span>;
+
     const modeGroup =
         (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
             (mode === 'add' || mode === 'delete' || mode === 'insert' || mode === 'deleteVertex') ? 'line' :
@@ -14,81 +20,76 @@ export default function Topbar({
 
     return (
         <div className={styles.topbar}>
-            {/* Режимы (иконки) */}
-            <div className={styles.tbLeft} role="toolbar" aria-label="Режимы">
-                <Tooltip label="Просмотр (Esc)">
+            {/* Modes (icons) */}
+            <div className={styles.tbLeft} role="toolbar" aria-label={t('Modes')}>
+                <Tooltip label={`${t('View')} (Esc)`}>
                     <button
                         className={clsx(styles.iconBtn, mode === "preview" && styles.iconActive)}
-                        aria-label="Просмотр"
+                        aria-label={t('View')}
                         aria-keyshortcuts="Esc"
                         aria-pressed={mode === "preview"}
                         onClick={() => { dismissTopbarHint(); setMode("preview"); }}
                     >👁️</button>
                 </Tooltip>
 
-                <Tooltip label="Заливка (F)">
+                <Tooltip label={`${t('Filling')} (F)`}>
                     <button
                         className={clsx(styles.iconBtn, (mode === "paint" || mode === "deleteFill") && styles.iconActive)}
-                        aria-label="Заливка"
+                        aria-label={t('Filling')}
                         aria-keyshortcuts="F"
                         aria-pressed={mode === "paint" || mode === "deleteFill"}
                         onClick={() => { dismissTopbarHint(); setMode("paint"); }}
                     >🪣</button>
                 </Tooltip>
 
-                <Tooltip label="Линии (A)">
+                <Tooltip label={`${t('Lines')} (A)`}>
                     <button
                         className={clsx(styles.iconBtn, modeGroup === "line" && styles.iconActive)}
-                        aria-label="Линии"
+                        aria-label={t('Lines')}
                         aria-keyshortcuts="A"
                         aria-pressed={modeGroup === "line"}
                         onClick={() => { dismissTopbarHint(); setMode(lastLineMode || "add"); }}
                     >✏️</button>
                 </Tooltip>
 
-                <Tooltip label="Варианты (V)">
+                <Tooltip label={`${t('Variants')} (V)`}>
                     <button
                         className={clsx(styles.iconBtn, mode === "variants" && styles.iconActive)}
-                        aria-label="Варианты деталей одежды"
+                        aria-label={t('ClothingDetailOptions')}
                         aria-keyshortcuts="V"
                         aria-pressed={mode === "variants"}
                         onClick={() => { dismissTopbarHint(); setMode("variants"); }}
                     >🧩</button>
                 </Tooltip>
 
-
-                <Tooltip label="Показать подсказку (H)">
+                <Tooltip label={`${t('ShowClue')} (H)`}>
                     <button
                         className={styles.iconBtn}
-                        aria-label="Справка"
+                        aria-label={t('Clue')}
                         aria-keyshortcuts="H"
                         onClick={() => { try { localStorage.removeItem('ce.topbarHint.v1'); } catch { }; setShowTopbarHint(true); }}
                     >?</button>
                 </Tooltip>
             </div>
 
-
             {showTopbarHint && (
-                <div className={styles.topbarHint} role="dialog" aria-label="Подсказка по режимам">
-                    <div className={styles.hintClose} onClick={dismissTopbarHint} aria-label="Закрыть">×</div>
-                    <div className={styles.hintTitle}>Быстрый старт</div>
+                <div className={styles.topbarHint} role="dialog" aria-label={t('ModeHint')}>
+                    <div className={styles.hintClose} onClick={dismissTopbarHint} aria-label={t('Close')}>×</div>
+                    <div className={styles.hintTitle}>{t('QuickStart')}</div>
                     <div className={styles.hintRow}>
-                        Нажмите <span className={styles.kbd}>F</span> — заливка,
-                        <span className={styles.kbd} style={{ marginLeft: 6 }}>A</span> — линии,
-                        <span className={styles.kbd} style={{ marginLeft: 6 }}>V</span> — варианты деталей одежды,
-                        <span className={styles.kbd} style={{ marginLeft: 6 }}>Esc</span> — просмотр,
-                        <span className={styles.kbd} style={{ marginLeft: 6 }}>←</span> или
-                        <span className={styles.kbd} style={{ marginLeft: 6 }}>→</span> — поменять сторону,
-                        <span className={styles.kbd} style={{ marginLeft: 6 }}>Q</span> или
-                        <span className={styles.kbd} style={{ marginLeft: 6 }}>E</span> — поменять сторону.
+                        <Trans
+                            i18nKey="hint.inline"
+                            components={{ K: <K />, KM: <KM /> }}
+                            values={{ left: '←', right: '→' }}
+                        />
                     </div>
                     <div className={styles.hintRow} style={{ marginTop: 6 }}>
-                        Или кликните по иконкам слева. Подсказка больше не появится.
+                        {t('HideHelpWindow')}
                     </div>
                 </div>
             )}
 
-            {/* контейнер табов */}
+            {/* Tabs container */}
             <div className={clsx(styles.topbarGroup, styles.tbCenter)} role="tablist" aria-label="Деталь">
                 <button
                     role="tab"
@@ -98,8 +99,8 @@ export default function Topbar({
                     className={clsx(styles.segBtn, presetIdx === 0 && styles.segActive)}
                     onClick={() => setPresetIdx(0)}
                     aria-keyshortcuts="Q"
-                    title="Перед (Q)"
-                >Перед</button>
+                    title={`${t('Front')} (Q)`}
+                >{t('Front')}</button>
 
                 <button
                     role="tab"
@@ -109,29 +110,29 @@ export default function Topbar({
                     className={clsx(styles.segBtn, presetIdx === 1 && styles.segActive)}
                     onClick={() => setPresetIdx(1)}
                     aria-keyshortcuts="E"
-                    title="Спинка (E)"
-                >Спинка</button>
+                    title={`${t('Back')} (E)`}
+                >{t('Back')}</button>
             </div>
 
-            {/* Сброс — одна кнопка */}
+            {/* Reset — one button */}
             <div className={styles.tbRight}>
                 <button
                     className={styles.resetBtn}
                     onClick={resetAll}
-                    aria-label="Сбросить всё"
-                    title="Сбросить всё"
+                    aria-label={t('ResetAll')}
+                    title={t('ResetAll')}
                 >
-                    ⚠️ Сбросить всё
+                    ⚠️ {t('ResetAll')}
                 </button>
 
                 <button
                     className={styles.exportBtn}
                     onClick={doExportSVG}
                     disabled={isExporting}
-                    aria-label="Выгрузить в SVG"
-                    title="Выгрузить в SVG"
+                    aria-label={t('ExportSVG')}
+                    title={t('ExportSVG')}
                 >
-                    {isExporting ? "Экспорт…" : "Экспорт SVG"}
+                    {isExporting ? t('Export') : t('ExportSVG')}
                 </button>
             </div>
 

@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 /**
- * История действий отдельно для "Перед" (presetIdx=0) и "Спинка" (presetIdx=1).
- * Пишем снимки СОСТОЯНИЯ ПОСЛЕ изменения (как в PS/AI).
- * Также ведём массив логов с лейблами действий.
+ * Action history separately for "Front" (presetIdx=0) and "Back" (presetIdx=1).
+ * We write snapshots of the STATE AFTER the change (as in PS/AI).
+ * We also maintain an array of logs with action labels.
  */
 export function useHistory({
     fills,
@@ -13,18 +14,23 @@ export function useHistory({
     setCurvesByPanel,
     max = 50,
 }) {
-    const [histByPreset, setHistByPreset] = useState({}); // { front:{stack:[snap], idx:number}, back:{...} }
-    const [logByPreset, setLogByPreset] = useState({}); // { front:{logs:[{label,at}], idx:number}, ... }
+
+    const { t } = useTranslation();
+
+    // { front:{stack:[snap], idx:number}, back:{...} }
+    const [histByPreset, setHistByPreset] = useState({});
+    // { front:{logs:[{label,at}], idx:number}, ... }
+    const [logByPreset, setLogByPreset] = useState({});
 
     const pid = presetIdx === 0 ? "front" : "back";
 
-    // текущий снимок
+    // current snapshot
     const snapNow = useCallback(() => ({
         fills: JSON.parse(JSON.stringify(fills)),
         curvesByPanel: JSON.parse(JSON.stringify(curvesByPanel)),
     }), [fills, curvesByPanel]);
 
-    // Инициализация стека и логов при первом заходе на деталь
+    // Initializing the stack and logs when first entering a part
     useEffect(() => {
         setHistByPreset(prev => {
             const h = prev[pid];
@@ -35,20 +41,20 @@ export function useHistory({
         setLogByPreset(prev => {
             const l = prev[pid];
             if (l && l.idx >= 0) return prev;
-            return { ...prev, [pid]: { logs: [{ label: "Старт", at: Date.now() }], idx: 0 } };
+            return { ...prev, [pid]: { logs: [{ label: t("Start"), at: Date.now() }], idx: 0 } };
         });
     }, [pid, snapNow]);
 
     const canUndo = !!(histByPreset[pid] && histByPreset[pid].idx > 0);
     const canRedo = !!(histByPreset[pid] && histByPreset[pid].idx < (histByPreset[pid].stack.length - 1));
 
-    // общий коммит Состояния ПОСЛЕ изменения + лог действия
-    const commitState = useCallback((nextSnap, label = "Шаг") => {
+    // General commit of the State AFTER the change + action log
+    const commitState = useCallback((nextSnap, label = t("Step")) => {
         setHistByPreset(prev => {
             const h = prev[pid] || { stack: [], idx: -1 };
             const pruned = h.stack.slice(0, h.idx + 1);
             pruned.push(nextSnap);
-            // лимитируем
+            // limited
             while (pruned.length > max) pruned.shift();
             const newIdx = pruned.length - 1;
             return { ...prev, [pid]: { stack: pruned, idx: newIdx } };
@@ -57,15 +63,14 @@ export function useHistory({
             const l = prev[pid] || { logs: [], idx: -1 };
             const pruned = l.logs.slice(0, Math.max(0, l.idx) + 1);
             pruned.push({ label, at: Date.now() });
-            while (pruned.length > max + 1) pruned.shift(); // +1, т.к. есть "Старт"
+            while (pruned.length > max + 1) pruned.shift();
             const newIdx = pruned.length - 1;
             return { ...prev, [pid]: { logs: pruned, idx: newIdx } };
         });
     }, [pid, max]);
 
-    // Позволяет добавить запись в историю без изменения данных,
-    // фиксируя текущее состояние (как PS/AI делает «после действия»).
-    const pushHistory = useCallback((label = "Шаг") => {
+    // Allows you to add a record to history without changing the data, capturing the current state (as PS/AI does "after action").
+    const pushHistory = useCallback((label = t("Step")) => {
         const snap = snapNow();
         commitState(snap, label);
     }, [snapNow, commitState]);
@@ -79,7 +84,7 @@ export function useHistory({
             const snap = h.stack[idx];
             setFills(snap.fills);
             setCurvesByPanel(snap.curvesByPanel);
-            // двигаем индекс логов тоже
+            // We're moving the log index too.
             setLogByPreset(pl => {
                 const l = pl[pid];
                 if (!l) return pl;
@@ -106,35 +111,31 @@ export function useHistory({
         });
     }, [pid, setFills, setCurvesByPanel]);
 
-    // Обёртки: вычисляем nextState, коммитим, затем применяем
-    const applyFillChange = useCallback((updater, label = "Заливка") => {
+    // Wrappers: calculate nextState, commit, then apply
+    const applyFillChange = useCallback((updater, label = t("Filling")) => {
         const nextFills = typeof updater === "function" ? updater(fills) : updater;
         const nextSnap = { fills: JSON.parse(JSON.stringify(nextFills)), curvesByPanel: snapNow().curvesByPanel };
         commitState(nextSnap, label);
         setFills(nextFills);
     }, [fills, setFills, snapNow, commitState]);
 
-    const applyCurvesChange = useCallback((updater, label = "Линии") => {
+    const applyCurvesChange = useCallback((updater, label = t("Lines")) => {
         const nextCurves = typeof updater === "function" ? updater(curvesByPanel) : updater;
         const nextSnap = { fills: snapNow().fills, curvesByPanel: JSON.parse(JSON.stringify(nextCurves)) };
         commitState(nextSnap, label);
         setCurvesByPanel(nextCurves);
     }, [curvesByPanel, setCurvesByPanel, snapNow, commitState]);
 
-    // Публичные данные для UI-ленты
+    // Public data for the UI feed
     const hist = histByPreset[pid] || { stack: [], idx: -1 };
     const log = logByPreset[pid] || { logs: [], idx: -1 };
-    const historyItems = log.logs;    // [{label, at}]
-    const historyIndex = log.idx;     // текущий шаг (соотносится со стеком)
+    const historyItems = log.logs;
+    const historyIndex = log.idx;
 
     return {
-        // управление
         historyUndo, historyRedo, canUndo, canRedo,
-        // применение изменений с лейблами
         applyFillChange, applyCurvesChange,
-        // лог без изменений (для вариантов)
         pushHistory,
-        // данные для ленты
         historyItems, historyIndex,
     };
 }

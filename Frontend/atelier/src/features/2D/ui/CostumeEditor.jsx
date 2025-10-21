@@ -1,7 +1,6 @@
-// CostumeEditor.jsx
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import styles from "../styles/CostumeEditor.module.css";
-import clsx from "clsx";
+
+import { useTranslation } from "react-i18next";
 
 import { sampleBezierPoints } from "../../../core/geometry/geometry.js";
 import { waveAlongPolyline } from "../../../core/geometry/polylineOps.js";
@@ -32,34 +31,30 @@ import ZoomControls from "./ZoomControls.jsx";
 import { PRESETS } from "../../../core/variables/presets.js";
 import { reduceSetSlotVariant } from "../../../core/variables/variants.js";
 
-/* ================== компонент ================== */
+import styles from "../styles/CostumeEditor.module.css";
+import clsx from "clsx";
+
 export default function CostumeEditor() {
+    const { t } = useTranslation();
     const scopeRef = useRef(null);
     const [showTopbarHint, setShowTopbarHint] = useState(false);
-    // Минимальный зазор между вершинами (в мировых единицах SVG). Настраивается из кода.
-    const MIN_GAP_WORLD = 20; // TODO: подберите под ваши единицы (напр., «5 см»)
-    // state для «запоминания» последнего подрежима
-    const [lastLineMode, setLastLineMode] = useState('add');     // 'add' | 'delete
-
+    const MIN_GAP_WORLD = 20;
+    const [lastLineMode, setLastLineMode] = useState('add');
     const [activePanelId, setActivePanelId] = useState(null);
-    // для анимации "из-за спины"
     const [prevPanels, setPrevPanels] = useState(null);
     const [isSwapping, setIsSwapping] = useState(false);
-    const SWAP_MS = 180; // синхрон с .swapIn/.swapOut (180ms)
+    const SWAP_MS = 180;
     const didEverSwapRef = useRef(false);
     const swapTimerRef = useRef(null);
-    // --- PRESETS state
-    const [presetIdx, setPresetIdx] = useState(0);   // 0: Перед, 1: Спинка
+    const [presetIdx, setPresetIdx] = useState(0);
     const activeId = presetIdx === 0 ? "front" : "back";
-    // кривые: 'cubic' или 'routed' (по контуру)
     const [curvesByPanel, setCurvesByPanel] = useState({});
     const [fills, setFills] = useState([]);
     const [paintColor, setPaintColor] = useState("#f26522");
     const [mode, setMode] = useState("preview");
-    const [defaultSubCount, setDefaultSubCount] = useState(2); // используется только при создании новых линий
-    const [selectedCurveKey, setSelectedCurveKey] = useState(null); // `${panelId}:${curveId}`
-    // тип пользовательской линии
-    const [lineStyle, setLineStyle] = useState("straight"); // 'straight' | 'wavy'
+    const [defaultSubCount, setDefaultSubCount] = useState(2);
+    const [selectedCurveKey, setSelectedCurveKey] = useState(null);
+    const [lineStyle, setLineStyle] = useState("straight");
     const [addBuffer, setAddBuffer] = useState(null);
     const [hoverAnchorIdx, setHoverAnchorIdx] = useState(null);
     const [hoverCurveKey, setHoverCurveKey] = useState(null);
@@ -67,7 +62,6 @@ export default function CostumeEditor() {
     const [hoverFace, setHoverFace] = useState(null);
     const [toast, setToast] = useState(null);
     const zoomScopeRef = useRef(null);
-    // параметры волны (в пикселях экрана)
     const [waveAmpPx, setWaveAmpPx] = useState(6);
     const [waveLenPx, setWaveLenPx] = useState(36);
     const [paletteOpen, setPaletteOpen] = useState(false);
@@ -79,7 +73,7 @@ export default function CostumeEditor() {
         back: { "hoodie.cuff": "base", "hoodie.belt": "base" }
     });
 
-    const [savedByPreset, setSavedByPreset] = useState({}); // { [presetId]: { curvesByPanel, fills, activePanelId } }
+    const [savedByPreset, setSavedByPreset] = useState({});
     const savedByPresetRef = useRef({});
 
     const dismissTopbarHint = useCallback(() => {
@@ -88,10 +82,8 @@ export default function CostumeEditor() {
         try { localStorage.setItem("ce.topbarHint.v1", "1"); } catch (e) { }
     }, [showTopbarHint]);
 
-    // --- PRESETS: кнопки/клавиши
     const prevPreset = () => setPresetIdx(i => (i - 1 + PRESETS.length) % PRESETS.length);
     const nextPreset = () => setPresetIdx(i => (i + 1) % PRESETS.length);
-    // общий bbox сцены — используется и для viewBox, и для сетки
 
     const snapshotFor = useCallback(() => ({
         curvesByPanel,
@@ -100,12 +92,12 @@ export default function CostumeEditor() {
     }), [curvesByPanel, fills, activePanelId]);
 
     const applySnapshot = useCallback((snap, panelsParsed) => {
-        if (!snap) return; // нет снимка — ничего не трогаем
+        if (!snap) return;
         const allowed = new Set((panelsParsed || []).map(p => p.id));
         const curvesIn = snap.curvesByPanel || {};
         const curves = Object.fromEntries(Object.entries(curvesIn).filter(([pid]) => allowed.has(pid)));
         const fills = (snap.fills || []).filter(f => allowed.has(f.panelId));
-        // активная панель — если нет в текущих parts, берём первую
+
         const active = allowed.has(snap.activePanelId) ? snap.activePanelId : (panelsParsed[0]?.id || null);
         setCurvesByPanel(curves);
         setFills(fills);
@@ -119,7 +111,7 @@ export default function CostumeEditor() {
     } = useHistory({
         fills, curvesByPanel, presetIdx,
         setFills, setCurvesByPanel,
-        max: 50, // можно поменять
+        max: 50
     });
 
     const {
@@ -128,14 +120,12 @@ export default function CostumeEditor() {
         currentPresetIdRef
     } = useVariantsComposition({ presetIdx, details, savedByPresetRef, applySnapshot });
 
-    // чтобы поймать "старые" панели до перезаписи
     const panelsRef = useRef(panels);
 
     const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
 
     const { svgRef, scale, gridDef, baseFacesByPanel, outerRingByPanel,
-        facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve,
-        viewBox
+        facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve
     } = useSceneGeometry({ panels, curvesByPanel, defaultSubCount });
 
     const { applyingPrefsRef, setBothLastModePreview } = useEditorPrefs({
@@ -151,9 +141,7 @@ export default function CostumeEditor() {
     } = useCanvasZoom({ bbox: gridDef.b, svgRef });
 
     const tooCloseToExistingAnchors = (panel, curve, testPt) => {
-        // берём все уже существующие «снимки» якорей для этой кривой:
         const merged = mergedAnchorsOf(panel);
-        // кандидаты: концы линии + все extraAnchorsByPanel от этой кривой
         const pts = [];
         const a = merged[curve.aIdx] ?? (curve.ax != null ? { x: curve.ax, y: curve.ay } : null);
         const b = merged[curve.bIdx] ?? (curve.bx != null ? { x: curve.bx, y: curve.by } : null);
@@ -184,10 +172,9 @@ export default function CostumeEditor() {
         setTimeout(() => setClickedCurveKey(k => (k === `${panelId}:${curveId}` ? null : k)), 220);
     };
 
-    // Клик по пустому месту канвы — снимаем выделение
     const onCanvasClick = useCallback(() => {
         if (mode === "preview" || applyingPrefsRef.current)
-            return;      // в preview ничего не делаем
+            return;
         if (mode !== "delete") {
             setSelectedCurveKey(null);
         }
@@ -197,7 +184,6 @@ export default function CostumeEditor() {
         if (mode === 'preview')
             return;
 
-        // В режиме заливки не мешаем покраске
         if (mode === 'paint' || mode === 'deleteFill')
             return;
 
@@ -226,10 +212,8 @@ export default function CostumeEditor() {
             }
 
             return prev;
-        }, "Параметры волны");
+        }, t("WaveParameters"));
     };
-
-    // линейная интерполяция точки на полилинии по «дуговой длине»
 
     const modeGroup =
         (mode === 'paint' || mode === 'deleteFill') ? 'fill' :
@@ -237,13 +221,11 @@ export default function CostumeEditor() {
                 (mode === 'variants' ? 'variants' : 'preview');
 
 
-    /* ===== действия ===== */
     const activePanel = useMemo(
         () => panels.find(p => p.id === activePanelId) || panels[0] || null,
         [panels, activePanelId]
     );
 
-    // сколько ручных вершин осталось в активной детали
     const manualLeftInActive = useMemo(() => {
         if (!activePanel) return 0;
         const extras = extraAnchorsByPanel[activePanel.id] || [];
@@ -258,7 +240,6 @@ export default function CostumeEditor() {
         return out;
     };
 
-    // определить источник точки по merged-индексу
     const makeRefForMergedIndex = (panel, mi) => {
         const base = panel.anchors || [];
         const extras = extraAnchorsByPanel[panel.id] || [];
@@ -266,7 +247,6 @@ export default function CostumeEditor() {
             return { type: 'base', panelId: panel.id, anchorIndex: mi };
         }
         const ex = extras[mi - base.length];
-        // ex.id = `${curveId}:${k}`
         let curveId = null, subIdx = null;
         if (ex?.id) {
             const [cid, k] = String(ex.id).split(':');
@@ -276,24 +256,20 @@ export default function CostumeEditor() {
         return { type: 'extra', panelId: panel.id, curveId, subIdx };
     };
 
-    // idx теперь — индекс в mergedAnchorsOf(activePanel)
     const onAnchorClickAddMode = (idx) => {
         if (!activePanel) return;
 
-        // первый клик — запоминаем начальную вершину
         if (addBuffer == null) {
             setAddBuffer(idx);
             return;
         }
 
-        // клик по той же вершине — игнор
         if (addBuffer === idx) { setAddBuffer(null); return; }
 
         const merged = mergedAnchorsOf(activePanel);
         const a = merged[addBuffer];
         const b = merged[idx];
 
-        // черновая «прямая» (кубик) между вершинами
         const { c1, c2 } = makeUserCurveBetween(a, b);
 
         const aRef = makeRefForMergedIndex(activePanel, addBuffer);
@@ -301,14 +277,12 @@ export default function CostumeEditor() {
 
         const draft = {
             id: crypto.randomUUID(),
-            aIdx: addBuffer, // важно: индексы в merged
+            aIdx: addBuffer,
             bIdx: idx,
             c1,
             c2,
         };
 
-        // 1) Если вся дискретизация прямой внутри объединения базовых граней —
-        //    сохраняем обычный кубик (ровная внутренняя линия).
         const faces = baseFacesByPanel[activePanel.id] || [];
         const allInside = sampleBezierPoints(
             a.x, a.y, c1.x, c1.y, c2.x, c2.y, b.x, b.y, 40
@@ -316,7 +290,6 @@ export default function CostumeEditor() {
 
         if (allInside) {
             if (lineStyle === "straight") {
-                // прежнее поведение: внутренняя ровная линия
                 applyCurvesChange((map) => {
                     const arr = [...(map[activePanel.id] || [])];
                     arr.push({
@@ -331,15 +304,14 @@ export default function CostumeEditor() {
                         subCount: defaultSubCount
                     });
                     return { ...map, [activePanel.id]: arr };
-                }, `Добавить линию прямая`);
+                }, t("AddAStraightLine"));
             }
             else {
-                // внутренняя волнистая линия
                 const base = sampleBezierPoints(a.x, a.y, draft.c1.x, draft.c1.y, draft.c2.x, draft.c2.y, b.x, b.y, 64);
                 const ampW = waveAmpPx * (scale.k || 1);
                 const lambdaW = waveLenPx * (scale.k || 1);
                 let wpts = waveAlongPolyline(base, ampW, lambdaW, null);
-                wpts = snapEnds(wpts, a.x, a.y, b.x, b.y); // ← фикс концов
+                wpts = snapEnds(wpts, a.x, a.y, b.x, b.y);
                 const d = catmullRomToBezierPath(wpts);
 
                 applyCurvesChange((map) => {
@@ -349,24 +321,20 @@ export default function CostumeEditor() {
                         type: "wavy",
                         aIdx: addBuffer, bIdx: idx,
                         d, pts: wpts,
-                        // база для пересчёта:
-                        basePts: base,                    // ← исходная «ровная» полилиния
-                        waveAmpPx, waveLenPx,             // ← параметры в пикселях экрана
-                        // остальное
+                        basePts: base,
+                        waveAmpPx, waveLenPx,
                         ax: a.x, ay: a.y, bx: b.x, by: b.y, aRef, bRef,
                         subCount: defaultSubCount
                     });
                     return { ...map, [activePanel.id]: arr };
-                }, `Добавить линию волнистая`);
+                }, t("AddAWavyLine"));
             }
 
-            //  внутренняя линия добавлена — выходим из обработчика
             setAddBuffer(null);
             return;
         }
 
-        //  иначе (вышла за деталь) — прижатые запрещены
-        setToast({ text: "Линия выходит за пределы детали. Прижатые к краю линии отключены." });
+        setToast({ text: t("TheLinExtendsBeyondThePart") });
         setAddBuffer(null);
         return;
     };
@@ -385,14 +353,13 @@ export default function CostumeEditor() {
                     if (aHit || bHit) { toDelete.add(c.id); changed = true; }
                 }
             }
-            // сброс выбора, если выбранная линия попала в toDelete
             if (selectedCurveKey) {
                 const [pid, cid] = selectedCurveKey.split(':');
                 if (pid === panelId && toDelete.has(cid)) setSelectedCurveKey(null);
             }
             const kept = arr.filter(c => !toDelete.has(c.id));
             return { ...prev, [panelId]: kept };
-        }, "Удалить линию");
+        }, t("DeleteLine"));
     };
 
     const eraseManualAnchor = (panelId, manual) => {
@@ -410,16 +377,13 @@ export default function CostumeEditor() {
 
             let stops = Array.isArray(cur.extraStops) ? cur.extraStops.slice() : [];
             if (stops.length === 0) return prev;
-            // поддержим оба формата: [number] и [{t,id?}]
             if (typeof stops[0] === 'number') {
-                // удаляем ближайшее по t — индексы не важны
                 const idx = Number.isFinite(manualT)
                     ? stops.reduce((best, v, j) =>
                         Math.abs(v - manualT) < Math.abs(stops[best] - manualT) ? j : best, 0)
                     : -1;
                 if (idx >= 0) stops.splice(idx, 1);
             } else {
-                // объекты вида {t, id?}
                 const ts = stops.map(s => s?.t ?? 0);
                 let idx = Number.isFinite(manualT)
                     ? ts.reduce((best, v, j) =>
@@ -429,7 +393,7 @@ export default function CostumeEditor() {
             }
             list[i] = { ...cur, extraStops: stops };
             return { ...prev, [panelId]: list };
-        }, "Удалить вершину");
+        }, t("DeleteVertex"));
     };
 
     const onCurveEnter = (panelId, id) => {
@@ -457,7 +421,7 @@ export default function CostumeEditor() {
             const i = fs.findIndex(f => f.panelId === panelId && f.faceKey === fk);
             if (i >= 0) { const cp = fs.slice(); cp[i] = { ...cp[i], color: paintColor }; return cp; }
             return [...fs, { id: crypto.randomUUID(), panelId, faceKey: fk, color: paintColor }];
-        }, `Заливка (${presetIdx === 0 ? 'Перед' : 'Спинка'})`);
+        }, `${t("Filling")} (${presetIdx === 0 ? t("Front") : t("Back")})`);
 
     };
     const onFilledEnter = (panelId, fk) => { if (mode === "deleteFill") setHoverFace({ panelId, faceKey: fk }); };
@@ -465,7 +429,7 @@ export default function CostumeEditor() {
     const onFilledClick = (panelId, fk) => {
         if (mode !== "deleteFill") return;
         applyFillChange(fs => fs.filter(f => !(f.panelId === panelId && f.faceKey === fk)),
-            `Очистка заливки (${presetIdx === 0 ? 'Перед' : 'Спинка'})`);
+            `${t("CleaningTheFill")}  (${presetIdx === 0 ? t("Front") : t("Back")})`);
         setHoverFace(null);
     };
 
@@ -476,7 +440,6 @@ export default function CostumeEditor() {
         try {
             setIsExporting(true);
 
-            // гарантируем, что обе стороны собраны, даже если вкладку не открывали
             const [frontPanels, backPanels] = await Promise.all([
                 (svgCacheRef.current.front?.length ? svgCacheRef.current.front : composePanelsForSide("front", details, manifest)),
                 (svgCacheRef.current.back?.length ? svgCacheRef.current.back : composePanelsForSide("back", details, manifest)),
@@ -520,10 +483,8 @@ export default function CostumeEditor() {
         return n.length > 1 && /.+@.+\..+/.test(e) && p.length >= 6;
     })();
 
-    // сохраняем выбранную шею, когда включается капюшон, чтобы вернуть её при выключении
     const prevNeckByFaceRef = useRef({ front: null, back: null });
 
-    // централизованный апдейтер + правила «капюшон ↔ шея»
     const setSlotVariant = (face, slot, variantId) => {
         setDetails(prev => {
             const { nextDetails, nextPrevNeck } = reduceSetSlotVariant(prev, {
@@ -532,26 +493,23 @@ export default function CostumeEditor() {
                 variantId,
                 prevNeckByFace: prevNeckByFaceRef.current
             });
-            prevNeckByFaceRef.current = nextPrevNeck; // обновили «память шеи»
+            prevNeckByFaceRef.current = nextPrevNeck;
             return nextDetails;
         });
 
-        // добавим запись в историю действий текущей стороны
-        const label = `Вариант: ${slot.split(".").pop()} → ${variantId || "base"}`;
+        const label = `${t("Variant")}: ${slot.split(".").pop()} → ${variantId || "base"}`;
         pushHistory(label);
     };
-    const changeKindRef = useRef(null); // 'preset' | 'slot' | null
+    const changeKindRef = useRef(null);
 
     const detailsRef = useRef(details);
-    const lastChangedSlotRef = useRef(null); // { presetId: 'front'|'back', slot: 'cuff'|... } | null
-    const restoringPresetRef = useRef(false); // true — пока восстанавливаем снапшот пресета
+    const lastChangedSlotRef = useRef(null);
+    const restoringPresetRef = useRef(false);
 
-    // единая кнопка "Сбросить всё"
     const resetAll = useCallback(() => {
-        if (!confirm("Точно сбросить всё? Это удалит заливки и линии на обеих деталях."))
+        if (!confirm(t("ClearlyResetEverything")))
             return;
 
-        // 1) чистим snapshots и состояния
         savedByPresetRef.current = {};
         setSavedByPreset({});
         setCurvesByPanel({});
@@ -560,17 +518,14 @@ export default function CostumeEditor() {
         setDetails({ front: {}, back: {} });
         setMode("preview");
 
-        // 2) фиксируем «preview» как последний режим для обеих сторон
         setBothLastModePreview();
     }, [panels, setSavedByPreset, setCurvesByPanel, setFills, setActivePanelId, setDetails, setMode]);
 
-    // автофокус на контейнере, чтобы клавиши работали сразу
     useEffect(() => {
         zoomScopeRef.current?.setAttribute("tabindex", "0");
         zoomScopeRef.current?.focus();
     }, []);
 
-    // Отслеживаем изменение details, чтобы знать какой слот поменялся на активной стороне
     useEffect(() => {
         const prev = detailsRef.current;
         const cur = details;
@@ -596,13 +551,11 @@ export default function CostumeEditor() {
     useEffect(() => { savedByPresetRef.current = savedByPreset; }, [savedByPreset]);
 
     useEffect(() => {
-        // на время восстановления/переключения пресета — ничего не сохраняем
         if (restoringPresetRef.current) return;
         if (changeKindRef.current === 'preset') return;
 
         const id = currentPresetIdRef.current;
         const snap = snapshotFor();
-        // <-- важное: обновляем ref синхронно, чтобы не было "окна"
         savedByPresetRef.current = { ...savedByPresetRef.current, [id]: snap };
         setSavedByPreset(prev => ({ ...prev, [id]: snap }));
     }, [fills, curvesByPanel, activePanelId]);
@@ -612,16 +565,12 @@ export default function CostumeEditor() {
         if (!target)
             return;
 
-        // Это именно смена пресета: сразу включаем «замок»,
-        // чтобы никакие автосохранения не стреляли не в ту сторону.
         changeKindRef.current = 'preset';
-        restoringPresetRef.current = true;               // ← NEW
-        // сначала сохраняем СТАРУЮ сторону под её id (и синхронно обновляем ref)
+        restoringPresetRef.current = true;
         const oldId = currentPresetIdRef.current;
         const snap = snapshotFor();
         savedByPresetRef.current = { ...savedByPresetRef.current, [oldId]: snap };
         setSavedByPreset(prev => ({ ...prev, [oldId]: snap }));
-        // переключаем текущий id на новую сторону
         currentPresetIdRef.current = target.id;
     }, [presetIdx]);
 
@@ -684,16 +633,14 @@ export default function CostumeEditor() {
 
     useEffect(() => { svgCacheRef.current = svgCache; }, [svgCache]);
 
-    // авто-выход из deleteVertex, когда ручных вершин нет
     useEffect(() => {
         if (mode !== 'deleteVertex') return;
         if (manualLeftInActive === 0) {
-            setMode('insert');                     // ← включаем добавление вершин
-            setToast({ text: 'Все ручные вершины удалены — переключаюсь в «Вставить вершину»' });
+            setMode('insert');
+            setToast({ text: t("AllManualVerticesHaveBeenRemoved") });
         }
     }, [mode, manualLeftInActive]);
 
-    // Когда входим в preview — снимаем выбор/ховер и сбрасываем буфер добавления
     useEffect(() => {
         if (mode === 'preview') {
             setSelectedCurveKey(null);
@@ -736,7 +683,6 @@ export default function CostumeEditor() {
             if (k === "arrowleft") prevPreset();
             if (k === "arrowright") nextPreset();
 
-            // Быстрый выбор стороны: Q — Перед, W — Спинка
             if (k === "Q" || k === "q") { setPresetIdx(0); e.preventDefault(); }
             if (k === "E" || k === "e") { setPresetIdx(1); e.preventDefault(); }
 
@@ -760,14 +706,12 @@ export default function CostumeEditor() {
         return () => el.removeEventListener("keydown", onKey);
     }, [panels, activePanel]);
 
-    // Реагируем на изменение panels (из хука): анимация, карта слотов, восстановление/очистка
     useEffect(() => {
         if (!panels || panels.length === 0) return;
 
         const kind = changeKindRef.current;
         if (kind === 'preset') restoringPresetRef.current = true;
 
-        // анимация переключения
         const old = panelsRef.current;
         if (old && old.length) {
             didEverSwapRef.current = true;
@@ -781,12 +725,10 @@ export default function CostumeEditor() {
             }, SWAP_MS);
         }
 
-        // обновим карту принадлежности панелей слотам
         const map = new Map();
         for (const p of panels) map.set(p.id, p.meta?.slot || null);
         panelSlotMapRef.current = map;
 
-        // восстановление/очистка
         const presetId = currentPresetIdRef.current;
         const changed = lastChangedSlotRef.current;
 
@@ -797,7 +739,7 @@ export default function CostumeEditor() {
             const { presetId: chPreset, slot: chSlotFull } = changed;
             if (chPreset === presetId && chSlotFull) {
                 const panelSlotMap = panelSlotMapRef.current || new Map();
-                const chSlot = String(chSlotFull).split(".").pop(); // ← normalize to pure
+                const chSlot = String(chSlotFull).split(".").pop();
                 setFills(fs => fs.filter(f => panelSlotMap.get(f.panelId) !== chSlot));
                 setCurvesByPanel(prev => {
                     const next = { ...prev };
@@ -822,34 +764,28 @@ export default function CostumeEditor() {
         };
     }, [panels]);
 
-    // стало — чистим только то, что относится к ТЕКУЩИМ панелям
     useEffect(() => {
         if (restoringPresetRef.current) return;
 
-        // список видимых сейчас панелей (активный пресет)
         const visibleIds = new Set(Object.keys(facesByPanel).map(String));
 
         setFills(fs =>
             fs.filter(f => {
                 const pid = String(f.panelId);
 
-                // если панель не из текущего пресета — ничего не трогаем
                 if (!visibleIds.has(pid)) return true;
 
-                // иначе проверяем валидность faceKey внутри этой панели
                 const polys = facesByPanel[pid] || [];
                 return polys.some(poly => faceKey(poly) === f.faceKey);
             })
         );
     }, [facesByPanel]);
 
-    // Keyboard checker
     useEffect(() => {
         const el = scopeRef.current;
         if (!el) return;
 
         const onKey = (e) => {
-            // работаем только когда фокус внутри редактора
             if (document.activeElement !== el) return;
 
             if (e.key === 'Escape') {
@@ -890,9 +826,8 @@ export default function CostumeEditor() {
                 className={clsx(styles.layout, modeGroup === 'preview' && styles.layoutPreview)}
                 tabIndex={0}
                 role="region"
-                aria-label="Редактор костюма"
+                aria-label={t("CostumeEditor")}
             >
-                {/* Левая область: канвас */}
                 <div className={styles.canvasWrap} onMouseDown={() => scopeRef.current?.focus()}>
                     {toast && (
                         <div className={styles.toast} role="status" aria-live="polite">
@@ -900,9 +835,8 @@ export default function CostumeEditor() {
                         </div>
                     )}
 
-                    {isLoadingPreset && <div className={styles.loader}>Загрузка…</div>}
+                    {isLoadingPreset && <div className={styles.loader}>{t("Loading")}</div>}
 
-                    {/* ВЕРХНЯЯ ПАНЕЛЬ: режимы, деталь, сброс */}
                     <Topbar
                         mode={mode}
                         setMode={setMode}
@@ -917,7 +851,6 @@ export default function CostumeEditor() {
                         isExporting={isExporting}
                     />
 
-                    {/* Стек SVG: предыдущая сцена (для анимации) + текущая */}
                     <CanvasStage
                         mode={mode}
                         scale={scale}
@@ -973,13 +906,11 @@ export default function CostumeEditor() {
                     />
 
                     <div className={styles.bottomUI}>
-                        {/* навигация пресетов снизу */}
                         <div className={styles.presetNav}>
-                            <button className={styles.navBtn} onClick={prevPreset} aria-label="Предыдущая заготовка">⟵</button>
-                            <div className={styles.presetChip}>{PRESETS[presetIdx]?.title || "—"}</div>
-                            <button className={styles.navBtn} onClick={nextPreset} aria-label="Следующая заготовка">⟶</button>
+                            <button className={styles.navBtn} onClick={prevPreset} aria-label={t("PreviousWorkpiece")}>⟵</button>
+                            <div className={styles.presetChip}>{t(PRESETS[presetIdx]?.title) || "—"}</div>
+                            <button className={styles.navBtn} onClick={nextPreset} aria-label={t("NextWorkpiece")}>⟶</button>
                         </div>
-                        {/* Зум-кнопки (центр снизу) */}
                         <ZoomControls
                             onIn={zoomIn}
                             onOut={zoomOut}
@@ -991,7 +922,6 @@ export default function CostumeEditor() {
 
                 </div>
 
-                {/* Правая панель рендерится только вне preview */}
                 {
                     modeGroup !== 'preview' && (
                         <SidebarEditor
@@ -1025,7 +955,6 @@ export default function CostumeEditor() {
                             canUndo={canUndo}
                             canRedo={canRedo}
                             details={details}
-                            setDetails={setDetails}
                             activeDetailId={activeDetailId}
                             setSlotVariant={setSlotVariant}
                         />
@@ -1033,42 +962,36 @@ export default function CostumeEditor() {
                 }
             </div >
 
-            {/* ====== FLOW UNDER THE EDITOR (mini-landing) ====== */}
-            < section className={styles.flow} aria-label="Оформление заказа" >
+            < section className={styles.flow} aria-label={t("PlacingAnOrder")} >
                 <div className={styles.flowContainer}>
                     <header className={styles.flowHeader}>
-                        <h2 className={styles.flowTitle}>Оформление заказа</h2>
-                        <p className={styles.flowSub}>Шаг за шагом: параметры → адрес → финализация</p>
+                        <h2 className={styles.flowTitle}>{t("PlacingAnOrder")}</h2>
+                        <p className={styles.flowSub}>{t("StepByStep")}</p>
                     </header>
 
-                    {/* Шаг 1 */}
                     <div className={styles.stepCard} id="step-body">
-                        <div className={styles.stepTitle}><span className={styles.stepBadge}>1</span> Параметры тела</div>
+                        <div className={styles.stepTitle}><span className={styles.stepBadge}>1</span> {t("BodyParameters")}</div>
                         <BodyParams value={bodyParams} onChange={setBodyParams} />
                     </div>
 
-                    {/* Шаг 2 */}
                     <div className={styles.stepCard} id="step-order">
-                        <div className={styles.stepTitle}><span className={styles.stepBadge}>2</span> Данные и адрес доставки</div>
+                        <div className={styles.stepTitle}><span className={styles.stepBadge}>2</span> {t("DeliveryDetailsAndAddress")}</div>
                         <OrderForm value={orderInfo} onChange={setOrderInfo} />
                     </div>
 
-                    {/* CTA */}
                     <div className={styles.ctaBar}>
                         <button
                             type="button"
                             className={styles.ctaButton}
                             disabled={!isOrderValid}
                             onClick={() => {
-                                // временно: просто подсветим недостающие поля/сохраним
-                                if (!isOrderValid) { alert("Заполни ФИО, email и телефон — и поехали!"); return; }
-                                // тут позже: переход на страницу финализации с превью
+                                if (!isOrderValid) { alert(t("FillData")); return; }
                                 console.log("Finalize payload", { bodyParams, orderInfo, fills, curvesByPanel });
                             }}
                         >
-                            Перейти к финализации
+                            {t("GoToFinalization")}
                         </button>
-                        {!isOrderValid && <div className={styles.ctaNote}>Чтобы активировать кнопку, заполни ФИО, email и телефон.</div>}
+                        {!isOrderValid && <div className={styles.ctaNote}>{t("ToActivateTheButton")}</div>}
                     </div>
                 </div>
             </section >

@@ -1,9 +1,15 @@
+import { useTranslation } from "react-i18next";
+
 export default function ZoomControls({ onIn, onOut, onReset, zoom = 1, onSet }) {
+
+    const { t } = useTranslation();
+
     const btn = {
         width: 42, height: 42, borderRadius: 9999,
         background: "#fff", border: "1px solid #e5e7eb",
         boxShadow: "0 4px 12px rgba(0,0,0,.08)", fontSize: 22, lineHeight: "42px"
     };
+
     return (
         <div
             style={{
@@ -13,19 +19,21 @@ export default function ZoomControls({ onIn, onOut, onReset, zoom = 1, onSet }) 
                 backdropFilter: "blur(4px)",
                 padding: 8, borderRadius: 9999, border: "1px solid #e5e7eb"
             }}
-            aria-label="Управление масштабом"
+            aria-label={t("ScaleControl")}
         >
             <button
                 type="button"
                 style={btn}
                 onClick={onOut}
-                title="Уменьшить">
+                title={t("Decrease")}
+                aria-label={t("Decrease")}>
                 −</button>
             <button
                 type="button"
                 style={btn}
                 onClick={onIn}
-                title="Увеличить"
+                title={t("Increase")}
+                aria-label={t("Increase")}
                 disabled={(zoom ?? 1) >= 1}
             >+</button>
             <input
@@ -36,8 +44,8 @@ export default function ZoomControls({ onIn, onOut, onReset, zoom = 1, onSet }) 
                 value={Math.round((zoom ?? 1) * 100)}
                 onChange={(e) => onSet?.(Number(e.target.value) / 100)}
                 style={{ width: 160 }}
-                title="Масштаб"
-                aria-label="Масштаб"
+                title={t("Scale")}
+                aria-label={t("Scale")}
             />
             <input
                 type="number"
@@ -51,7 +59,7 @@ export default function ZoomControls({ onIn, onOut, onReset, zoom = 1, onSet }) 
                 }}
                 style={{ width: 64, height: 42, borderRadius: 10, border: "1px solid #e5e7eb", textAlign: "center" }}
             />
-            <button type="button" style={{ ...btn, width: 64, fontSize: 14 }} onClick={onReset} title="Сбросить масштаб">Reset</button>
+            <button type="button" style={{ ...btn, width: 64, fontSize: 14 }} onClick={onReset} title={t("ResetScale")}>{t("Reset")}</button>
         </div>
     );
 }

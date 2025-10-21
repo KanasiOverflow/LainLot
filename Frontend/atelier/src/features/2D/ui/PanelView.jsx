@@ -1,7 +1,8 @@
 import { memo } from "react";
+import { facePath, faceKey } from "../../../core/svg/faceUtils.js";
+import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import styles from "../styles/CostumeEditor.module.css";
-import { facePath, faceKey, segsToD } from "../../../core/svg/faceUtils.js";
 
 export default memo(function PanelView({
     panel, mode, scale, facesByPanel, outerRingByPanel,
@@ -14,6 +15,7 @@ export default memo(function PanelView({
     setToast, onCurveClickDelete, onCurveClick
 }) {
 
+    const { t } = useTranslation();
     const faces = facesByPanel[panel.id] || [];
     const ring = outerRingByPanel[panel.id];
     const isActive = activePanel?.id === panel.id;
@@ -22,7 +24,7 @@ export default memo(function PanelView({
 
     return (
         <g key={panel.id} className={dimInactive ? styles.panelDimmed : undefined}>
-            {/* выбор детали (не мешаем заливке) */}
+            {/* Selecting a part (do not interfere with the filling) */}
             {ring && mode !== "preview" && mode !== "paint" && mode !== "deleteFill" && (
                 <path
                     d={facePath(ring)}
@@ -32,7 +34,7 @@ export default memo(function PanelView({
                 />
             )}
 
-            {/* грани для покраски / очистки */}
+            {/* edges for painting/cleaning */}
             {clickableFaces.map(poly => {
                 const fk = faceKey(poly);
                 const fill = (fills.find(f => f.panelId === panel.id && f.faceKey === fk)?.color) || "none";
@@ -59,7 +61,7 @@ export default memo(function PanelView({
                 );
             })}
 
-            {/* внешний контур */}
+            {/* outer contour */}
             {ring && (
                 <path
                     d={facePath(ring)}
@@ -125,10 +127,10 @@ export default memo(function PanelView({
                             const b = merged[c.bIdx] ?? (c.bx != null ? { x: c.bx, y: c.by } : null);
                             if (!a || !b) return;
 
-                            const near = closestPointOnCurve(panel, c, P); // ← твой хелпер
+                            const near = closestPointOnCurve(panel, c, P);
                             if (!near) return;
 
-                            const allowed = !tooCloseToExistingAnchors(panel, c, { x: near.x, y: near.y }); // ← твой хелпер
+                            const allowed = !tooCloseToExistingAnchors(panel, c, { x: near.x, y: near.y });
                             setInsertPreviewRAF({ panelId: panel.id, curveId: c.id, x: near.x, y: near.y, allowed, t: near.t });
                         }}
                         onClick={(e) => {
@@ -140,7 +142,7 @@ export default memo(function PanelView({
                                 const near = closestPointOnCurve(panel, c, P);
                                 if (!near) return;
                                 if (tooCloseToExistingAnchors(panel, c, { x: near.x, y: near.y })) {
-                                    setToast({ text: "Слишком близко к существующей вершине" });
+                                    setToast({ text: t("TooCloseToTheExistingPeak") });
                                     return;
                                 }
                                 applyCurvesChange(prev => {
@@ -157,7 +159,7 @@ export default memo(function PanelView({
                                         .filter((s, idx, arr) => idx === 0 || Math.abs(s.t - arr[idx - 1].t) > EPS);
                                     list[i] = { ...cur, extraStops: cleaned };
                                     return { ...prev, [panel.id]: list };
-                                }, "Вставить вершину");
+                                }, t("InsertVertex"));
                                 setInsertPreview(null);
                                 return;
                             }
@@ -171,7 +173,7 @@ export default memo(function PanelView({
                 );
             })}
 
-            {/* превью точки вставки */}
+            {/* insertion point preview */}
             {isActive && mode === "insert" && insertPreview && insertPreview.panelId === panel.id && (
                 Number.isFinite(insertPreview.x) && Number.isFinite(insertPreview.y) ? (
                     <circle
@@ -186,7 +188,7 @@ export default memo(function PanelView({
                 ) : null
             )}
 
-            {/* базовые + доп. якоря */}
+            {/* basic + additional anchors */}
             {isActive && (mode === "add" || mode === "delete" || mode === "insert") && (() => {
                 const base = panel.anchors || [];
                 const extras = extraAnchorsByPanel[panel.id] || [];
@@ -213,7 +215,7 @@ export default memo(function PanelView({
                 });
             })()}
 
-            {/* ручные вершины — для удаления */}
+            {/* manual vertices - for removal */}
             {isActive && mode === "deleteVertex" && (() => {
                 const extras = (extraAnchorsByPanel[panel.id] || []).filter(ex => ex?.id?.includes("@m"));
                 return extras.map(ex => {

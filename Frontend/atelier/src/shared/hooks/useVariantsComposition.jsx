@@ -27,8 +27,6 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                 setManifest(m);
             } catch (e) {
                 console.error(e);
-                // опционально: показать в UI подсказку
-                // toast.error("Не найден manifest.json. Запусти npm run build:svg-manifest");
             }
         })();
     }, []);
@@ -37,7 +35,6 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
         const prev = detailsRef.current;
         const cur = details;
 
-        // собираем все изменения
         const changes = [];
         for (const face of ['front', 'back']) {
             const p = prev[face] || {}, c = cur[face] || {};
@@ -50,7 +47,6 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
 
         if (changes.length) {
             changeKindRef.current = 'slot';
-            // приоритет — для текущей активной стороны (чтобы чистились заливки/линии именно там)
             const curFace = currentPresetIdRef.current;
             const preferred = changes.find(ch => ch.presetId === curFace) || changes[0];
             lastChangedSlotRef.current = preferred;
@@ -59,16 +55,14 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
         detailsRef.current = cur;
     }, [details]);
 
-    // build panels for current side
     useEffect(() => {
-        if (!manifest) return;        // ⬅️ без манифеста ничего не делаем
+        if (!manifest) return;
         let alive = true;
         (async () => {
             const preset = PRESETS[presetIdx];
             if (!preset) return;
             setIsLoadingPreset(true);
 
-            // ВАЖНО: делаем глубокую копию, чтобы подмены не трогали manifest.base[*]
             let baseSources = await getBaseSources(preset.id);
             baseSources = (Array.isArray(baseSources) ? baseSources.map(e => ({
                 file: e.file,
@@ -80,47 +74,36 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                 scale: e.scale ?? { x: 1, y: 1 }
             })) : []);
 
-            // индекс базовых частей по (product,slot,side,which)
             const keyOf = (s) => [s.product || "hoodie", s.slot || "", s.side || "", s.which || ""].join("|");
             const baseIdx = new Map(baseSources.map(s => [keyOf(s), s]));
 
-            // находим, какие слоты у нас вообще выбраны на этой стороне (details[preset.id])
             const chosen = details[preset.id] || {};
-            // hood активен, если ЛЮБОЙ из выбранных слотов имеет pure === 'hood'
             const hoodActive = Object.entries(chosen).some(
                 ([slotKey, val]) => val && val !== "base" && String(slotKey).split(".").pop().toLowerCase() === "hood"
             );
 
-            // Если капюшон активен — полностью убираем из базы любые части слота 'neck'
-            // (иначе базовая шея будет торчать под капюшоном)
             if (hoodActive) {
                 baseSources = baseSources.filter(s => (s.slot || "").toLowerCase() !== "neck");
             }
 
-            // начнём с копии базы
             const sources = baseSources.slice();
 
-            // для каждого выбранного слота подставляем/добавляем файлы из варианта
             for (const [slotFull, variantId] of Object.entries(chosen)) {
-                if (!variantId || variantId === "base") continue; // база: ничего не меняем
-                const pure = String(slotFull).split(".").pop();        // «голый» слот
+                if (!variantId || variantId === "base") continue;
+                const pure = String(slotFull).split(".").pop();
                 const product = slotFull.includes(".") ? slotFull.split(".")[0] : "hoodie";
                 const list =
                     (manifest?.variants?.[pure]) ||
-                    (manifest?.variants?.[slotFull]) ||                 // запасной путь
+                    (manifest?.variants?.[slotFull]) ||
                     [];
                 const v = list.find(x => x.id === variantId);
                 if (!v) continue;
 
-                const fmap = v.files?.[preset.id] || {}; // files для текущей стороны
+                const fmap = v.files?.[preset.id] || {};
 
-                // Если на этой стороне у варианта нет ни одного файла — пропускаем,
-                // чтобы не "очищать" базу и не ломать канву
                 if (!fmap || Object.keys(fmap).length === 0) {
-                    // console.warn(`[variants] empty files for ${slot}/${variantId} on ${preset.id}`);
                     continue;
                 }
-                // после выбора варианта слота v и нахождения подходящей ветки files для active side:
                 const sLower = pure.toLowerCase();
                 const allowSides = (sLower === "cuff" || sLower === "sleeve");
 
@@ -130,7 +113,6 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                 if (allowSides && fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
                 if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
 
-                // 3) не создаём новые под-части, которых нет в базе (кроме hood)
                 const hasBaseFor = (side, which) => baseIdx.has([product, pure, side || "", which || ""].join("|"));
                 if (sLower !== "hood") {
                     entries = entries.filter(e => hasBaseFor(e.side, e.which));
@@ -140,20 +122,15 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                     const k = [product, pure, e.side || "", e.which || ""].join("|");
                     const baseHit = baseIdx.get(k);
                     if (baseHit) {
-                        // заменяем файл в уже существующем базовом источнике
                         baseHit.file = e.file;
-                        // offset берём от варианта, если когда-нибудь появится на уровне варианта;
-                        // пока — наследуем базовый (важно для pants)
                         baseHit.offset = baseHit.offset ?? { x: 0, y: 0 };
                     } else {
-                        // базы нет — добавляем новый кусок
                         sources.push({
                             file: e.file,
                             slot: pure,
                             side: e.side || null,
                             which: e.which || null,
                             product,
-                            // наследуем смещения/масштаб из базовой «корневой» записи этого слота и продукта
                             offset: baseIdx.get([product, pure, "", ""].join("|"))?.offset ?? { x: 0, y: 0 },
                             scale: baseIdx.get([product, pure, "", ""].join("|"))?.scale ?? { x: 1, y: 1 }
                         });
@@ -161,9 +138,6 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                 }
             }
 
-            // === ВАЖНО: капюшон поверх всего ===
-            // Положим все куски слота 'hood' в конец, чтобы они рисовались последними
-            // (и визуально перекрывали остальные детали)
             if (sources.length) {
                 const hoodParts = [];
                 const rest = [];
@@ -171,8 +145,6 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
                     const isHood = (String(src.slot).toLowerCase() === "hood") && ((src.product || "hoodie") === "hoodie");
                     if (isHood) hoodParts.push(src); else rest.push(src);
                 }
-                // если хотим ещё и шнурки/подкладку поверх остальных частей капюшона — можно тоньше сортировать
-                // но базово достаточно просто положить hoodParts в конец
                 sources.length = 0;
                 sources.push(...rest, ...hoodParts);
             }
@@ -202,16 +174,10 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
         panelSlotMapRef.current = map;
 
         const presetId = currentPresetIdRef.current;
-        const changed = lastChangedSlotRef.current;
 
         if (changeKindRef.current === 'preset') {
             const snap = savedByPresetRef.current[presetId];
             applySnapshot(snap, composedPanels);
-        } else if (changed) {
-            const { presetId: chPreset, slot: chSlot } = changed;
-            if (chPreset === presetId && chSlot) {
-                // внешняя сторона может очистить fills/curves для затронутого слота, пользуясь panelSlotMapRef
-            }
         }
         changeKindRef.current = null;
         lastChangedSlotRef.current = null;
@@ -219,7 +185,6 @@ export function useVariantsComposition({ presetIdx, details, savedByPresetRef, a
         if (restoringPresetRef.current) setTimeout(() => { restoringPresetRef.current = false; }, 0);
     }, [composedPanels, applySnapshot, savedByPresetRef]);
 
-    // hood geometry for mask
     const hoodPanelIds = useMemo(() => {
         return new Set(
             panels

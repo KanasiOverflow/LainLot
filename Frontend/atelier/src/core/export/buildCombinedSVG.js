@@ -1,10 +1,8 @@
 import { getBounds } from "../geometry/bounds.js";
 import { renderPresetGroup } from "./renderPresetGroup.js";
 
-/* ============ helpers ============ */
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-/** bbox по массиву панелей */
 const bboxForPanels = (panels) => {
     let bb = null;
     for (const p of panels) {
@@ -21,7 +19,6 @@ const bboxForPanels = (panels) => {
     return bb || { x: 0, y: 0, w: 800, h: 500 };
 };
 
-/** Склейка «Перед» и «Спинка» в один SVG */
 export const buildCombinedSVG = async ({
     svgCache,
     currentPresetId,
@@ -30,7 +27,6 @@ export const buildCombinedSVG = async ({
     savedByPreset,
     inkscapeCompat = true
 }) => {
-    // обновим снап активного пресета
     const mergedSnaps = {
         ...savedByPreset,
         [currentPresetId]: {
@@ -46,7 +42,6 @@ export const buildCombinedSVG = async ({
     const gFront = renderPresetGroup(frontPanels, mergedSnaps.front?.curvesByPanel, mergedSnaps.front?.fills, { inkscapeCompat, maskId: "under-hood-front" });
     const gBack = renderPresetGroup(backPanels, mergedSnaps.back?.curvesByPanel, mergedSnaps.back?.fills, { inkscapeCompat, maskId: "under-hood-back" });
 
-    // раскладка
     const bbF = bboxForPanels(frontPanels);
     const bbB = bboxForPanels(backPanels);
     const pad = 24, gap = Math.max(60, Math.round(Math.max(bbF.h, bbB.h) * 0.08));
