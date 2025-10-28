@@ -14,7 +14,6 @@ export const rectToSegs = (x, y, w, h) => {
     return segsFromPoints(p.map(q => `${q.x},${q.y}`).join(" "), true);
 };
 export const circleToSegs = (cx, cy, r) => {
-    // аппроксим круг 12-угольником — для теста этого более чем достаточно
     const N = 12, pts = [];
     for (let i = 0; i < N; i++) {
         const a = (i / N) * Math.PI * 2;
@@ -71,11 +70,9 @@ export const extractCandidates = (raw) => {
     return tags;
 };
 
-// превращаем один SVG-текст в МНОГО панелей — по закрытым субпутям
 export const panelsFromRaw = (idPrefix, raw) => {
     const root = parseViewBox(raw);                                         // :contentReference[oaicite:9]{index=9}
     const cands = extractCandidates(raw).map(c => {
-        // bbox для фильтра “артборд”
         const xs = [], ys = [];
         for (const s of c.segs) {
             if (s.kind === "M") { xs.push(s.x); ys.push(s.y); }
@@ -88,16 +85,13 @@ export const panelsFromRaw = (idPrefix, raw) => {
         return { ...c, bbox };
     });
 
-    // мягкий фильтр: выкидываем только явный артборд/фон (когда он огромный)
     const filtered = cands.filter(c => !looksLikeBackground(c, root));      // :contentReference[oaicite:10]{index=10}
 
-    // теперь режем каждый path на закрытые субпути → отдельные панели
     const out = [];
     let idx = 0;
     for (const cand of filtered) {
         const subs = splitSegsIntoSubpaths(cand.segs);                         // :contentReference[oaicite:11]{index=11}
         for (const sub of subs) {
-            // пропускаем слишком маленькие соринки
             const xs = [], ys = [];
             for (const s of sub) {
                 if (s.kind === "M") { xs.push(s.x); ys.push(s.y); }
@@ -106,14 +100,14 @@ export const panelsFromRaw = (idPrefix, raw) => {
             }
             const w = Math.max(...xs) - Math.min(...xs);
             const h = Math.max(...ys) - Math.min(...ys);
-            if (w * h < (root.w * root.h) * 0.002) continue; // <0.2% листа — мусор
+            if (w * h < (root.w * root.h) * 0.002) continue;
 
             const anchors = collectAnchors(sub);                                  // :contentReference[oaicite:12]{index=12}
             out.push({
                 id: `${idPrefix}-${(++idx).toString().padStart(2, "0")}`,
                 segs: sub,
                 anchors,
-                meta: { slot: null }  // без слотов в тесте
+                meta: { slot: null }
             });
         }
     }
