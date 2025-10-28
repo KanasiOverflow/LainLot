@@ -6,7 +6,7 @@ import clsx from "clsx";
 export default function Topbar({
     mode, setMode, lastLineMode, setShowTopbarHint, showTopbarHint,
     dismissTopbarHint, presetIdx, setPresetIdx, resetAll, doExportSVG,
-    isExporting, IS_DEV, devOpen, setDevOpen
+    isExporting, IS_DEV, devOpen, handleDevClick
 }) {
 
     const { t } = useTranslation();
@@ -63,13 +63,14 @@ export default function Topbar({
                 </Tooltip>
 
                 {IS_DEV && (
-                    <Tooltip label={devOpen ? 'Hide dev mode' : 'Show dev mode'}>
+                    <Tooltip label={devOpen ? 'Hide test mode (T)' : 'Show test mode (T)'}>
                         <button
-                            className={styles.iconBtn}
-                            aria-label="Dev mode"
-                            aria-pressed={devOpen ? "true" : "false"}
-                            onClick={() => setDevOpen(o => !o)}
-                            title="Dev mode"
+                            className={clsx(styles.iconBtn, devOpen && styles.iconActive)}
+                            aria-label="Test mode"
+                            aria-keyshortcuts="T"
+                            aria-pressed={devOpen}
+                            onClick={() => handleDevClick()}
+                            title="Test mode"
                         >🧪</button>
                     </Tooltip>
                 )}

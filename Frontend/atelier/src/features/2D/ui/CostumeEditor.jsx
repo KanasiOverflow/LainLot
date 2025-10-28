@@ -125,6 +125,18 @@ export default function CostumeEditor() {
         if (swapTimerRef.current) { clearTimeout(swapTimerRef.current); swapTimerRef.current = null; }
     };
 
+    const exitTestMode = useCallback(() => {
+        // полностью гасим тест
+        setTestPanels(null);                   // <- главное: очистить тестовые панели
+        setPrevPanels(null);
+        setIsSwapping(false);
+        if (swapTimerRef.current) {
+            clearTimeout(swapTimerRef.current);
+            swapTimerRef.current = null;
+        }
+        setDevOpen(false);
+        setMode('preview');                    // вернуться в просмотр
+    }, []);
 
     const [savedByPreset, setSavedByPreset] = useState({});
     const savedByPresetRef = useRef({});
@@ -451,6 +463,16 @@ export default function CostumeEditor() {
             return { ...prev, [panelId]: list };
         }, t("DeleteVertex"));
     };
+
+    const handleDevClick = useCallback(() => {
+        if (inTest) {
+            // если тест загружен — выходим из него и переходим в preview
+            exitTestMode();
+        } else {
+            // иначе просто показать/скрыть Dev-панель
+            setDevOpen(v => !v);
+        }
+    }, [inTest, exitTestMode]);
 
     const onCurveEnter = (panelId, id) => {
         if (mode === 'preview')
@@ -853,8 +875,20 @@ export default function CostumeEditor() {
             if (document.activeElement !== el) return;
 
             if (e.key === 'Escape') {
+                e.preventDefault();
+                exitTestMode();
                 setMode('preview');
-                setAddBuffer(null); e.preventDefault();
+                setDevOpen(false);
+                return;
+            }
+            else if (e.key === 'T' || e.key === 't') {
+                e.preventDefault();
+                if (devOpen && inTest) {
+                    exitTestMode();
+                } else {
+                    setDevOpen(v => !v);
+                }
+                return;
             }
             else if (e.key === 'a' || e.key === 'A') {
                 setMode('add');
@@ -916,6 +950,7 @@ export default function CostumeEditor() {
                         IS_DEV={IS_DEV}
                         devOpen={devOpen}
                         setDevOpen={setDevOpen}
+                        handleDevClick={handleDevClick}
                     />
 
                     {IS_DEV && devOpen && (
