@@ -31,6 +31,8 @@ import ZoomControls from "./ZoomControls.jsx";
 import { PRESETS } from "../../../core/variables/presets.js";
 import { reduceSetSlotVariant } from "../../../core/variables/variants.js";
 
+import { panelsFromRaw } from "../../../core/testhelper/testhelper.js";
+
 import styles from "../styles/CostumeEditor.module.css";
 import clsx from "clsx";
 
@@ -72,6 +74,69 @@ export default function CostumeEditor() {
         front: { "hoodie.cuff": "base", "hoodie.belt": "base" },
         back: { "hoodie.cuff": "base", "hoodie.belt": "base" }
     });
+
+    // --- Developer Test Mode ---
+    // Надёжно работаем как в `vite dev`, так и при кастомной переменной среды.
+    const IS_DEV = Boolean(
+        import.meta.env?.DEV ||
+        String(import.meta.env?.MODE).toLowerCase() === "development" ||
+        String(import.meta.env?.VITE_ENVIRONMENT).toLowerCase() === "development"
+    );
+    // свернуть/развернуть панель разработчика
+    const [devOpen, setDevOpen] = useState(() => {
+        try { return localStorage.getItem("ce.devOpen.v1") !== "0"; } catch { return true; }
+    });
+    useEffect(() => {
+        try { localStorage.setItem("ce.devOpen.v1", devOpen ? "1" : "0"); } catch { }
+    }, [devOpen]);
+    const [testSide, setTestSide] = useState("front");   // 'front' | 'back'
+    const [testPanels, setTestPanels] = useState(null);  // null => обычные панели
+    const inTest = testPanels !== null;
+
+    const loadTestPair = async (side /* 'front'|'back' */) => {
+        const base = `/2d/test`;
+        const files = [
+            `${base}/hoodie_${side}.svg`,
+            `${base}/pants_${side}.svg`
+        ];
+
+        const texts = await Promise.all(files.map(async (url) => {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`Failed to load ${url}: ${res.status}`);
+            return await res.text();
+        }));
+
+        // генерим много панелей из каждого файла
+        const panelsParsed = [
+            ...panelsFromRaw(`hoodie-${side}`, texts[0]),
+            ...panelsFromRaw(`pants-${side}`, texts[1]),
+        ];
+
+        // активную ставим первую
+        setActivePanelId(panelsParsed[0]?.id ?? null);
+
+        // чистим пользовательские линии/заливки и включаем test-панели
+        setCurvesByPanel({});
+        setFills([]);
+        setTestPanels(panelsParsed);
+
+        setPrevPanels(null);
+        setIsSwapping(false);
+        if (swapTimerRef.current) { clearTimeout(swapTimerRef.current); swapTimerRef.current = null; }
+    };
+
+    const exitTestMode = useCallback(() => {
+        // полностью гасим тест
+        setTestPanels(null);                   // <- главное: очистить тестовые панели
+        setPrevPanels(null);
+        setIsSwapping(false);
+        if (swapTimerRef.current) {
+            clearTimeout(swapTimerRef.current);
+            swapTimerRef.current = null;
+        }
+        setDevOpen(false);
+        setMode('preview');                    // вернуться в просмотр
+    }, []);
 
     const [savedByPreset, setSavedByPreset] = useState({});
     const savedByPresetRef = useRef({});
@@ -122,11 +187,14 @@ export default function CostumeEditor() {
 
     const panelsRef = useRef(panels);
 
+    // в тесте работаем *только* с тестовыми панелями
+    const livePanels = inTest ? testPanels : panels;
+
     const { insertPreview, setInsertPreview, setInsertPreviewRAF } = useInsertPreviewRAF();
 
     const { svgRef, scale, gridDef, baseFacesByPanel, outerRingByPanel,
         facesByPanel, extraAnchorsByPanel, mergedAnchorsOf, getCursorWorld, closestPointOnCurve
-    } = useSceneGeometry({ panels, curvesByPanel, defaultSubCount });
+    } = useSceneGeometry({ panels: livePanels, curvesByPanel, defaultSubCount });
 
     const { applyingPrefsRef, setBothLastModePreview } = useEditorPrefs({
         activeId, mode, setMode, paintColor, setPaintColor,
@@ -222,8 +290,8 @@ export default function CostumeEditor() {
 
 
     const activePanel = useMemo(
-        () => panels.find(p => p.id === activePanelId) || panels[0] || null,
-        [panels, activePanelId]
+        () => livePanels.find(p => p.id === activePanelId) || livePanels[0] || null,
+        [livePanels, activePanelId]
     );
 
     const manualLeftInActive = useMemo(() => {
@@ -395,6 +463,16 @@ export default function CostumeEditor() {
             return { ...prev, [panelId]: list };
         }, t("DeleteVertex"));
     };
+
+    const handleDevClick = useCallback(() => {
+        if (inTest) {
+            // если тест загружен — выходим из него и переходим в preview
+            exitTestMode();
+        } else {
+            // иначе просто показать/скрыть Dev-панель
+            setDevOpen(v => !v);
+        }
+    }, [inTest, exitTestMode]);
 
     const onCurveEnter = (panelId, id) => {
         if (mode === 'preview')
@@ -649,7 +727,7 @@ export default function CostumeEditor() {
         }
     }, [mode]);
 
-    useEffect(() => { panelsRef.current = panels; }, [panels]);
+    useEffect(() => { panelsRef.current = livePanels; }, [livePanels]);
 
     useEffect(() => {
         if (!paletteOpen) return;
@@ -687,17 +765,17 @@ export default function CostumeEditor() {
             if (k === "E" || k === "e") { setPresetIdx(1); e.preventDefault(); }
 
             if (k === '[') {
-                if (panels.length) {
-                    const i = Math.max(0, panels.findIndex(p => p.id === activePanel?.id));
-                    const prev = panels[(i - 1 + panels.length) % panels.length];
-                    setActivePanelId(prev?.id ?? panels[0]?.id ?? null);
+                if (livePanels.length) {
+                    const i = Math.max(0, livePanels.findIndex(p => p.id === activePanel?.id));
+                    const prev = livePanels[(i - 1 + livePanels.length) % livePanels.length];
+                    setActivePanelId(prev?.id ?? livePanels[0]?.id ?? null);
                 }
             }
             if (k === ']') {
-                if (panels.length) {
-                    const i = Math.max(0, panels.findIndex(p => p.id === activePanel?.id));
-                    const next = panels[(i + 1) % panels.length];
-                    setActivePanelId(next?.id ?? panels[0]?.id ?? null);
+                if (livePanels.length) {
+                    const i = Math.max(0, livePanels.findIndex(p => p.id === activePanel?.id));
+                    const next = livePanels[(i + 1) % livePanels.length];
+                    setActivePanelId(next?.id ?? livePanels[0]?.id ?? null);
                 }
             }
         };
@@ -707,7 +785,15 @@ export default function CostumeEditor() {
     }, [panels, activePanel]);
 
     useEffect(() => {
-        if (!panels || panels.length === 0) return;
+        if (!livePanels || livePanels.length === 0) return;
+
+        if (inTest) {
+            const map = new Map();
+            for (const p of livePanels) map.set(p.id, null);
+            panelSlotMapRef.current = map;
+            panelsRef.current = livePanels;
+            return;
+        }
 
         const kind = changeKindRef.current;
         if (kind === 'preset') restoringPresetRef.current = true;
@@ -726,7 +812,7 @@ export default function CostumeEditor() {
         }
 
         const map = new Map();
-        for (const p of panels) map.set(p.id, p.meta?.slot || null);
+        for (const p of livePanels) map.set(p.id, p.meta?.slot || null);
         panelSlotMapRef.current = map;
 
         const presetId = currentPresetIdRef.current;
@@ -734,8 +820,8 @@ export default function CostumeEditor() {
 
         if (kind === 'preset') {
             const snap = savedByPresetRef.current[presetId];
-            applySnapshot(snap, panels);
-        } else if (changed) {
+            applySnapshot(snap, livePanels);
+        } else if (changed && !inTest) {// не трогаем снапы в тест-режиме
             const { presetId: chPreset, slot: chSlotFull } = changed;
             if (chPreset === presetId && chSlotFull) {
                 const panelSlotMap = panelSlotMapRef.current || new Map();
@@ -762,7 +848,7 @@ export default function CostumeEditor() {
                 swapTimerRef.current = null;
             }
         };
-    }, [panels]);
+    }, [livePanels]);
 
     useEffect(() => {
         if (restoringPresetRef.current) return;
@@ -789,8 +875,20 @@ export default function CostumeEditor() {
             if (document.activeElement !== el) return;
 
             if (e.key === 'Escape') {
+                e.preventDefault();
+                exitTestMode();
                 setMode('preview');
-                setAddBuffer(null); e.preventDefault();
+                setDevOpen(false);
+                return;
+            }
+            else if (e.key === 'T' || e.key === 't') {
+                e.preventDefault();
+                if (devOpen && inTest) {
+                    exitTestMode();
+                } else {
+                    setDevOpen(v => !v);
+                }
+                return;
             }
             else if (e.key === 'a' || e.key === 'A') {
                 setMode('add');
@@ -849,7 +947,39 @@ export default function CostumeEditor() {
                         resetAll={resetAll}
                         doExportSVG={doExportSVG}
                         isExporting={isExporting}
+                        IS_DEV={IS_DEV}
+                        devOpen={devOpen}
+                        setDevOpen={setDevOpen}
+                        handleDevClick={handleDevClick}
                     />
+
+                    {IS_DEV && devOpen && (
+                        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", padding: "4px 0" }}>
+                            <select
+                                value={testSide}
+                                onChange={(e) => setTestSide(e.target.value)}
+                                style={{ padding: "6px 8px", borderRadius: 8 }}
+                            >
+                                <option value="front">Front (hoodie_front + pants_front)</option>
+                                <option value="back">Back (hoodie_back + pants_back)</option>
+                            </select>
+
+                            <button type="button" className={styles.navBtn} onClick={() => loadTestPair(testSide)}>
+                                Load
+                            </button>
+
+                            {inTest && (
+                                <button type="button" className={styles.navBtn} onClick={() => {
+                                    setTestPanels(null);
+                                    setPrevPanels(null);
+                                    setIsSwapping(false);
+                                    if (swapTimerRef.current) { clearTimeout(swapTimerRef.current); swapTimerRef.current = null; }
+                                }}>
+                                    Exit
+                                </button>
+                            )}
+                        </div>
+                    )}
 
                     <CanvasStage
                         mode={mode}
@@ -893,7 +1023,7 @@ export default function CostumeEditor() {
                         viewBox={zoomedViewBox}
                         gridDef={gridDef}
                         svgMountKey={svgMountKey}
-                        panels={panels}
+                        panels={livePanels}
                         prevPanels={prevPanels}
                         isSwapping={isSwapping}
                         hoodPanelIds={hoodPanelIds}
