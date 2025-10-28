@@ -6,7 +6,7 @@ import clsx from "clsx";
 export default function Topbar({
     mode, setMode, lastLineMode, setShowTopbarHint, showTopbarHint,
     dismissTopbarHint, presetIdx, setPresetIdx, resetAll, doExportSVG,
-    isExporting,
+    isExporting, IS_DEV, devOpen, setDevOpen
 }) {
 
     const { t } = useTranslation();
@@ -61,6 +61,18 @@ export default function Topbar({
                         onClick={() => { dismissTopbarHint(); setMode("variants"); }}
                     >🧩</button>
                 </Tooltip>
+
+                {IS_DEV && (
+                    <Tooltip label={devOpen ? 'Hide dev mode' : 'Show dev mode'}>
+                        <button
+                            className={styles.iconBtn}
+                            aria-label="Dev mode"
+                            aria-pressed={devOpen ? "true" : "false"}
+                            onClick={() => setDevOpen(o => !o)}
+                            title="Dev mode"
+                        >🧪</button>
+                    </Tooltip>
+                )}
 
                 <Tooltip label={`${t('ShowClue')} (H)`}>
                     <button
