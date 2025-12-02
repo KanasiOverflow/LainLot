@@ -106,284 +106,49 @@
           "x": 1,
           "y": 1
         }
-      },
-      {
-        "file": "2d/svg/pants/front/belt.svg",
-        "product": "pants",
-        "slot": "belt",
-        "side": null,
-        "which": null,
-        "offset": {
-          "x": -140,
-          "y": 330
-        },
-        "scale": {
-          "x": 4.5,
-          "y": 4.5
-        }
-      },
-      {
-        "file": "2d/svg/pants/front/leg_left.svg",
-        "product": "pants",
-        "slot": "leg",
-        "side": "left",
-        "which": null,
-        "offset": {
-          "x": -140,
-          "y": 330
-        },
-        "scale": {
-          "x": 4.5,
-          "y": 4.5
-        }
-      },
-      {
-        "file": "2d/svg/pants/front/leg_right.svg",
-        "product": "pants",
-        "slot": "leg",
-        "side": "right",
-        "which": null,
-        "offset": {
-          "x": -140,
-          "y": 330
-        },
-        "scale": {
-          "x": 4.5,
-          "y": 4.5
-        }
-      },
-      {
-        "file": "2d/svg/pants/front/cuff_left.svg",
-        "product": "pants",
-        "slot": "cuff",
-        "side": "left",
-        "which": null,
-        "offset": {
-          "x": -140,
-          "y": 330
-        },
-        "scale": {
-          "x": 4.5,
-          "y": 4.5
-        }
-      },
-      {
-        "file": "2d/svg/pants/front/cuff_right.svg",
-        "product": "pants",
-        "slot": "cuff",
-        "side": "right",
-        "which": null,
-        "offset": {
-          "x": -140,
-          "y": 330
-        },
-        "scale": {
-          "x": 4.5,
-          "y": 4.5
-        }
       }
     ],
-    "back": [
-      {
-        "file": "2d/svg/hoodie/back/body.svg",
-        "product": "hoodie",
-        "slot": "body",
-        "side": null,
-        "which": null,
-        "offset": {
-          "x": 0,
-          "y": 0
-        },
-        "scale": {
-          "x": 1.1,
-          "y": 1.1
-        }
-      },
-      {
-        "file": "2d/svg/hoodie/back/belt.svg",
-        "product": "hoodie",
-        "slot": "belt",
-        "side": null,
-        "which": null,
-        "offset": {
-          "x": 0,
-          "y": 0
-        },
-        "scale": {
-          "x": 1.1,
-          "y": 1.1
-        }
-      },
-      {
-        "file": "2d/svg/hoodie/back/sleeve_left.svg",
-        "product": "hoodie",
-        "slot": "sleeve",
-        "side": "left",
-        "which": null,
-        "offset": {
-          "x": 0,
-          "y": 0
-        },
-        "scale": {
-          "x": 1.1,
-          "y": 1.1
-        }
-      },
-      {
-        "file": "2d/svg/hoodie/back/sleeve_right.svg",
-        "product": "hoodie",
-        "slot": "sleeve",
-        "side": "right",
-        "which": null,
-        "offset": {
-          "x": 0,
-          "y": 0
-        },
-        "scale": {
-          "x": 1.1,
-          "y": 1.1
-        }
-      },
-      {
-        "file": "2d/svg/hoodie/back/cuff_left.svg",
-        "product": "hoodie",
-        "slot": "cuff",
-        "side": "left",
-        "which": null,
-        "offset": {
-          "x": 0,
-          "y": 0
-        },
-        "scale": {
-          "x": 1.1,
-          "y": 1.1
-        }
-      },
-      {
-        "file": "2d/svg/hoodie/back/cuff_right.svg",
-        "product": "hoodie",
-        "slot": "cuff",
-        "side": "right",
-        "which": null,
-        "offset": {
-          "x": 0,
-          "y": 0
-        },
-        "scale": {
-          "x": 1.1,
-          "y": 1.1
-        }
-      },
-      {
-        "file": "2d/svg/pants/back/belt.svg",
-        "product": "pants",
-        "slot": "belt",
-        "side": null,
-        "which": null,
-        "offset": {
-          "x": -140,
-          "y": 240
-        },
-        "scale": {
-          "x": 3.5,
-          "y": 3.5
-        }
-      },
-      {
-        "file": "2d/svg/pants/back/leg_left.svg",
-        "product": "pants",
-        "slot": "leg",
-        "side": "left",
-        "which": null,
-        "offset": {
-          "x": -140,
-          "y": 240
-        },
-        "scale": {
-          "x": 3.5,
-          "y": 3.5
-        }
-      },
-      {
-        "file": "2d/svg/pants/back/leg_right.svg",
-        "product": "pants",
-        "slot": "leg",
-        "side": "right",
-        "which": null,
-        "offset": {
-          "x": -140,
-          "y": 240
-        },
-        "scale": {
-          "x": 3.5,
-          "y": 3.5
-        }
-      },
-      {
-        "file": "2d/svg/pants/back/cuff_left.svg",
-        "product": "pants",
-        "slot": "cuff",
-        "side": "left",
-        "which": null,
-        "offset": {
-          "x": -140,
-          "y": 240
-        },
-        "scale": {
-          "x": 3.5,
-          "y": 3.5
-        }
-      },
-      {
-        "file": "2d/svg/pants/back/cuff_right.svg",
-        "product": "pants",
-        "slot": "cuff",
-        "side": "right",
-        "which": null,
-        "offset": {
-          "x": -140,
-          "y": 240
-        },
-        "scale": {
-          "x": 3.5,
-          "y": 3.5
-        }
-      }
-    ],
+    "back": [],
     "previews": {
-      "front": {
-        "body": "2d/svg/hoodie/front/body_preview.svg",
-        "belt": "2d/svg/hoodie/front/belt_preview.svg",
-        "sleeve": "2d/svg/hoodie/front/sleeve_preview.svg",
-        "cuff": "2d/svg/hoodie/front/cuff_preview.svg",
-        "neck": "2d/svg/hoodie/front/neck_preview.svg",
-        "leg": "2d/svg/pants/front/leg_preview.svg"
-      },
-      "back": {
-        "body": "2d/svg/hoodie/front/body_preview.svg",
-        "belt": "2d/svg/hoodie/front/belt_preview.svg",
-        "sleeve": "2d/svg/hoodie/front/sleeve_preview.svg",
-        "cuff": "2d/svg/hoodie/front/cuff_preview.svg",
-        "neck": "2d/svg/hoodie/front/neck_preview.svg",
-        "leg": "2d/svg/pants/front/leg_preview.svg"
-      }
+      "front": {},
+      "back": {}
     }
   },
   "variants": {
     "body": [],
     "belt": [
       {
+        "id": "belt_ribbed",
+        "name": "belt_ribbed",
+        "product": "hoodie",
+        "preview": "2d/svg/hoodie/front/variants/belt/belt_ribbed_preview.svg",
+        "files": {
+          "front": {
+            "file": "2d/svg/hoodie/front/variants/belt/belt_ribbed.svg"
+          },
+          "back": {}
+        },
+        "offset": {
+          "front": {
+            "x": 0,
+            "y": 0
+          },
+          "back": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      {
         "id": "belt2",
         "name": "belt2",
         "product": "hoodie",
-        "preview": "2d/svg/hoodie/back/variants/belt/belt2_preview.svg",
+        "preview": "2d/svg/hoodie/front/variants/belt/belt2_preview.svg",
         "files": {
           "front": {
             "file": "2d/svg/hoodie/front/variants/belt/belt2.svg"
           },
-          "back": {
-            "file": "2d/svg/hoodie/back/variants/belt/belt2.svg"
-          }
+          "back": {}
         },
         "offset": {
           "front": {
@@ -397,15 +162,65 @@
         }
       }
     ],
-    "sleeve": [],
+    "sleeve": [
+      {
+        "id": "raglan_sleeve",
+        "name": "raglan_sleeve",
+        "product": "hoodie",
+        "preview": "2d/svg/hoodie/front/variants/sleeve/raglan_sleeve_preview.svg",
+        "files": {
+          "front": {
+            "left": "2d/svg/hoodie/front/variants/sleeve/raglan_sleeve_left.svg",
+            "right": "2d/svg/hoodie/front/variants/sleeve/raglan_sleeve_right.svg"
+          },
+          "back": {}
+        },
+        "offset": {
+          "front": {
+            "x": 0,
+            "y": 0
+          },
+          "back": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      {
+        "id": "set-in_sleeve",
+        "name": "set-in_sleeve",
+        "product": "hoodie",
+        "preview": "2d/svg/hoodie/front/variants/sleeve/set-in_sleeve_preview.svg",
+        "files": {
+          "front": {
+            "left": "2d/svg/hoodie/front/variants/sleeve/set-in_sleeve_left.svg",
+            "right": "2d/svg/hoodie/front/variants/sleeve/set-in_sleeve_right.svg"
+          },
+          "back": {}
+        },
+        "offset": {
+          "front": {
+            "x": 0,
+            "y": 0
+          },
+          "back": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      }
+    ],
     "cuff": [
       {
-        "id": "cuff",
-        "name": "cuff",
+        "id": "cuff_ribbed",
+        "name": "cuff_ribbed",
         "product": "hoodie",
-        "preview": "2d/svg/hoodie/back/variants/cuff/cuff_preview.svg",
+        "preview": "2d/svg/hoodie/front/variants/cuff/cuff_ribbed_preview.svg",
         "files": {
-          "front": {},
+          "front": {
+            "left": "2d/svg/hoodie/front/variants/cuff/cuff_ribbed_left.svg",
+            "right": "2d/svg/hoodie/front/variants/cuff/cuff_ribbed_right.svg"
+          },
           "back": {}
         },
         "offset": {
@@ -429,10 +244,7 @@
             "left": "2d/svg/hoodie/front/variants/cuff/cuff2_left.svg",
             "right": "2d/svg/hoodie/front/variants/cuff/cuff2_right.svg"
           },
-          "back": {
-            "left": "2d/svg/hoodie/back/variants/cuff/cuff2_left.svg",
-            "right": "2d/svg/hoodie/back/variants/cuff/cuff2_right.svg"
-          }
+          "back": {}
         },
         "offset": {
           "front": {
@@ -447,6 +259,28 @@
       }
     ],
     "neck": [
+      {
+        "id": "neck_ribbed",
+        "name": "neck_ribbed",
+        "product": "hoodie",
+        "preview": "2d/svg/hoodie/front/variants/neck/neck_ribbed_preview.svg",
+        "files": {
+          "front": {
+            "file": "2d/svg/hoodie/front/variants/neck/neck_ribbed.svg"
+          },
+          "back": {}
+        },
+        "offset": {
+          "front": {
+            "x": 0,
+            "y": 0
+          },
+          "back": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
       {
         "id": "neck2",
         "name": "neck2",
@@ -494,7 +328,52 @@
         }
       }
     ],
-    "pocket": [],
+    "pocket": [
+      {
+        "id": "pocket_patch",
+        "name": "pocket_patch",
+        "product": "hoodie",
+        "preview": "2d/svg/hoodie/front/variants/pocket/pocket_patch_preview.svg",
+        "files": {
+          "front": {
+            "file": "2d/svg/hoodie/front/variants/pocket/pocket_patch.svg"
+          },
+          "back": {}
+        },
+        "offset": {
+          "front": {
+            "x": 0,
+            "y": 0
+          },
+          "back": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      {
+        "id": "pocket_square_patch",
+        "name": "pocket_square_patch",
+        "product": "hoodie",
+        "preview": "2d/svg/hoodie/front/variants/pocket/pocket_square_patch_preview.svg",
+        "files": {
+          "front": {
+            "file": "2d/svg/hoodie/front/variants/pocket/pocket_square_patch.svg"
+          },
+          "back": {}
+        },
+        "offset": {
+          "front": {
+            "x": 0,
+            "y": 0
+          },
+          "back": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      }
+    ],
     "leg": []
   },
   "baseVariantBySlot": {
