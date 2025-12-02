@@ -138,28 +138,6 @@
             "y": 0
           }
         }
-      },
-      {
-        "id": "belt2",
-        "name": "belt2",
-        "product": "hoodie",
-        "preview": "2d/svg/hoodie/front/variants/belt/belt2_preview.svg",
-        "files": {
-          "front": {
-            "file": "2d/svg/hoodie/front/variants/belt/belt2.svg"
-          },
-          "back": {}
-        },
-        "offset": {
-          "front": {
-            "x": 0,
-            "y": 0
-          },
-          "back": {
-            "x": 0,
-            "y": 0
-          }
-        }
       }
     ],
     "sleeve": [
@@ -233,29 +211,6 @@
             "y": 0
           }
         }
-      },
-      {
-        "id": "cuff2",
-        "name": "cuff2",
-        "product": "hoodie",
-        "preview": "2d/svg/hoodie/front/variants/cuff/cuff2_preview.svg",
-        "files": {
-          "front": {
-            "left": "2d/svg/hoodie/front/variants/cuff/cuff2_left.svg",
-            "right": "2d/svg/hoodie/front/variants/cuff/cuff2_right.svg"
-          },
-          "back": {}
-        },
-        "offset": {
-          "front": {
-            "x": 0,
-            "y": 0
-          },
-          "back": {
-            "x": 0,
-            "y": 0
-          }
-        }
       }
     ],
     "neck": [
@@ -267,28 +222,6 @@
         "files": {
           "front": {
             "file": "2d/svg/hoodie/front/variants/neck/neck_ribbed.svg"
-          },
-          "back": {}
-        },
-        "offset": {
-          "front": {
-            "x": 0,
-            "y": 0
-          },
-          "back": {
-            "x": 0,
-            "y": 0
-          }
-        }
-      },
-      {
-        "id": "neck2",
-        "name": "neck2",
-        "product": "hoodie",
-        "preview": "2d/svg/hoodie/front/variants/neck/neck2_preview.svg",
-        "files": {
-          "front": {
-            "file": "2d/svg/hoodie/front/variants/neck/neck2.svg"
           },
           "back": {}
         },
