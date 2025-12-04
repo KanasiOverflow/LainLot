@@ -8,6 +8,11 @@ import { collectAnchors } from "../svg/anchors.js";
 import { resolveSvgSrcPath } from "../../core/variables/svgPath.js";
 import { getBaseSources } from "../../core/variables/variants.js";
 
+// === EXTRACT-PANELS: BUILD TAG ===
+console.log("[extractPanels] MODULE LOADED B1");
+if (typeof window !== "undefined") window.__EP_BUILD = "B1";
+
+
 localStorage.setItem("ce.debug.panels", "1"); // включить
 // перезагрузить страницу, повторить действие
 //localStorage.removeItem("ce.debug.panels");   // выключить
@@ -397,8 +402,8 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
         if (allowSides && fmap.right) entries.push({ file: fmap.right, side: "right", which: null });
         if (fmap.inner) entries.push({ file: fmap.inner, side: null, which: "inner" });
 
-        const hasBaseFor = (side, which) => baseIdx.has([product, slot, side || "", which || ""].join("|"));
-        if (sLower !== "hood") entries = entries.filter(e => hasBaseFor(e.side, e.which));
+        // const hasBaseFor = (side, which) => baseIdx.has([product, slot, side || "", which || ""].join("|"));
+        // if (sLower !== "hood") entries = entries.filter(e => hasBaseFor(e.side, e.which));
 
         for (const e of entries) {
             const k = [product, slot, e.side || "", e.which || ""].join("|");
@@ -428,6 +433,16 @@ export const composePanelsForSide = async (sideId, details, manifest) => {
         sources.push(...rest, ...hoodParts); // ✅ корректный спред
     }
 
+    // DIAG-лог: что реально идёт в сборку панелей
+    console.log("[compose]", sideId, {
+        count: sources.length,
+        sources: sources.map(s => ({
+            file: s.file, slot: s.slot, side: s.side, which: s.which,
+            scale: s.scale, offset: s.offset, product: s.product
+        }))
+    });
+
     // 4) собрать панели с тем же загрузчиком
     return await loadPresetToPanels({ id: sideId, sources });
+
 };

@@ -49,6 +49,18 @@ export default function CanvasStage({
         }
     };
 
+    // применять маску только если есть кольца капюшона
+    const useHoodMask = Array.isArray(hoodRings) && hoodRings.length > 0;
+
+    // кольца шеи: берём внешнее кольцо для всех панелей со слотом "neck"
+    const neckPanelIds = new Set(
+        panels.filter(p => String(p.slot).toLowerCase() === "neck").map(p => p.id)
+    );
+    const neckRings = panels
+        .filter(p => neckPanelIds.has(p.id))
+        .map(p => outerRingByPanel[p.id])   // outerRingByPanel уже есть в пропсах
+        .filter(Boolean);
+
     return (
         <div className={styles.canvasStack}>
             {/* bottom layer - pre-scene, outlines only */}
@@ -107,24 +119,17 @@ export default function CanvasStage({
                     </pattern>
 
                     {/* A mask that hides everything under the hood */}
-                    <mask id={`under-hood-mask-${svgMountKey}`} maskUnits="userSpaceOnUse">
-                        {/* show everything by default */}
-                        <rect
-                            x={gridDef.b.x}
-                            y={gridDef.b.y}
-                            width={gridDef.b.w}
-                            height={gridDef.b.h}
-                            fill="#fff"
-                        />
-                        {/* and we cross out the hood area (in black) */}
-                        {hoodRings.map((poly, i) => (
-                            <path key={i} d={facePath(poly)} fill="#000" />
-                        ))}
-                        {/* return the inner holes of the hood (white) */}
-                        {hoodHoles.map((poly, i) => (
-                            <path key={`hole-${i}`} d={facePath(poly)} fill="#fff" />
-                        ))}
-                    </mask>
+                    {useHoodMask && (
+                        <mask id={`under-hood-mask-${svgMountKey}`} maskUnits="userSpaceOnUse">
+                            <rect x={gridDef.b.x} y={gridDef.b.y} width={gridDef.b.w} height={gridDef.b.h} fill="#fff" />
+                            {/* чёрным скрываем область капюшона */}
+                            {hoodRings.map((poly, i) => <path key={i} d={facePath(poly)} fill="#000" />)}
+                            {/* белым возвращаем отверстия капюшона */}
+                            {hoodHoles.map((poly, i) => <path key={`hole-${i}`} d={facePath(poly)} fill="#fff" />)}
+                            {/* белым возвращаем видимость шеи */}
+                            {neckRings.map((poly, i) => <path key={`neck-${i}`} d={facePath(poly)} fill="#fff" />)}
+                        </mask>
+                    )}
                 </defs>
                 <rect
                     x={gridDef.b.x}
@@ -135,7 +140,7 @@ export default function CanvasStage({
                 />
 
                 {/* 1) All parts EXCEPT the hood are under the mask */}
-                <g mask={`url(#under-hood-mask-${svgMountKey})`}>
+                <g {...(useHoodMask ? { mask: `url(#under-hood-mask-${svgMountKey})` } : {})}>
                     {panels.filter(p => !hoodPanelIds.has(p.id)).map((p, i) => (
                         <g key={`wrap-${i}-${p.id}`} transform={transformOf(p) || undefined}>
                             <PanelView

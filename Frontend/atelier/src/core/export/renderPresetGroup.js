@@ -4,6 +4,10 @@ import { facePath, faceKey, segsToD } from "../svg/faceUtils.js";
 import { splitSegsIntoSubpaths, polylineFromSubpath, catmullRomToBezierPath } from "../svg/polylineOps.js";
 import { buildFacesForExport } from "./facesForExport.js";
 
+// === RENDER-PRESET-GROUP: BUILD TAG ===
+console.log("[rGroup] MODULE LOADED A1");
+if (typeof window !== "undefined") window.__RG_BUILD = "A1";
+
 const shortId = (id) => {
     const s = String(id);
     return s.includes("-") ? s.split("-").pop() : s;
@@ -36,7 +40,16 @@ export const renderPresetGroup = (
 
     const piecesNonHood = [];
     const piecesHood = [];
-    const maskId = opts.maskId || `uhm-${Math.random().toString(36).slice(2)}`;
+    // DIAG: на время диагностики принудительно отключаем маску
+    const useMask = false;
+    const maskId = undefined;
+
+    // DIAG-лог (что реально летит в рендер)
+    console.log("[rGroup] start", {
+        panels: Array.isArray(panels) ? panels.length : 0,
+        fills: Array.isArray(fillsLocal) ? fillsLocal.length : 0,
+        curvesPanels: curvesByPanelLocal ? Object.keys(curvesByPanelLocal).length : 0
+    });
 
     // Рендер одной панели в «корзину»
     const renderPanelPieces = (p, bucket) => {
@@ -94,18 +107,21 @@ export const renderPresetGroup = (
         renderPanelPieces(p, isHood(p) ? piecesHood : piecesNonHood);
     }
 
-    // Маска «под капюшоном»: всё белое видно, силуэт капюшона — чёрный (скрывает)
+    // Маска «под капюшоном»
     const hoodRings = panels.filter(isHood).map(p => ringByPanel[p.id]).filter(Boolean);
 
-    if (!hoodRings.length) {
-        // Капюшона нет — рендерим плоско
+    // Если капюшона нет ИЛИ маску не просили — плоский рендер без маски
+    if (!hoodRings.length || !useMask) {
+        console.log("[rGroup] flat-render", { hoodRings: hoodRings.length, useMask });
         return `<g>${piecesNonHood.join("")}${piecesHood.join("")}</g>`;
     }
 
+    // Иначе — применяем маску (maskId должен быть явно задан)
     const hugeRect = `<rect x="-10000" y="-10000" width="40000" height="40000" fill="#fff"/>`;
     const mask = `<mask id="${maskId}" maskUnits="userSpaceOnUse">${hugeRect}${hoodRings.map(r =>
         `<path d="${facePath(r)}" fill="#000"/>`
     ).join("")}</mask>`;
 
     return `<g><defs>${mask}</defs><g mask="url(#${maskId})">${piecesNonHood.join("")}</g>${piecesHood.join("")}</g>`;
+
 };
