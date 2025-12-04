@@ -8,14 +8,9 @@ import { collectAnchors } from "../svg/anchors.js";
 import { resolveSvgSrcPath } from "../../core/variables/svgPath.js";
 import { getBaseSources } from "../../core/variables/variants.js";
 
-/*
-
 localStorage.setItem("ce.debug.panels", "1"); // включить
 // перезагрузить страницу, повторить действие
-localStorage.removeItem("ce.debug.panels");   // выключить
-
-
-*/
+//localStorage.removeItem("ce.debug.panels");   // выключить
 
 // Включение логов: localStorage.setItem("ce.debug.panels", "1")
 // Выключение:       localStorage.removeItem("ce.debug.panels")
@@ -252,21 +247,22 @@ export const extractPanels = (rawSVG) => {
 
     __logPanels("candidates", { count: candidates.length });
 
+    // --- Выбор явного основного контура (если в SVG есть path id="panel")
+    const tagged = candidates.filter(c =>
+        c.label === "panel" ||
+        /id=["']panel["']/.test(c.rawTag)
+    );
 
-    // --- Удаляем «фон/рамку», если есть из чего выбирать
-    if (candidates.length > 1) {
-        const kept = candidates.filter(c => !looksLikeBackground(c, rootBox));
-        if (kept.length) candidates = kept;
+    if (tagged.length > 0) {
+        __logPanels("panel-id-detected", { count: tagged.length });
+        candidates = tagged;  // Берём только помеченные контуры
     }
-
-    __logPanels("afterBG", { count: candidates.length });
-
 
     // --- Фильтрация по площади (адаптивная)
     candidates.sort((a, b) => b.bboxArea - a.bboxArea);
     const maxA = candidates[0].bboxArea || 1;
     const dominatesView = (candidates[0].bboxArea / (rootBox.w * rootBox.h || 1)) > 0.45;
-    const ratio = (candidates.length <= 3 || dominatesView) ? 0.005 : PANEL_MIN_AREA_RATIO_DEFAULT;
+    const ratio = 0.00001;
 
     __logPanels("areas", {
         maxA: Math.round(maxA || 0),

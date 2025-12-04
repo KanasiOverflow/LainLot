@@ -16,19 +16,19 @@ const PRODUCTS = [
         },
         scale: {
             front: { x: 1, y: 1 },
-            back: { x: 1.1, y: 1.1 }
+            back: { x: 1, y: 1 }
         }
     },
     {
         key: "pants",
         slots: ["body", "belt", "leg", "cuff"],
         offsets: {
-            front: { x: -140, y: 330 },
-            back: { x: -140, y: 240 }
+            front: { x: 0, y: 0 },
+            back: { x: 0, y: 0 }
         },
         scale: {
-            front: { x: 4.5, y: 4.5 },
-            back: { x: 3.5, y: 3.5 }
+            front: { x: 1, y: 1 },
+            back: { x: 1, y: 1 }
         }
     },
 ];
