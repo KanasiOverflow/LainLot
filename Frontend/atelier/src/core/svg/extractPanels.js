@@ -72,21 +72,26 @@ export const extractPanels = (rawSVG) => {
 
     // ----- PATH
     for (const tag of pathTags) {
-        if (skipByAttr(tag))
-            continue;
+        if (skipByAttr(tag)) continue;
 
-        const d = tag.match(/\sd="([^"]+)"/i)?.[1]; if (!d)
-            continue;
+        const d = tag.match(/\sd="([^"]+)"/i)?.[1];
+        if (!d) continue;
 
         const M = parseMatrix(tag.match(/\btransform="([^"]+)"/i)?.[1] || "");
-        const subs = splitClosedSubpaths(d);
-        const chunks = subs.length ? subs : [d];
+
+        // корректно: не разбиваем по M/m
+        let chunks = splitClosedSubpaths(d);
+        if (!chunks.length) {
+            chunks = [d];  // один path → одна панель
+        }
+
         for (const subD of chunks) {
             let segs = parsePathD(subD);
 
-            if (M)
-                segs = applyMatrixToSegs(segs, M);
+            // ❌ НЕ закрываем не-замкнутые швы/линии
+            // if (!segs.some(s => s.kind === "Z")) segs = ensureClosed(segs);
 
+            if (M) segs = applyMatrixToSegs(segs, M);
             push(segs, tag);
         }
     }
@@ -258,9 +263,8 @@ export const extractPanels = (rawSVG) => {
         /id=["']panel["']/.test(c.rawTag)
     );
 
-    if (tagged.length > 0) {
-        __logPanels("panel-id-detected", { count: tagged.length });
-        candidates = tagged;  // Берём только помеченные контуры
+    if (tagged.length > 0 && candidates.length === tagged.length) {
+        candidates = tagged;
     }
 
     // --- Фильтрация по площади (адаптивная)

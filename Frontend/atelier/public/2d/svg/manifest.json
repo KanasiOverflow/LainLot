@@ -163,29 +163,6 @@
             "y": 0
           }
         }
-      },
-      {
-        "id": "set-in_sleeve",
-        "name": "set-in_sleeve",
-        "product": "hoodie",
-        "preview": "2d/svg/hoodie/front/variants/sleeve/set-in_sleeve_preview.svg",
-        "files": {
-          "front": {
-            "left": "2d/svg/hoodie/front/variants/sleeve/set-in_sleeve_left.svg",
-            "right": "2d/svg/hoodie/front/variants/sleeve/set-in_sleeve_right.svg"
-          },
-          "back": {}
-        },
-        "offset": {
-          "front": {
-            "x": 0,
-            "y": 0
-          },
-          "back": {
-            "x": 0,
-            "y": 0
-          }
-        }
       }
     ],
     "cuff": [

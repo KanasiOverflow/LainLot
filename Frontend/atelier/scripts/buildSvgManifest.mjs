@@ -147,6 +147,19 @@ async function collectVariants({ product, VAR_DIR, FRONT_DIR, BACK_DIR }, slotOr
         for (const f of files) {
             const meta = parseVariantName(f.name, slot, f.faceHint);
             if (!meta?.id) continue;
+
+            // если face не определён (например, файл лежит в общих /variants/slot),
+            // считаем его подходящим и для front, и для back
+            if (!meta.face) {
+                // для слотов с левой/правой стороной — копируем в обе стороны
+                if (["cuff", "sleeve", "leg"].includes(slot)) {
+                    meta.face = "both";
+                } else {
+                    // остальные — хотя бы для front
+                    meta.face = "front";
+                }
+            }
+
             if (!groups.has(meta.id)) {
                 groups.set(meta.id, {
                     id: meta.id,
@@ -162,7 +175,7 @@ async function collectVariants({ product, VAR_DIR, FRONT_DIR, BACK_DIR }, slotOr
 
             if (meta.preview) {
                 g.preview = url;
-            } else if (meta.face === "front") {
+            } else if (meta.face === "front" || meta.face === "both") {
                 if (["cuff", "sleeve", "leg"].includes(slot)) {
                     if (meta.side) g.files.front[meta.side] = url;
                 } else if (slot === "neck" && meta.which === "inner") {
@@ -170,13 +183,16 @@ async function collectVariants({ product, VAR_DIR, FRONT_DIR, BACK_DIR }, slotOr
                 } else {
                     g.files.front.file = url;
                 }
-            } else if (meta.face === "back") {
+            }
+
+            if (meta.face === "back" || meta.face === "both") {
                 if (["cuff", "sleeve", "leg"].includes(slot)) {
                     if (meta.side) g.files.back[meta.side] = url;
                 } else {
                     g.files.back.file = url;
                 }
             }
+
         }
         bySlot[slot] = [...groups.values()].sort((a, b) => a.id.localeCompare(b.id));
     }

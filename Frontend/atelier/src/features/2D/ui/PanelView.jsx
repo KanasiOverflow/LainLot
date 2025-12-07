@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { facePath, faceKey } from "../../../core/svg/faceUtils.js";
+import { facePath, faceKey, segsToD } from "../../../core/svg/faceUtils.js";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 import styles from "../styles/CostumeEditor.module.css";
@@ -60,6 +60,18 @@ export default memo(function PanelView({
                     </g>
                 );
             })}
+
+            {/* исходная геометрия панели (все линии, в том числе декоративные) */}
+            {panel.segs && panel.segs.length > 0 && (
+                <path
+                    d={segsToD(panel.segs)}
+                    fill="none"
+                    stroke="#111"
+                    strokeWidth={1 * (scale.k || 1)}      // чуть тоньше внешнего контура
+                    vectorEffect="non-scaling-stroke"
+                    style={{ pointerEvents: "none" }}
+                />
+            )}
 
             {/* outer contour */}
             {ring && (

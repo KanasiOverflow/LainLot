@@ -52,10 +52,18 @@ export default function CanvasStage({
     // применять маску только если есть кольца капюшона
     const useHoodMask = Array.isArray(hoodRings) && hoodRings.length > 0;
 
+    // панели-капюшоны и панели-шеи (нужны их трансформации)
+    const hoodPanels = panels.filter(p => hoodPanelIds.has(p.id));
+    const neckPanels = panels.filter(p => String(p.slot).toLowerCase().startsWith("neck"));
+
+
     // кольца шеи: берём внешнее кольцо для всех панелей со слотом "neck"
     const neckPanelIds = new Set(
-        panels.filter(p => String(p.slot).toLowerCase() === "neck").map(p => p.id)
+        panels
+            .filter(p => String(p.slot).toLowerCase().startsWith("neck"))
+            .map(p => p.id)
     );
+
     const neckRings = panels
         .filter(p => neckPanelIds.has(p.id))
         .map(p => outerRingByPanel[p.id])   // outerRingByPanel уже есть в пропсах
@@ -120,16 +128,33 @@ export default function CanvasStage({
 
                     {/* A mask that hides everything under the hood */}
                     {useHoodMask && (
-                        <mask id={`under-hood-mask-${svgMountKey}`} maskUnits="userSpaceOnUse">
+                        <mask id={`under-hood-mask-${svgMountKey}`}
+                            maskUnits="userSpaceOnUse"
+                            maskContentUnits="userSpaceOnUse">
                             <rect x={gridDef.b.x} y={gridDef.b.y} width={gridDef.b.w} height={gridDef.b.h} fill="#fff" />
-                            {/* чёрным скрываем область капюшона */}
-                            {hoodRings.map((poly, i) => <path key={i} d={facePath(poly)} fill="#000" />)}
-                            {/* белым возвращаем отверстия капюшона */}
-                            {hoodHoles.map((poly, i) => <path key={`hole-${i}`} d={facePath(poly)} fill="#fff" />)}
-                            {/* белым возвращаем видимость шеи */}
-                            {neckRings.map((poly, i) => <path key={`neck-${i}`} d={facePath(poly)} fill="#fff" />)}
+
+                            {/* чёрным скрываем область капюшона (учитываем transform панели!) */}
+                            {hoodPanels.map((p, i) => {
+                                const ring = outerRingByPanel[p.id];
+                                return ring ? (
+                                    <g key={`hood-ring-${i}`} transform={transformOf(p) || undefined}>
+                                        <path d={facePath(ring)} fill="#000" />
+                                    </g>
+                                ) : null;
+                            })}
+
+                            {/* белым возвращаем видимость шеи (тоже c transform панели) */}
+                            {neckPanels.map((p, i) => {
+                                const ring = outerRingByPanel[p.id];
+                                return ring ? (
+                                    <g key={`neck-ring-${i}`} transform={transformOf(p) || undefined}>
+                                        <path d={facePath(ring)} fill="#fff" />
+                                    </g>
+                                ) : null;
+                            })}
                         </mask>
                     )}
+
                 </defs>
                 <rect
                     x={gridDef.b.x}
